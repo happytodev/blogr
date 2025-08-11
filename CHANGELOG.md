@@ -1,7 +1,7 @@
 # Changelog
 
-All notable changes to `:package_name` will be documented in this file.
+All notable changes to `blogr` will be documented in this file.
 
-## 1.0.0 - 202X-XX-XX
+## 1.0.0 - 2025-08-10
 
 - initial release

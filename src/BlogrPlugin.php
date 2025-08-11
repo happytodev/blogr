@@ -1,20 +1,23 @@
 <?php
 
-namespace VendorName\Skeleton;
+namespace Happytodev\Blogr;
 
-use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Filament\Contracts\Plugin;
+use Happytodev\Blogr\Filament\Resources\BlogPostResource;
 
-class SkeletonPlugin implements Plugin
+class BlogrPlugin implements Plugin
 {
     public function getId(): string
     {
-        return 'skeleton';
+        return 'blogr';
     }
 
     public function register(Panel $panel): void
     {
-        //
+        $panel->resources([
+            BlogPostResource::class,
+        ]);
     }
 
     public function boot(Panel $panel): void

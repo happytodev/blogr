@@ -1,26 +1,27 @@
 <?php
 
-namespace VendorName\Skeleton;
+namespace Happytodev\Blogr;
 
-use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Asset;
 use Illuminate\Filesystem\Filesystem;
-use Livewire\Features\SupportTesting\Testable;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
+use Happytodev\Blogr\Testing\TestsBlogr;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Facades\FilamentAsset;
+use Happytodev\Blogr\Commands\BlogrCommand;
+use Filament\Support\Assets\AlpineComponent;
+use Livewire\Features\SupportTesting\Testable;
+use Happytodev\Blogr\Http\Controllers\BlogController;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use VendorName\Skeleton\Commands\SkeletonCommand;
-use VendorName\Skeleton\Testing\TestsSkeleton;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 
-class SkeletonServiceProvider extends PackageServiceProvider
+class BlogrServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'skeleton';
+    public static string $name = 'blogr';
 
-    public static string $viewNamespace = 'skeleton';
+    public static string $viewNamespace = 'blogr';
 
     public function configurePackage(Package $package): void
     {
@@ -36,7 +37,7 @@ class SkeletonServiceProvider extends PackageServiceProvider
                     ->publishConfigFile()
                     ->publishMigrations()
                     ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub(':vendor_slug/:package_slug');
+                    ->askToStarRepoOnGitHub('happytodev/blogr');
             });
 
         $configFileName = $package->shortName();
@@ -80,18 +81,18 @@ class SkeletonServiceProvider extends PackageServiceProvider
         if (app()->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
-                    $file->getRealPath() => base_path("stubs/skeleton/{$file->getFilename()}"),
-                ], 'skeleton-stubs');
+                    $file->getRealPath() => base_path("stubs/blogr/{$file->getFilename()}"),
+                ], 'blogr-stubs');
             }
         }
 
         // Testing
-        Testable::mixin(new TestsSkeleton);
+        Testable::mixin(new TestsBlogr);
     }
 
     protected function getAssetPackageName(): ?string
     {
-        return ':vendor_slug/:package_slug';
+        return 'happytodev/blogr';
     }
 
     /**
@@ -100,9 +101,11 @@ class SkeletonServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
-            // AlpineComponent::make('skeleton', __DIR__ . '/../resources/dist/components/skeleton.js'),
-            Css::make('skeleton-styles', __DIR__ . '/../resources/dist/skeleton.css'),
-            Js::make('skeleton-scripts', __DIR__ . '/../resources/dist/skeleton.js'),
+            // AlpineComponent::make('blogr', __DIR__ . '/../resources/dist/components/blogr.js'),
+
+            // The 2 folllowing are commented out as they are not used in the current context.
+            // Css::make('blogr-styles', __DIR__ . '/../resources/dist/blogr.css'),
+            // Js::make('blogr-scripts', __DIR__ . '/../resources/dist/blogr.js'),
         ];
     }
 
@@ -112,7 +115,7 @@ class SkeletonServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         return [
-            SkeletonCommand::class,
+            BlogrCommand::class,
         ];
     }
 
@@ -146,7 +149,40 @@ class SkeletonServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_skeleton_table',
+            'create_blogr_table',
         ];
+    }
+
+
+
+    // to check
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../config/blogr.php', 'blogr');
+    }
+
+    public function boot()
+    {
+        // Publier la configuration et les vues
+        $this->publishes([
+            __DIR__ . '/../config/blogr.php' => config_path('blogr.php'),
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/blogr'),
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+        ], 'blogr');
+
+        // Charger les migrations
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        // Charger les vues
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'blogr');
+
+        // Enregistrer les routes frontend
+        $this->app['router']
+            ->prefix(config('blogr.route.prefix', 'blog'))
+            ->middleware(config('blogr.route.middleware', ['web']))
+            ->group(function () {
+                $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
+                $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+            });
     }
 }
