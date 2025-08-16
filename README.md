@@ -1,4 +1,4 @@
-# This is my package blogr
+# Blogr – FilamentPHP Plugin
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/happytodev/blogr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/happytodev/blogr/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/happytodev/blogr/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -6,8 +6,6 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/happytodev/blogr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr)
 
 
-
-# Blogr – FilamentPHP Plugin
 
 Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel application.
 
