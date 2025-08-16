@@ -14,6 +14,13 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->text('content');
             $table->string('slug')->unique();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->boolean('is_published')->default(false);
+            $table->timestamp('published_at')->nullable();
+            $table->string('meta_title')->nullable();
+            $table->string('meta_description')->nullable();
+            $table->string('meta_keywords')->nullable();
+            $table->string('tldr')->nullable();
             $table->timestamps();
         });
     }
