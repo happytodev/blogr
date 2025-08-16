@@ -8,10 +8,10 @@
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold mb-4">{{ $post->title }}</h1>
         @if ($post->photo)
-            <img src="{{ $post->photo_url }}" alt="{{ $post->title }}" class="w-full h-auto mb-6 rounded-lg">
+            <img src="{{ $post->photo_url }}" alt="{{ $post->title }}" class="w-3/5 mx-auto h-auto my-12 rounded-lg">
         @endif
         <div class="prose max-w-none">{!! $post->content !!}</div>
         <a href="{{ route('blog.index') }}" class="text-blue-500 hover:underline mt-4 inline-block">Back to blog</a>
     </div>
 </body>
-</html>
+</html> 
