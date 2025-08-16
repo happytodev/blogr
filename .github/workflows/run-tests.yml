@@ -51,7 +51,3 @@ jobs:
 
       - name: List Installed Dependencies
         run: composer show -D
-
-      - name: Execute tests
-        # Tests aren't ready for now
-        # run: vendor/bin/pest --ci
