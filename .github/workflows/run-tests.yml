@@ -20,6 +20,8 @@ jobs:
           - laravel: 12.*
             testbench: 10.*
             carbon: 3.*
+            pest: 3.*
+            pest_plugin: 3.*
             os: ubuntu-latest
             php: 8.4
             stability: prefer-stable
