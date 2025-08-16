@@ -7,54 +7,91 @@
 
 
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+# Blogr – FilamentPHP Plugin
+
+Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel application.
 
 ## Installation
 
-You can install the package via composer:
+1. **Install the package via Composer**
 
 ```bash
 composer require happytodev/blogr
 ```
 
-You can publish and run the migrations with:
+2. **Publish configuration and migration files**
 
 ```bash
-php artisan vendor:publish --tag="blogr-migrations"
+php artisan vendor:publish --provider="Happytodev\Blogr\BlogrServiceProvider"
+```
+
+3. **Run the migrations**
+
+```bash
 php artisan migrate
 ```
 
-You can publish the config file with:
+4. **Add the plugin in AdminPanelProvider class**
 
-```bash
-php artisan vendor:publish --tag="blogr-config"
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="blogr-views"
-```
-
-This is the contents of the published config file:
+Add this line in your file `app\Providers\Filament\AdminPanelProvider.php`
 
 ```php
-return [
-];
+            ->plugin(BlogrPlugin::make())
 ```
 
-## Usage
+5. **Install typography plugin**
 
-```php
-$blogr = new Happytodev\Blogr();
-echo $blogr->echoPhrase('Hello, Happytodev!');
+Run `npm install -D @tailwindcss/typography`
+
+6. **Add typography plugin in `resources\css\app.css`**
+
+In `resources\css\app.css`, change : 
+
+```css
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+...
 ```
 
-## Testing
+by 
 
-```bash
-composer test
+```css
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+@plugin "@tailwindcss/typography";
+...
 ```
+
+7. **Access the blog in Filament**
+
+The plugin adds a Filament resource for managing blog posts.  
+Log in to your Filament admin panel and go to the “Blog Posts” section.
+
+## Configuration
+
+You can customize the table prefix in the published config file:  
+`config/blogr.php`
+
+## Features
+
+- Create, edit, and delete blog posts
+- Image upload and editing
+- SEO fields (meta title, description, keywords)
+- Scheduled publishing
+- Automatic author assignment
+
+## Support
+
+For questions or bug reports, open an issue on GitHub or contact [happytodev](mailto:happytodev@ik.me).
+
+## Sponsor
+
+If you like this project, you can support me via [GitHub Sponsors](https://github.com/sponsors/happytodev).
+
+---
+
+**License**  
+MIT
 
 ## Changelog
 
