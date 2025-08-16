@@ -163,26 +163,38 @@ class BlogrServiceProvider extends PackageServiceProvider
 
     public function boot()
     {
-        // Publier la configuration et les vues
+        // Publishes the configuration and views
         $this->publishes([
             __DIR__ . '/../config/blogr.php' => config_path('blogr.php'),
             __DIR__ . '/../resources/views' => resource_path('views/vendor/blogr'),
             __DIR__ . '/../database/migrations' => database_path('migrations'),
         ], 'blogr');
 
-        // Charger les migrations
+        // Load migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        // Charger les vues
+        // Load views
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'blogr');
 
-        // Enregistrer les routes frontend
-        $this->app['router']
-            ->prefix(config('blogr.route.prefix', 'blog'))
-            ->middleware(config('blogr.route.middleware', ['web']))
-            ->group(function () {
-                $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
-                $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
-            });
+        $prefix = trim(config('blogr.route.prefix', 'blog'), '/');
+
+        if ($prefix === '' || $prefix === '/') {
+            // Blog route as homepage
+            $this->app['router']
+                ->middleware(config('blogr.route.middleware', ['web']))
+                ->group(function () {
+                    $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
+                    $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                });
+        } else {
+            // Blog route with prefix
+            $this->app['router']
+                ->prefix($prefix)
+                ->middleware(config('blogr.route.middleware', ['web']))
+                ->group(function () {
+                    $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
+                    $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                });
+        }
     }
 }
