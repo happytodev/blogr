@@ -81,8 +81,15 @@ class BlogPostForm
                     ->helperText('SEO keywords for the blog post, separated by commas.'),
                 TextInput::make('tldr')
                     ->label('TL;DR')
+                    ->maxLength(255)
                     ->nullable()
-                    ->helperText('A brief summary of the blog post, displayed at the top.'),
+                    ->live()
+                    ->helperText(function ($state, TextInput $component) {
+                        $max = $component->getMaxLength();
+                        $remaining = $max - strlen($state);
+                        $text = "A brief summary of the blog post, displayed at the top. Remaining characters : $remaining / $max.";
+                        return $text;
+                    })
             ]);
     }
 }

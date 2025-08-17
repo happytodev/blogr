@@ -15,7 +15,14 @@
                     @endif
                     <div class="p-4 bg-green-50">
                         <h2 class="text-xl font-semibold mb-2">{{ $post->title }}</h2>
-                        <a href="{{ route('blog.show', $post->slug) }}" class="text-blue-500 hover:underline">Read more</a>
+                        @if ($post->tldr)
+                            <p class="text-gray-700 mb-4">
+                                <span class="font-bold">TL;DR : </span>
+                                <span class="italic">{{ $post->tldr }}</span>
+                            </p>
+                        @endif
+                        <a href="{{ route('blog.show', $post->slug) }}" class="text-blue-500 hover:underline">Read
+                            more</a>
                     </div>
                 </div>
             @endforeach
