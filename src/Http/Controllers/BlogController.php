@@ -16,15 +16,19 @@ class BlogController
 {
     public function index()
     {
-        $posts = BlogPost::latest()->take(config('blogr.posts_per_page', 10))->get()->map(function ($post) {
-            if ($post->photo) {
-                $post->photo_url = Storage::temporaryUrl(
-                    $post->photo,
-                    now()->addHours(1) // URL valid for 1 hour
-                );
-            }
-            return $post;
-        });
+        $posts = BlogPost::latest()
+            ->where('is_published', true)
+            ->take(config('blogr.posts_per_page', 10))
+            ->get()
+            ->map(function ($post) {
+                if ($post->photo) {
+                    $post->photo_url = Storage::temporaryUrl(
+                        $post->photo,
+                        now()->addHours(1) // URL valid for 1 hour
+                    );
+                }
+                return $post;
+            });
         return View::make('blogr::blog.index', ['posts' => $posts]);
     }
 
@@ -57,14 +61,15 @@ class BlogController
         $environment->addExtension(new HeadingPermalinkExtension());
         $environment->addExtension(new TableOfContentsExtension());
 
-        $post = BlogPost::where('slug', $slug)->firstOrFail();
+        $post = BlogPost::where('slug', $slug)
+            ->where('is_published', true)
+            ->firstOrFail();
 
         $converter = new MarkdownConverter($environment);
 
         // This will insert the table of contents at the placeholder [[TOC]]
         $markdownWithToc = "# Table of contents\n\n[[TOC]]\n\n" . $post->content;
         $post->content = $converter->convert($markdownWithToc)->getContent();
-
         if ($post->photo) {
             $post->photo_url = Storage::temporaryUrl(
                 $post->photo,
