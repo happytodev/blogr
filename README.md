@@ -61,6 +61,12 @@ Add this line in your file `app\Providers\Filament\AdminPanelProvider.php`
             ->plugin(BlogrPlugin::make())
 ```
 
+Don't forget to import the class : 
+
+```php
+use Happytodev\Blogr\BlogrPlugin;
+``` 
+
 5. **Install typography plugin**
 
 Run `npm install -D @tailwindcss/typography`
