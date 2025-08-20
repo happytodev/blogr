@@ -45,7 +45,7 @@ class BlogPostForm
                     ->columnSpanFull()
                     ->nullable(),
                 Select::make('category_id')
-                    ->label('Catégorie')
+                    ->label('Category')
                     ->options(Category::pluck('name', 'id'))
                     ->default(function () {
                         return Category::where('is_default', true)->first()->id;

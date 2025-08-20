@@ -17,7 +17,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // Créer la catégorie par défaut
+        // Create defauult category
         DB::table(config('blogr.tables.prefix', '') . 'categories')->insert([
             'name' => 'General',
             'slug' => 'general',

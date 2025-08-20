@@ -26,7 +26,7 @@ class CategoryForm
                     ->unique(ignoringRecord: true)
                     ->maxLength(255),
                 Toggle::make('is_default')
-                    ->label('Catégorie par défaut')
+                    ->label('Default category')
                     ->default(false),
             ]);
     }
