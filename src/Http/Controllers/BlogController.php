@@ -2,8 +2,10 @@
 
 namespace Happytodev\Blogr\Http\Controllers;
 
+use Happytodev\Blogr\Models\Tag;
 use Illuminate\Support\Facades\View;
 use Happytodev\Blogr\Models\BlogPost;
+use Happytodev\Blogr\Models\Category;
 use Illuminate\Support\Facades\Storage;
 use League\CommonMark\MarkdownConverter;
 use League\CommonMark\CommonMarkConverter;
@@ -16,7 +18,8 @@ class BlogController
 {
     public function index()
     {
-        $posts = BlogPost::latest()
+        $posts = BlogPost::with(['category', 'tags'])
+            ->latest()
             ->where('is_published', true)
             ->take(config('blogr.posts_per_page', 10))
             ->get()
@@ -61,7 +64,8 @@ class BlogController
         $environment->addExtension(new HeadingPermalinkExtension());
         $environment->addExtension(new TableOfContentsExtension());
 
-        $post = BlogPost::where('slug', $slug)
+        $post = BlogPost::with(['category', 'tags'])
+            ->where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
 
@@ -77,5 +81,47 @@ class BlogController
             );
         }
         return View::make('blogr::blog.show', ['post' => $post]);
+    }
+
+    public function category($categorySlug)
+    {
+        $category = Category::where('slug', $categorySlug)->firstOrFail();
+        $posts = BlogPost::with(['category', 'tags'])
+            ->where('category_id', $category->id)
+            ->latest()
+            ->take(config('blogr.posts_per_page', 10))
+            ->get()
+            ->map(function ($post) {
+                if ($post->photo) {
+                    $post->photo_url = Storage::temporaryUrl($post->photo, now()->addMinutes(5));
+                }
+                return $post;
+            });
+
+        return View::make('blogr::blog.category', [
+            'category' => $category,
+            'posts' => $posts,
+        ]);
+    }
+
+    public function tag($tagSlug)
+    {
+        $tag = Tag::where('slug', $tagSlug)->firstOrFail();
+        $posts = $tag->posts()
+            ->with(['category', 'tags'])
+            ->latest()
+            ->take(config('blogr.posts_per_page', 10))
+            ->get()
+            ->map(function ($post) {
+                if ($post->photo) {
+                    $post->photo_url = Storage::temporaryUrl($post->photo, now()->addMinutes(5));
+                }
+                return $post;
+            });
+
+        return View::make('blogr::blog.tag', [
+            'tag' => $tag,
+            'posts' => $posts,
+        ]);
     }
 }
