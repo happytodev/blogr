@@ -2,6 +2,13 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.2.1](https://github.com/happytodev/blogr/compare/v0.2.0...v0.2.1) - 2025-08-20
+
+### 📗 Documentation
+
+- chore(doc): add missing instruction in the `Installation` section of `README.md` file
+
+
 ## [v0.2.0](https://github.com/happytodev/blogr/compare/v0.1.4...v0.2.0) - 2025-08-20
 
 ###  🚀 Feature
