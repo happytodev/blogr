@@ -9,6 +9,30 @@
 
 Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel application.
 
+## Features
+
+- [x] Create, edit, and delete blog posts
+- [x] Edit post in markdown
+- [x] Table of contents is automatically generated 
+- [x] A post can have a TL;DR
+- [x] Support code (currently very simple)
+- [x] A blog post can have a category
+- [x] A blog post can have tags
+- [x] A blog post can be published or not
+- [x] The slug of blog post is automatically generated but can be customized
+- [x] Posts per category page
+- [x] Posts per tags page
+- [x] Image upload and editing
+- [x] Automatic author assignment
+- [x] Backend color customizable
+
+## Roadmap
+
+### Beta 2
+
+- [ ] SEO fields (meta title, description, keywords) (Scheduled for beta 2)
+- [ ] Scheduled publishing (Scheduled for beta 2)
+
 ## Installation
 
 1. **Install the package via Composer**
@@ -70,13 +94,6 @@ Log in to your Filament admin panel and go to the “Blog Posts” section.
 You can customize the table prefix in the published config file:  
 `config/blogr.php`
 
-## Features
-
-- Create, edit, and delete blog posts
-- Image upload and editing
-- SEO fields (meta title, description, keywords)
-- Scheduled publishing
-- Automatic author assignment
 
 ## Support
 
@@ -86,9 +103,8 @@ For questions or bug reports, open an issue on GitHub or contact [happytodev](ma
 
 If you like this project, you can support me via [GitHub Sponsors](https://github.com/sponsors/happytodev).
 
----
 
-**License**  
+## License
 MIT
 
 ## Changelog
