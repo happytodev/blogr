@@ -2,6 +2,27 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## Unreleased
+
+###  🚀 Feature
+
+- feat(blog): add support for tags and categories in blog posts.
+- feat(blog): display TL;DR section in the blog category view.
+- feat(blog): using textarea for TL;DR with characters limit and dynamic helper text to visualize remaining characters.
+- feat(config): allow customization of primary color in `blogr.php`.
+- feat(blog): adding a table of contents at the beginning of the blog post
+
+### 🐛 Bug fixes
+
+- fix(blog): resolve issue with missing `Filament\Support\Colors\Color` class in configuration.
+- fix(blog): When a blog post has 'published' to false, I should not to be able to see it on the blog index page
+
+### 🚜 Refactor
+
+- refactor(blog): improve layout for blog index cards with updated background and border colors.
+- refactor(config): enhance configuration structure for blog index cards.
+
+
 ## v0.1.2 - 2025-08-16
 - refactor(config): remove unused table prefix and admin path from blog configuration
 - feat(blogr): enhance routing logic for blog routes with optional prefix
