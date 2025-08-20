@@ -4,7 +4,6 @@ namespace Happytodev\Blogr;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
-use Filament\Support\Colors\Color;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
 use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
@@ -23,9 +22,8 @@ class BlogrPlugin implements Plugin
             CategoryResource::class,
             TagResource::class,
         ]);
-
         $panel->colors([
-            'primary' => config('blogr.colors.primary', Color::Orange),
+            'primary' => config('blogr.colors.primary', '#0ea5e9'),
         ]);
     }
 
