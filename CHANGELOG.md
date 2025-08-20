@@ -2,7 +2,7 @@
 
 All notable changes to `blogr` will be documented in this file.
 
-## Unreleased
+## [v0.2.0](https://github.com/happytodev/blogr/compare/v0.1.4...v0.2.0) - 2025-08-20
 
 ###  🚀 Feature
 

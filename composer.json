@@ -1,11 +1,13 @@
 {
     "name": "happytodev/blogr",
-    "description": "This is my package blogr",
+    "description": "Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel application.",
     "keywords": [
         "happytodev",
         "laravel",
+        "filamentphp",
         "blogr"
     ],
+    "version": "0.2.0",
     "homepage": "https://github.com/happytodev/blogr",
     "support": {
         "issues": "https://github.com/happytodev/blogr/issues",
