@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Support\Colors\Color;
+
 // config for Happytodev/Blogr
 return [
     'posts_per_page' => 10,  // Number of posts per page
@@ -15,5 +17,9 @@ return [
                 'top_border' => 'border-green-600', // Border color of blog index cards
             ]
         ]
+    ],
+    'colors' => [
+        'primary' => Color::Orange
+
     ]
 ];
