@@ -33,7 +33,7 @@ class BlogPostTable
                 TextColumn::make('tags.name')
                     ->badge(),
                 ToggleColumn::make('is_published')
-                    ->label('Publié')
+                    ->label('Published')
                     ->default(false),
                 TextColumn::make('created_at')
                     ->dateTime()
