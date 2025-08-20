@@ -31,7 +31,7 @@
                         <h2 class="text-xl font-semibold mb-2">{{ $post->title }}</h2>
                         <div class="mb-2">
                             <span class="text-sm text-gray-600">
-                                Catégory:
+                                Category:
                                 <a href="{{ route('blog.category', $post->category->slug) }}"
                                     class="text-blue-500 hover:underline">
                                     {{ $post->category->name }}

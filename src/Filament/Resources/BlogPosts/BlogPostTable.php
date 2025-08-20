@@ -29,7 +29,7 @@ class BlogPostTable
                         return $record->photo ? Storage::temporaryUrl($record->photo, now()->addMinutes(5)) : null;
                     }),
                 TextColumn::make('category.name')
-                    ->label('Catégorie'),
+                    ->label('Category'),
                 TextColumn::make('tags.name')
                     ->badge(),
                 ToggleColumn::make('is_published')

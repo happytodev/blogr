@@ -2,6 +2,13 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## Unreleased
+
+### 🐛 Bug fixes
+
+- fix(blog): Fix typos in category labels across multiple files [#38](https://github.com/happytodev/blogr/issues/38)
+
+
 ## [v0.2.1](https://github.com/happytodev/blogr/compare/v0.2.0...v0.2.1) - 2025-08-20
 
 ### 📗 Documentation
