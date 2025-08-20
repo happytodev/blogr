@@ -194,6 +194,8 @@ class BlogrServiceProvider extends PackageServiceProvider
                 ->group(function () {
                     $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
                     $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                    $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
+                    $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
                 });
         }
     }

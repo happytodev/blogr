@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Happytodev\Blogr\Models\Category;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -21,6 +22,11 @@ return new class extends Migration
             $table->string('meta_description')->nullable();
             $table->string('meta_keywords')->nullable();
             $table->string('tldr')->nullable();
+            $table->foreignId('category_id')
+                ->constrained(config('blogr.tables.prefix', '') . 'categories')
+                ->default(function () {
+                    return Category::where('is_default', true)->first()->id;
+                });
             $table->timestamps();
         });
     }

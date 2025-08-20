@@ -15,5 +15,8 @@ return [
                 'top_border' => 'border-green-600', // Border color of blog index cards
             ]
         ]
+    ],
+    'colors' => [
+        'primary' => '#FA2C36'
     ]
 ];
