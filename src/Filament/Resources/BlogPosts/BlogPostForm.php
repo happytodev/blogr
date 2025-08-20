@@ -6,7 +6,10 @@ use Illuminate\Support\Str;
 use Filament\Schemas\Schema;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Happytodev\Blogr\Models\Category;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\DateTimePicker;
@@ -41,6 +44,32 @@ class BlogPostForm
                     ->directory('blog-photos')
                     ->columnSpanFull()
                     ->nullable(),
+                Select::make('category_id')
+                    ->label('Catégorie')
+                    ->options(Category::pluck('name', 'id'))
+                    ->default(function () {
+                        return Category::where('is_default', true)->first()->id;
+                    })
+                    ->required(),
+                Select::make('tags')
+                    ->multiple()
+                    ->relationship('tags', 'name')
+                    ->preload()
+                    ->createOptionForm([
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                                if ($state) {
+                                    $set('slug', Str::slug($state));
+                                }
+                            }),
+                        TextInput::make('slug')
+                            ->required()
+                            ->unique()
+                            ->maxLength(255),
+                    ]),
                 MarkdownEditor::make('content')
                     ->required()
                     ->columnSpanFull()
@@ -79,12 +108,13 @@ class BlogPostForm
                     ->label('Meta Keywords')
                     ->nullable()
                     ->helperText('SEO keywords for the blog post, separated by commas.'),
-                TextInput::make('tldr')
+                Textarea::make('tldr')
                     ->label('TL;DR')
+                    ->columnSpanFull()
                     ->maxLength(255)
                     ->nullable()
                     ->live()
-                    ->helperText(function ($state, TextInput $component) {
+                    ->helperText(function ($state, Textarea $component) {
                         $max = $component->getMaxLength();
                         $remaining = $max - strlen($state);
                         $text = "A brief summary of the blog post, displayed at the top. Remaining characters : $remaining / $max.";
