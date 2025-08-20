@@ -1,8 +1,5 @@
 <?php
 
-use Filament\Support\Colors\Color;
-
-
 // config for Happytodev/Blogr
 return [
     'posts_per_page' => 10,  // Number of posts per page
@@ -20,7 +17,6 @@ return [
         ]
     ],
     'colors' => [
-        'primary' => Color::Orange
-
+        'primary' => '#FA2C36'
     ]
 ];
