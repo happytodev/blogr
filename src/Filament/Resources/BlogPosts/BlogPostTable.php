@@ -3,11 +3,14 @@
 namespace Happytodev\Blogr\Filament\Resources\BlogPosts;
 
 
-use Filament\Schemas\Schema;
+use Filament\Tables\Table;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Illuminate\Support\Facades\Storage;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Filters\SelectFilter;
 
 class BlogPostTable
 {
@@ -21,12 +24,27 @@ class BlogPostTable
                 TextColumn::make('slug')
                     ->sortable()
                     ->searchable(),
+                ImageColumn::make('photo')
+                    ->getStateUsing(function ($record) {
+                        return $record->photo ? Storage::temporaryUrl($record->photo, now()->addMinutes(5)) : null;
+                    }),
+                TextColumn::make('category.name')
+                    ->label('Catégorie'),
+                TextColumn::make('tags.name')
+                    ->badge(),
+                ToggleColumn::make('is_published')
+                    ->label('Publié')
+                    ->default(false),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('category')
+                    ->relationship('category', 'name'),
+                SelectFilter::make('tags')
+                    ->relationship('tags', 'name')
+                    ->multiple(),
             ])
             ->actions([
                 EditAction::make(),
