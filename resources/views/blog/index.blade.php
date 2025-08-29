@@ -10,7 +10,7 @@
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold mb-6">Blog Posts</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @foreach ($posts as $post)
+            @forelse ($posts as $post)
                 <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
                     <!-- Always include a fixed-height image container -->
                     <div class="relative h-48 bg-gray-200">
@@ -59,7 +59,11 @@
                             more</a>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <div class="col-span-full text-center text-gray-500 text-lg py-12">
+                    No post for the moment
+                </div>
+            @endforelse
         </div>
     </div>
 </body>
