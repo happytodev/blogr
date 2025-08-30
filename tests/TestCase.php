@@ -2,21 +2,24 @@
 
 namespace Happytodev\Blogr\Tests;
 
-use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use Mockery\MockInterface;
+use Illuminate\Foundation\Vite;
+use Illuminate\Support\HtmlString;
+use Filament\FilamentServiceProvider;
+use Livewire\LivewireServiceProvider;
+use Filament\Forms\FormsServiceProvider;
+use Filament\Tables\TablesServiceProvider;
+use Happytodev\Blogr\BlogrServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
-use Filament\FilamentServiceProvider;
-use Filament\Forms\FormsServiceProvider;
-use Filament\Infolists\InfolistsServiceProvider;
-use Filament\Notifications\NotificationsServiceProvider;
 use Filament\Support\SupportServiceProvider;
-use Filament\Tables\TablesServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Filament\Infolists\InfolistsServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use Filament\Notifications\NotificationsServiceProvider;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
-use Happytodev\Blogr\BlogrServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -25,8 +28,13 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Happytodev\\Blogr\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn(string $modelName) => 'Happytodev\\Blogr\\Tests\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
         );
+
+        // Add the Vite mock here
+        $this->mock(Vite::class, function (MockInterface $mock) {
+            $mock->shouldReceive('__invoke')->andReturn(new HtmlString(''));
+        });
     }
 
     protected function getPackageProviders($app)
@@ -52,9 +60,22 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_blogr_table.php.stub';
-        $migration->up();
-        */
+        $app['config']->set('app.key', 'base64:/QGZSf6gflmQp4zukiY3ab0DnTFMOqLK1//pgpQhFzw=');
+
+        // Configure database for testing
+        $app['config']->set('database.connections.testing', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
+    }
+
+    protected function defineDatabaseMigrations()
+    {
+        // Load test-specific migrations (including users table for testing)
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+
+        // Load package migrations
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 }

@@ -5,7 +5,7 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/happytodev/blogr/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/happytodev/blogr/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/happytodev/blogr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr)
 
-
+![alt text](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/blogr.webp)
 
 Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel application.
 
@@ -26,14 +26,50 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - [x] Automatic author assignment
 - [x] Backend color customizable
 
+## Screenshots
+
+### Blog post view
+
+![Blog post view](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-1.png)
+
+
+### Backend - List of posts
+
+![Backend - List of posts](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-2.png)
+
+### Backend - Edit post
+
+![Backend - Edit post](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-3.png)
+
 ## Roadmap
 
 ### Beta 2
 
-- [ ] SEO fields (meta title, description, keywords) (Scheduled for beta 2)
-- [ ] Scheduled publishing (Scheduled for beta 2)
+- [ ] SEO fields (meta title, description, keywords)
+- [ ] Scheduled publishing
+- [x] In the admin in the list of posts, display the toggle for is_published to quickly publish or unpublish 
+- [x] Add a table of content for blog post
+- [x] When no post is published, display a message to user
+- [ ] TOC could be deactivate for a post
+- [ ] User could define if TOC is activated by default or not for every post
+- [ ] Add a reading time information for blog post
+- [ ] Integrate meta fields
+- [ ] Add a RSS feed for the blog posts
+- [ ] Create widgets to display on dashboard
+- [ ] Add a settings page to easily manage settings set in config/blogr.php
+
+
+
+## Requirements
+
+- **Laravel 12.x**
+- **FilamentPHP v4.x**
+
+You have to start with a fresh install of Laravel and Filament v4 or add this package on existing app with these requirements.
 
 ## Installation
+
+
 
 1. **Install the package via Composer**
 
