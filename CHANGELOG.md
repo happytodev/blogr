@@ -14,6 +14,7 @@ All notable changes to `blogr` will be documented in this file.
 - test(blog): Verify blog post title, category, tags, TL;DR, and table of contents are displayed correctly
 - test(blog): Add test-specific database migrations and factories for isolated testing
 - test(blog): Configure TestCase for proper Laravel migrations loading in test environment
+- test(blog): Add Pest test execution step to CI workflow
 - refactor(test): Move test factories to `tests/database/factories/` directory for better organization
 - refactor(test): Update factory namespaces to match new test directory structure
 
@@ -28,6 +29,10 @@ All notable changes to `blogr` will be documented in this file.
 - refactor(test): Reorganize test database structure with dedicated migrations and factories directories
 - refactor(test): Improve test isolation by using test-specific database setup
 - refactor(package): Remove unnecessary UserFactory from package factories directory
+
+### 📦 Dependencies
+
+- test: Install orchestra/testbench for package testing
 
 ## [v0.2.2](https://github.com/happytodev/blogr/compare/v0.2.1...v0.2.2) - 2025-08-21
 
