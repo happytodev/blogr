@@ -83,7 +83,7 @@ class BlogPostForm
                 Hidden::make('user_id')
                     ->default(fn() => Filament::auth()->user()->id),
                 Toggle::make('is_published')
-                    ->label(function (Get $get) { 
+                    ->label(function (Get $get) {
                         $isPublished = $get('is_published');
                         $publishedAt = $get('published_at');
 
@@ -115,7 +115,7 @@ class BlogPostForm
                     ->default(false)
                     ->live()
                     ->afterStateUpdated(function (Set $set, ?bool $state, $context) {
-                        if ($state && $context === 'create') {
+                        if ($state && $context === 'create' || $state && $context === 'edit') {
                             // Only set published_at to now for new posts
                             $set('published_at', now()->format('Y-m-d\TH:i'));
                         } elseif (!$state) {

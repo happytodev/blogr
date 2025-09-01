@@ -2,7 +2,18 @@
 
 All notable changes to `blogr` will be documented in this file.
 
-## [Unreleased]
+## [v0.3.1](https://github.com/happytodev/blogr/compare/v0.3.0...v0.3.1) - 2025-09-01
+
+### 🐛 Bug fixes
+
+- fix(form): Update published_at to current time when republishing a scheduled post
+
+### 🧪 Testing
+
+- test(form): Add test for published_at update when republishing scheduled posts
+
+
+## [v0.3.0](https://github.com/happytodev/blogr/compare/v0.2.1...v0.3.0) - 2025-09-01
 
 ### 🚀 Feature
 
