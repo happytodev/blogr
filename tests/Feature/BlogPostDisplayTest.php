@@ -218,3 +218,68 @@ it('correctly identifies publication status', function () {
     expect($publishedPost->getPublicationStatus())->toBe('published');
     expect($publishedPost->getPublicationStatusColor())->toBe('success');
 });
+
+it('updates published_at to current time when republishing a scheduled post', function () {
+    // Create a user directly (since User factory is not available in this package)
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+        'email_verified_at' => now(),
+    ]);
+
+    // Create a category directly
+    $category = Category::create([
+        'name' => 'Technology',
+        'slug' => 'technology',
+        'is_default' => false,
+    ]);
+
+    // Create a scheduled post (future date)
+    $futureDate = now()->addDays(7);
+    $scheduledPost = BlogPost::create([
+        'title' => 'Scheduled Post',
+        'content' => 'This post is scheduled for the future.',
+        'slug' => 'scheduled-post',
+        'is_published' => true,
+        'published_at' => $futureDate,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+    ]);
+
+    // Verify initial state
+    expect($scheduledPost->is_published)->toBe(true);
+    expect($scheduledPost->published_at->toDateTimeString())->toBe($futureDate->toDateTimeString());
+    expect($scheduledPost->getPublicationStatus())->toBe('scheduled');
+
+    // Simulate unpublishing (like clicking toggle off in form)
+    $scheduledPost->update([
+        'is_published' => false,
+        'published_at' => null,
+    ]);
+
+    // Verify unpublished state
+    $scheduledPost->refresh();
+    expect((bool) $scheduledPost->is_published)->toBe(false);
+    expect($scheduledPost->published_at)->toBe(null);
+    expect($scheduledPost->getPublicationStatus())->toBe('draft');
+
+    // Simulate republishing (like clicking toggle on again in form)
+    // This should set published_at to current time
+    $beforeRepublish = now();
+    $scheduledPost->update([
+        'is_published' => true,
+        'published_at' => now()->format('Y-m-d\TH:i'), // This simulates what the form does
+    ]);
+
+    // Verify republished state
+    $scheduledPost->refresh();
+    expect((bool) $scheduledPost->is_published)->toBe(true);
+    expect($scheduledPost->published_at)->not->toBe(null);
+    // Check that published_at is recent (within last minute)
+    expect($scheduledPost->published_at->isAfter($beforeRepublish->subMinute()))->toBe(true);
+    expect($scheduledPost->getPublicationStatus())->toBe('published');
+
+    // Verify the post is now considered currently published
+    expect($scheduledPost->isCurrentlyPublished())->toBe(true);
+});
