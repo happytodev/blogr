@@ -5,7 +5,6 @@ namespace Happytodev\Blogr\Filament\Resources\BlogPosts;
 
 use Filament\Tables\Table;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Storage;
@@ -32,9 +31,16 @@ class BlogPostTable
                     ->label('Category'),
                 TextColumn::make('tags.name')
                     ->badge(),
-                ToggleColumn::make('is_published')
-                    ->label('Published')
-                    ->default(false),
+                TextColumn::make('publication_status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn ($record) => $record->getPublicationStatusColor())
+                    ->getStateUsing(fn ($record) => ucfirst($record->getPublicationStatus())),
+                TextColumn::make('published_at')
+                    ->label('Publish Date')
+                    ->dateTime()
+                    ->sortable()
+                    ->placeholder('Not set'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),

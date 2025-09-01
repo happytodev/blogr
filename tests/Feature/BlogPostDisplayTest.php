@@ -90,3 +90,131 @@ it('displays blog post with title, category, tags, TLDR and TOC correctly', func
     $response->assertSee('Understanding Laravel middleware');
     $response->assertSee('Working with the database ORM');
 });
+
+it('does not display scheduled posts before their publish date', function () {
+    // Create a user
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+        'email_verified_at' => now(),
+    ]);
+
+    // Create a category
+    $category = Category::create([
+        'name' => 'Technology',
+        'slug' => 'technology',
+        'is_default' => false,
+    ]);
+
+    // Create a scheduled blog post (future date)
+    $futureDate = now()->addDays(7);
+    $scheduledPost = BlogPost::create([
+        'title' => 'Future Laravel Features',
+        'content' => 'This post is scheduled for the future.',
+        'slug' => 'future-laravel-features',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => $futureDate,
+    ]);
+
+    // Visit the blog index
+    $response = $this->get(route('blog.index'));
+
+    // Assert the scheduled post is NOT displayed
+    $response->assertDontSee('Future Laravel Features');
+});
+
+it('displays scheduled posts after their publish date', function () {
+    // Create a user
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+        'email_verified_at' => now(),
+    ]);
+
+    // Create a category
+    $category = Category::create([
+        'name' => 'Technology',
+        'slug' => 'technology',
+        'is_default' => false,
+    ]);
+
+    // Create a scheduled blog post (past date)
+    $pastDate = now()->subDays(1);
+    $scheduledPost = BlogPost::create([
+        'title' => 'Past Laravel Features',
+        'content' => 'This post was scheduled in the past.',
+        'slug' => 'past-laravel-features',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => $pastDate,
+    ]);
+
+    // Visit the blog index
+    $response = $this->get(route('blog.index'));
+
+    // Assert the scheduled post IS displayed
+    $response->assertSee('Past Laravel Features');
+});
+
+it('correctly identifies publication status', function () {
+    // Create a user
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+        'email_verified_at' => now(),
+    ]);
+
+    // Create a category
+    $category = Category::create([
+        'name' => 'Technology',
+        'slug' => 'technology',
+        'is_default' => false,
+    ]);
+
+    // Test draft post
+    $draftPost = BlogPost::create([
+        'title' => 'Draft Post',
+        'content' => 'This is a draft.',
+        'slug' => 'draft-post',
+        'is_published' => false,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+    ]);
+
+    expect($draftPost->getPublicationStatus())->toBe('draft');
+    expect($draftPost->getPublicationStatusColor())->toBe('gray');
+
+    // Test scheduled post
+    $scheduledPost = BlogPost::create([
+        'title' => 'Scheduled Post',
+        'content' => 'This is scheduled.',
+        'slug' => 'scheduled-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now()->addDays(1),
+    ]);
+
+    expect($scheduledPost->getPublicationStatus())->toBe('scheduled');
+    expect($scheduledPost->getPublicationStatusColor())->toBe('warning');
+
+    // Test published post
+    $publishedPost = BlogPost::create([
+        'title' => 'Published Post',
+        'content' => 'This is published.',
+        'slug' => 'published-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now()->subDays(1),
+    ]);
+
+    expect($publishedPost->getPublicationStatus())->toBe('published');
+    expect($publishedPost->getPublicationStatusColor())->toBe('success');
+});

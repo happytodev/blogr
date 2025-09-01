@@ -15,6 +15,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Utilities\Get;
 
 class BlogPostForm
 {
@@ -82,20 +83,52 @@ class BlogPostForm
                 Hidden::make('user_id')
                     ->default(fn() => Filament::auth()->user()->id),
                 Toggle::make('is_published')
-                    ->label('Published')
+                    ->label(function (Get $get) { 
+                        $isPublished = $get('is_published');
+                        $publishedAt = $get('published_at');
+
+                        if (!$isPublished) {
+                            return 'Draft';
+                        }
+
+                        if (!$publishedAt) {
+                            return 'Published';
+                        }
+
+                        $publishDate = \Carbon\Carbon::parse($publishedAt);
+                        if ($publishDate->isFuture()) {
+                            return 'Scheduled';
+                        }
+
+                        return 'Published';
+                    })
+                    ->onColor(function (Get $get) {
+                        $publishedAt = $get('published_at');
+
+                        if ($publishedAt && \Carbon\Carbon::parse($publishedAt)->isFuture()) {
+                            return 'warning'; // Orange for scheduled
+                        }
+
+                        return 'success'; // Green for published
+                    })
+                    ->offColor('gray') // Gray for draft
                     ->default(false)
                     ->live()
-                    ->afterStateUpdated(function (Set $set, ?bool $state) {
-                        if ($state) {
+                    ->afterStateUpdated(function (Set $set, ?bool $state, $context) {
+                        if ($state && $context === 'create') {
+                            // Only set published_at to now for new posts
                             $set('published_at', now()->format('Y-m-d\TH:i'));
-                        } else {
+                        } elseif (!$state) {
+                            // Clear published_at when unpublishing
                             $set('published_at', null);
                         }
-                    })
-                    ->helperText('Toggle to publish or unpublish the post.'),
+                    }),
                 DateTimePicker::make('published_at')
-                    ->label('Date de publication')
-                    ->nullable(),
+                    ->label('Publish Date')
+                    ->nullable()
+                    ->live()
+                    ->after(now())
+                    ->helperText('Leave empty for immediate publication, or set a future date to schedule publication.'),
                 TextInput::make('meta_title')
                     ->label('Meta Title')
                     ->nullable()
