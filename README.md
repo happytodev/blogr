@@ -72,7 +72,6 @@ You have to start with a fresh install of Laravel and Filament v4 or add this pa
 ## Installation
 
 
-
 1. **Install the package via Composer**
 
 ```bash
