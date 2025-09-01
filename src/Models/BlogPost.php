@@ -23,9 +23,50 @@ class BlogPost extends Model
         'category_id',
     ];
 
+    protected $casts = [
+        'published_at' => 'datetime',
+    ];
+
     public function getTable()
     {
         return config('blogr.tables.prefix', '') . 'blog_posts';
+    }
+
+    // Check if the post is scheduled for future publication
+    public function isScheduled()
+    {
+        return $this->is_published && $this->published_at && $this->published_at->isFuture();
+    }
+
+    // Check if the post is currently published (either immediate or scheduled time reached)
+    public function isCurrentlyPublished()
+    {
+        return $this->is_published && (!$this->published_at || $this->published_at->isPast());
+    }
+
+    // Get the publication status text
+    public function getPublicationStatus()
+    {
+        if (!$this->is_published) {
+            return 'draft';
+        }
+
+        if ($this->isScheduled()) {
+            return 'scheduled';
+        }
+
+        return 'published';
+    }
+
+    // Get the publication status color
+    public function getPublicationStatusColor()
+    {
+        return match($this->getPublicationStatus()) {
+            'draft' => 'gray',
+            'scheduled' => 'warning',
+            'published' => 'success',
+            default => 'gray'
+        };
     }
 
     // A blog post belongs to a user

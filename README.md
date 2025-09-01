@@ -19,6 +19,8 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - [x] A blog post can have a category
 - [x] A blog post can have tags
 - [x] A blog post can be published or not
+- [x] Schedule posts for future publication with automatic publishing
+- [x] Publication status indicator (draft/scheduled/published) with color coding
 - [x] The slug of blog post is automatically generated but can be customized
 - [x] Posts per category page
 - [x] Posts per tags page
@@ -45,11 +47,11 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 
 ### Beta 2
 
-- [ ] SEO fields (meta title, description, keywords)
-- [ ] Scheduled publishing
-- [x] In the admin in the list of posts, display the toggle for is_published to quickly publish or unpublish 
-- [x] Add a table of content for blog post
-- [x] When no post is published, display a message to user
+- [x] SEO fields (meta title, description, keywords) ✅ **Completed**
+- [x] Scheduled publishing ✅ **Completed**
+- [x] In the admin in the list of posts, display the toggle for is_published to quickly publish or unpublish ✅ **Completed**
+- [x] Add a table of content for blog post ✅ **Completed**
+- [x] When no post is published, display a message to user ✅ **Completed**
 - [ ] TOC could be deactivate for a post
 - [ ] User could define if TOC is activated by default or not for every post
 - [ ] Add a reading time information for blog post

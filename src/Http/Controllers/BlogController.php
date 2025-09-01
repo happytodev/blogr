@@ -21,6 +21,10 @@ class BlogController
         $posts = BlogPost::with(['category', 'tags'])
             ->latest()
             ->where('is_published', true)
+            ->where(function ($query) {
+                $query->whereNull('published_at')
+                      ->orWhere('published_at', '<=', now());
+            })
             ->take(config('blogr.posts_per_page', 10))
             ->get()
             ->map(function ($post) {
@@ -67,6 +71,10 @@ class BlogController
         $post = BlogPost::with(['category', 'tags'])
             ->where('slug', $slug)
             ->where('is_published', true)
+            ->where(function ($query) {
+                $query->whereNull('published_at')
+                      ->orWhere('published_at', '<=', now());
+            })
             ->firstOrFail();
 
         $converter = new MarkdownConverter($environment);
@@ -88,6 +96,11 @@ class BlogController
         $category = Category::where('slug', $categorySlug)->firstOrFail();
         $posts = BlogPost::with(['category', 'tags'])
             ->where('category_id', $category->id)
+            ->where('is_published', true)
+            ->where(function ($query) {
+                $query->whereNull('published_at')
+                      ->orWhere('published_at', '<=', now());
+            })
             ->latest()
             ->take(config('blogr.posts_per_page', 10))
             ->get()
@@ -109,6 +122,11 @@ class BlogController
         $tag = Tag::where('slug', $tagSlug)->firstOrFail();
         $posts = $tag->posts()
             ->with(['category', 'tags'])
+            ->where('is_published', true)
+            ->where(function ($query) {
+                $query->whereNull('published_at')
+                      ->orWhere('published_at', '<=', now());
+            })
             ->latest()
             ->take(config('blogr.posts_per_page', 10))
             ->get()

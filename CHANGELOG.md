@@ -7,6 +7,9 @@ All notable changes to `blogr` will be documented in this file.
 ### 🚀 Feature
 
 - feat(blog): Display message when no posts are published [#25](https://github.com/happytodev/blogr/issues/25)
+- feat(blog): Add scheduled publishing functionality - posts can be published at a future date
+- feat(blog): Publication status indicator with color coding (gray=draft, orange=scheduled, green=published)
+- feat(blog): Enhanced admin interface with publish date picker and status display
 
 ### 🧪 Testing
 
