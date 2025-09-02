@@ -19,6 +19,12 @@
                     {{ $post->category->name }}
                 </a>
             </span>
+            @if(config('blogr.reading_time.enabled', true))
+            <span class="text-sm text-gray-600 ml-4">
+                @include('blogr::components.clock-icon')
+                {{ $post->reading_time }}
+            </span>
+            @endif
         </div>
         @if ($post->tags->count())
             <div class="mb-4">
