@@ -2,6 +2,15 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [Unreleased]
+
+### 🎨 UX/UI Improvements
+
+- ux(navigation): Organize plugin menus in "Blog" navigation group for better organization
+- ux(icons): Update TagResource navigation icon to Heroicon::OutlinedTag for better visual representation
+- ux(icons): Update CategoryResource navigation icon to Heroicon::OutlinedFolder for better visual representation
+- ux(navigation): Add navigation sort order (Blog Posts: 1, Categories: 2, Tags: 3) for consistent menu ordering
+
 ## [v0.3.2](https://github.com/happytodev/blogr/compare/v0.3.1...v0.3.2) - 2025-09-02
 
 ### 🐛 Bug fixes
