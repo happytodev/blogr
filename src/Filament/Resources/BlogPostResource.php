@@ -23,6 +23,10 @@ class BlogPostResource extends Resource
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Blogr';
+
+    protected static ?int $navigationSort = 1;
+
     public static function form(Schema $schema): Schema
     {
         return BlogPostForm::configure($schema);
