@@ -77,6 +77,9 @@ class BlogController
             })
             ->firstOrFail();
 
+        // Calculate reading time BEFORE adding TOC to content
+        $post->reading_time = $post->getFormattedReadingTime();
+
         $converter = new MarkdownConverter($environment);
 
         // This will insert the table of contents at the placeholder [[TOC]]
