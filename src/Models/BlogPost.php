@@ -87,4 +87,60 @@ class BlogPost extends Model
     {
         return $this->belongsToMany(Tag::class, config('blogr.tables.prefix', '') . 'blog_post_tag');
     }
+
+    /**
+     * Calculate estimated reading time for the post
+     *
+     * @return string
+     */
+    public function getEstimatedReadingTime()
+    {
+        $readingSpeed = config('blogr.reading_speed.words_per_minute', 200);
+
+        // Combine title and content for word count
+        $text = $this->title . ' ' . $this->content;
+
+        // Remove HTML tags and count words
+        $plainText = strip_tags($text);
+        $wordCount = str_word_count($plainText);
+
+        // Calculate reading time in minutes (using floor instead of ceil for more precision)
+        $minutes = floor($wordCount / $readingSpeed);
+
+        // If less than 1 minute but has content, show as <1 minute
+        if ($minutes < 1 && $wordCount > 0) {
+            return '<1 minute';
+        }
+
+        // Return formatted time
+        return $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+    }
+
+    /**
+     * Get reading time with icon for display
+     *
+     * @return string
+     */
+    public function getReadingTimeWithIcon()
+    {
+        $time = $this->getEstimatedReadingTime();
+        return $time;
+    }
+
+    /**
+     * Get formatted reading time text using configuration
+     *
+     * @return string
+     */
+    public function getFormattedReadingTime()
+    {
+        if (!config('blogr.reading_time.enabled', true)) {
+            return '';
+        }
+
+        $time = $this->getEstimatedReadingTime();
+        $format = config('blogr.reading_time.text_format', 'Reading time: {time}');
+
+        return str_replace('{time}', $time, $format);
+    }
 }
