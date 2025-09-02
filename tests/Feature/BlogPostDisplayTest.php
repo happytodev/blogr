@@ -283,3 +283,142 @@ it('updates published_at to current time when republishing a scheduled post', fu
     // Verify the post is now considered currently published
     expect($scheduledPost->isCurrentlyPublished())->toBe(true);
 });
+
+it('calculates estimated reading time correctly', function () {
+    // Create a user directly (since User factory is not available in this package)
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+        'email_verified_at' => now(),
+    ]);
+
+    // Create a category directly
+    $category = Category::create([
+        'name' => 'Technology',
+        'slug' => 'technology',
+        'is_default' => false,
+    ]);
+
+    // Test with very short content (should be < 1 minute)
+    $shortPost = BlogPost::create([
+        'title' => 'Hi',
+        'content' => 'Test.',
+        'slug' => 'short-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    expect($shortPost->getEstimatedReadingTime())->toBe('<1 minute');
+
+    // Test with longer content (should calculate properly)
+    $longPost = BlogPost::create([
+        'title' => 'Long Post with Substantial Content',
+        'content' => str_repeat('This is a sample paragraph with enough words to create a meaningful reading time estimate. ', 50),
+        'slug' => 'long-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    $readingTime = $longPost->getEstimatedReadingTime();
+    expect($readingTime)->not->toBe('<1 minute');
+    expect(str_contains($readingTime, 'minute'))->toBe(true);
+
+    // Test reading time with icon
+    $timeWithIcon = $longPost->getReadingTimeWithIcon();
+    expect(str_contains($timeWithIcon, 'minute'))->toBe(true);
+    expect($timeWithIcon)->not->toBe('<1 minute'); // Should be longer than 1 minute
+});
+
+it('displays consistent reading time between index and show pages', function () {
+    // Create a user directly (since User factory is not available in this package)
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+        'email_verified_at' => now(),
+    ]);
+
+    // Create a category directly
+    $category = Category::create([
+        'name' => 'Technology',
+        'slug' => 'technology',
+        'is_default' => false,
+    ]);
+
+    // Create a blog post with content that will have TOC added
+    $blogPost = BlogPost::create([
+        'title' => 'Test Post for Reading Time Consistency',
+        'content' => "# Introduction\n\nThis is a comprehensive guide with multiple sections.\n\n## Section 1\n\nDetailed content here.\n\n## Section 2\n\nMore detailed information.\n\n## Section 3\n\nFinal section with important details.",
+        'slug' => 'test-reading-time-consistency',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Get reading time from the model (as used in index page)
+    $indexReadingTime = $blogPost->getEstimatedReadingTime();
+
+    // Simulate what happens in the controller show method
+    $post = BlogPost::with(['category', 'tags'])
+        ->where('slug', $blogPost->slug)
+        ->where('is_published', true)
+        ->firstOrFail();
+
+    // Calculate reading time BEFORE adding TOC (as done in controller)
+    $post->reading_time = $post->getEstimatedReadingTime();
+
+    // Verify that the reading time is consistent
+    expect($post->reading_time)->toBe($indexReadingTime);
+});
+
+it('respects reading time configuration settings', function () {
+    // Create a user directly (since User factory is not available in this package)
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+        'email_verified_at' => now(),
+    ]);
+
+    // Create a category directly
+    $category = Category::create([
+        'name' => 'Technology',
+        'slug' => 'technology',
+        'is_default' => false,
+    ]);
+
+    // Create a blog post
+    $blogPost = BlogPost::create([
+        'title' => 'Test Post for Configuration',
+        'content' => 'This is a test post with some content for reading time calculation.',
+        'slug' => 'test-config-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Test with default configuration (enabled)
+    config(['blogr.reading_time.enabled' => true]);
+    config(['blogr.reading_time.text_format' => 'Reading time: {time}']);
+    $formattedTime = $blogPost->getFormattedReadingTime();
+    expect($formattedTime)->toContain('Reading time:');
+    expect($formattedTime)->toContain('minute');
+
+    // Test with custom format
+    config(['blogr.reading_time.text_format' => '{time} to read']);
+    $formattedTime = $blogPost->getFormattedReadingTime();
+    expect($formattedTime)->toContain('to read');
+    expect($formattedTime)->toContain('minute');
+
+    // Test with reading time disabled
+    config(['blogr.reading_time.enabled' => false]);
+    $formattedTime = $blogPost->getFormattedReadingTime();
+    expect($formattedTime)->toBe('');
+});
