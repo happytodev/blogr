@@ -7,7 +7,7 @@
         "filamentphp",
         "blogr"
     ],
-    "version": "0.3.1",
+    "version": "0.3.2",
     "homepage": "https://github.com/happytodev/blogr",
     "support": {
         "issues": "https://github.com/happytodev/blogr/issues",
@@ -24,7 +24,7 @@
     "require": {
         "php": "^8.1",
         "filament/actions": "^4.0",
-        "filament/filament": "4.0",
+        "filament/filament": "^4.0",
         "spatie/laravel-package-tools": "^1.15.0"
     },
     "require-dev": {
