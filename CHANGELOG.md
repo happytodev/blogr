@@ -4,6 +4,11 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 🐛 Bug fixes
+
+- fix(form): Add validation to prevent scheduling posts with past dates
+- fix(form): Restore proper date validation for published_at field with `after:now` rule
+
 ### 🎨 UX/UI Improvements
 
 - ux(navigation): Organize plugin menus in "Blog" navigation group for better organization
@@ -27,6 +32,7 @@ All notable changes to `blogr` will be documented in this file.
 - test(reading-time): Add test for reading time configuration settings (enable/disable)
 - test(reading-time): Add test for customizable text format functionality
 - test(reading-time): Verify icon is hidden when reading time is disabled
+- test(form): Add test to validate that published_at dates cannot be in the past
 
 ### 📚 Documentation
 

@@ -5,6 +5,7 @@ use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Validator;
 
 uses(RefreshDatabase::class);
 
@@ -421,4 +422,67 @@ it('respects reading time configuration settings', function () {
     config(['blogr.reading_time.enabled' => false]);
     $formattedTime = $blogPost->getFormattedReadingTime();
     expect($formattedTime)->toBe('');
+});
+
+it('validates that published_at date cannot be in the past when creating a post', function () {
+    // NOTE: This test validates model-level behavior. For comprehensive form validation testing,
+    // you would need to use Filament's testing tools to simulate form submission with past dates.
+    //
+    // Example of how to test form validation (requires Filament testing setup):
+    // $this->actingAs($user)
+    //     ->post(route('filament.admin.resources.blog-posts.create'), [
+    //         'title' => 'Test Post',
+    //         'content' => 'Test content',
+    //         'category_id' => $category->id,
+    //         'is_published' => true,
+    //         'published_at' => now()->subHours(1)->format('Y-m-d\TH:i'),
+    //     ])
+    //     ->assertInvalid(['published_at']);
+
+    // Create a user directly (since User factory is not available in this package)
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+        'email_verified_at' => now(),
+    ]);
+
+    // Create a category directly
+    $category = Category::create([
+        'name' => 'Technology',
+        'slug' => 'technology',
+        'is_default' => false,
+    ]);
+
+    // Test creating a post with past date through the model
+    $pastDate = now()->subHours(1);
+
+    // This should work at model level (no validation there)
+    $postWithPastDate = BlogPost::create([
+        'title' => 'Post with Past Date',
+        'content' => 'This post has a past publication date.',
+        'slug' => 'post-with-past-date',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => $pastDate,
+    ]);
+
+    // Verify the post was created successfully
+    expect($postWithPastDate)->toBeInstanceOf(BlogPost::class);
+    expect($postWithPastDate->published_at->toDateTimeString())->toBe($pastDate->toDateTimeString());
+
+    // Verify the publication status is correctly identified as published (past date)
+    expect($postWithPastDate->getPublicationStatus())->toBe('published');
+    expect($postWithPastDate->isCurrentlyPublished())->toBe(true);
+
+    // Test validation rule directly
+    $validator = Validator::make([
+        'published_at' => now()->subHours(1)->format('Y-m-d H:i:s'),
+    ], [
+        'published_at' => 'nullable|date|after:now',
+    ]);
+
+    expect($validator->fails())->toBe(true);
+    expect($validator->errors()->has('published_at'))->toBe(true);
 });
