@@ -2,6 +2,13 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.3.2](https://github.com/happytodev/blogr/compare/v0.3.1...v0.3.2) - 2025-09-02
+
+### 🐛 Bug fixes
+
+- fix(deps): Update filament/filament version constraint to allow minor updates
+
+
 ## [v0.3.1](https://github.com/happytodev/blogr/compare/v0.3.0...v0.3.1) - 2025-09-01
 
 ### 🐛 Bug fixes
