@@ -49,6 +49,14 @@
                                 @endforeach
                             </div>
                         @endif
+                        @if(config('blogr.reading_time.enabled', true))
+                        <div class="mb-2">
+                            <span class="text-sm text-gray-600">
+                                @include('blogr::components.clock-icon')
+                                {{ $post->getFormattedReadingTime() }}
+                            </span>
+                        </div>
+                        @endif
                         @if ($post->tldr)
                             <div class="text-gray-700 mb-4">
                                 <p class="font-bold mb-2">TL;DR : </p>
