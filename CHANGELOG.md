@@ -10,6 +10,29 @@ All notable changes to `blogr` will be documented in this file.
 - ux(icons): Update TagResource navigation icon to Heroicon::OutlinedTag for better visual representation
 - ux(icons): Update CategoryResource navigation icon to Heroicon::OutlinedFolder for better visual representation
 - ux(navigation): Add navigation sort order (Blog Posts: 1, Categories: 2, Tags: 3) for consistent menu ordering
+- feat(reading-time): Add estimated reading time display with clock icon for all blog posts
+- feat(reading-time): Display "<1 minute" for posts shorter than 1 minute reading time
+- feat(config): Add configurable reading speed in blogr.php config file (default: 200 words/minute)
+- feat(config): Include reading speed standards in config comments (150-300 words/minute range)
+- feat(config): Add reading time display configuration with enable/disable option
+- feat(config): Add customizable text format for reading time display with {time} placeholder
+- fix(reading-time): Extract clock icon to Blade component for proper Tailwind CSS processing
+- fix(reading-time): Hide clock icon when reading time display is disabled in configuration
+
+### 🧪 Testing
+
+- test(reading-time): Add comprehensive test for estimated reading time calculation
+- test(reading-time): Verify "<1 minute" display for short posts
+- test(reading-time): Test reading time with icon display functionality
+- test(reading-time): Add test for reading time configuration settings (enable/disable)
+- test(reading-time): Add test for customizable text format functionality
+- test(reading-time): Verify icon is hidden when reading time is disabled
+
+### 📚 Documentation
+
+- docs(reading-time): Update READING_TIME.md with new configuration options
+- docs(reading-time): Add examples for customizable text formats
+- docs(reading-time): Document complete deactivation feature (hides both icon and text)
 
 ## [v0.3.2](https://github.com/happytodev/blogr/compare/v0.3.1...v0.3.2) - 2025-09-02
 
