@@ -3,6 +3,7 @@
 namespace Happytodev\Blogr\Http\Controllers;
 
 use Happytodev\Blogr\Models\Tag;
+use Happytodev\Blogr\Helpers\SEOHelper;
 use Illuminate\Support\Facades\View;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
@@ -36,7 +37,13 @@ class BlogController
                 }
                 return $post;
             });
-        return View::make('blogr::blog.index', ['posts' => $posts]);
+
+        $seoData = SEOHelper::forListingPage('index');
+
+        return View::make('blogr::blog.index', [
+            'posts' => $posts,
+            'seoData' => $seoData
+        ]);
     }
 
     public function show($slug)
@@ -91,7 +98,13 @@ class BlogController
                 now()->addHours(1) // URL valid for 1 hour
             );
         }
-        return View::make('blogr::blog.show', ['post' => $post]);
+
+        $seoData = SEOHelper::forBlogPost($post);
+
+        return View::make('blogr::blog.show', [
+            'post' => $post,
+            'seoData' => $seoData
+        ]);
     }
 
     public function category($categorySlug)
@@ -117,6 +130,7 @@ class BlogController
         return View::make('blogr::blog.category', [
             'category' => $category,
             'posts' => $posts,
+            'seoData' => SEOHelper::forListingPage('category', $category->name)
         ]);
     }
 
@@ -143,6 +157,7 @@ class BlogController
         return View::make('blogr::blog.tag', [
             'tag' => $tag,
             'posts' => $posts,
+            'seoData' => SEOHelper::forListingPage('tag', $tag->name)
         ]);
     }
 }
