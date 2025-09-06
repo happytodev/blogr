@@ -1,12 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Posts with tag {{ $tag->name }}</title>
-    @vite(['resources/css/app.css'])
-</head>
-<body>
+@extends('blogr::layouts.blog')
+
+@section('seo-data')
+    @php
+        $seoData = $seoData ?? [];
+    @endphp
+@endsection
+
+@section('content')
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-6">Posts with le tag {{ $tag->name }}</h1>
+        <h1 class="text-3xl font-bold mb-6">Posts with tag {{ $tag->name }}</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($posts as $post)
                 <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
@@ -69,5 +71,4 @@
         </div>
         <a href="{{ route('blog.index') }}" class="text-blue-500 hover:underline mt-4 inline-block">Back to blog</a>
     </div>
-</body>
-</html>
+@endsection
