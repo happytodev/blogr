@@ -15,6 +15,7 @@ use Filament\Actions\ActionsServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Filament\Infolists\InfolistsServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
@@ -23,6 +24,7 @@ use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 
 class TestCase extends Orchestra
 {
+    use RefreshDatabase;
     protected function setUp(): void
     {
         parent::setUp();
@@ -74,8 +76,11 @@ class TestCase extends Orchestra
     {
         // Load test-specific migrations (including users table for testing)
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+    }
 
-        // Load package migrations
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+    protected function defineRoutes($router)
+    {
+        // Load test routes
+        require __DIR__ . '/Feature/routes.php';
     }
 }
