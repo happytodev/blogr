@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html>
+@extends('blogr::layouts.blog')
 
-<head>
-    <title>Blog</title>
-    @vite(['resources/css/app.css'])
-</head>
+@section('seo-data')
+    @php
+        $seoData = $seoData ?? [];
+    @endphp
+@endsection
 
-<body>
+@section('content')
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold mb-6">Blog Posts</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -74,6 +74,4 @@
             @endforelse
         </div>
     </div>
-</body>
-
-</html>
+@endsection
