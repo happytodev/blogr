@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html>
+@extends('blogr::layouts.blog')
 
-<head>
-    <title>{{ $post->title }}</title>
-    @vite(['resources/css/app.css'])
-</head>
+@section('seo-data')
+    @php
+        $seoData = $seoData ?? [];
+    @endphp
+@endsection
 
-<body>
+@section('content')
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-5xl font-bold mb-4">{{ $post->title }}</h1>
         @if ($post->photo)
@@ -46,6 +46,4 @@
         <div class="prose max-w-none">{!! $post->content !!}</div>
         <a href="{{ route('blog.index') }}" class="text-blue-500 hover:underline mt-4 inline-block">Back to blog</a>
     </div>
-</body>
-
-</html>
+@endsection

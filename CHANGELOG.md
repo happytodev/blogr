@@ -8,6 +8,8 @@ All notable changes to `blogr` will be documented in this file.
 
 - fix(form): Add validation to prevent scheduling posts with past dates
 - fix(form): Restore proper date validation for published_at field with `after:now` rule
+- fix(reading-time): Extract clock icon to Blade component for proper Tailwind CSS processing
+- fix(reading-time): Hide clock icon when reading time display is disabled in configuration
 
 ### 🎨 UX/UI Improvements
 
@@ -15,14 +17,31 @@ All notable changes to `blogr` will be documented in this file.
 - ux(icons): Update TagResource navigation icon to Heroicon::OutlinedTag for better visual representation
 - ux(icons): Update CategoryResource navigation icon to Heroicon::OutlinedFolder for better visual representation
 - ux(navigation): Add navigation sort order (Blog Posts: 1, Categories: 2, Tags: 3) for consistent menu ordering
+
+### 🚀 Features
+
 - feat(reading-time): Add estimated reading time display with clock icon for all blog posts
 - feat(reading-time): Display "<1 minute" for posts shorter than 1 minute reading time
 - feat(config): Add configurable reading speed in blogr.php config file (default: 200 words/minute)
 - feat(config): Include reading speed standards in config comments (150-300 words/minute range)
 - feat(config): Add reading time display configuration with enable/disable option
 - feat(config): Add customizable text format for reading time display with {time} placeholder
-- fix(reading-time): Extract clock icon to Blade component for proper Tailwind CSS processing
-- fix(reading-time): Hide clock icon when reading time display is disabled in configuration
+- feat(seo): Add comprehensive SEO meta fields integration (meta_title, meta_description, meta_keywords)
+- feat(seo): Implement Open Graph (OG) meta tags for better social media sharing
+- feat(seo): Add Twitter Cards support with customizable Twitter handle
+- feat(seo): Integrate JSON-LD structured data for enhanced search engine understanding
+- feat(seo): Add configurable default OG image with recommended dimensions (1200x630px)
+- feat(seo): Implement organization structured data with logo and site information
+- feat(seo): Add canonical URL support for proper SEO indexing
+- feat(seo): Include image meta tags when blog posts have photos
+- feat(seo): Add author information in meta tags and structured data
+- feat(seo): Support article tags in meta keywords and structured data
+- feat(seo): Add fallback to post data when meta fields are empty
+- feat(seo): Implement robots meta tag configuration
+- feat(config): Add complete SEO configuration section in blogr.php
+- feat(config): Include Facebook App ID support for enhanced Open Graph
+- feat(config): Add structured data enable/disable toggle
+- feat(config): Support customizable site name and default titles/descriptions
 
 ### 🧪 Testing
 
@@ -33,12 +52,30 @@ All notable changes to `blogr` will be documented in this file.
 - test(reading-time): Add test for customizable text format functionality
 - test(reading-time): Verify icon is hidden when reading time is disabled
 - test(form): Add test to validate that published_at dates cannot be in the past
+- test(seo): Add comprehensive SEO meta tags tests for blog posts and index pages
+- test(seo): Test Open Graph meta tags generation and validation
+- test(seo): Verify Twitter Cards implementation with customizable handle
+- test(seo): Add JSON-LD structured data validation tests
+- test(seo): Test canonical URL generation for proper SEO indexing
+- test(seo): Verify image meta tags when posts contain photos
+- test(seo): Test author information inclusion in meta tags
+- test(seo): Add robots meta tag configuration tests
+- test(seo): Test structured data enable/disable functionality
+- test(seo): Verify fallback behavior when meta fields are empty
+- test(seo): Add SEO configuration loading and validation tests
 
 ### 📚 Documentation
 
 - docs(reading-time): Update READING_TIME.md with new configuration options
 - docs(reading-time): Add examples for customizable text formats
 - docs(reading-time): Document complete deactivation feature (hides both icon and text)
+- docs(seo): Add comprehensive SEO configuration documentation in README.md
+- docs(seo): Document Open Graph image setup with recommended dimensions
+- docs(seo): Add Twitter Cards configuration examples
+- docs(seo): Document JSON-LD structured data setup with organization info
+- docs(seo): Include complete SEO configuration examples with all options
+- docs(seo): Add meta fields integration documentation
+- docs(seo): Document canonical URL and robots meta tag configuration
 
 ## [v0.3.2](https://github.com/happytodev/blogr/compare/v0.3.1...v0.3.2) - 2025-09-02
 

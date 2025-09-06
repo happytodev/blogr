@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html>
+@extends('blogr::layouts.blog')
 
-<head>
-    <title>Posts in category {{ $category->name }}</title>
-    @vite(['resources/css/app.css'])
-</head>
+@section('seo-data')
+    @php
+        $seoData = $seoData ?? [];
+    @endphp
+@endsection
 
-<body>
+@section('content')
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold mb-6">Posts in category {{ $category->name }}</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -71,6 +71,4 @@
         </div>
         <a href="{{ route('blog.index') }}" class="text-blue-500 hover:underline mt-4 inline-block">Back to blog</a>
     </div>
-</body>
-
-</html>
+@endsection

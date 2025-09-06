@@ -50,4 +50,41 @@ return [
         'enabled' => true, // Enable/disable reading time display
         'text_format' => 'Reading time: {time}', // Text format with {time} placeholder
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEO Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure SEO metadata for better search engine optimization and social sharing.
+    | These settings are used for listing pages (index, category, tag) and can be
+    | overridden by individual post metadata.
+    |
+    */
+    'seo' => [
+        'site_name' => env('APP_NAME', 'My Blog'), // Your site name
+        'default_title' => 'Blog', // Default title for listing pages
+        'default_description' => 'Discover our latest articles and insights', // Default description
+        'default_keywords' => 'blog, articles, news, insights', // Default keywords
+        'twitter_handle' => '@yourhandle', // Your Twitter handle for Twitter Cards
+        'facebook_app_id' => '', // Facebook App ID for Open Graph
+
+        // Open Graph defaults
+        'og' => [
+            'type' => 'website',
+            'image' => '/images/blogr.webp', // Default OG image
+            'image_width' => 1200,
+            'image_height' => 630,
+        ],
+
+        // Structured data
+        'structured_data' => [
+            'enabled' => true,
+            'organization' => [
+                'name' => env('APP_NAME', 'My Blog'),
+                'url' => env('APP_URL', 'https://yourwebsite.com'),
+                'logo' => env('APP_URL', 'https://yourwebsite.com') . '/images/logo.png',
+            ],
+        ],
+    ],
 ];

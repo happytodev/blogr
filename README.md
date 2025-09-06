@@ -27,6 +27,8 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - [x] Image upload and editing
 - [x] Automatic author assignment
 - [x] Backend color customizable
+- [x] Add a reading time information for blog post
+- [x] Integrate meta fields 
 
 ## Screenshots
 
@@ -54,8 +56,8 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - [x] When no post is published, display a message to user ✅ **Completed**
 - [ ] TOC could be deactivate for a post
 - [ ] User could define if TOC is activated by default or not for every post
-- [ ] Add a reading time information for blog post
-- [ ] Integrate meta fields
+- [x] Add a reading time information for blog post ✅ **Completed**
+- [x] Integrate meta fields ✅ **Completed**
 - [ ] Add a RSS feed for the blog posts
 - [ ] Create widgets to display on dashboard
 - [ ] Add a settings page to easily manage settings set in config/blogr.php
@@ -136,6 +138,178 @@ Log in to your Filament admin panel and go to the “Blog Posts” section.
 
 You can customize the table prefix in the published config file:  
 `config/blogr.php`
+
+### Default Open Graph (OG) Image Configuration
+
+To set a default Open Graph image that will be used when your blog posts don't have a specific image:
+
+1. **Place your image** in the `public/images/` folder of your Laravel application
+2. **Edit the file** `config/blogr.php`:
+
+```php
+'seo' => [
+    // ... other SEO configurations ...
+    
+    'og' => [
+        'type' => 'website',
+        'image' => '/images/your-og-image.jpg', // Path to your OG image
+        'image_width' => 1200, // Recommended width: 1200px
+        'image_height' => 630, // Recommended height: 630px
+    ],
+    
+    // ... other configurations ...
+],
+```
+
+**Recommendations for OG image:**
+- **Format**: JPG, PNG or WebP
+- **Dimensions**: 1200x630 pixels (1.91:1 ratio)
+- **Size**: Less than 1 MB
+- **Content**: Your site logo or representative image
+
+### Logo Configuration for Structured Data
+
+To set your organization's logo in the JSON-LD structured data:
+
+1. **Place your logo** in the `public/images/` folder of your Laravel application
+2. **Edit the file** `config/blogr.php`:
+
+```php
+'seo' => [
+    // ... other SEO configurations ...
+    
+    'structured_data' => [
+        'enabled' => true,
+        'organization' => [
+            'name' => env('APP_NAME', 'My Blog'),
+            'url' => env('APP_URL', 'https://yourwebsite.com'),
+            'logo' => env('APP_URL', 'https://yourwebsite.com') . '/images/your-logo.png',
+        ],
+    ],
+    
+    // ... other configurations ...
+],
+```
+
+**Recommendations for logo:**
+- **Format**: PNG or SVG (transparent preferred)
+- **Dimensions**: Minimum 112x112 pixels
+- **URL Format**: Complete absolute URL (with https://)
+
+### Complete Configuration Example
+
+```php
+'seo' => [
+    'site_name' => 'My Awesome Blog',
+    'default_title' => 'Blog',
+    'default_description' => 'Discover our latest articles',
+    'twitter_handle' => '@myblog',
+    
+    'og' => [
+        'type' => 'website',
+        'image' => '/images/og-default.jpg',
+        'image_width' => 1200,
+        'image_height' => 630,
+    ],
+    
+    'structured_data' => [
+        'enabled' => true,
+        'organization' => [
+            'name' => 'My Awesome Blog',
+            'url' => 'https://myawesomeblog.com',
+            'logo' => 'https://myawesomeblog.com/images/logo.png',
+        ],
+    ],
+],
+```
+### Reading Time Configuration
+
+Configure the reading time display for your blog posts:
+
+```php
+'reading_speed' => [
+    'words_per_minute' => 200, // Average reading speed (150-300 recommended)
+],
+
+'reading_time' => [
+    'enabled' => true, // Enable/disable reading time display
+    'text_format' => 'Reading time: {time}', // Customize display text
+],
+```
+
+**Reading speed recommendations:**
+- Slow readers: 150-200 words per minute
+- Average readers: 200-250 words per minute
+- Fast readers: 250-300 words per minute
+
+### Complete SEO Configuration
+
+Configure all SEO settings for optimal search engine optimization:
+
+```php
+'seo' => [
+    'site_name' => env('APP_NAME', 'My Blog'), // Your site name
+    'default_title' => 'Blog', // Default title for listing pages
+    'default_description' => 'Discover our latest articles and insights', // Default meta description
+    'default_keywords' => 'blog, articles, news, insights', // Default meta keywords
+    'twitter_handle' => '@yourhandle', // Twitter handle for Twitter Cards
+    'facebook_app_id' => '', // Facebook App ID for enhanced Open Graph
+    
+    'og' => [
+        'type' => 'website',
+        'image' => '/images/og-default.jpg',
+        'image_width' => 1200,
+        'image_height' => 630,
+    ],
+    
+    'structured_data' => [
+        'enabled' => true,
+        'organization' => [
+            'name' => env('APP_NAME', 'My Blog'),
+            'url' => env('APP_URL', 'https://yourwebsite.com'),
+            'logo' => env('APP_URL', 'https://yourwebsite.com') . '/images/logo.png',
+        ],
+    ],
+],
+```
+
+### Blog Appearance Configuration
+
+Customize the visual appearance of your blog:
+
+```php
+'blog_index' => [
+    'cards' => [
+        'colors' => [
+            'background' => 'bg-green-50', // Background color of blog cards
+            'top_border' => 'border-green-600', // Border color of blog cards
+        ]
+    ]
+],
+
+'colors' => [
+    'primary' => '#FA2C36' // Primary color for the blog
+],
+```
+
+### Route Configuration
+
+Configure the blog routes and middleware:
+
+```php
+'route' => [
+    'prefix' => 'blog', // URL prefix (leave empty for homepage)
+    'middleware' => ['web'], // Middleware for blog routes
+],
+```
+
+### Posts Per Page
+
+Control pagination settings:
+
+```php
+'posts_per_page' => 10, // Number of posts displayed per page
+```
 
 
 ## Support
