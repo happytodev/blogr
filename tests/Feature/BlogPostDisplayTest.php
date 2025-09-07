@@ -4,37 +4,24 @@ use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\Database\Factories\CategoryFactory;
+use Happytodev\Blogr\Tests\Database\Factories\TagFactory;
+use Happytodev\Blogr\Tests\Database\Factories\UserFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 
 uses(RefreshDatabase::class);
 
 it('displays blog post with title, category, tags, TLDR and TOC correctly', function () {
-    // Create a user directly (since User factory is not available in this package)
-    $user = User::create([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
-    ]);
+    // Create a user using the factory
+    $user = User::factory()->create();
 
-    // Create a category directly
-    $category = Category::create([
-        'name' => 'Technology',
-        'slug' => 'technology',
-        'is_default' => false,
-    ]);
+    // Create a category using the factory
+    $category = Category::factory()->create(['name' => 'Technology', 'slug' => 'technology']);
 
-    // Create tags directly
-    $tag1 = Tag::create([
-        'name' => 'Laravel',
-        'slug' => 'laravel',
-    ]);
-
-    $tag2 = Tag::create([
-        'name' => 'PHP',
-        'slug' => 'php',
-    ]);
+    // Create tags using the factory
+    $tag1 = Tag::factory()->create(['name' => 'Laravel', 'slug' => 'laravel']);
+    $tag2 = Tag::factory()->create(['name' => 'PHP', 'slug' => 'php']);
 
     // Create a blog post directly with content that will generate a TOC
     $blogPost = BlogPost::create([
@@ -93,20 +80,11 @@ it('displays blog post with title, category, tags, TLDR and TOC correctly', func
 });
 
 it('does not display scheduled posts before their publish date', function () {
-    // Create a user
-    $user = User::create([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
-    ]);
+    // Create a user using the factory
+    $user = User::factory()->create();
 
-    // Create a category
-    $category = Category::create([
-        'name' => 'Technology',
-        'slug' => 'technology',
-        'is_default' => false,
-    ]);
+    // Create a category using the factory
+    $category = Category::factory()->create(['name' => 'Technology', 'slug' => 'technology']);
 
     // Create a scheduled blog post (future date)
     $futureDate = now()->addDays(7);
@@ -128,20 +106,11 @@ it('does not display scheduled posts before their publish date', function () {
 });
 
 it('displays scheduled posts after their publish date', function () {
-    // Create a user
-    $user = User::create([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
-    ]);
+    // Create a user using the factory
+    $user = User::factory()->create();
 
-    // Create a category
-    $category = Category::create([
-        'name' => 'Technology',
-        'slug' => 'technology',
-        'is_default' => false,
-    ]);
+    // Create a category using the factory
+    $category = Category::factory()->create(['name' => 'Technology', 'slug' => 'technology']);
 
     // Create a scheduled blog post (past date)
     $pastDate = now()->subDays(1);
@@ -163,20 +132,11 @@ it('displays scheduled posts after their publish date', function () {
 });
 
 it('correctly identifies publication status', function () {
-    // Create a user
-    $user = User::create([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
-    ]);
+    // Create a user using the factory
+    $user = User::factory()->create();
 
-    // Create a category
-    $category = Category::create([
-        'name' => 'Technology',
-        'slug' => 'technology',
-        'is_default' => false,
-    ]);
+    // Create a category using the factory
+    $category = Category::factory()->create(['name' => 'Technology', 'slug' => 'technology']);
 
     // Test draft post
     $draftPost = BlogPost::create([
@@ -221,20 +181,11 @@ it('correctly identifies publication status', function () {
 });
 
 it('updates published_at to current time when republishing a scheduled post', function () {
-    // Create a user directly (since User factory is not available in this package)
-    $user = User::create([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
-    ]);
+    // Create a user using the factory
+    $user = User::factory()->create();
 
-    // Create a category directly
-    $category = Category::create([
-        'name' => 'Technology',
-        'slug' => 'technology',
-        'is_default' => false,
-    ]);
+    // Create a category using the factory
+    $category = Category::factory()->create(['name' => 'Technology', 'slug' => 'technology']);
 
     // Create a scheduled post (future date)
     $futureDate = now()->addDays(7);
@@ -265,15 +216,14 @@ it('updates published_at to current time when republishing a scheduled post', fu
     expect($scheduledPost->published_at)->toBe(null);
     expect($scheduledPost->getPublicationStatus())->toBe('draft');
 
-    // Simulate republishing (like clicking toggle on again in form)
-    // This should set published_at to current time
+    // Simulate republishing without setting a future date (immediate publication)
     $beforeRepublish = now();
     $scheduledPost->update([
         'is_published' => true,
-        'published_at' => now()->format('Y-m-d\TH:i'), // This simulates what the form does
+        'published_at' => null, // Leave empty for immediate publication
     ]);
 
-    // Verify republished state
+    // Verify republished state - published_at should be automatically set to now
     $scheduledPost->refresh();
     expect((bool) $scheduledPost->is_published)->toBe(true);
     expect($scheduledPost->published_at)->not->toBe(null);
@@ -286,16 +236,11 @@ it('updates published_at to current time when republishing a scheduled post', fu
 });
 
 it('calculates estimated reading time correctly', function () {
-    // Create a user directly (since User factory is not available in this package)
-    $user = User::create([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
-    ]);
+    // Create a user using the factory
+    $user = User::factory()->create();
 
     // Create a category directly
-    $category = Category::create([
+    $category = Category::factory()->create([
         'name' => 'Technology',
         'slug' => 'technology',
         'is_default' => false,
@@ -336,16 +281,11 @@ it('calculates estimated reading time correctly', function () {
 });
 
 it('displays consistent reading time between index and show pages', function () {
-    // Create a user directly (since User factory is not available in this package)
-    $user = User::create([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
-    ]);
+    // Create a user using the factory
+    $user = User::factory()->create();
 
     // Create a category directly
-    $category = Category::create([
+    $category = Category::factory()->create([
         'name' => 'Technology',
         'slug' => 'technology',
         'is_default' => false,
@@ -379,16 +319,11 @@ it('displays consistent reading time between index and show pages', function () 
 });
 
 it('respects reading time configuration settings', function () {
-    // Create a user directly (since User factory is not available in this package)
-    $user = User::create([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
-    ]);
+    // Create a user using the factory
+    $user = User::factory()->create();
 
     // Create a category directly
-    $category = Category::create([
+    $category = Category::factory()->create([
         'name' => 'Technology',
         'slug' => 'technology',
         'is_default' => false,
@@ -439,16 +374,11 @@ it('validates that published_at date cannot be in the past when creating a post'
     //     ])
     //     ->assertInvalid(['published_at']);
 
-    // Create a user directly (since User factory is not available in this package)
-    $user = User::create([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'password' => bcrypt('password'),
-        'email_verified_at' => now(),
-    ]);
+    // Create a user using the factory
+    $user = User::factory()->create();
 
     // Create a category directly
-    $category = Category::create([
+    $category = Category::factory()->create([
         'name' => 'Technology',
         'slug' => 'technology',
         'is_default' => false,
@@ -480,9 +410,140 @@ it('validates that published_at date cannot be in the past when creating a post'
     $validator = Validator::make([
         'published_at' => now()->subHours(1)->format('Y-m-d H:i:s'),
     ], [
-        'published_at' => 'nullable|date|after:now',
+        'published_at' => 'nullable|date|after:now - 30 seconds',
     ]);
 
     expect($validator->fails())->toBe(true);
     expect($validator->errors()->has('published_at'))->toBe(true);
+});
+
+it('allows immediate publication with current timestamp', function () {
+    $category = Category::factory()->create();
+    $user = User::factory()->create();
+
+    // Test creating a post with immediate publication (published_at = null)
+    $beforeCreate = now();
+    $postData = [
+        'title' => 'Immediate Publication Test',
+        'content' => 'This post should be published immediately.',
+        'slug' => 'immediate-publication-test',
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'is_published' => true,
+        'published_at' => null, // Leave empty for immediate publication
+    ];
+
+    $post = BlogPost::create($postData);
+
+    // Verify published_at was automatically set to current time
+    expect($post->published_at)->not->toBeNull();
+    expect($post->published_at->isAfter($beforeCreate->subSecond()))->toBe(true);
+    expect($post->isCurrentlyPublished())->toBe(true);
+    expect($post->getPublicationStatus())->toBe('published');
+
+    // Test validation rule for slightly past timestamps (should still work)
+    $validator = Validator::make([
+        'published_at' => now()->subSeconds(15)->format('Y-m-d H:i:s'),
+    ], [
+        'published_at' => 'nullable|date|after:now - 30 seconds',
+    ]);
+
+    expect($validator->passes())->toBe(true);
+
+    // Test with a timestamp that's too far in the past (should fail)
+    $validator = Validator::make([
+        'published_at' => now()->subMinutes(2)->format('Y-m-d H:i:s'),
+    ], [
+        'published_at' => 'nullable|date|after:now - 30 seconds',
+    ]);
+
+    expect($validator->fails())->toBe(true);
+});
+
+it('can create and publish a post immediately', function () {
+    $category = Category::factory()->create();
+    $user = User::factory()->create();
+
+    // Simulate creating a post with immediate publication (no published_at set)
+    $beforeCreate = now();
+    $postData = [
+        'title' => 'Test Post for Immediate Publication',
+        'content' => 'This is a test post content for immediate publication.',
+        'slug' => 'test-post-immediate-publication',
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'is_published' => true,
+        'published_at' => null, // Leave empty for immediate publication
+        'meta_title' => 'Test Meta Title',
+        'meta_description' => 'Test meta description',
+        'tldr' => 'Test TLDR',
+    ];
+
+    $post = BlogPost::create($postData);
+
+    // Verify the post was created and is published
+    expect($post)->toBeInstanceOf(BlogPost::class);
+    expect($post->is_published)->toBe(true);
+    expect($post->published_at)->not->toBeNull();
+    // Check that published_at was automatically set to current time
+    expect($post->published_at->isAfter($beforeCreate->subSecond()))->toBe(true);
+    expect($post->isCurrentlyPublished())->toBe(true);
+    expect($post->getPublicationStatus())->toBe('published');
+});
+
+it('handles publication with slightly past timestamp gracefully', function () {
+    // Simulate the user's scenario: setting a timestamp that's slightly in the past
+    $slightlyPastTimestamp = now()->subSeconds(10); // 10 seconds ago
+
+    // Test validation - should pass with the new rule
+    $validator = Validator::make([
+        'published_at' => $slightlyPastTimestamp->format('Y-m-d H:i:s'),
+    ], [
+        'published_at' => 'nullable|date|after:now - 30 seconds',
+    ]);
+
+    expect($validator->passes())->toBe(true);
+    expect($validator->errors()->has('published_at'))->toBe(false);
+
+    // Test with a timestamp that's too far in the past (should fail)
+    $tooFarPastTimestamp = now()->subMinutes(5);
+    $validator = Validator::make([
+        'published_at' => $tooFarPastTimestamp->format('Y-m-d H:i:s'),
+    ], [
+        'published_at' => 'nullable|date|after:now - 30 seconds',
+    ]);
+
+    expect($validator->fails())->toBe(true);
+    expect($validator->errors()->has('published_at'))->toBe(true);
+});
+
+it('preserves future dates for scheduled publication', function () {
+    $category = Category::factory()->create();
+    $user = User::factory()->create();
+
+    // Set a future date for scheduled publication
+    $futureDate = now()->addDays(7);
+
+    $postData = [
+        'title' => 'Scheduled Post',
+        'content' => 'This post should be published in the future.',
+        'slug' => 'scheduled-post-test',
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'is_published' => true,
+        'published_at' => $futureDate, // Future date should be preserved
+        'meta_title' => 'Scheduled Post',
+        'meta_description' => 'Test scheduled publication',
+        'tldr' => 'Scheduled publication test',
+    ];
+
+    $post = BlogPost::create($postData);
+
+    // Verify the post was created with scheduled publication
+    expect($post)->toBeInstanceOf(BlogPost::class);
+    expect($post->is_published)->toBe(true);
+    expect($post->published_at)->not->toBeNull();
+    expect($post->published_at->toDateTimeString())->toBe($futureDate->toDateTimeString());
+    expect($post->getPublicationStatus())->toBe('scheduled');
+    expect($post->isCurrentlyPublished())->toBe(false); // Not yet published
 });
