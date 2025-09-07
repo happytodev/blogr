@@ -116,11 +116,14 @@ class BlogPostForm
                     ->live()
                     ->afterStateUpdated(function (Set $set, Get $get, ?bool $state) {
                         if ($state) {
-                            // When activating publication, set to now if no date is set
+                            // When activating publication
                             $currentDate = $get('published_at');
-                            if (!$currentDate) {
-                                $set('published_at', now()->format('Y-m-d\TH:i'));
+
+                            // If no date is set or date is in the past, leave empty for immediate publication
+                            if (!$currentDate || \Carbon\Carbon::parse($currentDate)->isPast()) {
+                                $set('published_at', null);
                             }
+                            // If future date is set, keep it for scheduled publication
                         } elseif (!$state) {
                             // Clear published_at when unpublishing
                             $set('published_at', null);
@@ -130,7 +133,7 @@ class BlogPostForm
                     ->label('Publish Date')
                     ->nullable()
                     ->live()
-                    ->rules(['nullable', 'date', 'after:now'])
+                    ->rules(['nullable', 'date', 'after:now - 30 seconds'])
                     ->helperText('Leave empty for immediate publication, or set a future date to schedule publication.'),
                 TextInput::make('meta_title')
                     ->label('Meta Title')
