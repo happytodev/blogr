@@ -59,7 +59,7 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - [x] Add a reading time information for blog post ✅ **Completed**
 - [x] Integrate meta fields ✅ **Completed**
 - [ ] Add a RSS feed for the blog posts
-- [ ] Create widgets to display on dashboard
+- [x] Create widgets to display on dashboard ✅ **Completed**
 - [ ] Add a settings page to easily manage settings set in config/blogr.php
 
 
@@ -310,6 +310,124 @@ Control pagination settings:
 ```php
 'posts_per_page' => 10, // Number of posts displayed per page
 ```
+
+## Dashboard Widgets
+
+Blogr provides powerful dashboard widgets to help you monitor and manage your blog content effectively. These widgets are automatically available in your Filament dashboard once the plugin is installed.
+
+### Available Widgets
+
+#### 📊 BlogStatsOverview
+Displays comprehensive statistics about your blog:
+- Total number of posts
+- Published posts count
+- Draft posts count
+- Scheduled posts count
+- Total categories
+- Total tags
+
+Each statistic is displayed with color-coded indicators and descriptive icons.
+
+#### 📝 RecentBlogPosts
+Shows a table of the 10 most recent blog posts with:
+- Post title (with tooltip for long titles)
+- Category (with colored badges)
+- Author name
+- Publication status (with color coding: published=green, scheduled=yellow, draft=gray)
+
+#### ⏰ ScheduledPosts
+Provides an overview of upcoming scheduled publications:
+- Posts scheduled for future publication
+- Publication dates
+- Quick status overview
+
+#### 📈 BlogPostsChart
+Interactive chart showing blog post publication trends:
+- Monthly publication data for the last 12 months
+- Visual representation of content creation patterns
+- Helps identify peak publishing periods
+
+#### 📖 BlogReadingStats
+Analytics focused on content engagement:
+- Reading time statistics
+- Average reading times across posts
+- Content performance insights
+
+### How to Add Widgets to Your Dashboard
+
+#### Manual Registration
+If you need to customize widget placement or behavior, you can manually register them in your `AdminPanelProvider`:
+
+```php
+use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
+use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;
+use Happytodev\Blogr\Filament\Widgets\ScheduledPosts;
+use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
+use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ... other configurations ...
+        ->widgets([
+            BlogStatsOverview::class,
+            RecentBlogPosts::class,
+            ScheduledPosts::class,
+            BlogPostsChart::class,
+            BlogReadingStats::class,
+        ])
+        // ... other configurations ...
+}
+```
+
+
+### Widget Customization
+
+#### Changing Widget Size
+Widgets support different column spans:
+
+```php
+class CustomBlogStatsOverview extends BlogStatsOverview
+{
+    protected int | string | array $columnSpan = 'full'; // or 1, 2, 3, etc.
+}
+```
+
+#### Customizing Chart Data
+The BlogPostsChart widget can be extended to show different time periods:
+
+```php
+class CustomBlogPostsChart extends BlogPostsChart
+{
+    protected function getData(): array
+    {
+        // Custom data logic here
+        return [
+            'datasets' => [
+                [
+                    'label' => 'Posts per Month',
+                    'data' => [10, 15, 8, 12, 20, 18], // Your custom data
+                ],
+            ],
+            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        ];
+    }
+}
+```
+
+### Widget Permissions
+If you're using Filament's permission system, you can control widget visibility:
+
+```php
+class BlogStatsOverview extends BaseWidget
+{
+    public static function canView(): bool
+    {
+        return auth()->user()->can('view blog stats');
+    }
+}
+```
+
 
 
 ## Support
