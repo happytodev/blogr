@@ -2,6 +2,19 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.4.1](https://github.com/happytodev/blogr/compare/v0.4.0...v0.4.1) - 2025-09-07
+
+### 🐛 Bug fixes
+
+- fix(form): Improve publication date handling to prevent stale timestamps when editing posts
+- fix(form): Implement smart publication logic - preserve future dates for scheduling, auto-fill current time for immediate publication
+
+### 🧪 Testing
+
+- test(form): Add test for immediate publication with automatic timestamp filling
+- test(form): Add test for preserving future dates in scheduled publication
+- test(form): Add test for handling slightly past timestamps gracefully
+
 ## [v0.4.0](https://github.com/happytodev/blogr/compare/v0.3.2...v0.4.0) - 2025-09-06
 
 ### 🐛 Bug fixes

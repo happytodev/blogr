@@ -27,6 +27,25 @@ class BlogPost extends Model
         'published_at' => 'datetime',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($post) {
+            // If post is published but no published_at date is set, set it to now
+            if ($post->is_published && !$post->published_at) {
+                $post->published_at = now();
+            }
+        });
+
+        static::updating(function ($post) {
+            // If post is being published but no published_at date is set, set it to now
+            if ($post->is_published && !$post->published_at) {
+                $post->published_at = now();
+            }
+        });
+    }
+
     public function getTable()
     {
         return config('blogr.tables.prefix', '') . 'blog_posts';

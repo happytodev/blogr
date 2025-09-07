@@ -7,7 +7,7 @@
         "filamentphp",
         "blogr"
     ],
-    "version": "0.4.0",
+    "version": "0.4.1",
     "homepage": "https://github.com/happytodev/blogr",
     "support": {
         "issues": "https://github.com/happytodev/blogr/issues",
@@ -43,6 +43,7 @@
     "autoload-dev": {
         "psr-4": {
             "Happytodev\\Blogr\\Tests\\": "tests/",
+            "Happytodev\\Blogr\\Tests\\Database\\Factories\\": "tests/database/factories/",
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Factories\\": "workbench/database/factories/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
