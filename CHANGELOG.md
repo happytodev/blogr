@@ -2,6 +2,34 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [Unreleased]
+
+### 🚀 Features
+
+- feat(widgets): Add comprehensive dashboard widgets for blog management
+- feat(widgets): Implement BlogStatsOverview widget with post statistics (total, published, draft, scheduled posts)
+- feat(widgets): Add RecentBlogPosts table widget showing latest 10 posts with status badges
+- feat(widgets): Create ScheduledPosts widget for upcoming publications overview
+- feat(widgets): Implement BlogPostsChart widget with publication trends visualization
+- feat(widgets): Add BlogReadingStats widget for reading time analytics
+- feat(widgets): Register all widgets in service provider for automatic Filament discovery
+
+### 📊 Dashboard Enhancements
+
+- dashboard(widgets): Display blog statistics with color-coded status indicators
+- dashboard(widgets): Show recent posts table with category and author information
+- dashboard(widgets): Provide scheduled posts overview for content planning
+- dashboard(widgets): Visualize blog post publication trends with interactive charts
+- dashboard(widgets): Include reading time statistics for content performance analysis
+
+### 🧪 Testing
+
+- test(widgets): Add comprehensive test suite for all dashboard widgets
+- test(widgets): Implement BlogWidgetsTest with widget instantiation tests
+- test(widgets): Add tests for widget method availability and functionality
+- test(widgets): Include database interaction tests for widget data queries
+- test(widgets): Ensure all widget classes are properly autoloaded and functional
+
 ## [v0.4.1](https://github.com/happytodev/blogr/compare/v0.4.0...v0.4.1) - 2025-09-07
 
 ### 🐛 Bug fixes

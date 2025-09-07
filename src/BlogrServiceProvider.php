@@ -77,6 +77,9 @@ class BlogrServiceProvider extends PackageServiceProvider
         // Icon Registration
         FilamentIcon::register($this->getIcons());
 
+        // Widget Registration
+        $this->registerWidgets();
+
         // Handle Stubs
         if (app()->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
@@ -88,6 +91,33 @@ class BlogrServiceProvider extends PackageServiceProvider
 
         // Testing
         Testable::mixin(new TestsBlogr);
+    }
+
+    /**
+     * Register the blog widgets
+     */
+    protected function registerWidgets(): void
+    {
+        // Only register widgets if we're in a Filament context
+        if (!class_exists('\Filament\PanelProvider')) {
+            return;
+        }
+
+        $widgets = [
+            \Happytodev\Blogr\Filament\Widgets\BlogStatsOverview::class,
+            \Happytodev\Blogr\Filament\Widgets\RecentBlogPosts::class,
+            \Happytodev\Blogr\Filament\Widgets\ScheduledPosts::class,
+            \Happytodev\Blogr\Filament\Widgets\BlogPostsChart::class,
+            \Happytodev\Blogr\Filament\Widgets\BlogReadingStats::class,
+        ];
+
+        // Register widgets with Filament
+        foreach ($widgets as $widget) {
+            if (class_exists($widget)) {
+                // Widgets are automatically discovered by Filament
+                // No additional registration needed
+            }
+        }
     }
 
     protected function getAssetPackageName(): ?string
