@@ -24,11 +24,15 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - [x] The slug of blog post is automatically generated but can be customized
 - [x] Posts per category page
 - [x] Posts per tags page
-- [x] Image upload and editing
-- [x] Automatic author assignment
+- [x] Main post image upload and editing
+- [x] Drag & Drop image in the post content (see video demo below)
 - [x] Backend color customizable
-- [x] Add a reading time information for blog post
+- [x] Add a reading time information for blog post 
 - [x] Integrate meta fields 
+- [x] Content optimization for SEO
+- [x] Widgets available for the dashboard
+- [x] Update settings directly in the back office
+- [x] Automatic author assignment
 
 ## Screenshots
 
@@ -45,24 +49,40 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 
 ![Backend - Edit post](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-3.png)
 
+### Settings
+
+![Backend - Settings](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-4.png)
+
+### Widgets
+
+![Backend - Widgets](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-5.png)
+
+## Video demo
+
+### Drag & Drop image in the post content
+
+![alt text](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/demo-1.gif)
+
 ## Roadmap
 
-### Beta 2
+### Beta 2 (ETA 2025-09-15)
 
 - [x] SEO fields (meta title, description, keywords) ✅ **Completed**
 - [x] Scheduled publishing ✅ **Completed**
 - [x] In the admin in the list of posts, display the toggle for is_published to quickly publish or unpublish ✅ **Completed**
 - [x] Add a table of content for blog post ✅ **Completed**
 - [x] When no post is published, display a message to user ✅ **Completed**
-- [ ] TOC could be deactivate for a post
-- [ ] User could define if TOC is activated by default or not for every post
 - [x] Add a reading time information for blog post ✅ **Completed**
 - [x] Integrate meta fields ✅ **Completed**
-- [ ] Add a RSS feed for the blog posts
 - [x] Create widgets to display on dashboard ✅ **Completed**
-- [ ] Add a settings page to easily manage settings set in config/blogr.php
+- [x] Add a settings page to easily manage settings set in config/blogr.php ✅ **Completed**
+- [ ] TOC could be deactivate for a post
+- [ ] User could define if TOC is activated by default or not for every post
 
+### Beta 3 (ETA 2025-09-30)
 
+- [ ] Add a RSS feed for the blog posts
+- [ ] More to come...
 
 ## Requirements
 
