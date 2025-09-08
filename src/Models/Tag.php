@@ -32,9 +32,15 @@ class Tag extends Model
         });
 
         static::updating(function ($tag) {
-            // Only regenerate slug if name has changed
+            // Only regenerate slug if name has changed and slug hasn't been explicitly set to a different value
             if ($tag->isDirty('name')) {
-                $tag->slug = static::generateUniqueSlug($tag->name, $tag->id);
+                $expectedSlug = static::generateUniqueSlug($tag->name, $tag->id);
+                // Only regenerate if the current slug matches what would be auto-generated from the old name
+                $oldSlug = static::generateUniqueSlug($tag->getOriginal('name'), $tag->id);
+                if ($tag->slug === $oldSlug) {
+                    $tag->slug = $expectedSlug;
+                }
+                // If slug was explicitly set to something else, preserve it
             }
         });
     }
