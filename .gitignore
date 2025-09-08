@@ -13,3 +13,4 @@ phpstan.neon
 testbench.yaml
 vendor
 *.code-workspace
+tests/Browser/Screenshots
