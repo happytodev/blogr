@@ -27,8 +27,29 @@ class Tag extends Model
 
         static::creating(function ($tag) {
             if (empty($tag->slug)) {
-                $tag->slug = Str::slug($tag->name);
+                $tag->slug = static::generateUniqueSlug($tag->name);
             }
         });
+
+        static::updating(function ($tag) {
+            // Only regenerate slug if name has changed
+            if ($tag->isDirty('name')) {
+                $tag->slug = static::generateUniqueSlug($tag->name, $tag->id);
+            }
+        });
+    }
+
+    protected static function generateUniqueSlug($name, $excludeId = null)
+    {
+        $slug = Str::slug($name);
+        $originalSlug = $slug;
+        $counter = 1;
+
+        while (static::where('slug', $slug)->when($excludeId, fn($q) => $q->where('id', '!=', $excludeId))->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 }
