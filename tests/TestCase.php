@@ -2,6 +2,8 @@
 
 namespace Happytodev\Blogr\Tests;
 
+use Filament\Panel;
+use Filament\PanelProvider;
 use Mockery\MockInterface;
 use Illuminate\Foundation\Vite;
 use Illuminate\Support\HtmlString;
@@ -55,6 +57,7 @@ class TestCase extends Orchestra
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
             BlogrServiceProvider::class,
+            BrowserTestPanelProvider::class,
         ];
     }
 
