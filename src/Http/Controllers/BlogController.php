@@ -89,9 +89,18 @@ class BlogController
 
         $converter = new MarkdownConverter($environment);
 
-        // This will insert the table of contents at the placeholder [[TOC]]
-        $markdownWithToc = "# Table of contents\n\n[[TOC]]\n\n" . $post->content;
-        $post->content = $converter->convert($markdownWithToc)->getContent();
+        // Get content without frontmatter
+        $contentWithoutFrontmatter = $post->getContentWithoutFrontmatter();
+
+        // Only add TOC if it's not disabled
+        if (!$post->isTocDisabled()) {
+            // This will insert the table of contents at the placeholder [[TOC]]
+            $markdownWithToc = "# Table of contents\n\n[[TOC]]\n\n" . $contentWithoutFrontmatter;
+            $post->content = $converter->convert($markdownWithToc)->getContent();
+        } else {
+            // Convert markdown without TOC
+            $post->content = $converter->convert($contentWithoutFrontmatter)->getContent();
+        }
         if ($post->photo) {
             $post->photo_url = Storage::temporaryUrl(
                 $post->photo,

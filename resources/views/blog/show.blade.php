@@ -43,7 +43,7 @@
                 <p class="italic mb-4">{{ $post->tldr }}</p>
             </div>
         @endif
-        <div class="prose max-w-none">{!! $post->content !!}</div>
+        <div class="prose max-w-none">{!! $post->getContentWithoutFrontmatter() !!}</div>
         <a href="{{ route('blog.index') }}" class="text-blue-500 hover:underline mt-4 inline-block">Back to blog</a>
     </div>
 @endsection

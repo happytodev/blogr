@@ -75,6 +75,27 @@ class BlogPostForm
                     ->required()
                     ->columnSpanFull()
                     ->helperText('Use Markdown syntax for formatting.'),
+                Toggle::make('disable_toc')
+                    ->label('Disable Table of Contents')
+                    ->default(function ($record) {
+                        // Load value from frontmatter if record exists
+                        return $record ? $record->isTocDisabled() : false;
+                    })
+                    ->helperText('Disable the automatic table of contents generation for this post.')
+                    ->afterStateUpdated(function (Set $set, Get $get, $state, $record) {
+                        if ($record) {
+                            // Update the frontmatter in the content when toggle changes
+                            $content = $get('content');
+                            if ($content) {
+                                $updatedContent = self::updateFrontmatterInContent($content, ['disable_toc' => $state]);
+                                $set('content', $updatedContent);
+                            }
+                        }
+                    })
+                    ->dehydrateStateUsing(function ($state, $record) {
+                        // Don't save this as a separate field, it's handled in content
+                        return $state;
+                    }),
                 TextInput::make('slug')
                     ->required()
                     ->unique()
@@ -160,5 +181,60 @@ class BlogPostForm
                         return $text;
                     })
             ]);
+    }
+
+    /**
+     * Update frontmatter in content
+     *
+     * @param string $content
+     * @param array $updates
+     * @return string
+     */
+    protected static function updateFrontmatterInContent(string $content, array $updates): string
+    {
+        // Extract existing frontmatter
+        $lines = explode("\n", $content);
+        $frontmatterLines = [];
+        $contentLines = [];
+        $inFrontmatter = false;
+        $frontmatterEndIndex = 0;
+
+        foreach ($lines as $index => $line) {
+            if ($line === '---') {
+                if (!$inFrontmatter) {
+                    $inFrontmatter = true;
+                } else {
+                    $frontmatterEndIndex = $index;
+                    $contentLines = array_slice($lines, $index + 1);
+                    break;
+                }
+            } elseif ($inFrontmatter) {
+                $frontmatterLines[] = $line;
+            } else {
+                $contentLines[] = $line;
+            }
+        }
+
+        // Parse existing frontmatter
+        $frontmatter = [];
+        if (!empty($frontmatterLines)) {
+            $yaml = implode("\n", $frontmatterLines);
+            try {
+                $frontmatter = \Symfony\Component\Yaml\Yaml::parse($yaml) ?: [];
+            } catch (\Exception $e) {
+                $frontmatter = [];
+            }
+        }
+
+        // Update frontmatter with new values
+        $frontmatter = array_merge($frontmatter, $updates);
+
+        // Generate new YAML
+        try {
+            $newYaml = \Symfony\Component\Yaml\Yaml::dump($frontmatter, 2, 2);
+            return "---\n" . $newYaml . "---\n\n" . implode("\n", $contentLines);
+        } catch (\Exception $e) {
+            return $content;
+        }
     }
 }
