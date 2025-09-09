@@ -13,7 +13,8 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 
 - [x] Create, edit, and delete blog posts
 - [x] Edit post in markdown
-- [x] Table of contents is automatically generated 
+- [x] Table of contents is automatically generated
+- [x] TOC could be deactivate for a post 
 - [x] A post can have a TL;DR
 - [x] Support code (currently very simple)
 - [x] A blog post can have a category
@@ -76,12 +77,17 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - [x] Integrate meta fields ✅ **Completed**
 - [x] Create widgets to display on dashboard ✅ **Completed**
 - [x] Add a settings page to easily manage settings set in config/blogr.php ✅ **Completed**
-- [ ] TOC could be deactivate for a post
+- [x] TOC could be deactivate for a post ✅ **Completed**
 - [ ] User could define if TOC is activated by default or not for every post
+- [ ] Add default content to help user to start with Blogr
+
 
 ### Beta 3 (ETA 2025-09-30)
 
 - [ ] Add a RSS feed for the blog posts
+- [ ] Collapsible TOC
+- [ ] Title of blog post in the widget 'recent blog posts' should be clickable
+- [ ] Define TOC style like in the eventuallycoding.com blog
 - [ ] More to come...
 
 ## Requirements
