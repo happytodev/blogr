@@ -162,4 +162,170 @@ class BlogPost extends Model
 
         return str_replace('{time}', $time, $format);
     }
+
+    /**
+     * Get the frontmatter data for this post
+     *
+     * @return array
+     */
+    public function getFrontmatter()
+    {
+        $existingFrontmatter = $this->extractFrontmatter();
+
+        return array_merge([
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'published' => $this->is_published,
+            'published_at' => $this->published_at?->toISOString(),
+            'category' => $this->category?->name,
+            'tags' => $this->tags->pluck('name')->toArray(),
+            'meta_title' => $this->meta_title,
+            'meta_description' => $this->meta_description,
+            'meta_keywords' => $this->meta_keywords,
+            'tldr' => $this->tldr,
+            'disable_toc' => false, // Default value
+        ], $existingFrontmatter);
+    }
+
+    /**
+     * Extract frontmatter from content
+     *
+     * @return array
+     */
+    protected function extractFrontmatter()
+    {
+        if (!$this->content) {
+            return [];
+        }
+
+        // Check if content starts with frontmatter delimiter
+        if (!str_starts_with(trim($this->content), '---')) {
+            return [];
+        }
+
+        $lines = explode("\n", $this->content);
+        $frontmatterLines = [];
+        $inFrontmatter = false;
+        $contentStartIndex = 0;
+
+        foreach ($lines as $index => $line) {
+            if ($line === '---') {
+                if (!$inFrontmatter) {
+                    $inFrontmatter = true;
+                } else {
+                    $contentStartIndex = $index + 1;
+                    break;
+                }
+            } elseif ($inFrontmatter) {
+                $frontmatterLines[] = $line;
+            }
+        }
+
+        if (empty($frontmatterLines)) {
+            return [];
+        }
+
+        $yaml = implode("\n", $frontmatterLines);
+
+        try {
+            return \Symfony\Component\Yaml\Yaml::parse($yaml) ?: [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get the content without frontmatter
+     *
+     * @return string
+     */
+    public function getContentWithoutFrontmatter()
+    {
+        if (!$this->content) {
+            return '';
+        }
+
+        // Check if content starts with frontmatter delimiter
+        if (!str_starts_with(trim($this->content), '---')) {
+            return $this->content;
+        }
+
+        $lines = explode("\n", $this->content);
+        $inFrontmatter = false;
+        $contentStartIndex = 0;
+
+        foreach ($lines as $index => $line) {
+            if ($line === '---') {
+                if (!$inFrontmatter) {
+                    $inFrontmatter = true;
+                } else {
+                    $contentStartIndex = $index + 1;
+                    break;
+                }
+            }
+        }
+
+        return implode("\n", array_slice($lines, $contentStartIndex));
+    }
+
+    /**
+     * Check if TOC is disabled for this post
+     *
+     * @return bool
+     */
+    public function isTocDisabled()
+    {
+        $frontmatter = $this->getFrontmatter();
+        return $frontmatter['disable_toc'] ?? false;
+    }
+
+    /**
+     * Set TOC disabled status
+     *
+     * @param bool $disabled
+     * @return void
+     */
+    public function setTocDisabled($disabled = true)
+    {
+        $frontmatter = $this->getFrontmatter();
+        $frontmatter['disable_toc'] = (bool) $disabled;
+
+        $this->updateContentWithFrontmatter($frontmatter);
+    }
+
+    /**
+     * Update content with new frontmatter
+     *
+     * @param array $frontmatter
+     * @return void
+     */
+    protected function updateContentWithFrontmatter(array $frontmatter)
+    {
+        $contentWithoutFrontmatter = $this->getContentWithoutFrontmatter();
+
+        try {
+            $yaml = \Symfony\Component\Yaml\Yaml::dump($frontmatter, 2, 2);
+            $this->content = "---\n" . $yaml . "---\n\n" . $contentWithoutFrontmatter;
+        } catch (\Exception $e) {
+            // If YAML generation fails, keep original content
+        }
+    }
+
+    /**
+     * Get the content with frontmatter
+     *
+     * @return string
+     */
+    public function getContentWithFrontmatter()
+    {
+        $frontmatter = $this->getFrontmatter();
+        $contentWithoutFrontmatter = $this->getContentWithoutFrontmatter();
+
+        try {
+            $yaml = \Symfony\Component\Yaml\Yaml::dump($frontmatter, 2, 2);
+            return "---\n" . $yaml . "---\n\n" . $contentWithoutFrontmatter;
+        } catch (\Exception $e) {
+            return $this->content;
+        }
+    }
 }
