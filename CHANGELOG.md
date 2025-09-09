@@ -2,6 +2,18 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [Unreleased]
+
+### 🚀 Features
+
+- **TOC Disable Feature**: Add ability to disable table of contents per post via frontmatter ([Issue #20](https://github.com/happytodev/blogr/issues/20))
+
+### 🧪 Testing
+
+- **TOC Tests**: Add comprehensive tests for TOC disable functionality
+- **Frontmatter Tests**: Add tests to ensure frontmatter is not displayed in rendered content
+- **Form Integration Tests**: Add tests for Filament form TOC toggle functionality
+
 ## [v0.5.0](https://github.com/happytodev/blogr/compare/v0.4.1...v0.5.0) - 2025-09-09
 
 ### 🚀 Features
