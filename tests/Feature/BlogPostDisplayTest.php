@@ -547,3 +547,184 @@ it('preserves future dates for scheduled publication', function () {
     expect($post->getPublicationStatus())->toBe('scheduled');
     expect($post->isCurrentlyPublished())->toBe(false); // Not yet published
 });
+
+it('can disable table of contents for a specific post', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create content with frontmatter that disables TOC
+    $contentWithFrontmatter = "---\ndisable_toc: true\n---\n\n# Introduction\n\nThis post has headings but TOC is disabled.\n\n## Section 1\n\nContent here.\n\n## Section 2\n\nMore content.";
+
+    // Create a post with TOC disabled via frontmatter
+    $postData = [
+        'title' => 'Post Without TOC',
+        'content' => $contentWithFrontmatter,
+        'slug' => 'post-without-toc',
+        'tldr' => 'A post with table of contents disabled',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ];
+
+    $post = BlogPost::create($postData);
+
+    // Verify the post has TOC disabled
+    expect($post->isTocDisabled())->toBe(true);
+
+    // Verify the frontmatter contains disable_toc: true
+    $frontmatter = $post->getFrontmatter();
+    expect($frontmatter)->toHaveKey('disable_toc');
+    expect($frontmatter['disable_toc'])->toBe(true);
+});
+
+it('enables table of contents by default', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create a post without frontmatter (default behavior)
+    $postData = [
+        'title' => 'Post With Default TOC',
+        'content' => "# Introduction\n\nThis post has default TOC enabled.\n\n## Section 1\n\nContent here.",
+        'slug' => 'post-with-default-toc',
+        'tldr' => 'A post with default table of contents enabled',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ];
+
+    $post = BlogPost::create($postData);
+
+    // Verify the post has TOC enabled by default
+    expect($post->isTocDisabled())->toBe(false);
+
+    // Verify the frontmatter contains disable_toc: false
+    $frontmatter = $post->getFrontmatter();
+    expect($frontmatter)->toHaveKey('disable_toc');
+    expect($frontmatter['disable_toc'])->toBe(false);
+});
+
+it('can create post with TOC disabled via form', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Simulate form data with TOC disabled
+    $formData = [
+        'title' => 'Test Post with TOC Disabled',
+        'content' => "# Introduction\n\nThis is a test post.\n\n## Section 1\n\nContent here.",
+        'slug' => 'test-post-toc-disabled',
+        'tldr' => 'Test post with TOC disabled',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ];
+
+    // Create post as if submitted from form
+    $post = BlogPost::create($formData);
+
+    // Simulate what the form would do - update TOC setting
+    $post->setTocDisabled(true);
+
+    // Verify TOC is now disabled
+    expect($post->isTocDisabled())->toBe(true);
+
+    // Verify the content contains the frontmatter with disable_toc: true
+    expect($post->content)->toContain('disable_toc: true');
+});
+
+it('can update TOC setting via form', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create initial post
+    $post = BlogPost::create([
+        'title' => 'Test Post',
+        'content' => "# Introduction\n\nThis is a test post.\n\n## Section 1\n\nContent here.",
+        'slug' => 'test-post',
+        'tldr' => 'Test post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Initially TOC should be enabled (default)
+    expect($post->isTocDisabled())->toBe(false);
+
+    // Update to disable TOC
+    $post->setTocDisabled(true);
+
+    // Verify TOC is now disabled
+    expect($post->isTocDisabled())->toBe(true);
+    expect($post->content)->toContain('disable_toc: true');
+});
+
+it('does not display frontmatter in rendered content', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create a post with frontmatter
+    $post = BlogPost::create([
+        'title' => 'Test Post with Frontmatter',
+        'content' => "---\ntitle: 'Custom Title'\ndisable_toc: true\n---\n\n# Introduction\n\nThis is a test post.\n\n## Section 1\n\nContent here.",
+        'slug' => 'test-post-frontmatter',
+        'tldr' => 'Test post with frontmatter',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Visit the blog post page
+    $response = $this->get(route('blog.show', $post->slug));
+
+    // Assert the response is successful
+    $response->assertOk();
+
+    // Assert frontmatter is NOT displayed in the content
+    $response->assertDontSee('---');
+    $response->assertDontSee('title:');
+    $response->assertDontSee('disable_toc:');
+    $response->assertDontSee('Custom Title');
+
+    // Assert the actual content is displayed
+    $response->assertSee('Introduction');
+    $response->assertSee('This is a test post');
+    $response->assertSee('Section 1');
+});
+
+it('does not display TOC when disabled', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create a post with TOC disabled
+    $post = BlogPost::create([
+        'title' => 'Post Without TOC',
+        'content' => "---\ndisable_toc: true\n---\n\n# Introduction\n\nThis post has headings but TOC is disabled.\n\n## Section 1\n\nContent here.\n\n## Section 2\n\nMore content.",
+        'slug' => 'post-without-toc',
+        'tldr' => 'A post with table of contents disabled',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Visit the blog post page
+    $response = $this->get(route('blog.show', $post->slug));
+
+    // Assert the response is successful
+    $response->assertOk();
+
+    // Assert TOC is NOT displayed
+    $response->assertDontSee('Table of contents');
+    $response->assertDontSee('[[TOC]]');
+
+    // Assert the content is displayed without frontmatter
+    $response->assertSee('Introduction');
+    $response->assertSee('Section 1');
+    $response->assertSee('Section 2');
+    $response->assertDontSee('---');
+    $response->assertDontSee('disable_toc:');
+});
