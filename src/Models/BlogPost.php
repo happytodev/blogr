@@ -117,7 +117,8 @@ class BlogPost extends Model
         $readingSpeed = config('blogr.reading_speed.words_per_minute', 200);
 
         // Combine title and content for word count
-        $text = $this->title . ' ' . $this->content;
+        // Use getOriginal to avoid triggering the content accessor
+        $text = $this->title . ' ' . $this->getOriginal('content');
 
         // Remove HTML tags and count words
         $plainText = strip_tags($text);
@@ -172,7 +173,7 @@ class BlogPost extends Model
     {
         $existingFrontmatter = $this->extractFrontmatter();
 
-        return array_merge([
+        $defaults = [
             'title' => $this->title,
             'slug' => $this->slug,
             'published' => $this->is_published,
@@ -183,8 +184,14 @@ class BlogPost extends Model
             'meta_description' => $this->meta_description,
             'meta_keywords' => $this->meta_keywords,
             'tldr' => $this->tldr,
-            'disable_toc' => false, // Default value
-        ], $existingFrontmatter);
+        ];
+
+        // Only set disable_toc default if it doesn't exist in existing frontmatter
+        if (!isset($existingFrontmatter['disable_toc'])) {
+            $defaults['disable_toc'] = false;
+        }
+
+        return array_merge($defaults, $existingFrontmatter);
     }
 
     /**
@@ -198,40 +205,43 @@ class BlogPost extends Model
             return [];
         }
 
-        // Check if content starts with frontmatter delimiter
-        if (!str_starts_with(trim($this->content), '---')) {
-            return [];
-        }
-
-        $lines = explode("\n", $this->content);
-        $frontmatterLines = [];
-        $inFrontmatter = false;
-        $contentStartIndex = 0;
-
-        foreach ($lines as $index => $line) {
-            if ($line === '---') {
-                if (!$inFrontmatter) {
-                    $inFrontmatter = true;
-                } else {
-                    $contentStartIndex = $index + 1;
-                    break;
-                }
-            } elseif ($inFrontmatter) {
-                $frontmatterLines[] = $line;
-            }
-        }
-
-        if (empty($frontmatterLines)) {
-            return [];
-        }
-
-        $yaml = implode("\n", $frontmatterLines);
-
         try {
-            return \Symfony\Component\Yaml\Yaml::parse($yaml) ?: [];
+            $document = \Spatie\YamlFrontMatter\YamlFrontMatter::parse($this->content);
+            return $document->matter();
         } catch (\Exception $e) {
             return [];
         }
+    }
+
+    /**
+     * Get the content attribute - returns content without frontmatter for forms
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getContentAttribute($value)
+    {
+        // Only modify content for Filament admin forms to avoid recursion
+        if (app()->runningInConsole() === false &&
+            app()->bound('request') &&
+            request()->is('admin/*') &&
+            class_exists('\Filament\FilamentManager') &&
+            !isset($this->attributes['__content_accessor_called'])) {
+
+            // Prevent recursion by setting a flag
+            $this->attributes['__content_accessor_called'] = true;
+
+            try {
+                $result = $this->getContentWithoutFrontmatter();
+                unset($this->attributes['__content_accessor_called']);
+                return $result;
+            } catch (\Exception $e) {
+                unset($this->attributes['__content_accessor_called']);
+                return $value;
+            }
+        }
+
+        return $value;
     }
 
     /**
@@ -245,27 +255,15 @@ class BlogPost extends Model
             return '';
         }
 
-        // Check if content starts with frontmatter delimiter
-        if (!str_starts_with(trim($this->content), '---')) {
+        try {
+            $document = \Spatie\YamlFrontMatter\YamlFrontMatter::parse($this->content);
+            $body = $document->body();
+
+            // Clean up leading whitespace that might be left after frontmatter extraction
+            return ltrim($body, "\n\r");
+        } catch (\Exception $e) {
             return $this->content;
         }
-
-        $lines = explode("\n", $this->content);
-        $inFrontmatter = false;
-        $contentStartIndex = 0;
-
-        foreach ($lines as $index => $line) {
-            if ($line === '---') {
-                if (!$inFrontmatter) {
-                    $inFrontmatter = true;
-                } else {
-                    $contentStartIndex = $index + 1;
-                    break;
-                }
-            }
-        }
-
-        return implode("\n", array_slice($lines, $contentStartIndex));
     }
 
     /**
@@ -276,7 +274,14 @@ class BlogPost extends Model
     public function isTocDisabled()
     {
         $frontmatter = $this->getFrontmatter();
-        return $frontmatter['disable_toc'] ?? false;
+        $value = $frontmatter['disable_toc'] ?? false;
+
+        // Convert string values to boolean
+        if (is_string($value)) {
+            return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        return (bool) $value;
     }
 
     /**
@@ -325,7 +330,69 @@ class BlogPost extends Model
             $yaml = \Symfony\Component\Yaml\Yaml::dump($frontmatter, 2, 2);
             return "---\n" . $yaml . "---\n\n" . $contentWithoutFrontmatter;
         } catch (\Exception $e) {
-            return $this->content;
+            return $this->getOriginal('content');
         }
+    }
+
+    /**
+     * Check if TOC should be displayed for this post
+     * Takes into account global settings and frontmatter override
+     *
+     * @return bool
+     */
+    public function shouldDisplayToc()
+    {
+        $globalEnabled = config('blogr.toc.enabled', true);
+        $strictMode = config('blogr.toc.strict_mode', false);
+
+        // If strict mode is enabled, always use global setting
+        if ($strictMode) {
+            return $globalEnabled;
+        }
+
+        // If not in strict mode, check frontmatter override
+        $frontmatter = $this->extractFrontmatter();
+
+        // If frontmatter explicitly sets disable_toc, use that value
+        if (isset($frontmatter['disable_toc'])) {
+            return !$frontmatter['disable_toc']; // disable_toc: true means TOC is disabled, so return false
+        }
+
+        // Otherwise, use global setting
+        return $globalEnabled;
+    }
+
+    /**
+     * Check if TOC toggle should be editable for this post
+     * In strict mode, the toggle is not editable
+     *
+     * @return bool
+     */
+    public function isTocToggleEditable()
+    {
+        return !config('blogr.toc.strict_mode', false);
+    }
+
+    /**
+     * Get the default TOC disabled state for new posts
+     * Based on global settings
+     *
+     * @return bool
+     */
+    public static function getDefaultTocDisabled()
+    {
+        $globalEnabled = config('blogr.toc.enabled', true);
+        return !$globalEnabled; // If global is enabled, TOC should be enabled (disabled = false)
+    }
+
+    /**
+     * Check if TOC toggle should be editable for posts
+     * Static version for use in forms
+     *
+     * @return bool
+     */
+    public static function isTocToggleEditableStatic()
+    {
+        return !config('blogr.toc.strict_mode', false);
     }
 }
