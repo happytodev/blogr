@@ -16,6 +16,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Utilities\Get;
+use Happytodev\Blogr\Models\BlogPost;
 
 class BlogPostForm
 {
@@ -74,16 +75,93 @@ class BlogPostForm
                 MarkdownEditor::make('content')
                     ->required()
                     ->columnSpanFull()
-                    ->helperText('Use Markdown syntax for formatting.'),
+                    ->helperText('Use Markdown syntax for formatting.')
+                    ->default(function ($record) {
+                        // For existing records, show content without frontmatter
+                        if ($record) {
+                            return $record->getContentWithoutFrontmatter();
+                        }
+                        return null;
+                    })
+                    ->afterStateHydrated(function ($state, $set, $record) {
+                        // For existing records, ensure content is loaded without frontmatter
+                        if ($record) {
+                            $set('content', $record->getContentWithoutFrontmatter());
+                        }
+                    })
+                    ->afterStateUpdated(function ($state, $set, $record) {
+                        // When content changes, update the toggle to reflect current frontmatter
+                        if ($record && BlogPost::isTocToggleEditableStatic()) {
+                            try {
+                                $document = \Spatie\YamlFrontMatter\YamlFrontMatter::parse($state);
+                                $frontmatter = $document->matter();
+                                $isTocDisabled = $frontmatter['disable_toc'] ?? false;
+
+                                // Convert to boolean if it's a string
+                                if (is_string($isTocDisabled)) {
+                                    $isTocDisabled = filter_var($isTocDisabled, FILTER_VALIDATE_BOOLEAN);
+                                }
+
+                                $set('disable_toc', (bool) $isTocDisabled);
+                            } catch (\Exception $e) {
+                                // If parsing fails, assume no frontmatter
+                                $set('disable_toc', false);
+                            }
+                        }
+                    })
+                    ->dehydrateStateUsing(function ($state, $record) {
+                        // When saving, we need to ensure frontmatter is properly handled
+                        if ($record && BlogPost::isTocToggleEditableStatic()) {
+                            // Get the current content (which might not have frontmatter due to accessor)
+                            $currentContent = $record->getRawOriginal('content');
+                            $contentWithoutFrontmatter = $record->getContentWithoutFrontmatter();
+
+                            // If the content in the form is the same as content without frontmatter,
+                            // we need to add frontmatter if the toggle is enabled
+                            if ($state === $contentWithoutFrontmatter) {
+                                $isTocDisabled = $record->isTocDisabled();
+                                if ($isTocDisabled) {
+                                    return self::updateFrontmatterInContent($state, ['disable_toc' => true]);
+                                }
+                            }
+                        }
+
+                        return $state;
+                    }),
                 Toggle::make('disable_toc')
                     ->label('Disable Table of Contents')
                     ->default(function ($record) {
                         // Load value from frontmatter if record exists
-                        return $record ? $record->isTocDisabled() : false;
-                    })
-                    ->helperText('Disable the automatic table of contents generation for this post.')
-                    ->afterStateUpdated(function (Set $set, Get $get, $state, $record) {
                         if ($record) {
+                            return $record->isTocDisabled();
+                        }
+                        // Otherwise use default based on global settings
+                        return BlogPost::getDefaultTocDisabled();
+                    })
+                    ->afterStateHydrated(function ($state, $set, $record) {
+                        // Ensure the toggle reflects the current frontmatter state
+                        if ($record) {
+                            $set('disable_toc', $record->isTocDisabled());
+                        }
+                    })
+                    ->disabled(function () {
+                        // In strict mode, the toggle is not editable
+                        return !BlogPost::isTocToggleEditableStatic();
+                    })
+                    ->helperText(function () {
+                        $strictMode = config('blogr.toc.strict_mode', false);
+                        if ($strictMode) {
+                            $globalTocEnabled = config('blogr.toc.enabled', true);
+                            $statusMessage = $globalTocEnabled
+                                ? 'Currently, table of contents are always displayed for all posts.'
+                                : 'Currently, table of contents are always disabled for all posts.';
+
+                            return 'TOC setting is controlled globally and cannot be changed per post. ' . $statusMessage;
+                        }
+                        return 'Disable the automatic table of contents generation for this post.';
+                    })
+                    ->afterStateUpdated(function (Set $set, Get $get, $state, $record) {
+                        if ($record && BlogPost::isTocToggleEditableStatic()) {
                             // Update the frontmatter in the content when toggle changes
                             $content = $get('content');
                             if ($content) {
@@ -216,22 +294,32 @@ class BlogPostForm
         }
 
         // Parse existing frontmatter
-        $frontmatter = [];
+        $originalFrontmatter = [];
         if (!empty($frontmatterLines)) {
             $yaml = implode("\n", $frontmatterLines);
             try {
-                $frontmatter = \Symfony\Component\Yaml\Yaml::parse($yaml) ?: [];
+                $originalFrontmatter = \Symfony\Component\Yaml\Yaml::parse($yaml) ?: [];
             } catch (\Exception $e) {
-                $frontmatter = [];
+                $originalFrontmatter = [];
             }
         }
 
-        // Update frontmatter with new values
-        $frontmatter = array_merge($frontmatter, $updates);
+        // Update frontmatter with new values, but only keep meaningful values
+        $updatedFrontmatter = array_merge($originalFrontmatter, $updates);
+
+        // Remove disable_toc if it's false and wasn't originally present
+        if (isset($updates['disable_toc']) && $updates['disable_toc'] === false && !isset($originalFrontmatter['disable_toc'])) {
+            unset($updatedFrontmatter['disable_toc']);
+        }
+
+        // If no frontmatter remains, return content without frontmatter
+        if (empty($updatedFrontmatter)) {
+            return implode("\n", $contentLines);
+        }
 
         // Generate new YAML
         try {
-            $newYaml = \Symfony\Component\Yaml\Yaml::dump($frontmatter, 2, 2);
+            $newYaml = \Symfony\Component\Yaml\Yaml::dump($updatedFrontmatter, 2, 2);
             return "---\n" . $newYaml . "---\n\n" . implode("\n", $contentLines);
         } catch (\Exception $e) {
             return $content;
