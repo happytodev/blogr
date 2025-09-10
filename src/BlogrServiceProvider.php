@@ -11,6 +11,7 @@ use Happytodev\Blogr\Testing\TestsBlogr;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentAsset;
 use Happytodev\Blogr\Commands\BlogrCommand;
+use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Filament\Support\Assets\AlpineComponent;
 use Livewire\Features\SupportTesting\Testable;
 use Happytodev\Blogr\Http\Controllers\BlogController;
@@ -146,6 +147,7 @@ class BlogrServiceProvider extends PackageServiceProvider
     {
         return [
             BlogrCommand::class,
+            BlogrInstallCommand::class,
         ];
     }
 
@@ -206,6 +208,14 @@ class BlogrServiceProvider extends PackageServiceProvider
 
         // Load views
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'blogr');
+
+        // Register commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                BlogrCommand::class,
+                BlogrInstallCommand::class,
+            ]);
+        }
 
         $prefix = trim(config('blogr.route.prefix', 'blog'), '/');
 

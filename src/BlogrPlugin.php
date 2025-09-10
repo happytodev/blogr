@@ -8,6 +8,11 @@ use Happytodev\Blogr\Filament\Resources\BlogPostResource;
 use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
+use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
+use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;
+use Happytodev\Blogr\Filament\Widgets\ScheduledPosts;
+use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
+use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
 
 class BlogrPlugin implements Plugin
 {
@@ -26,6 +31,14 @@ class BlogrPlugin implements Plugin
 
         $panel->pages([
             BlogrSettings::class,
+        ]);
+
+        $panel->widgets([
+            BlogStatsOverview::class,
+            RecentBlogPosts::class,
+            ScheduledPosts::class,
+            BlogPostsChart::class,
+            BlogReadingStats::class,
         ]);
 
         $panel->colors([

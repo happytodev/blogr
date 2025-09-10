@@ -12,6 +12,10 @@ All notable changes to `blogr` will be documented in this file.
 - **Settings Page Integration**: Add TOC configuration section in Filament settings page with TGE and TSM toggles
 - **Real-time Updates**: Form updates frontmatter content when TOC toggle is changed
 - **Dynamic Form Behavior**: TOC toggle becomes readonly when strict mode is enabled
+- **Automated Installation**: Add `blogr:install` command for streamlined setup process
+- **Default Content Creation**: Automatically create sample blog posts, categories, and tags to help users get started
+- **Installation Options**: Support for `--skip-npm` and `--skip-tutorials` flags for flexible installation
+- **User Onboarding**: Guided setup with welcome messages and next steps instructions
 
 ### 🧪 Testing
 
@@ -21,6 +25,9 @@ All notable changes to `blogr` will be documented in this file.
 - **Global Settings Tests**: Add tests for global TOC configuration and priority handling
 - **Strict Mode Tests**: Add tests for all TGE/TSM matrix scenarios (4 combinations)
 - **Matrix Behavior Tests**: Comprehensive test coverage for TGE=0/1 and TSM=0/1 combinations
+- **Install Command Tests**: Add comprehensive unit tests for `blogr:install` command functionality
+- **Command Registration Tests**: Add tests for command registration and help display
+- **Mock-based Testing**: Implement proper mocking to avoid filesystem conflicts in parallel test execution
 
 ## [v0.5.0](https://github.com/happytodev/blogr/compare/v0.4.1...v0.5.0) - 2025-09-09
 
