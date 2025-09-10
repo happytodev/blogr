@@ -7,12 +7,20 @@ All notable changes to `blogr` will be documented in this file.
 ### 🚀 Features
 
 - **TOC Disable Feature**: Add ability to disable table of contents per post via frontmatter ([Issue #20](https://github.com/happytodev/blogr/issues/20))
+- **Global TOC Setting**: Add global configuration option to enable/disable TOC by default for all posts
+- **TOC Strict Mode**: Add strict mode to prevent individual posts from overriding global TOC setting
+- **Settings Page Integration**: Add TOC configuration section in Filament settings page with TGE and TSM toggles
+- **Real-time Updates**: Form updates frontmatter content when TOC toggle is changed
+- **Dynamic Form Behavior**: TOC toggle becomes readonly when strict mode is enabled
 
 ### 🧪 Testing
 
 - **TOC Tests**: Add comprehensive tests for TOC disable functionality
 - **Frontmatter Tests**: Add tests to ensure frontmatter is not displayed in rendered content
 - **Form Integration Tests**: Add tests for Filament form TOC toggle functionality
+- **Global Settings Tests**: Add tests for global TOC configuration and priority handling
+- **Strict Mode Tests**: Add tests for all TGE/TSM matrix scenarios (4 combinations)
+- **Matrix Behavior Tests**: Comprehensive test coverage for TGE=0/1 and TSM=0/1 combinations
 
 ## [v0.5.0](https://github.com/happytodev/blogr/compare/v0.4.1...v0.5.0) - 2025-09-09
 
