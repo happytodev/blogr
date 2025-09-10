@@ -11,29 +11,50 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 
 ## Features
 
-- [x] Create, edit, and delete blog posts
-- [x] Edit post in markdown
-- [x] Table of contents is automatically generated
-- [x] TOC could be deactivate for a post 
-- [x] A post can have a TL;DR
-- [x] Support code (currently very simple)
-- [x] A blog post can have a category
-- [x] A blog post can have tags
-- [x] A blog post can be published or not
-- [x] Schedule posts for future publication with automatic publishing
-- [x] Publication status indicator (draft/scheduled/published) with color coding
-- [x] The slug of blog post is automatically generated but can be customized
-- [x] Posts per category page
-- [x] Posts per tags page
-- [x] Main post image upload and editing
-- [x] Drag & Drop image in the post content (see video demo below)
-- [x] Backend color customizable
-- [x] Add a reading time information for blog post 
-- [x] Integrate meta fields 
-- [x] Content optimization for SEO
-- [x] Widgets available for the dashboard
-- [x] Update settings directly in the back office
-- [x] Automatic author assignment
+### Content management
+
+- Create, edit, and delete blog posts
+- Edit post in markdown
+- A post can have a TL;DR
+- The post's slug can be custom
+- Status : Draft, Scheduled, Published
+- Category (one per post)
+- Tags (multiple per post)
+- Posts by category page
+- Posts by tag page
+- Post reading time
+- Support code (currently very simple)
+
+#### Medias
+
+- Main post image upload and editing
+- Drag & Drop image in the post content (see video demo below)
+
+### Table of contents
+
+- Table of contents is automatically generated
+- TOC could be deactivate for a post 
+- User could define if TOC is activated by default or not for every post
+
+### SEO
+
+- Integrate meta fields 
+- Content optimization for SEO
+
+
+### Settings
+
+- Many settings are available on an admin page or directly in `config/blogr.php`
+
+### Tutorial
+
+- Add default content to help user to start with Blogr
+
+### Widgets
+
+- Widgets available for the dashboard
+
+
 
 ## Screenshots
 
@@ -78,8 +99,8 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - [x] Create widgets to display on dashboard ✅ **Completed**
 - [x] Add a settings page to easily manage settings set in config/blogr.php ✅ **Completed**
 - [x] TOC could be deactivate for a post ✅ **Completed**
-- [ ] User could define if TOC is activated by default or not for every post
-- [ ] Add default content to help user to start with Blogr
+- [x] User could define if TOC is activated by default or not for every post ✅ **Completed**
+- [x] Add default content to help user to start with Blogr ✅ **Completed**
 
 
 ### Beta 3 (ETA 2025-09-30)
@@ -95,10 +116,119 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - **Laravel 12.x**
 - **FilamentPHP v4.x**
 
+```bash
+laravel new mycompanyblog
+
+cd mycompanyblog
+
+composer require filament/filament:"^4.0"
+
+php artisan filament:install --panels
+
+php artisan make:filament-user
+```
+
 You have to start with a fresh install of Laravel and Filament v4 or add this package on existing app with these requirements.
 
 ## Installation
 
+### Install with blogr command
+
+The easiest way to install Blogr is using the automated installation command. This command will guide you through the entire installation process and handle most configuration automatically.
+
+1. **Install the package via Composer**
+
+```bash
+composer require happytodev/blogr
+```
+
+2. **Run the automated installation**
+
+```bash
+php artisan blogr:install
+```
+
+#### Available Options
+
+The `blogr:install` command supports several options to customize your installation:
+
+- `--skip-npm` - Skip npm dependencies installation
+- `--skip-tutorials` - Skip tutorial content installation
+
+**Examples:**
+```bash
+# Install everything (recommended for new installations)
+php artisan blogr:install
+
+# Skip npm installation (if you don't need typography plugin)
+php artisan blogr:install --skip-npm
+
+# Skip tutorial content
+php artisan blogr:install --skip-tutorials
+
+# Skip both npm and tutorials
+php artisan blogr:install --skip-npm --skip-tutorials
+```
+
+#### What the command does
+
+The automated installation performs the following steps:
+
+1. **📦 Publishes configuration and migration files**
+   - Publishes `config/blogr.php`
+   - Publishes migration files
+   - Publishes views and assets
+
+2. **🗄️ Runs database migrations**
+   - Creates necessary database tables
+   - Handles migration conflicts gracefully
+
+3. **📚 Installs tutorial content** (unless `--skip-tutorials` is used)
+   - Creates 7 comprehensive tutorial posts
+   - Includes welcome guide, installation help, and advanced features
+   - Creates a dedicated "Blogr Tutorial" category
+
+4. **📊 Installs dashboard widgets**
+   - BlogStatsOverview - Blog statistics and metrics
+   - RecentBlogPosts - Latest posts with quick actions
+   - ScheduledPosts - Upcoming scheduled publications
+   - BlogPostsChart - Publication trends over time
+   - BlogReadingStats - Reading time analytics
+
+5. **📦 Handles npm dependencies** (unless `--skip-npm` is used)
+   - Installs `@tailwindcss/typography` if not present
+   - Updates `resources/css/app.css` with typography plugin
+
+6. **🔧 Checks AdminPanelProvider configuration**
+   - Verifies BlogrPlugin is properly registered
+   - Provides guidance if configuration is missing
+
+7. **⭐ Prompts for GitHub star**
+   - Asks if you'd like to support the project
+   - Completely optional and non-intrusive
+
+#### After installation
+
+Once the command completes successfully, you can:
+
+- **Access your admin panel** at `/admin`
+- **View tutorial posts** (if installed) in the "Blogr Tutorial" category
+- **Create your first blog post** using the "Blog Posts" section
+- **Configure settings** in the "Blogr Settings" page
+- **Explore dashboard widgets** for blog analytics
+
+#### Troubleshooting
+
+If you encounter issues:
+
+- **Clear caches**: `php artisan optimize:clear`
+- **Re-run migrations**: `php artisan migrate:fresh` (⚠️ This will reset your database)
+- **Check file permissions**: Ensure web server can write to storage directories
+- **Verify npm installation**: Run `npm install && npm run build` if needed
+
+### Manual installation
+
+If you prefer to install Blogr manually or need more control over the installation process, follow these steps:
 
 1. **Install the package via Composer**
 
