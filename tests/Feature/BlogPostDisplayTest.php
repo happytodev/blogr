@@ -728,3 +728,227 @@ it('does not display TOC when disabled', function () {
     $response->assertDontSee('---');
     $response->assertDontSee('disable_toc:');
 });
+
+it('respects global TOC setting when no frontmatter is present', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create a post without frontmatter (should use global setting)
+    $post = BlogPost::create([
+        'title' => 'Post With Global TOC Setting',
+        'content' => "# Introduction\n\nThis post uses global TOC setting.\n\n## Section 1\n\nContent here.\n\n## Section 2\n\nMore content.",
+        'slug' => 'post-global-toc',
+        'tldr' => 'A post using global TOC setting',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Test with global TOC enabled (default)
+    config(['blogr.toc.enabled' => true]);
+    expect($post->shouldDisplayToc())->toBe(true);
+
+    // Test with global TOC disabled
+    config(['blogr.toc.enabled' => false]);
+    expect($post->shouldDisplayToc())->toBe(false);
+});
+
+it('frontmatter setting overrides global TOC setting', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create a post with TOC explicitly disabled in frontmatter
+    $postWithDisabledToc = BlogPost::create([
+        'title' => 'Post With TOC Disabled in Frontmatter',
+        'content' => "---\ndisable_toc: true\n---\n\n# Introduction\n\nTOC disabled via frontmatter.\n\n## Section 1\n\nContent here.",
+        'slug' => 'post-toc-disabled-frontmatter',
+        'tldr' => 'TOC disabled via frontmatter',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Create a post with TOC explicitly enabled in frontmatter
+    $postWithEnabledToc = BlogPost::create([
+        'title' => 'Post With TOC Enabled in Frontmatter',
+        'content' => "---\ndisable_toc: false\n---\n\n# Introduction\n\nTOC enabled via frontmatter.\n\n## Section 1\n\nContent here.",
+        'slug' => 'post-toc-enabled-frontmatter',
+        'tldr' => 'TOC enabled via frontmatter',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Even if global TOC is disabled, frontmatter should override
+    config(['blogr.toc.enabled' => false]);
+    expect($postWithDisabledToc->shouldDisplayToc())->toBe(false); // Frontmatter says false
+    expect($postWithEnabledToc->shouldDisplayToc())->toBe(true);   // Frontmatter says false (so TOC enabled)
+
+    // Even if global TOC is enabled, frontmatter should override
+    config(['blogr.toc.enabled' => true]);
+    expect($postWithDisabledToc->shouldDisplayToc())->toBe(false); // Frontmatter says false
+    expect($postWithEnabledToc->shouldDisplayToc())->toBe(true);   // Frontmatter says false (so TOC enabled)
+});
+
+it('global TOC setting works end-to-end', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create a post without frontmatter (should use global setting)
+    $post = BlogPost::create([
+        'title' => 'Post Using Global TOC Setting',
+        'content' => "# Introduction\n\nThis post uses global TOC setting.\n\n## Section 1\n\nContent here.\n\n## Section 2\n\nMore content.",
+        'slug' => 'post-global-toc-setting',
+        'tldr' => 'Post using global TOC setting',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Test with global TOC enabled
+    config(['blogr.toc.enabled' => true]);
+    $response = $this->get(route('blog.show', $post->slug));
+    $response->assertOk();
+    $response->assertSee('Table of contents');
+    $response->assertDontSee('---'); // No frontmatter should be visible
+
+    // Test with global TOC disabled
+    config(['blogr.toc.enabled' => false]);
+    $response = $this->get(route('blog.show', $post->slug));
+    $response->assertOk();
+    $response->assertDontSee('Table of contents');
+    $response->assertDontSee('---'); // No frontmatter should be visible
+    $response->assertSee('Introduction'); // Content should still be visible
+});
+
+it('handles TGE=0 and TSM=0 scenario', function () {
+    // TGE = 0 (TOC globally disabled), TSM = 0 (not strict mode)
+    config(['blogr.toc.enabled' => false, 'blogr.toc.strict_mode' => false]);
+
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create a post without frontmatter - should default to TOC disabled
+    $post = BlogPost::create([
+        'title' => 'Post TGE=0 TSM=0',
+        'content' => "# Introduction\n\nContent.\n\n## Section 1\n\nContent here.",
+        'slug' => 'post-tge0-tsm0',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Should not display TOC by default
+    expect($post->shouldDisplayToc())->toBe(false);
+
+    // But frontmatter can override
+    $postWithOverride = BlogPost::create([
+        'title' => 'Post With Override',
+        'content' => "---\ndisable_toc: false\n---\n\n# Introduction\n\nContent.\n\n## Section 1\n\nContent here.",
+        'slug' => 'post-with-override',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Should display TOC due to frontmatter override
+    expect($postWithOverride->shouldDisplayToc())->toBe(true);
+});
+
+it('handles TGE=0 and TSM=1 scenario', function () {
+    // TGE = 0 (TOC globally disabled), TSM = 1 (strict mode)
+    config(['blogr.toc.enabled' => false, 'blogr.toc.strict_mode' => true]);
+
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create a post - should never display TOC regardless of frontmatter
+    $post = BlogPost::create([
+        'title' => 'Post TGE=0 TSM=1',
+        'content' => "---\ndisable_toc: false\n---\n\n# Introduction\n\nContent.\n\n## Section 1\n\nContent here.",
+        'slug' => 'post-tge0-tsm1',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Should not display TOC (strict mode overrides frontmatter)
+    expect($post->shouldDisplayToc())->toBe(false);
+    expect($post->isTocToggleEditable())->toBe(false);
+});
+
+it('handles TGE=1 and TSM=0 scenario', function () {
+    // TGE = 1 (TOC globally enabled), TSM = 0 (not strict mode)
+    config(['blogr.toc.enabled' => true, 'blogr.toc.strict_mode' => false]);
+
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create a post without frontmatter - should default to TOC enabled
+    $post = BlogPost::create([
+        'title' => 'Post TGE=1 TSM=0',
+        'content' => "# Introduction\n\nContent.\n\n## Section 1\n\nContent here.",
+        'slug' => 'post-tge1-tsm0',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Should display TOC by default
+    expect($post->shouldDisplayToc())->toBe(true);
+
+    // But frontmatter can override
+    $postWithOverride = BlogPost::create([
+        'title' => 'Post With Override',
+        'content' => "---\ndisable_toc: true\n---\n\n# Introduction\n\nContent.\n\n## Section 1\n\nContent here.",
+        'slug' => 'post-with-override-tge1',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Should not display TOC due to frontmatter override
+    expect($postWithOverride->shouldDisplayToc())->toBe(false);
+});
+
+it('handles TGE=1 and TSM=1 scenario', function () {
+    // TGE = 1 (TOC globally enabled), TSM = 1 (strict mode)
+    config(['blogr.toc.enabled' => true, 'blogr.toc.strict_mode' => true]);
+
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create a post - should always display TOC regardless of frontmatter
+    $post = BlogPost::create([
+        'title' => 'Post TGE=1 TSM=1',
+        'content' => "---\ndisable_toc: true\n---\n\n# Introduction\n\nContent.\n\n## Section 1\n\nContent here.",
+        'slug' => 'post-tge1-tsm1',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Should display TOC (strict mode overrides frontmatter)
+    expect($post->shouldDisplayToc())->toBe(true);
+    expect($post->isTocToggleEditable())->toBe(false);
+});
+
+it('default TOC state respects global settings', function () {
+    // Test TGE=0 (global disabled) -> default should be disabled
+    config(['blogr.toc.enabled' => false]);
+    expect(BlogPost::getDefaultTocDisabled())->toBe(true);
+
+    // Test TGE=1 (global enabled) -> default should be enabled
+    config(['blogr.toc.enabled' => true]);
+    expect(BlogPost::getDefaultTocDisabled())->toBe(false);
+});

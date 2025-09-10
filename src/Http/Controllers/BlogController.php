@@ -85,22 +85,25 @@ class BlogController
             ->firstOrFail();
 
         // Calculate reading time BEFORE adding TOC to content
-        $post->reading_time = $post->getFormattedReadingTime();
+        $post->reading_time = $post->getEstimatedReadingTime();
 
         $converter = new MarkdownConverter($environment);
 
         // Get content without frontmatter
         $contentWithoutFrontmatter = $post->getContentWithoutFrontmatter();
 
-        // Only add TOC if it's not disabled
-        if (!$post->isTocDisabled()) {
+        // Only add TOC if it should be displayed
+        if ($post->shouldDisplayToc()) {
             // This will insert the table of contents at the placeholder [[TOC]]
             $markdownWithToc = "# Table of contents\n\n[[TOC]]\n\n" . $contentWithoutFrontmatter;
-            $post->content = $converter->convert($markdownWithToc)->getContent();
+            $convertedContent = $converter->convert($markdownWithToc)->getContent();
         } else {
             // Convert markdown without TOC
-            $post->content = $converter->convert($contentWithoutFrontmatter)->getContent();
+            $convertedContent = $converter->convert($contentWithoutFrontmatter)->getContent();
         }
+
+        // Set the converted content directly to avoid triggering accessor
+        $post->setAttribute('content', $convertedContent);
         if ($post->photo) {
             $post->photo_url = Storage::temporaryUrl(
                 $post->photo,
