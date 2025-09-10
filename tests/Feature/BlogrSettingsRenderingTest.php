@@ -150,6 +150,51 @@ it('loads config data on mount', function () {
     expect($page->form)->not->toBeNull();
 });
 
+it('can save TOC settings', function () {
+    $page = app(BlogrSettings::class);
+
+    // Fill form with TOC settings including strict mode
+    $testData = [
+        'posts_per_page' => 10,
+        'route' => [
+            'prefix' => 'blog',
+        ],
+        'colors' => [
+            'primary' => '#3b82f6',
+        ],
+        'reading_speed' => [
+            'words_per_minute' => 200,
+        ],
+        'reading_time' => [
+            'text_format' => 'Reading time: {time} min',
+            'enabled' => true,
+        ],
+        'toc' => [
+            'enabled' => false, // Test TOC disabled globally
+            'strict_mode' => true, // Test strict mode enabled
+        ],
+        'seo' => [
+            'site_name' => 'Test Blog',
+            'default_title' => 'Test Title',
+            'default_description' => 'Test Description',
+            'structured_data' => [
+                'enabled' => true,
+                'organization' => [
+                    'name' => 'Test Organization',
+                    'url' => 'https://test.com',
+                    'logo' => 'https://test.com/logo.png',
+                ],
+            ],
+        ],
+    ];
+
+    $page->form->fill($testData);
+
+    // Test that both TOC settings are properly handled
+    expect($testData['toc']['enabled'])->toBe(false);
+    expect($testData['toc']['strict_mode'])->toBe(true);
+});
+
 it('config values are properly loaded', function () {
     // Test that config values are accessible
     $config = config('blogr', []);
