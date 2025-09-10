@@ -50,6 +50,8 @@ class BlogrSettings extends Page
     public ?string $seo_structured_data_organization_name = null;
     public ?string $seo_structured_data_organization_url = null;
     public ?string $seo_structured_data_organization_logo = null;
+    public ?bool $toc_enabled = null;
+    public ?bool $toc_strict_mode = null;
 
     public function mount(): void
     {
@@ -77,6 +79,8 @@ class BlogrSettings extends Page
         $this->seo_structured_data_organization_name = $config['seo']['structured_data']['organization']['name'] ?? '';
         $this->seo_structured_data_organization_url = $config['seo']['structured_data']['organization']['url'] ?? '';
         $this->seo_structured_data_organization_logo = $config['seo']['structured_data']['organization']['logo'] ?? '';
+        $this->toc_enabled = $config['toc']['enabled'] ?? true;
+        $this->toc_strict_mode = $config['toc']['strict_mode'] ?? false;
     }
 
     public function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
@@ -185,6 +189,19 @@ class BlogrSettings extends Page
                             ->url(),
                     ])
                     ->columns(2),
+
+                Section::make('Table of Contents')
+                    ->description('Table of contents configuration for blog posts')
+                    ->schema([
+                        Toggle::make('toc_enabled')
+                            ->label('Enable Table of Contents by Default')
+                            ->default(true)
+                            ->helperText('Enable TOC globally. Individual posts can override this unless strict mode is enabled.'),
+                        Toggle::make('toc_strict_mode')
+                            ->label('Strict Mode')
+                            ->default(false)
+                            ->helperText('When enabled, individual posts cannot override the global TOC setting.'),
+                    ]),
             ]);
     }
 
@@ -212,6 +229,10 @@ class BlogrSettings extends Page
             'reading_time' => [
                 'text_format' => $this->reading_time_text_format,
                 'enabled' => $this->reading_time_enabled,
+            ],
+            'toc' => [
+                'enabled' => $this->toc_enabled,
+                'strict_mode' => $this->toc_strict_mode,
             ],
             'seo' => [
                 'site_name' => $this->seo_site_name,

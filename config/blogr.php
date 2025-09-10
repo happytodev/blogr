@@ -53,6 +53,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Table of Contents Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure the table of contents behavior for blog posts.
+    | You can enable/disable TOC globally, and control whether individual
+    | posts can override this setting.
+    |
+    */
+    'toc' => [
+        'enabled' => true, // TOC Globally Enabled (TGE): Enable/disable TOC globally by default
+        'strict_mode' => false, // TOC Strict Mode (TSM): If true, individual posts cannot override global setting
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | SEO Configuration
     |--------------------------------------------------------------------------
     |
