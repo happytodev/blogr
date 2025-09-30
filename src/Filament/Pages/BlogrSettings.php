@@ -32,9 +32,7 @@ class BlogrSettings extends Page
     // Form properties
     public ?int $posts_per_page = null;
     public ?string $route_prefix = null;
-
     public ?bool $route_frontend_enabled = null;
-
     public ?string $colors_primary = null;
     public ?string $blog_index_cards_colors_background = null;
     public ?string $blog_index_cards_colors_top_border = null;
