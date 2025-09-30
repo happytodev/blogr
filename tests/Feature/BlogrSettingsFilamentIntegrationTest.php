@@ -23,6 +23,7 @@ it('blogr settings has all required public properties', function () {
     $expectedProperties = [
         'posts_per_page',
         'route_prefix',
+        'route_frontend_enabled',
         'reading_speed_words_per_minute',
         'reading_time_text_format',
         'reading_time_enabled',
@@ -47,6 +48,7 @@ it('blogr settings mount method loads config correctly', function () {
     config([
         'blogr.posts_per_page' => 25,
         'blogr.route.prefix' => 'articles',
+        'blogr.route.frontend.enabled' => true,
         'blogr.reading_time.enabled' => false,
         'blogr.seo.site_name' => 'Test Blog',
         'blogr.seo.structured_data.enabled' => false,
@@ -58,6 +60,7 @@ it('blogr settings mount method loads config correctly', function () {
     // Test that config values are loaded into properties
     expect($page->posts_per_page)->toBe(25);
     expect($page->route_prefix)->toBe('articles');
+    expect($page->route_frontend_enabled)->toBeTrue();
     expect($page->reading_time_enabled)->toBeFalse();
     expect($page->seo_site_name)->toBe('Test Blog');
     expect($page->seo_structured_data_enabled)->toBeFalse();

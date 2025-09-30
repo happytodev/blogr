@@ -32,6 +32,9 @@ class BlogrSettings extends Page
     // Form properties
     public ?int $posts_per_page = null;
     public ?string $route_prefix = null;
+
+    public ?bool $route_frontend_enabled = null;
+
     public ?string $colors_primary = null;
     public ?string $blog_index_cards_colors_background = null;
     public ?string $blog_index_cards_colors_top_border = null;
@@ -61,6 +64,7 @@ class BlogrSettings extends Page
         // Set form properties from config
         $this->posts_per_page = $config['posts_per_page'] ?? 10;
         $this->route_prefix = $config['route']['prefix'] ?? 'blog';
+        $this->route_frontend_enabled = $config['route']['frontend']['enabled'] ?? true;
         $this->colors_primary = $config['colors']['primary'] ?? '#3b82f6';
         $this->blog_index_cards_colors_background = $config['blog_index']['cards']['colors']['background'] ?? 'bg-white';
         $this->blog_index_cards_colors_top_border = $config['blog_index']['cards']['colors']['top_border'] ?? 'border-t-4 border-blue-500';
@@ -100,6 +104,11 @@ class BlogrSettings extends Page
                             ->label('Route Prefix')
                             ->placeholder('blog')
                             ->helperText('URL prefix for blog routes')
+                            ->required(),
+                        Toggle::make('route_frontend_enabled')
+                            ->label('Enable Frontend Routes')
+                            ->helperText('Enable frontend routes for the blog')
+                            ->default(true)
                             ->required(),
                     ])
                     ->columns(2),
@@ -211,6 +220,9 @@ class BlogrSettings extends Page
             'posts_per_page' => $this->posts_per_page,
             'route' => [
                 'prefix' => $this->route_prefix,
+                'frontend' => [
+                    'enabled' => $this->route_frontend_enabled,
+                ],
             ],
             'colors' => [
                 'primary' => $this->colors_primary,
