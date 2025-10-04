@@ -2,7 +2,7 @@
 
 All notable changes to `blogr` will be documented in this file.
 
-## Unpublished
+## [v0.7.0](https://github.com/happytodev/blogr/compare/v0.7.0...v0.6.2) - 2025-10-05
 
 ### 🐛 Bug Fixes
 
@@ -11,6 +11,7 @@ All notable changes to `blogr` will be documented in this file.
 
 ### ✨ Features
 
+- **Frontend Routes Configuration**: Add `blogr.route.frontend.enable` setting to control frontend route registration
 - **Tag Display in Blog Posts Table**: Limit tag display to first 3 tags with "+X other(s)" indication for better UX, using proper singular/plural grammar ("+1 other" vs "+2 others")
 
 ### 🧪 Testing
@@ -30,10 +31,6 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Code Formatting**: Improve code formatting and consistency in `BlogrSettings.php`
 
-### ✨ Features
-
-- **Limited Tag Display**: Show maximum 3 tags in blog posts table with "+X others" indication for better UI
-- **Frontend Routes Configuration**: Add `blogr.route.frontend.enable` setting to control frontend route registration
 
 ## [v0.6.1](https://github.com/happytodev/blogr/compare/v0.6.0...v0.6.1) - 2025-10-04
 
