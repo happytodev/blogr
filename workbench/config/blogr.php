@@ -4,6 +4,9 @@
 return [
     'posts_per_page' => 10,  // Number of posts per page
     'route' => [
+        'frontend' => [
+            'enabled' => true,
+        ],
         // Prefix for frontend routes, if empty, the blog will be the homepage
         'prefix' => 'blog',
         'middleware' => ['web'], // Middleware for frontend routes

@@ -94,6 +94,32 @@ class BlogrServiceProvider extends PackageServiceProvider
         Testable::mixin(new TestsBlogr);
     }
 
+    protected function registerFrontendRoutes(): void
+    {
+        $prefix = trim(config('blogr.route.prefix', 'blog'), '/');
+
+        if ($prefix === '' || $prefix === '/') {
+            // Blog route as homepage
+            $this->app['router']
+                ->middleware(config('blogr.route.middleware', ['web']))
+                ->group(function () {
+                    $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
+                    $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                });
+        } else {
+            // Blog route with prefix
+            $this->app['router']
+                ->prefix($prefix)
+                ->middleware(config('blogr.route.middleware', ['web']))
+                ->group(function () {
+                    $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
+                    $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                    $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
+                    $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
+                });
+        }
+    }
+
     /**
      * Register the blog widgets
      */
@@ -219,25 +245,8 @@ class BlogrServiceProvider extends PackageServiceProvider
 
         $prefix = trim(config('blogr.route.prefix', 'blog'), '/');
 
-        if ($prefix === '' || $prefix === '/') {
-            // Blog route as homepage
-            $this->app['router']
-                ->middleware(config('blogr.route.middleware', ['web']))
-                ->group(function () {
-                    $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
-                    $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
-                });
-        } else {
-            // Blog route with prefix
-            $this->app['router']
-                ->prefix($prefix)
-                ->middleware(config('blogr.route.middleware', ['web']))
-                ->group(function () {
-                    $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
-                    $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
-                    $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
-                    $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
-                });
+        if (config()->get('blogr.route.frontend.enabled', true)) {
+            $this->registerFrontendRoutes();
         }
     }
 }
