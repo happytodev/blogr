@@ -9,6 +9,10 @@ All notable changes to `blogr` will be documented in this file.
 - **Category Slug Validation**: Fix unique validation for category slugs to properly ignore current record during editing
 - **Blog Post Publish Date Validation**: Allow editing existing published posts with past publish dates by making validation conditional based on whether it's a new post or existing record
 
+### ✨ Features
+
+- **Tag Display in Blog Posts Table**: Limit tag display to first 3 tags with "+X other(s)" indication for better UX, using proper singular/plural grammar ("+1 other" vs "+2 others")
+
 ### 🧪 Testing
 
 - **Category Form Tests**: Add comprehensive unit tests for `CategoryForm` schema configuration
@@ -18,14 +22,17 @@ All notable changes to `blogr` will be documented in this file.
   - Scheduling future publication dates
   - Immediate publication behavior
   - Draft post handling
+- **Tag Display Tests**: Add tests for limited tag display in blog posts table including singular/plural grammar handling
+- **Blog Post Tag Display Tests**: Add tests for limited tag display in table with "+X others" indication
 - **Filament Integration Tests**: Add tests for Filament settings page integration and form validation
 
 ### 🎨 Code Quality
 
 - **Code Formatting**: Improve code formatting and consistency in `BlogrSettings.php`
 
-### 🚀 Features
+### ✨ Features
 
+- **Limited Tag Display**: Show maximum 3 tags in blog posts table with "+X others" indication for better UI
 - **Frontend Routes Configuration**: Add `blogr.route.frontend.enable` setting to control frontend route registration
 
 ## [v0.6.1](https://github.com/happytodev/blogr/compare/v0.6.0...v0.6.1) - 2025-10-04
