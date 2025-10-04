@@ -30,7 +30,26 @@ class BlogPostTable
                 TextColumn::make('category.name')
                     ->label('Category'),
                 TextColumn::make('tags.name')
-                    ->badge(),
+                    ->badge()
+                    ->getStateUsing(function ($record) {
+                        $tags = $record->tags;
+                        $tagNames = $tags->pluck('name')->toArray();
+
+                        if (count($tagNames) <= 3) {
+                            return $tagNames;
+                        }
+
+                        // Take first 3 tags and add "+X other(s)"
+                        $displayTags = array_slice($tagNames, 0, 3);
+                        $remainingCount = count($tagNames) - 3;
+
+                        // Use singular "other" for 1, plural "others" for > 1
+                        $otherText = $remainingCount === 1 ? 'other' : 'others';
+                        $displayTags[] = "+{$remainingCount} {$otherText}";
+
+                        return $displayTags;
+                    })
+                    ->listWithLineBreaks(),
                 TextColumn::make('publication_status')
                     ->label('Status')
                     ->badge()
