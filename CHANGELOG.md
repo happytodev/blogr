@@ -2,6 +2,13 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## Unpublished
+
+### 🧪 Testing
+
+- **Category Form Tests**: Add comprehensive unit tests for `CategoryForm` schema configuration
+- **Category Model Tests**: Add functional tests for Category model behavior including slug generation, uniqueness validation, and relationships
+
 ## [v0.6.1](https://github.com/happytodev/blogr/compare/v0.6.0...v0.6.1) - 2025-10-04
 
 ### 🐛 Bug Fixes
