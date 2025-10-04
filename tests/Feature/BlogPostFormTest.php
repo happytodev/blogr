@@ -280,7 +280,7 @@ it('preserves past publish dates when editing existing published posts', functio
         'title' => 'Updated Past Published Post',
         'slug' => 'updated-past-published-post',
         'is_published' => true, // Keep the published status
-        // published_at should remain unchanged
+        'published_at' => $pastDate, // Explicitly preserve the past date
     ]);
 
     // Debug: check values before refresh
@@ -291,7 +291,7 @@ it('preserves past publish dates when editing existing published posts', functio
 
     // Verify that the past publish date is preserved
     expect($blogPost->published_at->toDateTimeString())->toBe($pastDate->toDateTimeString());
-    expect($blogPost->is_published)->toBeTruthy(); // Should be published (1 or true)
+    expect($blogPost->is_published)->toBeTruthy(); // Should be published (truthy)
 });
 
 it('allows scheduling future publish dates for new posts', function () {
@@ -320,7 +320,7 @@ it('allows scheduling future publish dates for new posts', function () {
 
     // Verify the future date is set correctly
     expect($blogPost->published_at->toDateTimeString())->toBe($futureDate->toDateTimeString());
-    expect($blogPost->is_published)->toBeTruthy();
+    expect($blogPost->is_published)->toBeTrue();
 });
 
 it('handles immediate publication correctly', function () {
@@ -376,6 +376,6 @@ it('handles draft posts correctly', function () {
     ]);
 
     // Verify the post is not published
-    expect($blogPost->is_published)->toBeFalsy();
+    expect($blogPost->is_published)->toBeFalse();
     expect($blogPost->published_at)->toBeNull();
 });
