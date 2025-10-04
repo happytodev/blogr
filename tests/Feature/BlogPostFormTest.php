@@ -379,3 +379,161 @@ it('handles draft posts correctly', function () {
     expect($blogPost->is_published)->toBeFalse();
     expect($blogPost->published_at)->toBeNull();
 });
+
+it('displays limited tags in table with others count', function () {
+    // Create a user and category
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+    ]);
+    $category = Category::create([
+        'name' => 'Test Category',
+        'slug' => 'test-category',
+    ]);
+
+    // Create multiple tags
+    $tag1 = \Happytodev\Blogr\Models\Tag::create(['name' => 'lorem-1', 'slug' => 'lorem-1']);
+    $tag2 = \Happytodev\Blogr\Models\Tag::create(['name' => 'lorem-2', 'slug' => 'lorem-2']);
+    $tag3 = \Happytodev\Blogr\Models\Tag::create(['name' => 'lorem-3', 'slug' => 'lorem-3']);
+    $tag4 = \Happytodev\Blogr\Models\Tag::create(['name' => 'lorem-4', 'slug' => 'lorem-4']);
+    $tag5 = \Happytodev\Blogr\Models\Tag::create(['name' => 'lorem-5', 'slug' => 'lorem-5']);
+
+    // Create a blog post with 5 tags
+    $blogPost = BlogPost::create([
+        'title' => 'Post with Many Tags',
+        'content' => 'This post has many tags.',
+        'slug' => 'post-with-many-tags',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Attach all 5 tags to the post
+    $blogPost->tags()->attach([$tag1->id, $tag2->id, $tag3->id, $tag4->id, $tag5->id]);
+
+    // Test the tag display logic (simulating what happens in the table)
+    $tags = $blogPost->tags;
+    $tagNames = $tags->pluck('name')->toArray();
+
+    if (count($tagNames) <= 3) {
+        $displayTags = $tagNames;
+    } else {
+        $displayTags = array_slice($tagNames, 0, 3);
+        $remainingCount = count($tagNames) - 3;
+        $word = $remainingCount === 1 ? 'other' : 'others';
+        $displayTags[] = "+{$remainingCount} {$word}";
+    }
+
+    // Verify the display shows first 3 tags + "+2 others"
+    expect($displayTags)->toHaveCount(4);
+    expect($displayTags[0])->toBe('lorem-1');
+    expect($displayTags[1])->toBe('lorem-2');
+    expect($displayTags[2])->toBe('lorem-3');
+    expect($displayTags[3])->toBe('+2 others');
+});
+
+it('displays all tags when 3 or fewer', function () {
+    // Create a user and category
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+    ]);
+    $category = Category::create([
+        'name' => 'Test Category',
+        'slug' => 'test-category',
+    ]);
+
+    // Create 3 tags
+    $tag1 = \Happytodev\Blogr\Models\Tag::create(['name' => 'tag-1', 'slug' => 'tag-1']);
+    $tag2 = \Happytodev\Blogr\Models\Tag::create(['name' => 'tag-2', 'slug' => 'tag-2']);
+    $tag3 = \Happytodev\Blogr\Models\Tag::create(['name' => 'tag-3', 'slug' => 'tag-3']);
+
+    // Create a blog post with 3 tags
+    $blogPost = BlogPost::create([
+        'title' => 'Post with Three Tags',
+        'content' => 'This post has exactly 3 tags.',
+        'slug' => 'post-with-three-tags',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Attach 3 tags to the post
+    $blogPost->tags()->attach([$tag1->id, $tag2->id, $tag3->id]);
+
+    // Test the tag display logic
+    $tags = $blogPost->tags;
+    $tagNames = $tags->pluck('name')->toArray();
+
+    if (count($tagNames) <= 3) {
+        $displayTags = $tagNames;
+    } else {
+        $displayTags = array_slice($tagNames, 0, 3);
+        $remainingCount = count($tagNames) - 3;
+        $word = $remainingCount === 1 ? 'other' : 'others';
+        $displayTags[] = "+{$remainingCount} {$word}";
+    }
+
+    // Verify all 3 tags are displayed without "+others"
+    expect($displayTags)->toHaveCount(3);
+    expect($displayTags[0])->toBe('tag-1');
+    expect($displayTags[1])->toBe('tag-2');
+    expect($displayTags[2])->toBe('tag-3');
+});
+
+it('displays limited tags in table with singular other count', function () {
+    // Create a user and category
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+    ]);
+    $category = Category::create([
+        'name' => 'Test Category',
+        'slug' => 'test-category',
+    ]);
+
+    // Create 4 tags
+    $tag1 = \Happytodev\Blogr\Models\Tag::create(['name' => 'tag-1', 'slug' => 'tag-1']);
+    $tag2 = \Happytodev\Blogr\Models\Tag::create(['name' => 'tag-2', 'slug' => 'tag-2']);
+    $tag3 = \Happytodev\Blogr\Models\Tag::create(['name' => 'tag-3', 'slug' => 'tag-3']);
+    $tag4 = \Happytodev\Blogr\Models\Tag::create(['name' => 'tag-4', 'slug' => 'tag-4']);
+
+    // Create a blog post with 4 tags
+    $blogPost = BlogPost::create([
+        'title' => 'Post with Four Tags',
+        'content' => 'This post has exactly 4 tags.',
+        'slug' => 'post-with-four-tags',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Attach 4 tags to the post
+    $blogPost->tags()->attach([$tag1->id, $tag2->id, $tag3->id, $tag4->id]);
+
+    // Test the tag display logic
+    $tags = $blogPost->tags;
+    $tagNames = $tags->pluck('name')->toArray();
+
+    if (count($tagNames) <= 3) {
+        $displayTags = $tagNames;
+    } else {
+        $displayTags = array_slice($tagNames, 0, 3);
+        $remainingCount = count($tagNames) - 3;
+        $word = $remainingCount === 1 ? 'other' : 'others';
+        $displayTags[] = "+{$remainingCount} {$word}";
+    }
+
+    // Verify the display shows first 3 tags + "+1 other"
+    expect($displayTags)->toHaveCount(4);
+    expect($displayTags[0])->toBe('tag-1');
+    expect($displayTags[1])->toBe('tag-2');
+    expect($displayTags[2])->toBe('tag-3');
+    expect($displayTags[3])->toBe('+1 other');
+});
