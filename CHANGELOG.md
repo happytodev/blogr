@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.6.1](https://github.com/happytodev/blogr/compare/v0.6.0...v0.6.1) - 2025-10-04
+
+### 🐛 Bug Fixes
+
+- Fix invalid named parameter `ignoringRecord` in category slug unique validation ([Issue #77](https://github.com/happytodev/blogr/issues/77))
+
 ## [v0.6.0](https://github.com/happytodev/blogr/compare/v0.5.0...v0.6.0) - 2025-09-10
 
 ### 🚀 Features
