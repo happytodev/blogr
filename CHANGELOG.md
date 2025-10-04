@@ -7,11 +7,17 @@ All notable changes to `blogr` will be documented in this file.
 ### 🐛 Bug Fixes
 
 - **Category Slug Validation**: Fix unique validation for category slugs to properly ignore current record during editing
+- **Blog Post Publish Date Validation**: Allow editing existing published posts with past publish dates by making validation conditional based on whether it's a new post or existing record
 
 ### 🧪 Testing
 
 - **Category Form Tests**: Add comprehensive unit tests for `CategoryForm` schema configuration
 - **Category Model Tests**: Add functional tests for Category model behavior including slug generation, uniqueness validation, and relationships
+- **Blog Post Publication Tests**: Add tests for publish date handling including:
+  - Preservation of past publish dates when editing existing posts
+  - Scheduling future publication dates
+  - Immediate publication behavior
+  - Draft post handling
 - **Filament Integration Tests**: Add tests for Filament settings page integration and form validation
 
 ### 🎨 Code Quality
