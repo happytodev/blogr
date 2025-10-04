@@ -29,7 +29,7 @@ it('preserves existing slug when provided', function () {
 it('has many posts relationship', function () {
     $category = CategoryFactory::new()->create();
     
-    expect($category->posts())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class);
+    expect($category->posts())->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class);      
 });
 
 it('can create category with factory', function () {

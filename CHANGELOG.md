@@ -4,10 +4,23 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### 🐛 Bug Fixes
+
+- **Category Slug Validation**: Fix unique validation for category slugs to properly ignore current record during editing
+
 ### 🧪 Testing
 
 - **Category Form Tests**: Add comprehensive unit tests for `CategoryForm` schema configuration
 - **Category Model Tests**: Add functional tests for Category model behavior including slug generation, uniqueness validation, and relationships
+- **Filament Integration Tests**: Add tests for Filament settings page integration and form validation
+
+### 🎨 Code Quality
+
+- **Code Formatting**: Improve code formatting and consistency in `BlogrSettings.php`
+
+### 🚀 Features
+
+- **Frontend Routes Configuration**: Add `blogr.route.frontend.enable` setting to control frontend route registration
 
 ## [v0.6.1](https://github.com/happytodev/blogr/compare/v0.6.0...v0.6.1) - 2025-10-04
 
