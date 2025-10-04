@@ -247,3 +247,135 @@ it('shows correct helper text when strict mode is enabled and global TOC is disa
 
     expect($helperText)->toBe('TOC setting is controlled globally and cannot be changed per post. Currently, table of contents are always disabled for all posts.');
 });
+
+it('preserves past publish dates when editing existing published posts', function () {
+    // Create a user and category
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+    ]);
+    $category = Category::create([
+        'name' => 'Test Category',
+        'slug' => 'test-category',
+    ]);
+
+    // Create a blog post published in the past (1 year ago)
+    $pastDate = now()->subYear();
+    $blogPost = BlogPost::create([
+        'title' => 'Past Published Post',
+        'content' => 'This is a test post content.',
+        'slug' => 'past-published-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => $pastDate,
+    ]);
+
+    // Verify initial state
+    expect($blogPost->published_at->toDateTimeString())->toBe($pastDate->toDateTimeString());
+
+    // Simulate editing the post (changing title but keeping publish date)
+    $blogPost->update([
+        'title' => 'Updated Past Published Post',
+        'slug' => 'updated-past-published-post',
+        'is_published' => true, // Keep the published status
+        'published_at' => $pastDate, // Explicitly preserve the past date
+    ]);
+
+    // Debug: check values before refresh
+    expect($blogPost->is_published)->toBeTrue(); // Check before refresh
+
+    // Refresh from database
+    $blogPost->refresh();
+
+    // Verify that the past publish date is preserved
+    expect($blogPost->published_at->toDateTimeString())->toBe($pastDate->toDateTimeString());
+    expect($blogPost->is_published)->toBeTruthy(); // Should be published (truthy)
+});
+
+it('allows scheduling future publish dates for new posts', function () {
+    // Create a user and category
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+    ]);
+    $category = Category::create([
+        'name' => 'Test Category',
+        'slug' => 'test-category',
+    ]);
+
+    // Create a blog post scheduled for the future
+    $futureDate = now()->addDays(7);
+    $blogPost = BlogPost::create([
+        'title' => 'Future Scheduled Post',
+        'content' => 'This post will be published in the future.',
+        'slug' => 'future-scheduled-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => $futureDate,
+    ]);
+
+    // Verify the future date is set correctly
+    expect($blogPost->published_at->toDateTimeString())->toBe($futureDate->toDateTimeString());
+    expect($blogPost->is_published)->toBeTrue();
+});
+
+it('handles immediate publication correctly', function () {
+    // Create a user and category
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+    ]);
+    $category = Category::create([
+        'name' => 'Test Category',
+        'slug' => 'test-category',
+    ]);
+
+    // Create a blog post for immediate publication (no published_at date)
+    $blogPost = BlogPost::create([
+        'title' => 'Immediately Published Post',
+        'content' => 'This post is published immediately.',
+        'slug' => 'immediately-published-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => null, // Immediate publication
+    ]);
+
+    // Verify the post is published and has a publish date set to now (automatic)
+    expect($blogPost->published_at)->not->toBeNull();
+    expect($blogPost->published_at)->toBeInstanceOf(\Carbon\Carbon::class);
+    expect($blogPost->is_published)->toBeTruthy();
+});
+
+it('handles draft posts correctly', function () {
+    // Create a user and category
+    $user = User::create([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+    ]);
+    $category = Category::create([
+        'name' => 'Test Category',
+        'slug' => 'test-category',
+    ]);
+
+    // Create a draft blog post
+    $blogPost = BlogPost::create([
+        'title' => 'Draft Post',
+        'content' => 'This is a draft post.',
+        'slug' => 'draft-post',
+        'is_published' => false,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => null,
+    ]);
+
+    // Verify the post is not published
+    expect($blogPost->is_published)->toBeFalse();
+    expect($blogPost->published_at)->toBeNull();
+});

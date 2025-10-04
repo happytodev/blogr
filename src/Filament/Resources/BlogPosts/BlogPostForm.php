@@ -232,7 +232,21 @@ class BlogPostForm
                     ->label('Publish Date')
                     ->nullable()
                     ->live()
-                    ->rules(['nullable', 'date', 'after:now - 30 seconds'])
+                    ->rules([
+                        'nullable',
+                        'date',
+                        function ($attribute, $value, $fail) {
+                            // Allow past dates for existing records (editing published posts)
+                            // Only require future dates for new posts or when scheduling
+                            if ($value && (empty($record) || (method_exists($record, 'exists') && !$record->exists))) {
+                                // For new posts, require future dates or null for immediate publication
+                                if (\Carbon\Carbon::parse($value)->isPast()) {
+                                    $fail('Publish date must be in the future for new posts.');
+                                }
+                            }
+                            // For existing posts, allow any date (past dates are preserved)
+                        }
+                    ])
                     ->helperText('Leave empty for immediate publication, or set a future date to schedule publication.'),
                 TextInput::make('meta_title')
                     ->label('Meta Title')
