@@ -238,7 +238,7 @@ class BlogPostForm
                         function ($attribute, $value, $fail) {
                             // Allow past dates for existing records (editing published posts)
                             // Only require future dates for new posts or when scheduling
-                            if ($value && request()->route() && str_contains(request()->route()->getName(), 'create')) {
+                            if ($value && (empty($record) || (method_exists($record, 'exists') && !$record->exists))) {
                                 // For new posts, require future dates or null for immediate publication
                                 if (\Carbon\Carbon::parse($value)->isPast()) {
                                     $fail('Publish date must be in the future for new posts.');
