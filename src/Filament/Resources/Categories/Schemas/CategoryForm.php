@@ -23,7 +23,7 @@ class CategoryForm
                     }),
                 TextInput::make('slug')
                     ->required()
-                    ->unique(ignoringRecord: true)
+                    ->unique('categories', 'slug')
                     ->maxLength(255),
                 Toggle::make('is_default')
                     ->label('Default category')
