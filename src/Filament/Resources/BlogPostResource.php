@@ -16,6 +16,7 @@ use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\ListBlogPosts;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\CreateBlogPost;
 
 use BackedEnum;
+use Filament\Facades\Filament;
 
 class BlogPostResource extends Resource
 {
@@ -26,6 +27,40 @@ class BlogPostResource extends Resource
     protected static string|\UnitEnum|null $navigationGroup = 'Blogr';
 
     protected static ?int $navigationSort = 1;
+
+    public static function canViewAny(): bool
+    {
+        return Filament::auth()->user()->hasRole(['admin', 'writer']);
+    }
+
+    public static function canCreate(): bool
+    {
+        return Filament::auth()->user()->hasRole(['admin', 'writer']);
+    }
+
+    public static function canEdit($record): bool
+    {
+        $user = Filament::auth()->user();
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+        if ($user->hasRole('writer')) {
+            return $record->user_id === $user->id;
+        }
+        return false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        $user = Filament::auth()->user();
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+        if ($user->hasRole('writer')) {
+            return $record->user_id === $user->id;
+        }
+        return false;
+    }
 
     public static function form(Schema $schema): Schema
     {

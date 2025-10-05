@@ -4,6 +4,7 @@ namespace Happytodev\Blogr\Models;
 
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class BlogPost extends Model
@@ -32,6 +33,14 @@ class BlogPost extends Model
         parent::boot();
 
         static::creating(function ($post) {
+            // Prevent writers from publishing posts
+            if ($post->is_published && $post->user_id) {
+                $user = User::find($post->user_id);
+                if ($user && $user->hasRole('writer') && !$user->hasRole('admin')) {
+                    throw new \Exception('Writers cannot publish posts. Only admins can publish.');
+                }
+            }
+
             // If post is published but no published_at date is set, set it to now
             if ($post->is_published && !$post->published_at) {
                 $post->published_at = now();
@@ -39,6 +48,14 @@ class BlogPost extends Model
         });
 
         static::updating(function ($post) {
+            // Prevent writers from publishing posts
+            if ($post->is_published && $post->user_id) {
+                $user = User::find($post->user_id);
+                if ($user && $user->hasRole('writer') && !$user->hasRole('admin')) {
+                    throw new \Exception('Writers cannot publish posts. Only admins can publish.');
+                }
+            }
+
             // If post is being published but no published_at date is set, set it to now
             if ($post->is_published && !$post->published_at) {
                 $post->published_at = now();

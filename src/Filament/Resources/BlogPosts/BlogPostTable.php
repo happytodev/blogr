@@ -2,7 +2,6 @@
 
 namespace Happytodev\Blogr\Filament\Resources\BlogPosts;
 
-
 use Filament\Tables\Table;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteBulkAction;
@@ -10,12 +9,22 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Storage;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Facades\Filament;
 
 class BlogPostTable
 {
-    public static function configure(Table $schema): Table
+    public static function configure(Table $table): Table
     {
-        return $schema
+        return $table
+            ->modifyQueryUsing(function ($query) {
+                $user = Filament::auth()->user();
+                if ($user->hasRole('writer') && !$user->hasRole('admin')) {
+                    // Writers can only see their own posts
+                    $query->where('user_id', $user->id);
+                }
+                // Admins can see all posts
+                return $query;
+            })
             ->columns([
                 TextColumn::make('title')
                     ->sortable()

@@ -6,10 +6,11 @@ use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
-    use HasFactory;
+    use HasFactory, HasRoles;
     protected $fillable = [
         'name',
         'email',
@@ -25,6 +26,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function blogPosts()
     {
         return $this->hasMany(BlogPost::class);
+    }
+
+    public function guardName()
+    {
+        return 'web';
     }
 
     public function canAccessPanel(\Filament\Panel $panel): bool
