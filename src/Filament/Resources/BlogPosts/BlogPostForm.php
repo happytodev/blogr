@@ -2,8 +2,6 @@
 
 namespace Happytodev\Blogr\Filament\Resources\BlogPosts;
 
-use Illuminate\Support\Str;
-use Filament\Schemas\Schema;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -16,7 +14,9 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Happytodev\Blogr\Models\BlogPost;
+use Illuminate\Support\Str;
 
 class BlogPostForm
 {
@@ -213,6 +213,7 @@ class BlogPostForm
                     ->offColor('gray') // Gray for draft
                     ->default(false)
                     ->live()
+                    ->visible(fn() => Filament::auth()->user() && method_exists(Filament::auth()->user(), 'hasRole') ? Filament::auth()->user()->hasRole('admin') : false)
                     ->afterStateUpdated(function (Set $set, Get $get, ?bool $state) {
                         if ($state) {
                             // When activating publication
@@ -232,6 +233,7 @@ class BlogPostForm
                     ->label('Publish Date')
                     ->nullable()
                     ->live()
+                    ->visible(fn() => Filament::auth()->user() && method_exists(Filament::auth()->user(), 'hasRole') ? Filament::auth()->user()->hasRole('admin') : false)
                     ->rules([
                         'nullable',
                         'date',
