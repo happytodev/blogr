@@ -5,15 +5,18 @@ namespace Happytodev\Blogr;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Asset;
+use Illuminate\Support\Facades\Gate;
+use Happytodev\Blogr\Models\BlogPost;
 use Illuminate\Filesystem\Filesystem;
 use Spatie\LaravelPackageTools\Package;
 use Happytodev\Blogr\Testing\TestsBlogr;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentAsset;
 use Happytodev\Blogr\Commands\BlogrCommand;
-use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Filament\Support\Assets\AlpineComponent;
+use Happytodev\Blogr\Policies\BlogPostPolicy;
 use Livewire\Features\SupportTesting\Testable;
+use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
@@ -64,6 +67,9 @@ class BlogrServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        // Register Policies
+        Gate::policy(BlogPost::class, BlogPostPolicy::class);
+
         // Asset Registration
         FilamentAsset::register(
             $this->getAssets(),
