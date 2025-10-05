@@ -26,6 +26,7 @@
         "filament/actions": "^4.0",
         "filament/filament": "^4.0",
         "spatie/laravel-package-tools": "^1.15.0",
+        "spatie/laravel-permission": "^6.0",
         "spatie/yaml-front-matter": "^2.1"
     },
     "require-dev": {
