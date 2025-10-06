@@ -59,7 +59,17 @@ class UserResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Users';
+        return __('blogr::blogr.users.navigation_label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('blogr::blogr.users.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('blogr::blogr.users.plural_model_label');
     }
 
     public static function getPages(): array
