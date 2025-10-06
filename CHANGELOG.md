@@ -2,6 +2,27 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## Unpublished
+
+### 🎭 Role-Based Access Control
+
+- **Admin & Writer Roles**: Two predefined user roles with distinct permissions
+  - **Admin**: Full access to all features including user management and post publishing
+  - **Writer**: Can create and edit content but cannot publish posts or manage users
+  
+- **Optional User Management**: Install user management when needed with a simple command
+  - `php artisan blogr:install-user-management`
+  - Automatically sets up roles, permissions, and admin interface
+  - Includes optional test users for quick setup (`--with-test-users`)
+
+### 🧪 Testing
+
+- **Enhanced Test Coverage**: Comprehensive test suite with 134 passing tests
+  - User management and role assignment
+  - Permission verification for admin and writer roles
+  - Data persistence validation
+
+
 ## [v0.7.0](https://github.com/happytodev/blogr/compare/v0.7.0...v0.6.2) - 2025-10-05
 
 ### 🐛 Bug Fixes

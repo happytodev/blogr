@@ -2,17 +2,17 @@
 
 namespace Happytodev\Blogr;
 
-use Filament\Panel;
 use Filament\Contracts\Plugin;
-use Happytodev\Blogr\Filament\Resources\BlogPostResource;
-use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
-use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
+use Filament\Panel;
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
+use Happytodev\Blogr\Filament\Resources\BlogPostResource;
+use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
+use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
+use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
+use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
 use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
 use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;
 use Happytodev\Blogr\Filament\Widgets\ScheduledPosts;
-use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
-use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
 
 class BlogrPlugin implements Plugin
 {
