@@ -17,6 +17,7 @@ use Filament\Support\Assets\AlpineComponent;
 use Happytodev\Blogr\Policies\BlogPostPolicy;
 use Livewire\Features\SupportTesting\Testable;
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
+use Happytodev\Blogr\Commands\InstallUserManagementCommand;
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
@@ -35,7 +36,6 @@ class BlogrServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package->name(static::$name)
-            ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->publishConfigFile()
@@ -175,14 +175,6 @@ class BlogrServiceProvider extends PackageServiceProvider
     /**
      * @return array<class-string>
      */
-    protected function getCommands(): array
-    {
-        return [
-            BlogrCommand::class,
-            BlogrInstallCommand::class,
-        ];
-    }
-
     /**
      * @return array<string>
      */
@@ -246,6 +238,7 @@ class BlogrServiceProvider extends PackageServiceProvider
             $this->commands([
                 BlogrCommand::class,
                 BlogrInstallCommand::class,
+                InstallUserManagementCommand::class,
             ]);
         }
 
