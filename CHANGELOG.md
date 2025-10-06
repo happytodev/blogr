@@ -4,36 +4,23 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
-### 🚀 Features
+### 🎭 Role-Based Access Control
 
-- **Role-Based Permission System**: Implement comprehensive role-based permissions using Spatie Laravel Permission v6
-  - **Admin Role**: Full access to create, edit, publish, and manage all blog posts
-  - **Writer Role**: Can create and edit their own posts but cannot publish them directly
-  - **Permission Levels**: Writers can only view and edit their own posts, admins can manage all posts
-- **Filament Integration**: Enhanced Filament admin panel with role-based UI restrictions
-  - **Conditional Form Fields**: Publish controls are hidden for writers, visible only for admins
-  - **Resource Permissions**: BlogPostResource respects user roles for create, edit, delete, and view operations
-  - **Table Filtering**: Writers only see their own posts in the admin table
-- **Model-Level Validation**: Added boot method validation in BlogPost model to prevent writers from publishing posts
-- **Automatic Permission Tables**: Migration automatically creates required Spatie permission tables (roles, permissions, model_has_roles, etc.)
-- **Demo Application Setup**: Complete integration guide and setup for testing permissions in demo applications
+- **Admin & Writer Roles**: Two predefined user roles with distinct permissions
+  - **Admin**: Full access to all features including user management and post publishing
+  - **Writer**: Can create and edit content but cannot publish posts or manage users
+  
+- **Optional User Management**: Install user management when needed with a simple command
+  - `php artisan blogr:install-user-management`
+  - Automatically sets up roles, permissions, and admin interface
+  - Includes optional test users for quick setup (`--with-test-users`)
 
 ### 🧪 Testing
 
-- **Permission Test Suite**: Added comprehensive test suite for role-based permissions (8 new tests)
-  - **Role Assignment Tests**: Verify admin and writer roles can be assigned correctly
-  - **Permission Enforcement Tests**: Test that writers cannot publish posts at model level
-  - **Filament UI Tests**: Verify form controls are properly hidden/shown based on user roles
-  - **Access Control Tests**: Test that writers can only view/edit their own posts
-  - **Form Configuration Tests**: Ensure BlogPostForm::configure works without TypeError for both roles
-- **Parallel Testing**: All tests pass in parallel execution mode without conflicts
-
-### 🔧 Technical Improvements
-
-- **Schema Type Safety**: Improved type handling in BlogPostForm to work with both custom and Filament schemas
-- **Dependency Management**: Added spatie/laravel-permission ^6.0 as required dependency
-- **Migration Strategy**: Implemented proper migration loading in TestCase for consistent test database setup
-- **Code Quality**: Enhanced error handling and method existence checks for better compatibility
+- **Enhanced Test Coverage**: Comprehensive test suite with 134 passing tests
+  - User management and role assignment
+  - Permission verification for admin and writer roles
+  - Data persistence validation
 
 
 ## [v0.7.0](https://github.com/happytodev/blogr/compare/v0.7.0...v0.6.2) - 2025-10-05
