@@ -47,11 +47,67 @@ return [
     |
     | Configure how reading time is displayed on blog posts.
     | You can enable/disable the display and customize the text format.
+    | 
+    | For multilingual sites, you can define translations for each locale:
+    | 'text_format' => [
+    |     'en' => 'Reading time: {time}',
+    |     'fr' => 'Temps de lecture : {time}',
+    | ]
+    |
+    | Or use a simple string for all locales:
+    | 'text_format' => 'Reading time: {time}'
     |
     */
     'reading_time' => [
         'enabled' => true, // Enable/disable reading time display
-        'text_format' => 'Reading time: {time}', // Text format with {time} placeholder
+        'text_format' => [
+            'en' => 'Reading time: {time}',
+            'fr' => 'Temps de lecture : {time}',
+            'es' => 'Tiempo de lectura: {time}',
+            'de' => 'Lesezeit: {time}',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Blog Posts Default Image Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure default image for blog posts without a featured image.
+    |
+    */
+    'posts' => [
+        'default_image' => '/vendor/blogr/images/default-post.svg', // Default image for posts without photo
+        'show_language_switcher' => true, // Show available languages on post page
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Blog Series Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure blog series settings including default images.
+    |
+    */
+    'series' => [
+        'enabled' => true,
+        'default_image' => '/vendor/blogr/images/default-series.svg', // Default image for series without photo
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Multilingual Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure available locales and default locale for multilingual content.
+    | Posts, series, categories, and tags can be translated into these locales.
+    | The default locale is used when no translation is available.
+    |
+    */
+    'locales' => [
+        'enabled' => false, // Enable localized routes (/{locale}/blog/...)
+        'default' => 'en', // Default locale
+        'available' => ['en', 'fr', 'es', 'de'], // Available locales for translations
     ],
 
     /*
@@ -104,5 +160,64 @@ return [
                 'logo' => env('APP_URL', 'https://yourwebsite.com') . '/images/logo.png',
             ],
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | UI Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure the user interface elements like navigation, footer, theme switcher, etc.
+    |
+    */
+    'ui' => [
+        'navigation' => [
+            'enabled' => true, // Show navigation bar
+            'sticky' => true, // Make navigation sticky on scroll
+            'show_logo' => true, // Show site logo/name
+            'show_language_switcher' => true, // Show language switcher in navigation
+            'show_theme_switcher' => true, // Show day/night/auto theme switcher
+        ],
+        'footer' => [
+            'enabled' => true, // Show footer
+            'text' => '© 2025 My Blog. All rights reserved.', // Footer text (supports HTML)
+            'show_social_links' => true, // Show social media links
+            'social_links' => [
+                'twitter' => '', // Twitter/X URL
+                'github' => '', // GitHub URL
+                'linkedin' => '', // LinkedIn URL
+                'facebook' => '', // Facebook URL
+            ],
+        ],
+        'theme' => [
+            'default' => 'light', // Default theme: 'light', 'dark', or 'auto'
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Locales Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure multilingual support for the blog.
+    |
+    */
+    'locales' => [
+        'enabled' => true, // Enable/disable multilingual support
+        'default' => 'en', // Default locale
+        'available' => ['en', 'fr', 'es', 'de'], // Available locales
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Posts Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure post-specific settings like default images, language indicators, etc.
+    |
+    */
+    'posts' => [
+        'default_image' => '/vendor/blogr/images/default-post.svg', // Default image for posts without photo
+        'show_language_switcher' => true, // Show available translations indicator on posts
     ],
 ];
