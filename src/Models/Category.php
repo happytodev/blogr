@@ -22,6 +22,30 @@ class Category extends Model
         return $this->hasMany(BlogPost::class);
     }
 
+    /**
+     * A category has many translations
+     */
+    public function translations()
+    {
+        return $this->hasMany(CategoryTranslation::class, 'category_id');
+    }
+
+    /**
+     * Get the translation for a specific locale
+     */
+    public function translate(string $locale): ?CategoryTranslation
+    {
+        return $this->translations()->where('locale', $locale)->first();
+    }
+
+    /**
+     * Get the default translation (English)
+     */
+    public function getDefaultTranslation(): ?CategoryTranslation
+    {
+        return $this->translate('en') ?? $this->translations()->first();
+    }
+
     public static function boot()
     {
         parent::boot();

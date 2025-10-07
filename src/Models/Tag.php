@@ -21,6 +21,21 @@ class Tag extends Model
         return $this->belongsToMany(BlogPost::class, config('blogr.tables.prefix', '') . 'blog_post_tag');
     }
 
+    public function translations()
+    {
+        return $this->hasMany(TagTranslation::class, 'tag_id');
+    }
+
+    public function translate(string $locale): ?TagTranslation
+    {
+        return $this->translations()->where('locale', $locale)->first();
+    }
+
+    public function getDefaultTranslation(): ?TagTranslation
+    {
+        return $this->translate('en') ?? $this->translations()->first();
+    }
+
     public static function boot()
     {
         parent::boot();
