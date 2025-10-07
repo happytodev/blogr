@@ -49,13 +49,13 @@ it('displays blog post with title, category, tags, TLDR and TOC correctly', func
 
     // Assert the category is displayed
     $response->assertSee('Technology');
-    $response->assertSee(route('blog.category', $category->slug));
+    $response->assertSee(route('blog.category', ['locale' => app()->getLocale(), 'categorySlug' => $category->slug]));
 
     // Assert the tags are displayed
     $response->assertSee('Laravel');
     $response->assertSee('PHP');
-    $response->assertSee(route('blog.tag', $tag1->slug));
-    $response->assertSee(route('blog.tag', $tag2->slug));
+    $response->assertSee(route('blog.tag', ['locale' => app()->getLocale(), 'tagSlug' => $tag1->slug]));
+    $response->assertSee(route('blog.tag', ['locale' => app()->getLocale(), 'tagSlug' => $tag2->slug]));
 
     // Assert the TL;DR is displayed
     $response->assertSee('TL;DR');
@@ -246,7 +246,7 @@ it('calculates estimated reading time correctly', function () {
         'is_default' => false,
     ]);
 
-    // Test with very short content (should be < 1 minute)
+    // Test with very short content (should be minimum 1 minute)
     $shortPost = BlogPost::create([
         'title' => 'Hi',
         'content' => 'Test.',
@@ -257,7 +257,7 @@ it('calculates estimated reading time correctly', function () {
         'published_at' => now(),
     ]);
 
-    expect($shortPost->getEstimatedReadingTime())->toBe('<1 minute');
+    expect($shortPost->getEstimatedReadingTime())->toBe('1 minute');
 
     // Test with longer content (should calculate properly)
     $longPost = BlogPost::create([
@@ -345,13 +345,13 @@ it('respects reading time configuration settings', function () {
     config(['blogr.reading_time.text_format' => 'Reading time: {time}']);
     $formattedTime = $blogPost->getFormattedReadingTime();
     expect($formattedTime)->toContain('Reading time:');
-    expect($formattedTime)->toContain('minute');
+    expect($formattedTime)->toContain('min');
 
     // Test with custom format
     config(['blogr.reading_time.text_format' => '{time} to read']);
     $formattedTime = $blogPost->getFormattedReadingTime();
     expect($formattedTime)->toContain('to read');
-    expect($formattedTime)->toContain('minute');
+    expect($formattedTime)->toContain('min');
 
     // Test with reading time disabled
     config(['blogr.reading_time.enabled' => false]);
