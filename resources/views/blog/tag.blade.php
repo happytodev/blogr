@@ -32,7 +32,7 @@
                         <div class="mb-2">
                             <span class="text-sm text-gray-600">
                                 Category:
-                                <a href="{{ route('blog.category', $post->category->slug) }}"
+                                <a href="{{ route('blog.category', ['locale' => $currentLocale ?? app()->getLocale(), 'categorySlug' => $post->category->slug]) }}"
                                     class="text-blue-500 hover:underline">
                                     {{ $post->category->name }}
                                 </a>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ config('blogr.ui.theme.default', 'light') === 'dark' ? 'dark' : '' }}">
 
 <head>
     <meta charset="utf-8">
@@ -60,7 +60,10 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
     <!-- Styles -->
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <!-- Structured Data (JSON-LD) -->
     @if (config('blogr.seo.structured_data.enabled', true))
@@ -70,16 +73,66 @@
     @endif
 
     @stack('head')
+    
+    <!-- Temporary dark mode styles until CSS is recompiled -->
+    <style>
+        .dark body, .dark .bg-gray-50 { background-color: rgb(17 24 39); }
+        .dark .bg-white { background-color: rgb(31 41 55); }
+        .dark .bg-gray-900 { background-color: rgb(17 24 39); }
+        .dark .bg-gray-800 { background-color: rgb(31 41 55); }
+        .dark .bg-gray-700 { background-color: rgb(55 65 81); }
+        .dark .text-gray-900 { color: rgb(243 244 246); }
+        .dark .text-gray-800 { color: rgb(229 231 235); }
+        .dark .text-gray-700 { color: rgb(209 213 219); }
+        .dark .text-gray-600 { color: rgb(156 163 175); }
+        .dark .text-gray-500 { color: rgb(107 114 128); }
+        .dark .text-gray-400 { color: rgb(156 163 175); }
+        .dark .text-gray-300 { color: rgb(209 213 219); }
+        .dark .text-gray-100 { color: rgb(243 244 246); }
+        .dark .text-white { color: rgb(255 255 255); }
+        .dark .border-gray-200 { border-color: rgb(55 65 81); }
+        .dark .border-gray-700 { border-color: rgb(55 65 81); }
+        .dark .hover\:bg-gray-100:hover { background-color: rgb(55 65 81); }
+        .dark .hover\:bg-gray-800:hover { background-color: rgb(55 65 81); }
+        .dark .hover\:bg-gray-700:hover { background-color: rgb(75 85 99); }
+    </style>
+    
+    <!-- Dark mode initialization script (runs before page render to prevent flash) -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || '{{ config('blogr.ui.theme.default', 'light') }}';
+            if (theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
 </head>
 
-<body>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
     @stack('body-start')
 
-    <div class="min-h-screen bg-gray-50">
-        @yield('content')
+    <div class="min-h-screen flex flex-col">
+        <!-- Navigation -->
+        @if(config('blogr.ui.navigation.enabled', true))
+            @include('blogr::components.navigation', [
+                'currentLocale' => $currentLocale ?? config('blogr.locales.default', 'en'),
+                'availableLocales' => $availableLocales ?? config('blogr.locales.available', ['en'])
+            ])
+        @endif
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            @yield('content')
+        </main>
+
+        <!-- Footer -->
+        @include('blogr::components.footer')
     </div>
 
     @stack('body-end')
+    @stack('scripts')
 </body>
 
 </html>
