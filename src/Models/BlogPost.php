@@ -5,10 +5,14 @@ namespace Happytodev\Blogr\Models;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Helpers\ConfigHelper;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BlogPost extends Model
 {
+    use HasFactory;
+    
     protected $fillable = [
         'title',
         'photo',
@@ -22,11 +26,22 @@ class BlogPost extends Model
         'meta_keywords',
         'tldr',
         'category_id',
+        'blog_series_id',
+        'series_position',
+        'default_locale',
     ];
 
     protected $casts = [
         'published_at' => 'datetime',
     ];
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return \Happytodev\Blogr\Tests\Database\Factories\BlogPostFactory::new();
+    }
 
     protected static function boot()
     {
@@ -125,27 +140,186 @@ class BlogPost extends Model
     }
 
     /**
-     * Calculate estimated reading time for the post
-     *
-     * @return string
+     * A blog post belongs to a series
      */
-    public function getEstimatedReadingTime()
+    public function series()
+    {
+        return $this->belongsTo(BlogSeries::class, 'blog_series_id');
+    }
+
+    /**
+     * A blog post has many translations
+     */
+    public function translations()
+    {
+        return $this->hasMany(BlogPostTranslation::class, 'blog_post_id');
+    }
+
+    /**
+     * Get the translation for a specific locale
+     */
+    public function translate(string $locale): ?BlogPostTranslation
+    {
+        return $this->translations()->where('locale', $locale)->first();
+    }
+
+    /**
+     * Alias for translate() method
+     */
+    public function getTranslation(string $locale): ?BlogPostTranslation
+    {
+        return $this->translate($locale);
+    }
+
+    /**
+     * Get the default translation
+     */
+    public function getDefaultTranslation(): ?BlogPostTranslation
+    {
+        $locale = $this->default_locale ?? config('app.locale', 'en');
+        return $this->translate($locale) ?? $this->translations()->first();
+    }
+
+    /**
+     * Accesseur pour obtenir le titre depuis la traduction par défaut
+     */
+    public function getTitleAttribute($value): ?string
+    {
+        // Si on a déjà la valeur en DB (ancien système), la retourner
+        if ($value) {
+            return $value;
+        }
+        
+        // Sinon, récupérer depuis la traduction
+        $translation = $this->getDefaultTranslation();
+        return $translation?->title;
+    }
+
+    /**
+     * Get the slug for the default locale
+     */
+    public function getSlugAttribute($value): ?string
+{
+        if ($value) {
+            return $value;
+        }
+        
+        $translation = $this->getDefaultTranslation();
+        return $translation?->slug;
+    }
+
+    /**
+     * Get the TLDR attribute (with backward compatibility)
+     */
+    public function getTldrAttribute($value): ?string
+    {
+        if ($value) {
+            return $value;
+        }
+        
+        $translation = $this->getDefaultTranslation();
+        return $translation?->tldr;
+    }
+
+    /**
+     * Get the reading time attribute (with backward compatibility)
+     */
+    public function getReadingTimeAttribute($value): ?string
+    {
+        if ($value) {
+            return $value;
+        }
+        
+        $translation = $this->getDefaultTranslation();
+        return $translation?->reading_time;
+    }
+
+    /**
+     * Get the next post in the series
+     */
+    public function nextInSeries(): ?BlogPost
+    {
+        if (!$this->blog_series_id || !$this->series_position) {
+            return null;
+        }
+
+        return static::where('blog_series_id', $this->blog_series_id)
+            ->where('series_position', '>', $this->series_position)
+            ->orderBy('series_position')
+            ->first();
+    }
+
+    /**
+     * Get the previous post in the series
+     */
+    public function previousInSeries(): ?BlogPost
+    {
+        if (!$this->blog_series_id || !$this->series_position) {
+            return null;
+        }
+
+        return static::where('blog_series_id', $this->blog_series_id)
+            ->where('series_position', '<', $this->series_position)
+            ->orderBy('series_position', 'desc')
+            ->first();
+    }
+
+    /**
+     * Get the complete series navigation
+     */
+    public function getSeriesNavigation(): ?array
+    {
+        if (!$this->blog_series_id) {
+            return null;
+        }
+
+        return [
+            'previous' => $this->previousInSeries(),
+            'current' => $this,
+            'next' => $this->nextInSeries(),
+            'all' => static::where('blog_series_id', $this->blog_series_id)
+                ->orderBy('series_position')
+                ->get(),
+        ];
+    }
+
+    /**
+     * Get estimated reading time in minutes (raw number)
+     *
+     * @return int
+     */
+    public function getEstimatedReadingTimeMinutes(): int
     {
         $readingSpeed = config('blogr.reading_speed.words_per_minute', 200);
 
         // Combine title and content for word count
-        // Use getOriginal to avoid triggering the content accessor
         $text = $this->title . ' ' . $this->getOriginal('content');
 
         // Remove HTML tags and count words
         $plainText = strip_tags($text);
         $wordCount = str_word_count($plainText);
 
-        // Calculate reading time in minutes (using floor instead of ceil for more precision)
+        // Calculate reading time in minutes
         $minutes = floor($wordCount / $readingSpeed);
 
-        // If less than 1 minute but has content, show as <1 minute
-        if ($minutes < 1 && $wordCount > 0) {
+        // Minimum 1 minute if has content
+        return $wordCount > 0 ? max(1, (int)$minutes) : 0;
+    }
+
+    /**
+     * Calculate estimated reading time for the post (legacy string format)
+     *
+     * @return string
+     */
+    public function getEstimatedReadingTime()
+    {
+        $minutes = $this->getEstimatedReadingTimeMinutes();
+
+        if ($minutes === 0) {
+            return '0 minutes';
+        }
+
+        if ($minutes < 1) {
             return '<1 minute';
         }
 
@@ -175,10 +349,9 @@ class BlogPost extends Model
             return '';
         }
 
-        $time = $this->getEstimatedReadingTime();
-        $format = config('blogr.reading_time.text_format', 'Reading time: {time}');
-
-        return str_replace('{time}', $time, $format);
+        $minutes = $this->getEstimatedReadingTimeMinutes();
+        
+        return ConfigHelper::getReadingTimeText($minutes);
     }
 
     /**
@@ -258,6 +431,12 @@ class BlogPost extends Model
             }
         }
 
+        // For frontend: if no value in DB, check translations
+        if (!$value) {
+            $translation = $this->getDefaultTranslation();
+            return $translation?->content;
+        }
+
         return $value;
     }
 
@@ -268,18 +447,26 @@ class BlogPost extends Model
      */
     public function getContentWithoutFrontmatter()
     {
-        if (!$this->content) {
+        // Get content from DB or translations
+        $content = $this->attributes['content'] ?? null;
+        
+        if (!$content) {
+            $translation = $this->getDefaultTranslation();
+            $content = $translation?->content;
+        }
+        
+        if (!$content) {
             return '';
         }
 
         try {
-            $document = \Spatie\YamlFrontMatter\YamlFrontMatter::parse($this->content);
+            $document = \Spatie\YamlFrontMatter\YamlFrontMatter::parse($content);
             $body = $document->body();
 
             // Clean up leading whitespace that might be left after frontmatter extraction
             return ltrim($body, "\n\r");
         } catch (\Exception $e) {
-            return $this->content;
+            return $content;
         }
     }
 

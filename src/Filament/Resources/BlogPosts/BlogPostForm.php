@@ -7,6 +7,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Models\BlogSeries;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
@@ -72,6 +73,35 @@ class BlogPostForm
                             ->unique()
                             ->maxLength(255),
                     ]),
+                
+                // Blog Series fields
+                Select::make('blog_series_id')
+                    ->label('Blog Series')
+                    ->placeholder('Select a series (optional)')
+                    ->options(function () {
+                        return BlogSeries::query()
+                            ->with('translations')
+                            ->get()
+                            ->mapWithKeys(function ($series) {
+                                $translation = $series->getDefaultTranslation();
+                                $label = $translation ? $translation->title : $series->slug;
+                                return [$series->id => $label];
+                            });
+                    })
+                    ->searchable()
+                    ->preload()
+                    ->nullable()
+                    ->helperText('Assign this post to a series')
+                    ->reactive(),
+                
+                TextInput::make('series_position')
+                    ->label('Position in Series')
+                    ->numeric()
+                    ->minValue(1)
+                    ->default(1)
+                    ->helperText('Order of this post within the series')
+                    ->visible(fn ($get) => $get('blog_series_id') !== null),
+                
                 MarkdownEditor::make('content')
                     ->required()
                     ->columnSpanFull()
