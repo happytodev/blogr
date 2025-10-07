@@ -5,7 +5,10 @@ namespace Happytodev\Blogr\Http\Controllers;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Helpers\SEOHelper;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 use Happytodev\Blogr\Models\BlogPost;
+use Happytodev\Blogr\Models\BlogPostTranslation;
+use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
 use Illuminate\Support\Facades\Storage;
 use League\CommonMark\MarkdownConverter;
@@ -17,9 +20,18 @@ use League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension;
 
 class BlogController
 {
-    public function index()
+    public function index($locale = null)
     {
-        $posts = BlogPost::with(['category', 'tags'])
+        // Handle locale
+        $locale = $this->resolveLocale($locale);
+        
+        // Get posts that have translations in this locale
+        $posts = BlogPost::whereHas('translations', function($query) use ($locale) {
+                $query->where('locale', $locale);
+            })
+            ->with(['category', 'tags', 'translations' => function($query) use ($locale) {
+                $query->where('locale', $locale);
+            }])
             ->latest()
             ->where('is_published', true)
             ->where(function ($query) {
@@ -28,7 +40,18 @@ class BlogController
             })
             ->take(config('blogr.posts_per_page', 10))
             ->get()
-            ->map(function ($post) {
+            ->map(function ($post) use ($locale) {
+                // Get the translation for this locale
+                $translation = $post->translations->first();
+                
+                // Override post attributes with translation
+                if ($translation) {
+                    $post->translated_title = $translation->title;
+                    $post->translated_slug = $translation->slug;
+                    $post->translated_excerpt = $translation->excerpt;
+                    $post->translated_tldr = $translation->tldr;
+                }
+                
                 if ($post->photo) {
                     $post->photo_url = Storage::temporaryUrl(
                         $post->photo,
@@ -38,31 +61,103 @@ class BlogController
                 return $post;
             });
 
+        // Get featured series with their translations
+        $featuredSeries = BlogSeries::where('is_featured', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->with(['translations' => function($query) use ($locale) {
+                $query->where('locale', $locale);
+            }, 'posts' => function($query) {
+                $query->where('is_published', true)
+                      ->orderBy('series_position');
+            }])
+            ->orderBy('position')
+            ->take(3)
+            ->get()
+            ->map(function ($series) use ($locale) {
+                $translation = $series->translations->first();
+                if ($translation) {
+                    $series->translated_title = $translation->title;
+                    $series->translated_description = $translation->description;
+                }
+                if ($series->photo) {
+                    $series->photo_url = Storage::temporaryUrl(
+                        $series->photo,
+                        now()->addHours(1)
+                    );
+                }
+                return $series;
+            });
+
         $seoData = SEOHelper::forListingPage('index');
 
         return View::make('blogr::blog.index', [
             'posts' => $posts,
-            'seoData' => $seoData
+            'featuredSeries' => $featuredSeries,
+            'seoData' => $seoData,
+            'currentLocale' => $locale,
+            'availableLocales' => config('blogr.locales.available', ['en']),
         ]);
     }
 
-    public function show($slug)
+    public function show($localeOrSlug, $slug = null)
     {
+        // Determine if locales are enabled
+        $localesEnabled = config('blogr.locales.enabled', false);
+        
+        // Parse parameters
+        if ($localesEnabled && $slug !== null) {
+            // Format: /{locale}/blog/{slug}
+            $locale = $localeOrSlug;
+            $actualSlug = $slug;
+        } else {
+            // Format: /blog/{slug} (backward compatibility)
+            $locale = config('blogr.locales.default', 'en');
+            $actualSlug = $localeOrSlug;
+        }
+        
+        // Validate locale
+        $locale = $this->resolveLocale($locale);
+        
+        // Fetch translation
+        $translation = BlogPostTranslation::where('slug', $actualSlug)
+            ->where('locale', $locale)
+            ->with([
+                'post.category', 
+                'post.tags', 
+                'post.translations',
+                'post.series.translations',
+                'post.series.posts.translations'
+            ])
+            ->firstOrFail();
+        
+        $post = $translation->post;
+        
+        // Check if post is published
+        if (!$post->is_published) {
+            abort(404);
+        }
+        
+        if ($post->published_at && $post->published_at->isFuture()) {
+            abort(404);
+        }
+        
+        // Prepare markdown converter
         $environment = new Environment([
             'heading_permalink' => [
-                'html_class' => 'heading-permalink', // CSS class for permalinks (optional)
-                'id_prefix' => '', // Prefix for anchor IDs (default: empty)
-                'fragment_prefix' => '', // Prefix for URL fragments (default: empty)
-                'insert' => 'before', // Position of the permalink: 'before' or 'after' the heading (default: 'before')
-                'min_heading_level' => 1, // Minimum level to add permalinks (default: 1)
-                'max_heading_level' => 6, // Maximum level (default: 6)
-                'title' => 'Permalink', // Title for the title attribute (default: 'Permalink')
-                'symbol' => '#', // Symbol for the permalink (default: '¶')
-                'aria_hidden' => true, // Adds aria-hidden="true" for accessibility (default: true)
+                'html_class' => 'heading-permalink',
+                'id_prefix' => '',
+                'fragment_prefix' => '',
+                'insert' => 'before',
+                'min_heading_level' => 1,
+                'max_heading_level' => 6,
+                'title' => 'Permalink',
+                'symbol' => '#',
+                'aria_hidden' => true,
             ],
             'table_of_contents' => [
-                'position' => 'placeholder', // Change to 'placeholder' instead of 'top'
-                'placeholder' => '[[TOC]]', // Set a unique placeholder (e.g., [[TOC]])
+                'position' => 'placeholder',
+                'placeholder' => '[[TOC]]',
                 'style' => 'bullet',
                 'min_heading_level' => 2,
                 'max_heading_level' => 6,
@@ -75,46 +170,121 @@ class BlogController
         $environment->addExtension(new HeadingPermalinkExtension());
         $environment->addExtension(new TableOfContentsExtension());
 
-        $post = BlogPost::with(['category', 'tags'])
-            ->where('slug', $slug)
-            ->where('is_published', true)
-            ->where(function ($query) {
-                $query->whereNull('published_at')
-                      ->orWhere('published_at', '<=', now());
-            })
-            ->firstOrFail();
-
-        // Calculate reading time BEFORE adding TOC to content
-        $post->reading_time = $post->getEstimatedReadingTime();
-
         $converter = new MarkdownConverter($environment);
 
-        // Get content without frontmatter
-        $contentWithoutFrontmatter = $post->getContentWithoutFrontmatter();
+        // Get content without frontmatter from translation
+        $contentWithoutFrontmatter = $this->getContentWithoutFrontmatter($translation->content);
 
         // Only add TOC if it should be displayed
         if ($post->shouldDisplayToc()) {
-            // This will insert the table of contents at the placeholder [[TOC]]
-            $markdownWithToc = "# Table of contents\n\n[[TOC]]\n\n" . $contentWithoutFrontmatter;
+            $tocTitle = __('blogr::blogr.ui.table_of_contents');
+            $markdownWithToc = "# {$tocTitle}\n\n[[TOC]]\n\n" . $contentWithoutFrontmatter;
             $convertedContent = $converter->convert($markdownWithToc)->getContent();
         } else {
-            // Convert markdown without TOC
             $convertedContent = $converter->convert($contentWithoutFrontmatter)->getContent();
         }
 
-        // Set the converted content directly to avoid triggering accessor
+        // Set converted content on post for backward compatibility with views
         $post->setAttribute('content', $convertedContent);
+
+        // Prepare display data from translation
+        $displayData = [
+            'title' => $translation->title,
+            'slug' => $translation->slug,
+            'content' => $convertedContent,
+            'excerpt' => $translation->excerpt,
+            'tldr' => $translation->tldr,
+            'seo_title' => $translation->seo_title,
+            'seo_description' => $translation->seo_description,
+            'seo_keywords' => $translation->seo_keywords,
+            'reading_time' => $translation->reading_time ?? $post->getEstimatedReadingTime(),
+        ];
+        
+        // Add photo URL if exists
         if ($post->photo) {
             $post->photo_url = Storage::temporaryUrl(
                 $post->photo,
-                now()->addHours(1) // URL valid for 1 hour
+                now()->addHours(1)
             );
         }
+        
+        // Get available translations for language switcher
+        $availableTranslations = $post->translations->map(function ($trans) use ($localesEnabled) {
+            return [
+                'locale' => $trans->locale,
+                'title' => $trans->title,
+                'url' => $localesEnabled 
+                    ? route('blog.show', ['locale' => $trans->locale, 'slug' => $trans->slug])
+                    : route('blog.show', ['slug' => $trans->slug]),
+            ];
+        });
 
-        $seoData = SEOHelper::forBlogPost($post);
+        // Build SEO data using translation data instead of post data
+        // Use content without frontmatter for description
+        $contentWithoutFrontmatter = $this->getContentWithoutFrontmatter($translation->content);
+        $seoData = [
+            'title' => $translation->seo_title ?: $translation->title,
+            'description' => $translation->seo_description ?: Str::limit(strip_tags($contentWithoutFrontmatter), 160),
+            'keywords' => $translation->seo_keywords ?: $translation->title,
+            'canonical' => $localesEnabled 
+                ? route('blog.show', ['locale' => $locale, 'slug' => $translation->slug])
+                : route('blog.show', ['slug' => $translation->slug]),
+            'og_type' => 'article',
+            'schema_type' => 'BlogPosting',
+            'site_name' => config('blogr.seo.site_name', 'My Blog'),
+            'robots' => 'index, follow',
+            'author' => $post->user->name ?? config('blogr.seo.site_name', 'My Blog'),
+            'published_time' => $post->published_at?->toISOString(),
+            'modified_time' => $post->updated_at->toISOString(),
+            'tags' => $post->tags->pluck('name')->toArray(),
+        ];
+
+        // Add image if post has one
+        if ($post->photo) {
+            $seoData['image'] = $post->photo_url;
+            $seoData['image_width'] = 1200;
+            $seoData['image_height'] = 630;
+        } else {
+            $seoData['image'] = asset(config('blogr.seo.og.image', '/images/blogr.webp'));
+            $seoData['image_width'] = config('blogr.seo.og.image_width', 1200);
+            $seoData['image_height'] = config('blogr.seo.og.image_height', 630);
+        }
+
+        // Add structured data for JSON-LD
+        $seoData['schema_additional'] = json_encode([
+            'headline' => $translation->title,
+            'author' => [
+                '@type' => 'Person',
+                'name' => $post->user->name ?? config('blogr.seo.site_name', 'My Blog'),
+            ],
+            'datePublished' => $post->published_at?->toISOString(),
+            'dateModified' => $post->updated_at->toISOString(),
+        ]);
+
+        // Prepare translated slugs for series posts if post is part of a series
+        if ($post->series) {
+            // Translate the series itself
+            $seriesTranslation = $post->series->translations->firstWhere('locale', $locale);
+            if ($seriesTranslation) {
+                $post->series->translated_title = $seriesTranslation->title;
+                $post->series->translated_description = $seriesTranslation->description;
+            }
+            
+            // Translate each post in the series
+            $post->series->posts->each(function ($seriesPost) use ($locale) {
+                $seriesTranslation = $seriesPost->translations->firstWhere('locale', $locale);
+                if ($seriesTranslation) {
+                    $seriesPost->translated_slug = $seriesTranslation->slug;
+                    $seriesPost->translated_title = $seriesTranslation->title;
+                }
+            });
+        }
 
         return View::make('blogr::blog.show', [
             'post' => $post,
+            'displayData' => $displayData,
+            'currentLocale' => $locale,
+            'availableTranslations' => $availableTranslations,
             'seoData' => $seoData
         ]);
     }
@@ -171,5 +341,138 @@ class BlogController
             'posts' => $posts,
             'seoData' => SEOHelper::forListingPage('tag', $tag->name)
         ]);
+    }
+
+    public function seriesIndex()
+    {
+        $series = \Happytodev\Blogr\Models\BlogSeries::with(['translations', 'posts'])
+            ->published()
+            ->orderBy('position')
+            ->get()
+            ->map(function ($s) {
+                $currentLocale = app()->getLocale();
+                $translation = $s->translate($currentLocale) ?? $s->getDefaultTranslation();
+                $s->title = $translation?->title ?? $s->slug;
+                $s->description = $translation?->description ?? '';
+                return $s;
+            });
+        
+        $locale = app()->getLocale();
+        
+        $seoData = [
+            'title' => 'Blog Series - ' . config('app.name'),
+            'description' => 'Browse all our blog series and learn step by step.',
+            'canonical' => route('blog.series.index', ['locale' => $locale]),
+        ];
+
+        return View::make('blogr::blog.series-index', [
+            'series' => $series,
+            'currentLocale' => $locale,
+            'seoData' => $seoData
+        ]);
+    }
+
+    public function series($localeOrSlug, $seriesSlug = null)
+    {
+        // Determine if locales are enabled
+        $localesEnabled = config('blogr.locales.enabled', false);
+        
+        // Parse parameters
+        if ($localesEnabled && $seriesSlug !== null) {
+            // Format: /{locale}/blog/series/{seriesSlug}
+            $locale = $localeOrSlug;
+            $actualSlug = $seriesSlug;
+        } else {
+            // Format: /blog/series/{seriesSlug} (backward compatibility)
+            $locale = config('blogr.locales.default', 'en');
+            $actualSlug = $localeOrSlug;
+        }
+        
+        // Validate locale
+        $locale = $this->resolveLocale($locale);
+        
+        $series = \Happytodev\Blogr\Models\BlogSeries::where('slug', $actualSlug)
+            ->published()
+            ->firstOrFail();
+        
+        $posts = $series->posts()
+            ->with(['translations'])
+            ->where('is_published', true)
+            ->where(function ($query) {
+                $query->whereNull('published_at')
+                      ->orWhere('published_at', '<=', now());
+            })
+            ->orderBy('series_position')
+            ->orderBy('position')
+            ->get()
+            ->map(function ($post) use ($locale) {
+                // Add translated slug for each post
+                $translation = $post->translations->firstWhere('locale', $locale);
+                if ($translation) {
+                    $post->translated_slug = $translation->slug;
+                    $post->translated_title = $translation->title;
+                    $post->translated_excerpt = $translation->excerpt;
+                }
+                
+                if ($post->photo) {
+                    $post->photo_url = Storage::temporaryUrl(
+                        $post->photo,
+                        now()->addHours(1)
+                    );
+                }
+                return $post;
+            });
+
+        $seriesTranslation = $series->translate($locale) ?? $series->getDefaultTranslation();
+        
+        $seoData = [
+            'title' => $seriesTranslation?->seo_title ?? $seriesTranslation?->title ?? $series->slug,
+            'description' => $seriesTranslation?->seo_description ?? $seriesTranslation?->description ?? '',
+            'canonical' => $localesEnabled 
+                ? route('blog.series', ['locale' => $locale, 'seriesSlug' => $actualSlug])
+                : route('blog.series', ['seriesSlug' => $actualSlug]),
+        ];
+
+        return View::make('blogr::blog.series', [
+            'series' => $series,
+            'seriesTranslation' => $seriesTranslation,
+            'posts' => $posts,
+            'currentLocale' => $locale,
+            'seoData' => $seoData
+        ]);
+    }
+
+    /**
+     * Resolve the locale from the request or use the default.
+     *
+     * @param string|null $locale
+     * @return string
+     */
+    protected function resolveLocale($locale = null): string
+    {
+        $localesEnabled = config('blogr.locales.enabled', false);
+        
+        if (!$localesEnabled) {
+            return config('blogr.locales.default', 'en');
+        }
+        
+        if ($locale && in_array($locale, config('blogr.locales.available', ['en']))) {
+            return $locale;
+        }
+        
+        return config('blogr.locales.default', 'en');
+    }
+
+    /**
+     * Get content without frontmatter for markdown conversion.
+     *
+     * @param string $content
+     * @return string
+     */
+    protected function getContentWithoutFrontmatter(string $content): string
+    {
+        // Remove frontmatter (content between --- and ---)
+        $pattern = '/^---\s*\n.*?\n---\s*\n/s';
+        return preg_replace($pattern, '', $content);
     }
 }
