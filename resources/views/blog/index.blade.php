@@ -7,12 +7,16 @@
 @endsection
 
 @section('content')
+    @php
+        $currentLocale = app()->getLocale();
+    @endphp
+    
     <div class="container mx-auto px-4 py-12">
         <!-- Page Header -->
         <div class="mb-12 text-center">
-            <h1 class="text-5xl font-bold mb-4 text-gray-900 dark:text-white">{{ config('blogr.seo.default_title', 'Blog') }}</h1>
+            <h1 class="text-5xl font-bold mb-4 text-gray-900 dark:text-white">{{ \Happytodev\Blogr\Helpers\ConfigHelper::getSeoDefaultTitle($currentLocale) }}</h1>
             <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                {{ config('blogr.seo.default_description', 'Discover our latest articles and insights') }}
+                {{ \Happytodev\Blogr\Helpers\ConfigHelper::getSeoDefaultDescription($currentLocale) }}
             </p>
         </div>
 
@@ -137,9 +141,14 @@
                         @if ($post->tags->count())
                             <div class="mb-4 flex flex-wrap gap-2">
                                 @foreach ($post->tags->take(3) as $tag)
-                                    <a href="{{ route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tag->slug]) }}"
+                                    @php
+                                        $tagTranslation = $tag->translate($currentLocale);
+                                        $tagName = $tagTranslation ? $tagTranslation->name : $tag->name;
+                                        $tagSlug = $tagTranslation ? $tagTranslation->slug : $tag->slug;
+                                    @endphp
+                                    <a href="{{ route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) }}"
                                        class="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs px-2.5 py-1 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
-                                        #{{ $tag->name }}
+                                        #{{ $tagName }}
                                     </a>
                                 @endforeach
                                 @if($post->tags->count() > 3)

@@ -7,7 +7,7 @@
             @if(config('blogr.ui.navigation.show_logo', true))
             <div class="flex-shrink-0">
                 <a href="{{ route('blog.index', ['locale' => $currentLocale]) }}" class="text-2xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    {{ config('blogr.seo.site_name', config('app.name', 'Blog')) }}
+                    {{ \Happytodev\Blogr\Helpers\ConfigHelper::getSeoSiteName($currentLocale) }}
                 </a>
             </div>
             @endif

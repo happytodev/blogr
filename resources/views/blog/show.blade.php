@@ -168,9 +168,14 @@
             <div class="mb-8 flex flex-wrap gap-2">
                 <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Tags:</span>
                 @foreach ($post->tags as $tag)
-                    <a href="{{ route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tag->slug]) }}"
+                    @php
+                        $tagTranslation = $tag->translate($currentLocale);
+                        $tagName = $tagTranslation ? $tagTranslation->name : $tag->name;
+                        $tagSlug = $tagTranslation ? $tagTranslation->slug : $tag->slug;
+                    @endphp
+                    <a href="{{ route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) }}"
                         class="inline-block bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 text-sm px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                        #{{ $tag->name }}
+                        #{{ $tagName }}
                     </a>
                 @endforeach
             </div>
