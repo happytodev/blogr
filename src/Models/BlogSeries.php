@@ -1,0 +1,142 @@
+<?php
+
+namespace Happytodev\Blogr\Models;
+
+use Happytodev\Blogr\Database\Factories\BlogSeriesFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
+
+class BlogSeries extends Model
+{
+    use HasFactory;
+
+    protected $table = 'blog_series';
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): BlogSeriesFactory
+    {
+        return BlogSeriesFactory::new();
+    }
+
+    protected $fillable = [
+        'slug',
+        'photo',
+        'position',
+        'is_featured',
+        'published_at',
+    ];
+
+    protected $casts = [
+        'is_featured' => 'boolean',
+        'published_at' => 'datetime',
+    ];
+
+    /**
+     * Get all translations for this series.
+     */
+    public function translations(): HasMany
+    {
+        return $this->hasMany(BlogSeriesTranslation::class);
+    }
+
+    /**
+     * Get all posts in this series.
+     */
+    public function posts(): HasMany
+    {
+        return $this->hasMany(BlogPost::class)->orderBy('series_position');
+    }
+
+    /**
+     * Get the translation for a specific locale.
+     */
+    public function translate(string $locale): ?BlogSeriesTranslation
+    {
+        return $this->translations()->where('locale', $locale)->first();
+    }
+
+    /**
+     * Get the default translation (English).
+     */
+    public function getDefaultTranslation(): ?BlogSeriesTranslation
+    {
+        return $this->translate('en') ?? $this->translations()->first();
+    }
+
+    /**
+     * Get the title attribute from translation.
+     */
+    public function getTitleAttribute($value): ?string
+    {
+        if ($value) {
+            return $value;
+        }
+        
+        $translation = $this->getDefaultTranslation();
+        return $translation?->title;
+    }
+
+    /**
+     * Get the description attribute from translation.
+     */
+    public function getDescriptionAttribute($value): ?string
+    {
+        if ($value) {
+            return $value;
+        }
+        
+        $translation = $this->getDefaultTranslation();
+        return $translation?->description;
+    }
+
+    /**
+     * Get the photo URL attribute.
+     */
+    public function getPhotoUrlAttribute(): string
+    {
+        if ($this->photo) {
+            return Storage::url($this->photo);
+        }
+        
+        // Return default series image from config
+        $defaultImage = config('blogr.series.default_image', '/images/default-series.svg');
+        return asset($defaultImage);
+    }
+
+    /**
+     * Scope a query to only include published series.
+     */
+    public function scopePublished($query)
+    {
+        return $query->whereNotNull('published_at')
+                     ->where('published_at', '<=', now());
+    }
+
+    /**
+     * Scope a query to only include featured series.
+     */
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
+    }
+
+    /**
+     * Check if the series is published.
+     */
+    public function isPublished(): bool
+    {
+        return $this->published_at !== null && $this->published_at->isPast();
+    }
+
+    /**
+     * Check if the series is featured.
+     */
+    public function isFeatured(): bool
+    {
+        return $this->is_featured;
+    }
+}

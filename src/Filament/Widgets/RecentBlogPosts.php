@@ -17,7 +17,7 @@ class RecentBlogPosts extends BaseWidget
         return $table
             ->query(
                 BlogPost::query()
-                    ->with(['category', 'user'])
+                    ->with(['category', 'user', 'translations'])
                     ->latest()
                     ->limit(10)
             )

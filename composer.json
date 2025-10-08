@@ -40,7 +40,8 @@
     "autoload": {
         "psr-4": {
             "Happytodev\\Blogr\\": "src/",
-            "Happytodev\\Blogr\\Database\\Factories\\": "database/factories/"
+            "Happytodev\\Blogr\\Database\\Factories\\": "database/factories/",
+            "Happytodev\\Blogr\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {

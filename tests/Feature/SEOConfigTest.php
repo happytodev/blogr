@@ -1,5 +1,6 @@
 <?php
 
+use Happytodev\Blogr\Helpers\ConfigHelper;
 use Happytodev\Blogr\Helpers\SEOHelper;
 
 test('SEO configuration is properly loaded', function () {
@@ -8,8 +9,8 @@ test('SEO configuration is properly loaded', function () {
     expect($seoConfig)->toBeArray();
 
     // Test that default values are available (either from config or defaults)
-    expect(config('blogr.seo.default_title', 'Blog'))->toBeString();
-    expect(config('blogr.seo.default_description', 'Discover our latest articles and insights'))->toBeString();
+    expect(ConfigHelper::getSeoDefaultTitle())->toBeString();
+    expect(ConfigHelper::getSeoDefaultDescription())->toBeString();
     expect(config('blogr.seo.structured_data.enabled', true))->toBeBool();
 });
 

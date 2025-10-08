@@ -4,9 +4,13 @@ use Happytodev\Blogr\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
 
 if (config('blogr.route.frontend.enabled', true)) {
-    // Blog routes for testing
+    // Blog routes for testing (non-localized)
     Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
     Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+    
+    // Blog routes for testing (localized) - Always register for testing
+    Route::get('/{locale}/blog', [BlogController::class, 'index'])->name('blog.index.localized');
+    Route::get('/{locale}/blog/{slug}', [BlogController::class, 'show'])->name('blog.show.localized');
 }
 
 // Filament routes for browser testing

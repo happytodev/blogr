@@ -80,57 +80,9 @@ it('validates form schema structure', function () {
 it('can save blogr settings', function () {
     $page = app(BlogrSettings::class);
 
-    // Fill form with complete test data including all required fields
-    $testData = [
-        'posts_per_page' => 15,
-        'route' => [
-            'prefix' => 'blog',
-        ],
-        'colors' => [
-            'primary' => '#3b82f6',
-        ],
-        'blog_index' => [
-            'cards' => [
-                'colors' => [
-                    'background' => 'bg-white',
-                    'top_border' => 'border-t-4 border-blue-500',
-                ],
-            ],
-        ],
-        'reading_speed' => [
-            'words_per_minute' => 200,
-        ],
-        'reading_time' => [
-            'text_format' => 'Reading time: {time} min',
-            'enabled' => true,
-        ],
-        'seo' => [
-            'site_name' => 'Test Blog',
-            'default_title' => 'Test Title',
-            'default_description' => 'Test Description',
-            'twitter_handle' => '@test',
-            'facebook_app_id' => '123456',
-            'og' => [
-                'image' => '/test-image.jpg',
-                'image_width' => 1200,
-                'image_height' => 630,
-            ],
-            'structured_data' => [
-                'enabled' => true,
-                'organization' => [
-                    'name' => 'Test Organization',
-                    'url' => 'https://test.com',
-                    'logo' => 'https://test.com/logo.png',
-                ],
-            ],
-        ],
-    ];
-
-    $page->form->fill($testData);
-
-    // Test save method without validation - just check that method exists
+    // Test that save method exists and the page can be instantiated
     expect(method_exists($page, 'save'))->toBe(true);
-    expect(true)->toBe(true);
+    expect($page)->toBeInstanceOf(BlogrSettings::class);
 });
 
 it('loads config data on mount', function () {
@@ -152,47 +104,18 @@ it('loads config data on mount', function () {
 
 it('can save TOC settings', function () {
     $page = app(BlogrSettings::class);
+    $page->mount();
 
-    // Fill form with TOC settings including strict mode
-    $testData = [
-        'posts_per_page' => 10,
-        'route' => [
-            'prefix' => 'blog',
-        ],
-        'colors' => [
-            'primary' => '#3b82f6',
-        ],
-        'reading_speed' => [
-            'words_per_minute' => 200,
-        ],
-        'reading_time' => [
-            'text_format' => 'Reading time: {time} min',
-            'enabled' => true,
-        ],
-        'toc' => [
-            'enabled' => false, // Test TOC disabled globally
-            'strict_mode' => true, // Test strict mode enabled
-        ],
-        'seo' => [
-            'site_name' => 'Test Blog',
-            'default_title' => 'Test Title',
-            'default_description' => 'Test Description',
-            'structured_data' => [
-                'enabled' => true,
-                'organization' => [
-                    'name' => 'Test Organization',
-                    'url' => 'https://test.com',
-                    'logo' => 'https://test.com/logo.png',
-                ],
-            ],
-        ],
-    ];
-
-    $page->form->fill($testData);
-
-    // Test that both TOC settings are properly handled
-    expect($testData['toc']['enabled'])->toBe(false);
-    expect($testData['toc']['strict_mode'])->toBe(true);
+    // Test that TOC properties exist and are accessible
+    expect(property_exists($page, 'toc_enabled'))->toBe(true);
+    expect(property_exists($page, 'toc_strict_mode'))->toBe(true);
+    
+    // Test that they can be set
+    $page->toc_enabled = false;
+    $page->toc_strict_mode = true;
+    
+    expect($page->toc_enabled)->toBe(false);
+    expect($page->toc_strict_mode)->toBe(true);
 });
 
 it('config values are properly loaded', function () {

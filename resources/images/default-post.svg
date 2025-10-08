@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="doc-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f7fafc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#edf2f7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bg-gradient)"/>
+  
+  <!-- Decorative circles -->
+  <circle cx="100" cy="100" r="80" fill="#ffffff" opacity="0.1"/>
+  <circle cx="700" cy="500" r="100" fill="#ffffff" opacity="0.1"/>
+  <circle cx="650" cy="100" r="60" fill="#ffffff" opacity="0.15"/>
+  
+  <!-- Document icon -->
+  <g transform="translate(250, 150)">
+    <!-- Document body -->
+    <rect x="0" y="40" width="300" height="360" rx="12" fill="url(#doc-gradient)" stroke="#cbd5e0" stroke-width="3"/>
+    
+    <!-- Folded corner -->
+    <path d="M 240 40 L 300 40 L 300 100 Z" fill="#e2e8f0"/>
+    <path d="M 240 40 L 300 100 L 240 100 Z" fill="#cbd5e0"/>
+    
+    <!-- Lines representing text -->
+    <rect x="30" y="120" width="240" height="12" rx="6" fill="#a0aec0" opacity="0.6"/>
+    <rect x="30" y="150" width="200" height="12" rx="6" fill="#a0aec0" opacity="0.6"/>
+    <rect x="30" y="180" width="220" height="12" rx="6" fill="#a0aec0" opacity="0.6"/>
+    <rect x="30" y="210" width="180" height="12" rx="6" fill="#a0aec0" opacity="0.6"/>
+    
+    <rect x="30" y="260" width="240" height="12" rx="6" fill="#a0aec0" opacity="0.4"/>
+    <rect x="30" y="290" width="200" height="12" rx="6" fill="#a0aec0" opacity="0.4"/>
+    <rect x="30" y="320" width="220" height="12" rx="6" fill="#a0aec0" opacity="0.4"/>
+  </g>
+  
+  <!-- Blog icon badge -->
+  <g transform="translate(340, 460)">
+    <circle cx="60" cy="60" r="50" fill="#667eea" opacity="0.9"/>
+    <text x="60" y="75" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="white" text-anchor="middle">B</text>
+  </g>
+</svg>

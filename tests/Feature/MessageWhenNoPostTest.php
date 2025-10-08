@@ -8,10 +8,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-it('Display "No post for the moment" if there are no posts', function () {
+it('Display "No posts yet" if there are no posts', function () {
     // la base est rafraîchie par RefreshDatabase, donc pas de posts par défaut
     // Remplace route('blog.index') par '/blog' ou le nom de route correct si nécessaire
     $this->get(route('blog.index'))
         ->assertOk()
-        ->assertSeeText('No post for the moment');
+        ->assertSeeText('No posts yet');
 });

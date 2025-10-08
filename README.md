@@ -11,6 +11,29 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 
 ## Features
 
+### 🎯 Blog Series (NEW)
+
+- **Organize posts into series**: Group related posts together for better content structure
+- **Automatic navigation**: Previous/Next navigation between posts in a series
+- **Featured series**: Highlight important series with a featured flag
+- **Position ordering**: Define custom order for posts within a series
+- **Multilingual support**: Translate series titles and descriptions
+- **Rich UI components**: 
+  - Series navigation widget (prev/next)
+  - Complete series list view
+  - Series badge for posts
+  - Breadcrumb with series context
+
+### 🌍 Multilingual Support (NEW)
+
+- **Multiple languages**: Built-in support for en, fr, es, de (extensible)
+- **Per-entity translations**: Translate posts, series, categories, and tags
+- **Localized routes**: Optional URL structure like `/{locale}/blog/{slug}`
+- **Language switcher**: Beautiful dropdown component for language selection
+- **SEO optimization**: Automatic hreflang tags for international SEO
+- **Default locale**: Fallback to default language when translation is missing
+- **Translation management**: Full Filament admin interface for translations
+
 ### Content management
 
 - Create, edit, and delete blog posts
@@ -584,7 +607,254 @@ class BlogStatsOverview extends BaseWidget
 }
 ```
 
+## 📚 Blog Series
 
+Blog series allow you to organize related posts together, making it easier for readers to follow a tutorial or thematic content.
+
+### Creating a Series
+
+1. Go to **Admin Panel > Blogr > Blog Series**
+2. Click **New Blog Series**
+3. Fill in the series information:
+   - **Slug**: Unique identifier (e.g., `laravel-beginners`)
+   - **Position**: Display order
+   - **Is Featured**: Highlight important series
+   - **Published At**: Series publication date
+
+### Adding Translations
+
+In the **Translations** section, add content for each language:
+- **Locale**: Select language (en, fr, es, de)
+- **Title**: Series title in that language
+- **Description**: Brief description
+- **SEO Title & Description**: For search engines
+
+### Assigning Posts to Series
+
+When creating/editing a blog post:
+1. Select **Blog Series** from dropdown
+2. Set **Position** to define order within series (1, 2, 3...)
+3. Save the post
+
+### Frontend Components
+
+#### Series Navigation (Previous/Next)
+Automatically displays at the top/bottom of posts in a series:
+
+```blade
+<x-blogr::series-navigation :post="$post" />
+```
+
+#### Complete Series List
+Shows all posts in a series with progress indicator:
+
+```blade
+<x-blogr::series-list :series="$series" :currentPost="$post" />
+```
+
+#### Series Badge
+Compact indicator showing "Part X/Y":
+
+```blade
+<x-blogr::series-badge :post="$post" :showTitle="true" />
+```
+
+#### Breadcrumb with Series Context
+Includes series in navigation path with Schema.org markup:
+
+```blade
+<x-blogr::breadcrumb :post="$post" />
+```
+
+### Viewing a Series
+
+Access series at: `/blog/series/{series-slug}`
+
+Example: `/blog/series/laravel-for-beginners`
+
+## 🌍 Multilingual Support
+
+Blogr supports multiple languages for your blog content, with automatic translation management.
+
+### Configuration
+
+Edit `config/blogr.php`:
+
+```php
+'locales' => [
+    'enabled' => false, // Set to true to enable localized routes
+    'default' => 'en', // Default language
+    'available' => ['en', 'fr', 'es', 'de'], // Supported languages
+],
+```
+
+### Settings Page
+
+Configure via **Admin Panel > Settings > Multilingual Settings**:
+- **Enable Localized Routes**: Activate URL pattern `/{locale}/blog/...`
+- **Default Locale**: Fallback language
+- **Available Locales**: Comma-separated list
+
+### Translating Content
+
+#### Blog Posts
+1. Create/edit a post
+2. In **Translations** tab, click **Add Translation**
+3. Select locale and enter translated content
+4. Each translation has its own:
+   - Title, slug, content
+   - SEO fields
+   - Reading time (auto-calculated)
+   - Categories and tags (per translation)
+
+#### Blog Series
+Same process in the Series edit form with translations repeater.
+
+#### Categories & Tags
+Categories and tags now support translations:
+```php
+$category = Category::find(1);
+$translation = $category->translate('fr'); // Get French translation
+echo $translation->name; // Category name in French
+```
+
+### Localized Routes
+
+When enabled (`'enabled' => true`), URLs include locale:
+
+- English: `/en/blog/my-post`
+- French: `/fr/blog/mon-article`  
+- Spanish: `/es/blog/mi-articulo`
+
+Without localized routes, URLs use default patterns and language is managed by translation relationships.
+
+### Frontend Components
+
+#### Language Switcher
+Add to your layout:
+
+```blade
+<x-blogr::language-switcher 
+    current-route="blog.show" 
+    :route-parameters="['slug' => $post->slug]" 
+/>
+```
+
+#### Hreflang Tags (SEO)
+Add in `<head>` section:
+
+```blade
+<x-blogr::hreflang-tags 
+    current-route="blog.show" 
+    :route-parameters="['slug' => $post->slug]" 
+/>
+```
+
+This generates:
+```html
+<link rel="alternate" hreflang="en" href="https://example.com/en/blog/post" />
+<link rel="alternate" hreflang="fr" href="https://example.com/fr/blog/post" />
+<link rel="alternate" hreflang="x-default" href="https://example.com/en/blog/post" />
+```
+
+### Translation Helpers
+
+```php
+use Happytodev\Blogr\Helpers\LocaleHelper;
+
+// Get current locale
+$locale = LocaleHelper::currentLocale(); // 'fr'
+
+// Generate localized URL
+$url = LocaleHelper::route('blog.show', ['slug' => 'my-post'], 'fr');
+
+// Get all available locales
+$locales = LocaleHelper::availableLocales(); // ['en', 'fr', 'es', 'de']
+
+// Get alternate URLs for hreflang
+$urls = LocaleHelper::alternateUrls('blog.show', ['slug' => 'my-post']);
+// ['en' => '...', 'fr' => '...', ...]
+```
+
+## 🎨 Demo Data Seeder
+
+To quickly visualize blog series and multilingual features, run the demo seeder:
+
+```bash
+php artisan db:seed --class="Happytodev\Blogr\Database\Seeders\BlogSeriesSeeder"
+```
+
+This creates:
+- ✅ 2 blog series with en/fr translations
+- ✅ 7 blog posts across both series
+- ✅ "Laravel for Beginners" series (4 posts, featured)
+- ✅ "Vue.js Best Practices" series (3 posts)
+- ✅ Categories and tags
+- ✅ Proper ordering and relationships
+
+**View the results:**
+- Admin: `/admin/blog-series` and `/admin/blog-posts`
+- Frontend: `/blog/series/laravel-for-beginners`
+
+See `database/seeders/README_SEEDERS.md` for full documentation.
+
+## 🧪 Testing
+
+Blogr includes comprehensive test coverage to ensure reliability and prevent regressions.
+
+### Running Tests
+
+```bash
+# Run all tests
+cd /path/to/packages/happytodev/blogr
+php vendor/bin/pest
+
+# Run specific test suites
+php vendor/bin/pest tests/Feature/BlogSeriesModelTest.php
+php vendor/bin/pest tests/Feature/DatabaseSchemaIntegrityTest.php
+
+# Run with coverage
+php vendor/bin/pest --coverage
+```
+
+### Test Coverage
+
+#### Model Tests (`BlogSeriesModelTest`)
+- ✅ Database schema integrity
+- ✅ Model creation with all fields
+- ✅ Updating fields without SQL errors
+- ✅ Toggle `is_featured` safely
+- ✅ Fillable array correctness
+- ✅ Photo field handling
+
+#### Schema Integrity Tests (`DatabaseSchemaIntegrityTest`)
+- ✅ All required tables exist
+- ✅ All columns match model fillable
+- ✅ Nullable columns are properly configured
+- ✅ Unique constraints are in place
+- ✅ Default values are correct
+- ✅ Migrations are idempotent
+
+### Adding Your Own Tests
+
+When adding new models or features, follow this pattern:
+
+```php
+public function test_can_create_model_without_errors(): void
+{
+    $model = YourModel::create([
+        'field1' => 'value1',
+        'field2' => 'value2',
+    ]);
+    
+    $this->assertDatabaseHas('your_table', [
+        'field1' => 'value1',
+        'field2' => 'value2',
+    ]);
+}
+```
+
+**See [TESTS_SCHEMA_INTEGRITY.md](TESTS_SCHEMA_INTEGRITY.md) for detailed testing documentation and bug prevention strategies.**
 
 ## Support
 

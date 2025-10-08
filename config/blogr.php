@@ -47,11 +47,65 @@ return [
     |
     | Configure how reading time is displayed on blog posts.
     | You can enable/disable the display and customize the text format.
+    | 
+    | For multilingual sites, you can define translations for each locale:
+    | 'text_format' => [
+    |     'en' => 'Reading time: {time}',
+    |     'fr' => 'Temps de lecture : {time}',
+    | ]
+    |
+    | Or use a simple string for all locales:
+    | 'text_format' => 'Reading time: {time}'
     |
     */
     'reading_time' => [
         'enabled' => true, // Enable/disable reading time display
-        'text_format' => 'Reading time: {time}', // Text format with {time} placeholder
+        'text_format' => [
+            'en' => 'Reading time: {time}',
+            'fr' => 'Temps de lecture : {time}',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Blog Posts Default Image Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure default image for blog posts without a featured image.
+    |
+    */
+    'posts' => [
+        'default_image' => '/vendor/blogr/images/default-post.svg', // Default image for posts without photo
+        'show_language_switcher' => true, // Show available languages on post page
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Blog Series Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure blog series settings including default images.
+    |
+    */
+    'series' => [
+        'enabled' => true,
+        'default_image' => '/vendor/blogr/images/default-series.svg', // Default image for series without photo
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Multilingual Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure available locales and default locale for multilingual content.
+    | Posts, series, categories, and tags can be translated into these locales.
+    | The default locale is used when no translation is available.
+    |
+    */
+    'locales' => [
+        'enabled' => false, // Enable localized routes (/{locale}/blog/...)
+        'default' => 'en', // Default locale
+        'available' => ['en', 'fr'], // Available locales for translations
     ],
 
     /*
@@ -80,10 +134,22 @@ return [
     |
     */
     'seo' => [
-        'site_name' => env('APP_NAME', 'My Blog'), // Your site name
-        'default_title' => 'Blog', // Default title for listing pages
-        'default_description' => 'Discover our latest articles and insights', // Default description
-        'default_keywords' => 'blog, articles, news, insights', // Default keywords
+        'site_name' => [
+            'en' => 'The blog',
+            'fr' => 'Le blog',
+        ],
+        'default_title' => [
+            'en' => 'Blog',
+            'fr' => 'Blog',
+        ],
+        'default_description' => [
+            'en' => 'Discover our latest articles and insights',
+            'fr' => 'Découvrez nos derniers articles et analyses',
+        ],
+        'default_keywords' => [
+            'en' => 'blog, articles, news, insights',
+            'fr' => 'blog, articles, news, analyses',
+        ],
         'twitter_handle' => '@yourhandle', // Your Twitter handle for Twitter Cards
         'facebook_app_id' => '', // Facebook App ID for Open Graph
 
@@ -104,5 +170,64 @@ return [
                 'logo' => env('APP_URL', 'https://yourwebsite.com') . '/images/logo.png',
             ],
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | UI Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure the user interface elements like navigation, footer, theme switcher, etc.
+    |
+    */
+    'ui' => [
+        'navigation' => [
+            'enabled' => true, // Show navigation bar
+            'sticky' => true, // Make navigation sticky on scroll
+            'show_logo' => true, // Show site logo/name
+            'show_language_switcher' => true, // Show language switcher in navigation
+            'show_theme_switcher' => true, // Show day/night/auto theme switcher
+        ],
+        'footer' => [
+            'enabled' => true, // Show footer
+            'text' => '© 2025 My Blog. All rights reserved.', // Footer text (supports HTML)
+            'show_social_links' => true, // Show social media links
+            'social_links' => [
+                'twitter' => 'https://twitter.com/happytodev', // Twitter/X URL
+                'github' => 'https://github.com/happytodev', // GitHub URL
+                'linkedin' => 'https://linkedin.com/company/happytodev', // LinkedIn URL
+                'facebook' => 'https://facebook.com/happytodev', // Facebook URL
+            ],
+        ],
+        'theme' => [
+            'default' => 'light', // Default theme: 'light', 'dark', or 'auto'
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Locales Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure multilingual support for the blog.
+    |
+    */
+    'locales' => [
+        'enabled' => true, // Enable/disable multilingual support
+        'default' => 'en', // Default locale
+        'available' => ['en', 'fr'], // Available locales
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Posts Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure post-specific settings like default images, language indicators, etc.
+    |
+    */
+    'posts' => [
+        'default_image' => '/vendor/blogr/images/default-post.svg', // Default image for posts without photo
+        'show_language_switcher' => true, // Show available translations indicator on posts
     ],
 ];

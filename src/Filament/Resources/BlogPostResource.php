@@ -14,6 +14,7 @@ use Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostTable;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\ListBlogPosts;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\CreateBlogPost;
+use Happytodev\Blogr\Filament\Resources\BlogPostResource\RelationManagers;
 
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -78,6 +79,13 @@ class BlogPostResource extends Resource
             'index' => ListBlogPosts::route('/'),
             'create' => CreateBlogPost::route('/create'),
             'edit' => EditBlogPost::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\TranslationsRelationManager::class,
         ];
     }
 }

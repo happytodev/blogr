@@ -14,6 +14,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentAsset;
 use Happytodev\Blogr\Commands\BlogrCommand;
 use Filament\Support\Assets\AlpineComponent;
+use Happytodev\Blogr\Helpers\ConfigHelper;
 use Happytodev\Blogr\Policies\BlogPostPolicy;
 use Livewire\Features\SupportTesting\Testable;
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
@@ -94,6 +95,16 @@ class BlogrServiceProvider extends PackageServiceProvider
                     $file->getRealPath() => base_path("stubs/blogr/{$file->getFilename()}"),
                 ], 'blogr-stubs');
             }
+            
+            // Publish translations
+            $this->publishes([
+                __DIR__ . '/../resources/lang' => $this->app->langPath('vendor/blogr'),
+            ], 'blogr-translations');
+            
+            // Publish default series image
+            $this->publishes([
+                __DIR__ . '/../resources/images' => public_path('vendor/blogr/images'),
+            ], 'blogr-assets');
         }
 
         // Testing
@@ -103,26 +114,88 @@ class BlogrServiceProvider extends PackageServiceProvider
     protected function registerFrontendRoutes(): void
     {
         $prefix = trim(config('blogr.route.prefix', 'blog'), '/');
+        $localesEnabled = config('blogr.locales.enabled', false);
+        $availableLocales = config('blogr.locales.available', ['en']);
+        $localePattern = implode('|', $availableLocales);
 
-        if ($prefix === '' || $prefix === '/') {
-            // Blog route as homepage
+        if ($localesEnabled) {
+            // Add fallback redirect from non-localized URL to default locale
+            $defaultLocale = config('blogr.locales.default', 'en');
+            
+            if ($prefix === '' || $prefix === '/') {
+                // Redirect homepage to default locale
+                $this->app['router']
+                    ->middleware(config('blogr.route.middleware', ['web']))
+                    ->get('/', function () use ($defaultLocale) {
+                        return redirect("/{$defaultLocale}");
+                    });
+            } else {
+                // Redirect /blog to /en/blog (or default locale)
+                $this->app['router']
+                    ->middleware(config('blogr.route.middleware', ['web']))
+                    ->get("/{$prefix}", function () use ($prefix, $defaultLocale) {
+                        return redirect("/{$defaultLocale}/{$prefix}");
+                    });
+            }
+            
+            // Register localized routes with locale prefix
             $this->app['router']
-                ->middleware(config('blogr.route.middleware', ['web']))
-                ->group(function () {
-                    $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
-                    $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                ->prefix('{locale}')
+                ->where(['locale' => $localePattern])
+                ->middleware(array_merge(
+                    config('blogr.route.middleware', ['web']),
+                    [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                ))
+                ->group(function () use ($prefix) {
+                    if ($prefix === '' || $prefix === '/') {
+                        // Blog as homepage with locale
+                        $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
+                        $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
+                        $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
+                        $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                        $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
+                        $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
+                    } else {
+                        // Blog with prefix and locale
+                        $this->app['router']
+                            ->prefix($prefix)
+                            ->group(function () {
+                                $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
+                                $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
+                                $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
+                                $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                                $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
+                                $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
+                                $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
+                            });
+                    }
                 });
         } else {
-            // Blog route with prefix
-            $this->app['router']
-                ->prefix($prefix)
-                ->middleware(config('blogr.route.middleware', ['web']))
-                ->group(function () {
-                    $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
-                    $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
-                    $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
-                    $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
-                });
+            // Original non-localized routes
+            if ($prefix === '' || $prefix === '/') {
+                // Blog route as homepage
+                $this->app['router']
+                    ->middleware(config('blogr.route.middleware', ['web']))
+                    ->group(function () {
+                        $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
+                        $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
+                        $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
+                        $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                    });
+            } else {
+                // Blog route with prefix
+                $this->app['router']
+                    ->prefix($prefix)
+                    ->middleware(config('blogr.route.middleware', ['web']))
+                    ->group(function () {
+                        $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
+                        $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
+                        $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
+                        $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                        $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
+                        $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
+                    });
+            }
         }
     }
 
@@ -215,10 +288,18 @@ class BlogrServiceProvider extends PackageServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/blogr.php', 'blogr');
+        
+        // Register config helper
+        $this->app->singleton('blogr.config', function ($app) {
+            return new ConfigHelper();
+        });
     }
 
     public function boot()
     {
+        // Register Observers
+        BlogPost::observe(\Happytodev\Blogr\Observers\BlogPostObserver::class);
+        
         // Publishes the configuration and views
         $this->publishes([
             __DIR__ . '/../config/blogr.php' => config_path('blogr.php'),
@@ -232,6 +313,9 @@ class BlogrServiceProvider extends PackageServiceProvider
 
         // Load views
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'blogr');
+        
+        // Load translations
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'blogr');
 
         // Register commands
         if ($this->app->runningInConsole()) {
