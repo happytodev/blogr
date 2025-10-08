@@ -4,6 +4,7 @@ namespace Happytodev\Blogr\Http\Controllers;
 
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Helpers\SEOHelper;
+use Happytodev\Blogr\Helpers\ConfigHelper;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Happytodev\Blogr\Models\BlogPost;
@@ -29,9 +30,13 @@ class BlogController
         $posts = BlogPost::whereHas('translations', function($query) use ($locale) {
                 $query->where('locale', $locale);
             })
-            ->with(['category', 'tags', 'translations' => function($query) use ($locale) {
-                $query->where('locale', $locale);
-            }])
+            ->with([
+                'category.translations', 
+                'tags.translations', 
+                'translations' => function($query) use ($locale) {
+                    $query->where('locale', $locale);
+                }
+            ])
             ->latest()
             ->where('is_published', true)
             ->where(function ($query) {
@@ -123,8 +128,8 @@ class BlogController
         $translation = BlogPostTranslation::where('slug', $actualSlug)
             ->where('locale', $locale)
             ->with([
-                'post.category', 
-                'post.tags', 
+                'post.category.translations', 
+                'post.tags.translations', 
                 'post.translations',
                 'post.series.translations',
                 'post.series.posts.translations'
@@ -231,9 +236,9 @@ class BlogController
                 : route('blog.show', ['slug' => $translation->slug]),
             'og_type' => 'article',
             'schema_type' => 'BlogPosting',
-            'site_name' => config('blogr.seo.site_name', 'My Blog'),
+            'site_name' => ConfigHelper::getSeoSiteName($locale),
             'robots' => 'index, follow',
-            'author' => $post->user->name ?? config('blogr.seo.site_name', 'My Blog'),
+            'author' => $post->user->name ?? ConfigHelper::getSeoSiteName($locale),
             'published_time' => $post->published_at?->toISOString(),
             'modified_time' => $post->updated_at->toISOString(),
             'tags' => $post->tags->pluck('name')->toArray(),
@@ -255,7 +260,7 @@ class BlogController
             'headline' => $translation->title,
             'author' => [
                 '@type' => 'Person',
-                'name' => $post->user->name ?? config('blogr.seo.site_name', 'My Blog'),
+                'name' => $post->user->name ?? ConfigHelper::getSeoSiteName($locale),
             ],
             'datePublished' => $post->published_at?->toISOString(),
             'dateModified' => $post->updated_at->toISOString(),
@@ -289,10 +294,41 @@ class BlogController
         ]);
     }
 
-    public function category($categorySlug)
+    public function category($locale, $categorySlug)
     {
-        $category = Category::where('slug', $categorySlug)->firstOrFail();
-        $posts = BlogPost::with(['category', 'tags'])
+        // Validate and resolve locale
+        $currentLocale = $this->resolveLocale($locale);
+        
+        // Try to find category by main slug first
+        $category = Category::where('slug', $categorySlug)->first();
+        
+        // If not found, try to find by translated slug
+        if (!$category) {
+            $translation = \Happytodev\Blogr\Models\CategoryTranslation::where('slug', $categorySlug)
+                ->where('locale', $currentLocale)
+                ->first();
+                
+            if ($translation) {
+                $category = $translation->category;
+            }
+        }
+        
+        // If still not found, 404
+        if (!$category) {
+            abort(404);
+        }
+        
+        // Get the translation for current locale
+        $categoryTranslation = $category->translate($currentLocale);
+        $displayName = $categoryTranslation ? $categoryTranslation->name : $category->name;
+        
+        $posts = BlogPost::with([
+                'category.translations', 
+                'tags.translations',
+                'translations' => function($query) use ($currentLocale) {
+                    $query->where('locale', $currentLocale);
+                }
+            ])
             ->where('category_id', $category->id)
             ->where('is_published', true)
             ->where(function ($query) {
@@ -311,16 +347,50 @@ class BlogController
 
         return View::make('blogr::blog.category', [
             'category' => $category,
+            'categoryTranslation' => $categoryTranslation,
+            'displayName' => $displayName,
             'posts' => $posts,
-            'seoData' => SEOHelper::forListingPage('category', $category->name)
+            'currentLocale' => $currentLocale,
+            'seoData' => SEOHelper::forListingPage('category', $displayName)
         ]);
     }
 
-    public function tag($tagSlug)
+    public function tag($locale, $tagSlug)
     {
-        $tag = Tag::where('slug', $tagSlug)->firstOrFail();
+        // Validate and resolve locale
+        $currentLocale = $this->resolveLocale($locale);
+        
+        // Try to find tag by main slug first
+        $tag = Tag::where('slug', $tagSlug)->first();
+        
+        // If not found, try to find by translated slug
+        if (!$tag) {
+            $translation = \Happytodev\Blogr\Models\TagTranslation::where('slug', $tagSlug)
+                ->where('locale', $currentLocale)
+                ->first();
+                
+            if ($translation) {
+                $tag = $translation->tag;
+            }
+        }
+        
+        // If still not found, 404
+        if (!$tag) {
+            abort(404);
+        }
+        
+        // Get the translation for current locale
+        $tagTranslation = $tag->translate($currentLocale);
+        $displayName = $tagTranslation ? $tagTranslation->name : $tag->name;
+        
         $posts = $tag->posts()
-            ->with(['category', 'tags'])
+            ->with([
+                'category.translations', 
+                'tags.translations',
+                'translations' => function($query) use ($currentLocale) {
+                    $query->where('locale', $currentLocale);
+                }
+            ])
             ->where('is_published', true)
             ->where(function ($query) {
                 $query->whereNull('published_at')
@@ -338,8 +408,11 @@ class BlogController
 
         return View::make('blogr::blog.tag', [
             'tag' => $tag,
+            'tagTranslation' => $tagTranslation,
+            'displayName' => $displayName,
             'posts' => $posts,
-            'seoData' => SEOHelper::forListingPage('tag', $tag->name)
+            'currentLocale' => $currentLocale,
+            'seoData' => SEOHelper::forListingPage('tag', $displayName)
         ]);
     }
 
