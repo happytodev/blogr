@@ -63,8 +63,6 @@ return [
         'text_format' => [
             'en' => 'Reading time: {time}',
             'fr' => 'Temps de lecture : {time}',
-            'es' => 'Tiempo de lectura: {time}',
-            'de' => 'Lesezeit: {time}',
         ],
     ],
 
@@ -107,7 +105,7 @@ return [
     'locales' => [
         'enabled' => false, // Enable localized routes (/{locale}/blog/...)
         'default' => 'en', // Default locale
-        'available' => ['en', 'fr', 'es', 'de'], // Available locales for translations
+        'available' => ['en', 'fr'], // Available locales for translations
     ],
 
     /*
@@ -136,10 +134,22 @@ return [
     |
     */
     'seo' => [
-        'site_name' => env('APP_NAME', 'My Blog'), // Your site name
-        'default_title' => 'Blog', // Default title for listing pages
-        'default_description' => 'Discover our latest articles and insights', // Default description
-        'default_keywords' => 'blog, articles, news, insights', // Default keywords
+        'site_name' => [
+            'en' => 'The blog',
+            'fr' => 'Le blog',
+        ],
+        'default_title' => [
+            'en' => 'Blog',
+            'fr' => 'Blog',
+        ],
+        'default_description' => [
+            'en' => 'Discover our latest articles and insights',
+            'fr' => 'Découvrez nos derniers articles et analyses',
+        ],
+        'default_keywords' => [
+            'en' => 'blog, articles, news, insights',
+            'fr' => 'blog, articles, news, analyses',
+        ],
         'twitter_handle' => '@yourhandle', // Your Twitter handle for Twitter Cards
         'facebook_app_id' => '', // Facebook App ID for Open Graph
 
@@ -183,10 +193,10 @@ return [
             'text' => '© 2025 My Blog. All rights reserved.', // Footer text (supports HTML)
             'show_social_links' => true, // Show social media links
             'social_links' => [
-                'twitter' => '', // Twitter/X URL
-                'github' => '', // GitHub URL
-                'linkedin' => '', // LinkedIn URL
-                'facebook' => '', // Facebook URL
+                'twitter' => 'https://twitter.com/happytodev', // Twitter/X URL
+                'github' => 'https://github.com/happytodev', // GitHub URL
+                'linkedin' => 'https://linkedin.com/company/happytodev', // LinkedIn URL
+                'facebook' => 'https://facebook.com/happytodev', // Facebook URL
             ],
         ],
         'theme' => [
@@ -205,7 +215,7 @@ return [
     'locales' => [
         'enabled' => true, // Enable/disable multilingual support
         'default' => 'en', // Default locale
-        'available' => ['en', 'fr', 'es', 'de'], // Available locales
+        'available' => ['en', 'fr'], // Available locales
     ],
 
     /*
