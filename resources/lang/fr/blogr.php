@@ -41,6 +41,8 @@ return [
         'all_posts_in_series' => 'Tous les articles de cette série',
         'part_number' => 'Partie :number',
         'current' => 'actuel',
+        'featured' => 'En vedette',
+        'series' => 'Cette article fait partie de la série',
     ],
     
     // Dates

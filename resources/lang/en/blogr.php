@@ -7,7 +7,7 @@ return [
         'model_label' => 'User',
         'plural_model_label' => 'Users',
     ],
-    
+
     // Blog UI
     'ui' => [
         'table_of_contents' => 'Table of contents',
@@ -28,7 +28,7 @@ return [
         'min_read' => ':minutes min read',
         'untitled' => 'Untitled',
     ],
-    
+
     // Series
     'series' => [
         'title' => 'Blog Series',
@@ -40,8 +40,10 @@ return [
         'started_on' => 'Started :date',
         'all_posts_in_series' => 'All Posts in This Series',
         'part_number' => 'Part :number',
+        'featured' => 'Featured',
+        'series' => 'This post is part of the series',
     ],
-    
+
     // Dates
     'date' => [
         'published_on' => 'Published on :date',
