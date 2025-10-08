@@ -157,5 +157,5 @@ test('reading time text accepts zero minutes', function () {
     
     $result = ConfigHelper::getReadingTimeText(0);
     
-    expect($result)->toBe('Reading time: 0 min');
+    expect($result)->toBe('Reading time: < 1 min');
 });
