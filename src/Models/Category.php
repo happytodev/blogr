@@ -35,6 +35,12 @@ class Category extends Model
      */
     public function translate(string $locale): ?CategoryTranslation
     {
+        // If translations are already loaded, use them (avoid N+1)
+        if ($this->relationLoaded('translations')) {
+            return $this->translations->firstWhere('locale', $locale);
+        }
+        
+        // Otherwise, query the database
         return $this->translations()->where('locale', $locale)->first();
     }
 
