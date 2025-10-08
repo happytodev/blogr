@@ -12,20 +12,16 @@ class SEOHelper
      */
     public static function forListingPage(string $type = 'index', ?string $name = null, ?string $description = null): array
     {
-        $config = config('blogr.seo', []);
-        $defaultConfig = [
-            'default_title' => 'Blog',
-            'default_description' => 'Discover our latest articles and insights',
-            'default_keywords' => 'blog, articles, news, insights',
-        ];
-
-        $baseTitle = $config['default_title'] ?? $defaultConfig['default_title'];
-        $baseDescription = $description ?: ($config['default_description'] ?? $defaultConfig['default_description']);
+        $currentLocale = app()->getLocale();
+        
+        $baseTitle = ConfigHelper::getSeoDefaultTitle($currentLocale);
+        $baseDescription = $description ?: ConfigHelper::getSeoDefaultDescription($currentLocale);
+        $baseKeywords = ConfigHelper::getSeoDefaultKeywords($currentLocale);
 
         $seo = [
             'title' => $baseTitle,
             'description' => $baseDescription,
-            'keywords' => $config['default_keywords'] ?? $defaultConfig['default_keywords'],
+            'keywords' => $baseKeywords,
             'canonical' => url()->current(),
             'og_type' => 'website',
             'schema_type' => 'WebPage',
@@ -37,7 +33,7 @@ class SEOHelper
                 if ($name) {
                     $seo['title'] = "Category: {$name} - {$baseTitle}";
                     $seo['description'] = "Browse all articles in the {$name} category. {$baseDescription}";
-                    $seo['keywords'] = "{$name}, " . ($config['default_keywords'] ?? $defaultConfig['default_keywords']);
+                    $seo['keywords'] = "{$name}, {$baseKeywords}";
                 }
                 break;
 
@@ -45,7 +41,7 @@ class SEOHelper
                 if ($name) {
                     $seo['title'] = "Tag: {$name} - {$baseTitle}";
                     $seo['description'] = "Articles tagged with {$name}. {$baseDescription}";
-                    $seo['keywords'] = "{$name}, " . ($config['default_keywords'] ?? $defaultConfig['default_keywords']);
+                    $seo['keywords'] = "{$name}, {$baseKeywords}";
                 }
                 break;
 
