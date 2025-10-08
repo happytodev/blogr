@@ -6,6 +6,7 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
+use Happytodev\Blogr\Filament\Resources\BlogSeriesResource;
 use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
 use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
@@ -25,6 +26,7 @@ class BlogrPlugin implements Plugin
     {
         $panel->resources([
             BlogPostResource::class,
+            BlogSeriesResource::class,
             CategoryResource::class,
             TagResource::class,
         ]);
