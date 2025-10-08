@@ -81,9 +81,18 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 
 ## Screenshots
 
+### Home page
+
+![Blogr home](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/blogr-home.png)
+
+
 ### Blog post view
 
 ![Blog post view](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-1.png)
+
+### Series
+
+![Series](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/blogr-series.png)
 
 
 ### Backend - List of posts
@@ -97,6 +106,8 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 ### Settings
 
 ![Backend - Settings](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-4.png)
+
+![Backend - New Settings](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/blogr-new-settings.png)
 
 ### Widgets
 
@@ -128,6 +139,9 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 
 ### Beta 3 (ETA 2025-09-30)
 
+- [x] Multilingual
+- [x] Series of posts
+- [x] Add a writer role, which can write a post but not publish it
 - [ ] Add a RSS feed for the blog posts
 - [ ] Collapsible TOC
 - [ ] Title of blog post in the widget 'recent blog posts' should be clickable
@@ -854,7 +868,6 @@ public function test_can_create_model_without_errors(): void
 }
 ```
 
-**See [TESTS_SCHEMA_INTEGRITY.md](TESTS_SCHEMA_INTEGRITY.md) for detailed testing documentation and bug prevention strategies.**
 
 ## Support
 
