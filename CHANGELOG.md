@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.8.0](https://github.com/happytodev/blogr/compare/v0.8.0...v0.7.0) - 2025-10-08
+
 ### 📚 Blog Series Feature
 
 - **Series Management**: Create and organize blog posts into series
