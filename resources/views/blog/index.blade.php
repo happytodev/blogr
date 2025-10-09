@@ -102,7 +102,7 @@
                         
                         <!-- Category Badge -->
                         <div class="absolute top-4 left-4">
-                            <a href="{{ route('blog.category', ['locale' => $currentLocale, 'categorySlug' => $post->category->slug]) }}"
+                            <a href="{{ config('blogr.locales.enabled') ? route('blog.category', ['locale' => $currentLocale, 'categorySlug' => $post->category->slug]) : route('blog.category', ['categorySlug' => $post->category->slug]) }}"
                                class="inline-block bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-900 dark:text-white hover:bg-white dark:hover:bg-gray-900 transition-colors">
                                 {{ $post->category->name }}
                             </a>
@@ -121,7 +121,7 @@
                     <div class="p-6 flex-grow flex flex-col">
                         <!-- Title -->
                         <h2 class="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
-                            <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug]) }}">
+                            <a href="{{ config('blogr.locales.enabled') ? route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug]) : route('blog.show', ['slug' => $post->translated_slug]) }}">
                                 {{ $post->translated_title ?? $post->title }}
                             </a>
                         </h2>
@@ -146,7 +146,7 @@
                                         $tagName = $tagTranslation ? $tagTranslation->name : $tag->name;
                                         $tagSlug = $tagTranslation ? $tagTranslation->slug : $tag->slug;
                                     @endphp
-                                    <a href="{{ route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) }}"
+                                    <a href="{{ config('blogr.locales.enabled') ? route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) : route('blog.tag', ['tagSlug' => $tagSlug]) }}"
                                        class="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs px-2.5 py-1 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
                                         #{{ $tagName }}
                                     </a>
@@ -160,7 +160,7 @@
                         @endif
 
                         <!-- Read More Button -->
-                        <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug]) }}" 
+                        <a href="{{ config('blogr.locales.enabled') ? route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug]) : route('blog.show', ['slug' => $post->translated_slug]) }}" 
                            class="mt-auto inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold group/link">
                             {{ __('blogr::blogr.ui.read_more') }}
                             <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
