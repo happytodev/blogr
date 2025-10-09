@@ -44,7 +44,7 @@
                     </span>
                 @endif
 
-                <a href="{{ route('blog.category', ['locale' => $currentLocale, 'categorySlug' => $post->category->slug]) }}"
+                <a href="{{ config('blogr.locales.enabled') ? route('blog.category', ['locale' => $currentLocale, 'categorySlug' => $post->category->slug]) : route('blog.category', ['categorySlug' => $post->category->slug]) }}"
                     class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
                     {{ $post->category->name }}
                 </a>
@@ -150,7 +150,7 @@
                 </div>
 
                 <div class="pt-4 border-t border-purple-200 dark:border-purple-700">
-                    <a href="{{ route('blog.series.index', ['locale' => $currentLocale]) }}"
+                    <a href="{{ config('blogr.locales.enabled') ? route('blog.series.index', ['locale' => $currentLocale]) : route('blog.series.index') }}"
                         class="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 hover:underline text-sm inline-flex items-center">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -173,7 +173,7 @@
                         $tagName = $tagTranslation ? $tagTranslation->name : $tag->name;
                         $tagSlug = $tagTranslation ? $tagTranslation->slug : $tag->slug;
                     @endphp
-                    <a href="{{ route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) }}"
+                    <a href="{{ config('blogr.locales.enabled') ? route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) : route('blog.tag', ['tagSlug' => $tagSlug]) }}"
                         class="inline-block bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 text-sm px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                         #{{ $tagName }}
                     </a>
@@ -197,7 +197,7 @@
 
         <!-- Back to Blog Button -->
         <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-            <a href="{{ route('blog.index', ['locale' => $currentLocale]) }}"
+            <a href="{{ config('blogr.locales.enabled') ? route('blog.index', ['locale' => $currentLocale]) : route('blog.index') }}"
                 class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold group">
                 <svg class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
