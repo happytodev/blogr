@@ -4,7 +4,9 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
-### ✨ Features
+## [v0.8.1](https://github.com/happytodev/blogr/compare/v0.8.1...v0.8.0) - 2025-10-09
+
+### 🐛 Bug Fixes
 
 - You can now actually use the blogr engine as your home page. The “homepage” setting will help you do this.
 
@@ -20,16 +22,11 @@ All notable changes to `blogr` will be documented in this file.
 - **Comprehensive Navigation Tests**: Added BlogNavigationTest.php with tests for all homepage × locale configuration combinations
 - **Route Test Fixes**: Removed locale parameters from route assertions when locales are disabled
 - **Testbench Configuration**: Updated testbench config files with complete homepage and locales sections
-- **CI/CD Compatibility**: Fixed failing tests in CI/CD environment by configuring default locale settings in TestCase
-  - Added default test configuration in `TestCase::getEnvironmentSetUp()` to set `locales.enabled = false` before ServiceProvider loads routes
-  - This ensures consistent behavior across local and CI/CD environments where default configurations may differ
-  - Tests requiring locales enabled (like `PostLanguageIndicatorTest`, `FrontendTranslationsTest`) override this default appropriately
-  - Removed redundant `beforeEach` hooks from individual test files for cleaner test code
-  - All 238 tests now pass consistently in all environments
 
 ### 🌐 Browser Test Updates
 
 - **Authentication Setup**: Added skip() calls to browser tests requiring proper authentication setup with explanatory messages
+
 
 ## [v0.8.0](https://github.com/happytodev/blogr/compare/v0.8.0...v0.7.0) - 2025-10-08
 
