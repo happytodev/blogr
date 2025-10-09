@@ -1,0 +1,23 @@
+@import 'tailwindcss';
+
+@plugin "@tailwindcss/typography";
+
+/* Include Laravel framework views */
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+/* Include your application views */
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+/* Include Blogr package views */
+@source '../../vendor/happytodev/blogr/resources/views/**/*.blade.php';
+@source '../views/vendor/blogr/**/*.blade.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* IMPORTANT: Required for Blogr theme switcher (light/dark/auto mode) */
+@variant dark (.dark &);
