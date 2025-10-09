@@ -62,10 +62,34 @@ class BlogrInstallCommand extends Command
     {
         $this->info('📦 Publishing Blogr configuration and migration files...');
 
+        // Publish Blogr config, views, and migrations
         $this->call('vendor:publish', [
             '--provider' => 'Happytodev\Blogr\BlogrServiceProvider',
             '--force' => true
         ]);
+
+        // Publish Blogr assets (images)
+        $this->info('📦 Publishing Blogr assets (images)...');
+        $this->call('vendor:publish', [
+            '--tag' => 'blogr-assets',
+            '--force' => true
+        ]);
+
+        // Publish Spatie Permission migrations (required for roles & permissions)
+        $this->info('📦 Publishing Spatie Permission migrations...');
+        $this->call('vendor:publish', [
+            '--provider' => 'Spatie\Permission\PermissionServiceProvider',
+            '--tag' => 'permission-migrations'
+        ]);
+
+        // Optionally publish Spatie Permission config
+        if ($this->confirm('Would you like to publish Spatie Permission configuration file?', false)) {
+            $this->call('vendor:publish', [
+                '--provider' => 'Spatie\Permission\PermissionServiceProvider',
+                '--tag' => 'permission-config'
+            ]);
+            $this->info('✅ Spatie Permission configuration published.');
+        }
 
         $this->info('✅ Configuration and migration files published successfully.');
     }
