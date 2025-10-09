@@ -49,13 +49,14 @@ it('displays blog post with title, category, tags, TLDR and TOC correctly', func
 
     // Assert the category is displayed
     $response->assertSee('Technology');
-    $response->assertSee(route('blog.category', ['locale' => app()->getLocale(), 'categorySlug' => $category->slug]));
+    // With locales disabled, routes should not have locale parameter
+    $response->assertSee(route('blog.category', ['categorySlug' => $category->slug]));
 
     // Assert the tags are displayed
     $response->assertSee('Laravel');
     $response->assertSee('PHP');
-    $response->assertSee(route('blog.tag', ['locale' => app()->getLocale(), 'tagSlug' => $tag1->slug]));
-    $response->assertSee(route('blog.tag', ['locale' => app()->getLocale(), 'tagSlug' => $tag2->slug]));
+    $response->assertSee(route('blog.tag', ['tagSlug' => $tag1->slug]));
+    $response->assertSee(route('blog.tag', ['tagSlug' => $tag2->slug]));
 
     // Assert the TL;DR is displayed
     $response->assertSee('TL;DR');
