@@ -9,6 +9,8 @@ return [
         ],
         // Prefix for frontend routes, if empty, the blog will be the homepage
         'prefix' => 'blog',
+        // Set to true to make blog the homepage (overrides prefix)
+        'homepage' => false,
         'middleware' => ['web'], // Middleware for frontend routes
     ],
     'blog_index' => [

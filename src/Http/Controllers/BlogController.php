@@ -294,17 +294,31 @@ class BlogController
         ]);
     }
 
-    public function category($locale, $categorySlug)
+    public function category($localeOrCategorySlug, $categorySlug = null)
     {
+        // Determine if locales are enabled
+        $localesEnabled = config('blogr.locales.enabled', false);
+        
+        // Parse parameters
+        if ($localesEnabled && $categorySlug !== null) {
+            // Format: /{locale}/blog/category/{categorySlug}
+            $locale = $localeOrCategorySlug;
+            $actualCategorySlug = $categorySlug;
+        } else {
+            // Format: /blog/category/{categorySlug} (backward compatibility)
+            $locale = config('blogr.locales.default', 'en');
+            $actualCategorySlug = $localeOrCategorySlug;
+        }
+        
         // Validate and resolve locale
         $currentLocale = $this->resolveLocale($locale);
         
         // Try to find category by main slug first
-        $category = Category::where('slug', $categorySlug)->first();
+        $category = Category::where('slug', $actualCategorySlug)->first();
         
         // If not found, try to find by translated slug
         if (!$category) {
-            $translation = \Happytodev\Blogr\Models\CategoryTranslation::where('slug', $categorySlug)
+            $translation = \Happytodev\Blogr\Models\CategoryTranslation::where('slug', $actualCategorySlug)
                 ->where('locale', $currentLocale)
                 ->first();
                 
@@ -355,17 +369,31 @@ class BlogController
         ]);
     }
 
-    public function tag($locale, $tagSlug)
+    public function tag($localeOrTagSlug, $tagSlug = null)
     {
+        // Determine if locales are enabled
+        $localesEnabled = config('blogr.locales.enabled', false);
+        
+        // Parse parameters
+        if ($localesEnabled && $tagSlug !== null) {
+            // Format: /{locale}/blog/tag/{tagSlug}
+            $locale = $localeOrTagSlug;
+            $actualTagSlug = $tagSlug;
+        } else {
+            // Format: /blog/tag/{tagSlug} (backward compatibility)
+            $locale = config('blogr.locales.default', 'en');
+            $actualTagSlug = $localeOrTagSlug;
+        }
+        
         // Validate and resolve locale
         $currentLocale = $this->resolveLocale($locale);
         
         // Try to find tag by main slug first
-        $tag = Tag::where('slug', $tagSlug)->first();
+        $tag = Tag::where('slug', $actualTagSlug)->first();
         
         // If not found, try to find by translated slug
         if (!$tag) {
-            $translation = \Happytodev\Blogr\Models\TagTranslation::where('slug', $tagSlug)
+            $translation = \Happytodev\Blogr\Models\TagTranslation::where('slug', $actualTagSlug)
                 ->where('locale', $currentLocale)
                 ->first();
                 
@@ -416,26 +444,28 @@ class BlogController
         ]);
     }
 
-    public function seriesIndex()
+    public function seriesIndex($locale = null)
     {
+        // Handle locale
+        $locale = $this->resolveLocale($locale);
+        
         $series = \Happytodev\Blogr\Models\BlogSeries::with(['translations', 'posts'])
             ->published()
             ->orderBy('position')
             ->get()
-            ->map(function ($s) {
-                $currentLocale = app()->getLocale();
-                $translation = $s->translate($currentLocale) ?? $s->getDefaultTranslation();
+            ->map(function ($s) use ($locale) {
+                $translation = $s->translate($locale) ?? $s->getDefaultTranslation();
                 $s->title = $translation?->title ?? $s->slug;
                 $s->description = $translation?->description ?? '';
                 return $s;
             });
         
-        $locale = app()->getLocale();
-        
         $seoData = [
             'title' => 'Blog Series - ' . config('app.name'),
             'description' => 'Browse all our blog series and learn step by step.',
-            'canonical' => route('blog.series.index', ['locale' => $locale]),
+            'canonical' => config('blogr.locales.enabled') 
+                ? route('blog.series.index', ['locale' => $locale])
+                : route('blog.series.index'),
         ];
 
         return View::make('blogr::blog.series-index', [

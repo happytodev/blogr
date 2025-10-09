@@ -10,6 +10,7 @@ use Happytodev\Blogr\Tests\Database\Factories\CategoryFactory;
 use Happytodev\Blogr\Tests\Database\Factories\TagFactory;
 
 test('blog index page includes correct SEO meta tags', function () {
+    
     // Create some test posts
     $user = User::create([
         'name' => 'Test User',

@@ -9,6 +9,8 @@ return [
         ],
         // Prefix for frontend routes, if empty, the blog will be the homepage
         'prefix' => 'blog',
+        // Set to true to make blog the homepage (overrides prefix)
+        'homepage' => false,
         'middleware' => ['web'], // Middleware for frontend routes
     ],
     'blog_index' => [
@@ -52,6 +54,22 @@ return [
     'reading_time' => [
         'enabled' => true, // Enable/disable reading time display
         'text_format' => 'Reading time: {time}', // Text format with {time} placeholder
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Locales Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure available locales and default locale for multilingual content.
+    | Posts, series, categories, and tags can be translated into these locales.
+    | The default locale is used when no translation is available.
+    |
+    */
+    'locales' => [
+        'enabled' => false, // Enable localized routes (/{locale}/blog/...)
+        'default' => 'en', // Default locale
+        'available' => ['en', 'fr'], // Available locales for translations
     ],
 
     /*

@@ -57,7 +57,7 @@
                                 $categoryName = $categoryTranslation ? $categoryTranslation->name : $post->category->name;
                                 $categorySlug = $categoryTranslation ? $categoryTranslation->slug : $post->category->slug;
                             @endphp
-                            <a href="{{ route('blog.category', ['locale' => $currentLocale, 'categorySlug' => $categorySlug]) }}"
+                            <a href="{{ config('blogr.locales.enabled') ? route('blog.category', ['locale' => $currentLocale, 'categorySlug' => $categorySlug]) : route('blog.category', ['categorySlug' => $categorySlug]) }}"
                                class="inline-block bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-900 dark:text-white hover:bg-white dark:hover:bg-gray-900 transition-colors">
                                 {{ $categoryName }}
                             </a>

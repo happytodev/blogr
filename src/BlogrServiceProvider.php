@@ -114,21 +114,28 @@ class BlogrServiceProvider extends PackageServiceProvider
     protected function registerFrontendRoutes(): void
     {
         $prefix = trim(config('blogr.route.prefix', 'blog'), '/');
+        $isHomepage = config('blogr.route.homepage', false);
         $localesEnabled = config('blogr.locales.enabled', false);
         $availableLocales = config('blogr.locales.available', ['en']);
         $localePattern = implode('|', $availableLocales);
 
+        // If homepage is explicitly set, override prefix
+        if ($isHomepage) {
+            $prefix = '';
+        }
+
         if ($localesEnabled) {
             // Add fallback redirect from non-localized URL to default locale
             $defaultLocale = config('blogr.locales.default', 'en');
-            
-            if ($prefix === '' || $prefix === '/') {
-                // Redirect homepage to default locale
+
+            if ($prefix === '' || $prefix === '/' || $isHomepage) {
+                // When blog is homepage, override the root route to redirect to default locale
+                // This ensures it takes precedence over any other root route
                 $this->app['router']
                     ->middleware(config('blogr.route.middleware', ['web']))
                     ->get('/', function () use ($defaultLocale) {
-                        return redirect("/{$defaultLocale}");
-                    });
+                        return redirect("/{$defaultLocale}", 302);
+                    })->name('homepage.redirect');
             } else {
                 // Redirect /blog to /en/blog (or default locale)
                 $this->app['router']
@@ -136,9 +143,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                     ->get("/{$prefix}", function () use ($prefix, $defaultLocale) {
                         return redirect("/{$defaultLocale}/{$prefix}");
                     });
-            }
-            
-            // Register localized routes with locale prefix
+            }            // Register localized routes with locale prefix
             $this->app['router']
                 ->prefix('{locale}')
                 ->where(['locale' => $localePattern])
@@ -146,8 +151,8 @@ class BlogrServiceProvider extends PackageServiceProvider
                     config('blogr.route.middleware', ['web']),
                     [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
                 ))
-                ->group(function () use ($prefix) {
-                    if ($prefix === '' || $prefix === '/') {
+                ->group(function () use ($prefix, $isHomepage) {
+                    if ($prefix === '' || $prefix === '/' || $isHomepage) {
                         // Blog as homepage with locale
                         $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
                         $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
@@ -172,7 +177,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                 });
         } else {
             // Original non-localized routes
-            if ($prefix === '' || $prefix === '/') {
+            if ($prefix === '' || $prefix === '/' || $isHomepage) {
                 // Blog route as homepage
                 $this->app['router']
                     ->middleware(config('blogr.route.middleware', ['web']))
@@ -180,6 +185,8 @@ class BlogrServiceProvider extends PackageServiceProvider
                         $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
                         $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
                         $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
+                        $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
+                        $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
                         $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
                     });
             } else {
