@@ -14,6 +14,10 @@ beforeEach(function () {
 it('can display a blog post without locales enabled', function () {
     config(['blogr.locales.enabled' => false]);
     config(['blogr.locales.default' => 'en']);
+    config(['blogr.route.homepage' => false]);
+    
+    // Re-register service provider with new config
+    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
     
     $post = BlogPost::factory()->create([
         'title' => 'Original Title',

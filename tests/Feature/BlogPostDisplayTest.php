@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Validator;
 
 uses(RefreshDatabase::class);
 
+beforeEach(function () {
+    $this->app['config']->set('blogr.locales.enabled', false);
+    $this->app['config']->set('blogr.route.prefix', 'blog');
+    $this->app['config']->set('blogr.route.homepage', false);
+    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
+});
+
 it('displays blog post with title, category, tags, TLDR and TOC correctly', function () {
     // Create a user using the factory
     $user = User::factory()->create();

@@ -11,6 +11,11 @@ beforeEach(function () {
     Config::set('blogr.locales.default', 'en');
     Config::set('blogr.locales.available', ['en', 'fr', 'es']);
     Config::set('blogr.posts.show_language_switcher', true);
+    Config::set('blogr.route.prefix', 'blog');
+    Config::set('blogr.route.homepage', false);
+    
+    // Re-register service provider with new config
+    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
 });
 
 test('post language indicator is not shown when disabled in config', function () {
@@ -26,7 +31,7 @@ test('post language indicator is not shown when disabled in config', function ()
     
     // The observer automatically creates an 'en' translation
     
-    $response = get(route('blog.show', ['slug' => 'test-post']));
+    $response = get(route('blog.show', ['locale' => 'en', 'slug' => 'test-post']));
     
     $response->assertStatus(200);
     $response->assertDontSee('Available in:');
@@ -44,7 +49,7 @@ test('post language indicator is not shown when only one translation exists', fu
     // The observer automatically creates an 'en' translation
     // We only have one translation
     
-    $response = get(route('blog.show', ['slug' => 'test-post-single']));
+    $response = get(route('blog.show', ['locale' => 'en', 'slug' => 'test-post-single']));
     
     $response->assertStatus(200);
     $response->assertDontSee('Available in:');
