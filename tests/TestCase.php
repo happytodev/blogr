@@ -114,9 +114,10 @@ class TestCase extends Orchestra
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
 
-    protected function defineRoutes($router)
-    {
-        // Load test routes
-        require __DIR__ . '/Feature/routes.php';
-    }
+    // Routes are now defined by BlogrServiceProvider in boot()
+    // protected function defineRoutes($router)
+    // {
+    //     // Load test routes
+    //     require __DIR__ . '/Feature/routes.php';
+    // }
 }
