@@ -4,11 +4,87 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
-## [v0.8.1](https://github.com/happytodev/blogr/compare/v0.8.1...v0.8.0) - 2025-10-09
-
 ### 🐛 Bug Fixes
 
-- You can now actually use the blogr engine as your home page. The “homepage” setting will help you do this.
+- **Installation Command**: Fixed "no such table: roles" error during tutorial installation
+  - Now automatically publishes Spatie Permission migrations before running migrations
+  - Added optional prompt to publish Spatie Permission configuration
+  - Updated README documentation to reflect Spatie Permission setup
+  
+- **Missing Default Images**: Fixed 404 error on default post and series images
+  - Added automatic publication of `blogr-assets` tag during installation
+  - Default images (default-post.svg, default-series.svg) are now correctly copied to `public/vendor/blogr/images/`
+  - **Manual fix for existing installations**: Run `php artisan vendor:publish --tag=blogr-assets --force`
+
+- **Theme Switcher Not Working**: Fixed light/dark/auto theme switcher functionality
+  - Removed unreliable Alpine.js CDN loading from layout
+  - Added Alpine.js as npm dependency for reliable asset bundling
+  - Created `themeSwitch()` Alpine component for proper initialization
+  - Added proper system preference detection for auto mode
+  - Theme preferences now correctly persist in localStorage
+  - **⚠️ CRITICAL**: Requires Tailwind CSS v4 dark mode configuration
+  - **Manual fix for existing installations**: 
+    1. Run `npm install alpinejs`
+    2. Add Alpine initialization to `resources/js/app.js`:
+       ```javascript
+       import Alpine from 'alpinejs'
+       window.Alpine = Alpine
+       Alpine.data('themeSwitch', () => ({
+           theme: localStorage.getItem('theme') || 'auto',
+           init() {
+               this.applyTheme();
+               window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                   if (this.theme === 'auto') {
+                       this.applyTheme();
+                   }
+               });
+           },
+           setTheme(newTheme) {
+               this.theme = newTheme;
+               localStorage.setItem('theme', newTheme);
+               this.applyTheme();
+           },
+           applyTheme() {
+               const isDark = this.theme === 'dark' || 
+                             (this.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+               if (isDark) {
+                   document.documentElement.classList.add('dark');
+               } else {
+                   document.documentElement.classList.remove('dark');
+               }
+           }
+       }));
+       Alpine.start()
+       ```
+    3. **CRITICAL**: Add dark mode variant to `resources/css/app.css`:
+       ```css
+       @variant dark (.dark &);
+       ```
+       This line must be added to your Tailwind CSS v4 configuration for dark mode to work.
+    4. Remove Alpine CDN script from `resources/views/vendor/blogr/layouts/blog.blade.php` if present
+    5. Run `npm run build`
+       ```
+    3. Remove Alpine CDN script from `resources/views/vendor/blogr/layouts/blog.blade.php`
+    4. Run `npm run build`
+
+  - Added Alpine.js as npm dependency requirement in installation docs
+  - Alpine.js is now properly loaded via Vite for reliable initialization
+  - **Manual fix for existing installations**: 
+    1. Run `npm install alpinejs`
+    2. Add Alpine initialization to `resources/js/app.js`:
+       ```javascript
+       import Alpine from 'alpinejs'
+       window.Alpine = Alpine
+       Alpine.start()
+       ```
+    3. Remove Alpine.js CDN script from published `resources/views/vendor/blogr/layouts/blog.blade.php`
+    4. Run `npm run build`
+
+## [v0.8.1](https://github.com/happytodev/blogr/compare/v0.8.1...v0.8.0) - 2025-10-09
+
+### ✨ Features
+
+- You can now actually use the blogr engine as your home page. The "homepage" setting will help you do this.
 
 ### 🔧 Route Configuration Fixes
 
