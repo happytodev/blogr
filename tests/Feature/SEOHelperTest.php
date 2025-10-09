@@ -6,13 +6,6 @@ use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
 
-beforeEach(function () {
-    $this->app['config']->set('blogr.locales.enabled', false);
-    $this->app['config']->set('blogr.route.prefix', 'blog');
-    $this->app['config']->set('blogr.route.homepage', false);
-    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
-});
-
 test('SEOHelper generates correct metadata for listing pages', function () {
     // Test index page
     $seoData = SEOHelper::forListingPage('index');

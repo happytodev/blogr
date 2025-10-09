@@ -9,14 +9,6 @@ use Happytodev\Blogr\Tests\Database\Factories\UserFactory;
 use Happytodev\Blogr\Tests\Database\Factories\CategoryFactory;
 use Happytodev\Blogr\Tests\Database\Factories\TagFactory;
 
-// Configure all SEO tests to work without locales
-beforeEach(function () {
-    $this->app['config']->set('blogr.locales.enabled', false);
-    $this->app['config']->set('blogr.route.prefix', 'blog');
-    $this->app['config']->set('blogr.route.homepage', false);
-    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
-});
-
 test('blog index page includes correct SEO meta tags', function () {
     
     // Create some test posts

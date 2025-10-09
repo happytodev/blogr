@@ -69,6 +69,11 @@ class TestCase extends Orchestra
 
         $app['config']->set('app.key', 'base64:/QGZSf6gflmQp4zukiY3ab0DnTFMOqLK1//pgpQhFzw=');
 
+        // Configure blogr settings for testing - MUST be set before ServiceProvider loads
+        $app['config']->set('blogr.locales.enabled', false);
+        $app['config']->set('blogr.route.prefix', 'blog');
+        $app['config']->set('blogr.route.homepage', false);
+
         // Configure database for testing
         $app['config']->set('database.connections.testing', [
             'driver' => 'sqlite',
