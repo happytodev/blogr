@@ -38,6 +38,9 @@ it('can display a blog post with locales enabled', function () {
     config(['blogr.locales.default' => 'en']);
     config(['blogr.locales.available' => ['en', 'fr']]);
     
+    // Re-register service provider to apply locale configuration
+    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
+    
     $post = BlogPost::factory()->create([
         'title' => 'English Title',
         'slug' => 'english-slug',
@@ -62,6 +65,9 @@ it('can display translated post in French', function () {
     config(['blogr.locales.enabled' => true]);
     config(['blogr.locales.default' => 'en']);
     config(['blogr.locales.available' => ['en', 'fr']]);
+    
+    // Re-register service provider to apply locale configuration
+    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
     
     $post = BlogPost::factory()->create([
         'title' => 'English Title',
@@ -91,6 +97,9 @@ it('provides translations for language switcher', function () {
     config(['blogr.locales.enabled' => true]);
     config(['blogr.locales.default' => 'en']);
     config(['blogr.locales.available' => ['en', 'fr', 'es']]);
+    
+    // Re-register service provider to apply locale configuration
+    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
     
     $post = BlogPost::factory()->create([
         'title' => 'English Title',
@@ -126,6 +135,9 @@ it('provides translations for language switcher', function () {
 it('returns 404 for missing translation', function () {
     config(['blogr.locales.enabled' => true]);
     config(['blogr.locales.default' => 'en']);
+    
+    // Re-register service provider to apply locale configuration
+    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
     
     $post = BlogPost::factory()->create([
         'title' => 'English Title',
