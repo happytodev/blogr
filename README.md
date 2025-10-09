@@ -179,7 +179,75 @@ The easiest way to install Blogr is using the automated installation command. Th
 composer require happytodev/blogr
 ```
 
-2. **Run the automated installation**
+2. **Install Alpine.js (required for theme switcher and interactive features)**
+
+```bash
+npm install alpinejs
+```
+
+Then add Alpine.js to your `resources/js/app.js`:
+
+```javascript
+import Alpine from 'alpinejs'
+
+window.Alpine = Alpine
+
+// Theme Switcher Component (required for light/dark/auto mode)
+Alpine.data('themeSwitch', () => ({
+    theme: localStorage.getItem('theme') || 'auto',
+    
+    init() {
+        this.applyTheme();
+        
+        // Watch for system preference changes when in auto mode
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (this.theme === 'auto') {
+                this.applyTheme();
+            }
+        });
+    },
+    
+    setTheme(newTheme) {
+        this.theme = newTheme;
+        localStorage.setItem('theme', newTheme);
+        this.applyTheme();
+    },
+    
+    applyTheme() {
+        const isDark = this.theme === 'dark' || 
+                      (this.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+}));
+
+Alpine.start()
+```
+
+3. **Configure Tailwind CSS v4 for dark mode**
+
+Add the dark mode variant to your `resources/css/app.css`:
+
+```css
+@import 'tailwindcss';
+
+@plugin "@tailwindcss/typography";
+
+/* Add these @source directives to include Blogr views */
+@source '../../vendor/happytodev/blogr/resources/views/**/*.blade.php';
+@source '../views/vendor/blogr/**/*.blade.php';
+
+/* Configure dark mode with class strategy */
+@variant dark (.dark &);
+```
+
+**⚠️ Important**: The `@variant dark (.dark &);` line is **required** for the theme switcher to work with Tailwind CSS v4.
+
+4. **Run the automated installation**
 
 ```bash
 php artisan blogr:install
@@ -213,11 +281,15 @@ The automated installation performs the following steps:
 
 1. **📦 Publishes configuration and migration files**
    - Publishes `config/blogr.php`
-   - Publishes migration files
+   - Publishes Blogr migration files
+   - Publishes Blogr assets (default images to `public/vendor/blogr/images/`)
+   - Publishes Spatie Permission migrations (for roles & permissions)
    - Publishes views and assets
+   - Optionally publishes Spatie Permission config
 
 2. **🗄️ Runs database migrations**
    - Creates necessary database tables
+   - Creates roles and permissions tables
    - Handles migration conflicts gracefully
 
 3. **📚 Installs tutorial content** (unless `--skip-tutorials` is used)
@@ -262,6 +334,17 @@ If you encounter issues:
 - **Re-run migrations**: `php artisan migrate:fresh` (⚠️ This will reset your database)
 - **Check file permissions**: Ensure web server can write to storage directories
 - **Verify npm installation**: Run `npm install && npm run build` if needed
+
+**Theme Switcher Issues:**
+
+- **Dark mode doesn't work**: Ensure you have added `@variant dark (.dark &);` to your `resources/css/app.css` file (required for Tailwind CSS v4)
+- **Auto mode doesn't detect system preference**: 
+  - **Windows users**: Check Settings → Personalization → Colors → Choose your mode (set to Dark or Light)
+  - ⚠️ **Note**: Windows 11 doesn't have built-in automatic light/dark switching by time of day. You need to manually set Dark/Light mode, or use a third-party app like [Auto Dark Mode](https://github.com/AutoDarkMode/Windows-Auto-Night-Mode)
+  - **macOS users**: Check System Settings → Appearance (Dark or Auto mode available)
+  - Clear browser cache and localStorage: Open DevTools (F12) → Console → run `localStorage.clear()` then refresh
+  - Verify in console: `window.matchMedia('(prefers-color-scheme: dark)').matches` should return `true` if your system is in dark mode
+- **Theme doesn't persist**: Check browser console for JavaScript errors, ensure Alpine.js is properly loaded
 
 ### Manual installation
 
@@ -331,6 +414,39 @@ Log in to your Filament admin panel and go to the “Blog Posts” section.
 
 You can customize the table prefix in the published config file:  
 `config/blogr.php`
+
+### Tailwind CSS v4 Dark Mode Configuration
+
+**⚠️ CRITICAL**: If you're using Tailwind CSS v4, you **MUST** configure the dark mode variant for the theme switcher to work.
+
+Add this line to your `resources/css/app.css`:
+
+```css
+@variant dark (.dark &);
+```
+
+**Complete example** of a Tailwind CSS v4 configuration compatible with Blogr:
+
+```css
+@import 'tailwindcss';
+
+@plugin "@tailwindcss/typography";
+
+/* Include Blogr package views */
+@source '../../vendor/happytodev/blogr/resources/views/**/*.blade.php';
+@source '../views/vendor/blogr/**/*.blade.php';
+
+/* Your theme customizations */
+@theme {
+    /* Your theme variables here */
+}
+
+/* REQUIRED: Dark mode variant for Blogr theme switcher */
+@variant dark (.dark &);
+```
+
+**Why is this required?**  
+Tailwind CSS v4 doesn't enable class-based dark mode by default. The `@variant dark (.dark &);` directive tells Tailwind to generate dark mode classes (like `dark:bg-gray-900`) that are activated when a parent element has the `dark` class. This is how Blogr's theme switcher controls dark mode.
 
 ### Default Open Graph (OG) Image Configuration
 
