@@ -4,6 +4,9 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+
+## [v0.8.3](https://github.com/happytodev/blogr/compare/v0.8.3...v0.8.2) - 2025-10-10
+
 ### ✨ Enhancements
 
 - **Installation Command**: Enhanced automation of installation process
