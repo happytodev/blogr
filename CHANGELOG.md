@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## ## [v0.8.2](https://github.com/happytodev/blogr/compare/v0.8.2...v0.8.1) - 2025-10-10
+
 ### 🐛 Bug Fixes
 
 - **Installation Command**: Fixed "no such table: roles" error during tutorial installation
