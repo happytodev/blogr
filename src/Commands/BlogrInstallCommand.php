@@ -37,6 +37,15 @@ class BlogrInstallCommand extends Command
         // Step 2.5: Configure User model with HasRoles trait
         $this->configureUserModel();
 
+        // Step 2.6: Create roles and permissions
+        $this->createRolesAndPermissions();
+
+        // Step 2.7: Create test users with roles
+        $this->createTestUsers();
+
+        // Step 2.8: Install UserResource for managing users in Filament
+        $this->installUserResource();
+
         // Step 3: Install tutorial content (unless skipped)
         if (!$this->option('skip-tutorials')) {
             $this->installTutorials();
@@ -862,6 +871,93 @@ JS;
         } catch (\Exception $e) {
             $this->warn('⚠️  Error copying images: ' . $e->getMessage());
             $this->line('ℹ️  You may need to manually copy images from vendor/happytodev/blogr/resources/images/');
+        }
+    }
+
+    protected function createRolesAndPermissions(): void
+    {
+        $this->info('👥 Creating roles and permissions...');
+
+        try {
+            // Run the RoleAndPermissionSeeder
+            $seeder = new \Happytodev\Blogr\Database\Seeders\RoleAndPermissionSeeder();
+            $seeder->setCommand($this);
+            $seeder->run();
+        } catch (\Exception $e) {
+            $this->warn('⚠️  Error creating roles and permissions: ' . $e->getMessage());
+            $this->line('ℹ️  You may need to create roles manually.');
+        }
+    }
+
+    /**
+     * Create test users with appropriate roles
+     */
+    protected function createTestUsers(): void
+    {
+        $this->info('� Creating test users...');
+
+        try {
+            $seederClass = \Happytodev\Blogr\Database\Seeders\TestUsersSeeder::class;
+            $seeder = new $seederClass();
+            $seeder->setCommand($this);
+            $seeder->run();
+        } catch (\Exception $e) {
+            $this->warn('⚠️  Error creating test users: ' . $e->getMessage());
+            $this->line('ℹ️  You may need to create users manually.');
+        }
+    }
+
+    /**
+     * Install UserResource for managing users in Filament
+     */
+    protected function installUserResource(): void
+    {
+        $this->info('📋 Installing UserResource for user management...');
+
+        // Define the paths
+        $stubsPath = __DIR__ . '/../../stubs';
+        $appPath = app_path();
+
+        $files = [
+            'UserResource.stub' => $appPath . '/Filament/Resources/UserResource.php',
+            'UserForm.stub' => $appPath . '/Filament/Resources/Users/Schemas/UserForm.php',
+            'UsersTable.stub' => $appPath . '/Filament/Resources/Users/Tables/UsersTable.php',
+            'ListUsers.stub' => $appPath . '/Filament/Resources/Users/Pages/ListUsers.php',
+            'CreateUser.stub' => $appPath . '/Filament/Resources/Users/Pages/CreateUser.php',
+            'EditUser.stub' => $appPath . '/Filament/Resources/Users/Pages/EditUser.php',
+        ];
+
+        $copiedCount = 0;
+        foreach ($files as $stub => $destination) {
+            $source = $stubsPath . '/' . $stub;
+            
+            // Check if the file already exists
+            if (file_exists($destination)) {
+                $this->line("   • " . basename($destination) . " already exists, skipping...");
+                continue;
+            }
+
+            // Create the directory if it doesn't exist
+            $directory = dirname($destination);
+            if (!is_dir($directory)) {
+                mkdir($directory, 0755, true);
+            }
+
+            // Copy the file
+            if (file_exists($source)) {
+                copy($source, $destination);
+                $this->line("   • Copied " . basename($destination));
+                $copiedCount++;
+            } else {
+                $this->warn("   ⚠️  Stub file not found: " . basename($stub));
+            }
+        }
+
+        if ($copiedCount > 0) {
+            $this->info("✅ UserResource installed successfully! ({$copiedCount} files)");
+            $this->line("   You can now manage users in the admin panel.");
+        } else {
+            $this->line("ℹ️  UserResource files already exist.");
         }
     }
 }
