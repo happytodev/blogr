@@ -4,7 +4,54 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
-## ## [v0.8.2](https://github.com/happytodev/blogr/compare/v0.8.2...v0.8.1) - 2025-10-10
+### ✨ Enhancements
+
+- **Installation Command**: Enhanced automation of installation process
+  - **BlogrPlugin auto-configuration**: Automatically adds `BlogrPlugin::make()` to AdminPanelProvider (handles both cases: with and without existing plugins array)
+  - **User Model auto-configuration**: Automatically adds `HasRoles` trait from Spatie Permission to User model
+  - Now detects and configures AdminPanelProvider automatically with user confirmation
+
+### 🐛 Bug Fixes
+
+- **Critical: User Model Configuration**: User model now automatically configured with Spatie Permission HasRoles trait
+  - Fixes `Call to undefined method App\Models\User::hasRole()` error in BlogPostResource authorization
+  - Automatically adds `use Spatie\Permission\Traits\HasRoles;` import to User model
+  - Automatically adds `HasRoles` to User model traits
+  - **Manual fix for existing installations**:
+    ```php
+    // In app/Models/User.php, add:
+    use Spatie\Permission\Traits\HasRoles;
+    
+    // And in the class:
+    use HasFactory, HasRoles, Notifiable;
+    ```
+
+- **Critical: Default Images Path**: Fixed images publication to use correct path
+  - Removed duplicate image publication in `public/storage/images/`
+  - Images now published **only** to `public/vendor/blogr/images/` via `blogr-assets` tag
+  - Views reference `/vendor/blogr/images/` path correctly
+  - **Manual fix for existing installations**: 
+    ```bash
+    # Remove old images
+    rm -rf public/storage/images/blogr.webp public/storage/images/default-*.svg
+    
+    # Create correct directory and copy images
+    mkdir -p public/vendor/blogr/images
+    cp vendor/happytodev/blogr/resources/images/* public/vendor/blogr/images/
+    ```
+
+## [v0.8.2](https://github.com/happytodev/blogr/compare/v0.8.2...v0.8.1) - 2025-10-10
+
+### ✨ Enhancements
+
+- **Installation Command**: Complete automation of installation process
+  - **Alpine.js configuration**: Automatically configures Alpine.js in `resources/js/app.js`
+  - **Tailwind CSS v4 dark mode**: Automatically adds `@variant dark (.dark &);` to `resources/css/app.css`
+  - **Series content**: New option to install example series with posts (`--skip-series` to skip)
+  - **Asset building**: Automatically runs `npm run build` at the end (`--skip-build` to skip)
+  - **Frontend configuration**: New `--skip-frontend` option to skip Alpine.js and Tailwind CSS configuration
+  - **One-command setup**: After `composer require happytodev/blogr`, just run `php artisan blogr:install`
+  - All configurations can now be applied automatically with user confirmation
 
 ### 🐛 Bug Fixes
 
@@ -14,9 +61,8 @@ All notable changes to `blogr` will be documented in this file.
   - Updated README documentation to reflect Spatie Permission setup
   
 - **Missing Default Images**: Fixed 404 error on default post and series images
-  - Added automatic publication of `blogr-assets` tag during installation
-  - Default images (default-post.svg, default-series.svg) are now correctly copied to `public/vendor/blogr/images/`
-  - **Manual fix for existing installations**: Run `php artisan vendor:publish --tag=blogr-assets --force`
+  - Default images (default-post.svg, default-series.svg) are now correctly published to `public/vendor/blogr/images/`
+  - **Manual fix for existing installations**: Run `php artisan vendor:publish --tag=blogr-assets --force` and copy images manually if needed
 
 - **Theme Switcher Not Working**: Fixed light/dark/auto theme switcher functionality
   - Removed unreliable Alpine.js CDN loading from layout
@@ -65,8 +111,6 @@ All notable changes to `blogr` will be documented in this file.
        This line must be added to your Tailwind CSS v4 configuration for dark mode to work.
     4. Remove Alpine CDN script from `resources/views/vendor/blogr/layouts/blog.blade.php` if present
     5. Run `npm run build`
-       ```
-    3. Remove Alpine CDN script from `resources/views/vendor/blogr/layouts/blog.blade.php`
     4. Run `npm run build`
 
   - Added Alpine.js as npm dependency requirement in installation docs

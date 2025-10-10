@@ -13,7 +13,12 @@ use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
 
 class BlogrInstallCommand extends Command
 {
-    public $signature = 'blogr:install {--skip-npm : Skip npm dependencies installation} {--skip-tutorials : Skip tutorial content installation}';
+    public $signature = 'blogr:install 
+                        {--skip-npm : Skip npm dependencies installation} 
+                        {--skip-tutorials : Skip tutorial content installation}
+                        {--skip-series : Skip series content installation}
+                        {--skip-frontend : Skip frontend configuration (Alpine.js and Tailwind CSS)}
+                        {--skip-build : Skip npm run build at the end}';
 
     public $description = 'Install and configure Blogr with all necessary steps';
 
@@ -29,20 +34,47 @@ class BlogrInstallCommand extends Command
         // Step 2: Run migrations
         $this->runMigrations();
 
+        // Step 2.5: Configure User model with HasRoles trait
+        $this->configureUserModel();
+
+        // Step 2.6: Create roles and permissions
+        $this->createRolesAndPermissions();
+
+        // Step 2.7: Create test users with roles
+        $this->createTestUsers();
+
+        // Step 2.8: Install UserResource for managing users in Filament
+        $this->installUserResource();
+
         // Step 3: Install tutorial content (unless skipped)
         if (!$this->option('skip-tutorials')) {
             $this->installTutorials();
         }
 
+        // Step 3.5: Install series content (unless skipped)
+        if (!$this->option('skip-series')) {
+            $this->installSeries();
+        }
+
         // Step 4: Install dashboard widgets
         $this->installWidgets();
 
-        // Step 5: Handle npm dependencies (unless skipped)
+        // Step 5: Configure frontend (Alpine.js and Tailwind CSS)
+        if (!$this->option('skip-frontend')) {
+            $this->configureFrontend();
+        }
+
+        // Step 6: Handle npm dependencies (unless skipped)
         if (!$this->option('skip-npm')) {
             $this->handleNpmDependencies();
         }
 
-        // Step 5: Check AdminPanelProvider configuration
+        // Step 7: Build assets (unless skipped)
+        if (!$this->option('skip-build') && !$this->option('skip-npm')) {
+            $this->buildAssets();
+        }
+
+        // Step 8: Check AdminPanelProvider configuration
         $this->checkAdminPanelProvider();
 
         // Step 6: GitHub star prompt
@@ -68,12 +100,15 @@ class BlogrInstallCommand extends Command
             '--force' => true
         ]);
 
-        // Publish Blogr assets (images)
-        $this->info('📦 Publishing Blogr assets (images)...');
+        // Publish Blogr assets (images) to public/vendor/blogr/images
+        $this->info('📦 Publishing Blogr assets (default images)...');
         $this->call('vendor:publish', [
             '--tag' => 'blogr-assets',
             '--force' => true
         ]);
+
+        // Manual fallback: Copy images directly if vendor:publish didn't work (symlink issue)
+        $this->ensureImagesArePublished();
 
         // Publish Spatie Permission migrations (required for roles & permissions)
         $this->info('📦 Publishing Spatie Permission migrations...');
@@ -150,6 +185,249 @@ class BlogrInstallCommand extends Command
         }
     }
 
+    protected function installSeries(): void
+    {
+        $this->info('📖 Installing series content...');
+
+        if ($this->confirm('Would you like to install example series with posts to showcase the series feature?', true)) {
+            try {
+                // Run the BlogSeriesSeeder
+                $this->call('db:seed', [
+                    '--class' => 'Happytodev\\Blogr\\Database\\Seeders\\BlogSeriesSeeder'
+                ]);
+                $this->info('✅ Series content installed successfully.');
+                $this->line('ℹ️ Check out your blog to see the series feature in action!');
+            } catch (\Exception $e) {
+                $this->error('❌ Failed to install series content: ' . $e->getMessage());
+                $this->line('ℹ️ You can install it later manually.');
+            }
+        } else {
+            $this->line('ℹ️ Series installation skipped.');
+        }
+    }
+
+    protected function configureFrontend(): void
+    {
+        $this->info('🎨 Configuring frontend (Alpine.js and Tailwind CSS v4)...');
+        $this->newLine();
+
+        // Configure Alpine.js
+        $this->configureAlpineJs();
+
+        // Configure Tailwind CSS v4
+        $this->configureTailwindCss();
+    }
+
+    protected function configureAlpineJs(): void
+    {
+        $this->info('🔧 Configuring Alpine.js for theme switcher...');
+
+        $appJsPath = resource_path('js/app.js');
+
+        if (!File::exists($appJsPath)) {
+            $this->warn('⚠️ app.js not found at: ' . $appJsPath);
+            $this->line('ℹ️ You need to manually configure Alpine.js. See documentation.');
+            return;
+        }
+
+        $appJsContent = File::get($appJsPath);
+
+        // Check if Alpine is already configured
+        if (str_contains($appJsContent, 'import Alpine from') || str_contains($appJsContent, "import Alpine from")) {
+            $this->info('✅ Alpine.js is already configured in app.js.');
+            return;
+        }
+
+        if ($this->confirm('Would you like to automatically configure Alpine.js in your app.js?', true)) {
+            $this->updateAppJs($appJsContent, $appJsPath);
+        } else {
+            $this->line('ℹ️ You need to manually configure Alpine.js. See README.md for instructions.');
+        }
+    }
+
+    protected function updateAppJs(string $content, string $path): void
+    {
+        // Read the stub file
+        $stubPath = __DIR__ . '/../../stubs/app.js.stub';
+        
+        if (File::exists($stubPath)) {
+            $stubContent = File::get($stubPath);
+            
+            // Check if app.js only has import './bootstrap';
+            if (trim($content) === "import './bootstrap';") {
+                // Replace entirely with stub
+                File::put($path, $stubContent);
+                $this->info('✅ Alpine.js configuration added to app.js.');
+            } else {
+                // Append Alpine configuration after imports
+                $alpineConfig = "\n" . $this->getAlpineConfigSnippet();
+                
+                // Find a good place to insert (after imports)
+                if (preg_match('/^(import\s+.*;\s*)+/m', $content, $matches)) {
+                    $content = preg_replace(
+                        '/^(import\s+.*;\s*)+/m',
+                        "$0\n" . $alpineConfig,
+                        $content,
+                        1
+                    );
+                } else {
+                    $content .= "\n" . $alpineConfig;
+                }
+                
+                File::put($path, $content);
+                $this->info('✅ Alpine.js configuration added to app.js.');
+            }
+        } else {
+            $this->warn('⚠️ Could not find Alpine.js stub file.');
+            $this->line('ℹ️ Please manually add Alpine.js configuration. See README.md.');
+        }
+    }
+
+    protected function getAlpineConfigSnippet(): string
+    {
+        return <<<'JS'
+import Alpine from 'alpinejs';
+
+window.Alpine = Alpine;
+
+// Blogr Theme Switcher Component (required for light/dark/auto mode)
+Alpine.data('themeSwitch', () => ({
+    theme: localStorage.getItem('theme') || 'auto',
+    
+    init() {
+        this.applyTheme();
+        
+        // Watch for system preference changes when in auto mode
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (this.theme === 'auto') {
+                this.applyTheme();
+            }
+        });
+    },
+    
+    setTheme(newTheme) {
+        this.theme = newTheme;
+        localStorage.setItem('theme', newTheme);
+        this.applyTheme();
+    },
+    
+    applyTheme() {
+        const isDark = this.theme === 'dark' || 
+                      (this.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+}));
+
+Alpine.start();
+JS;
+    }
+
+    protected function configureTailwindCss(): void
+    {
+        $this->info('🎨 Configuring Tailwind CSS v4 dark mode...');
+
+        $cssPath = resource_path('css/app.css');
+
+        if (!File::exists($cssPath)) {
+            $this->warn('⚠️ app.css not found at: ' . $cssPath);
+            $this->line('ℹ️ You need to manually configure Tailwind CSS v4. See documentation.');
+            return;
+        }
+
+        $cssContent = File::get($cssPath);
+
+        // Check if dark variant is already configured
+        if (str_contains($cssContent, '@variant dark')) {
+            $this->info('✅ Tailwind CSS v4 dark mode is already configured.');
+            return;
+        }
+
+        if ($this->confirm('Would you like to automatically configure Tailwind CSS v4 dark mode in your app.css?', true)) {
+            $this->updateAppCss($cssContent, $cssPath);
+        } else {
+            $this->warn('⚠️ CRITICAL: You MUST add "@variant dark (.dark &);" to your app.css for the theme switcher to work!');
+            $this->line('ℹ️ See README.md for complete instructions.');
+        }
+    }
+
+    protected function updateAppCss(string $content, string $path): void
+    {
+        // Add Blogr views @source directives if not present
+        $blogrSources = [
+            "@source '../../vendor/happytodev/blogr/resources/views/**/*.blade.php';",
+            "@source '../views/vendor/blogr/**/*.blade.php';",
+        ];
+
+        foreach ($blogrSources as $source) {
+            if (!str_contains($content, $source)) {
+                // Add after other @source directives or after @plugin
+                if (preg_match('/@source\s+.*?;/s', $content)) {
+                    $content = preg_replace(
+                        '/(@source\s+.*?;\s*)/s',
+                        "$0\n" . $source . "\n",
+                        $content,
+                        1
+                    );
+                } elseif (preg_match('/@plugin\s+.*?;/s', $content)) {
+                    $content = preg_replace(
+                        '/(@plugin\s+.*?;\s*)/s',
+                        "$0\n\n" . $source . "\n",
+                        $content,
+                        1
+                    );
+                }
+            }
+        }
+
+        // Add dark variant at the end if not present
+        if (!str_contains($content, '@variant dark')) {
+            $darkVariant = "\n/* REQUIRED: Dark mode variant for Blogr theme switcher */\n@variant dark (.dark &);\n";
+            $content .= $darkVariant;
+        }
+
+        File::put($path, $content);
+        $this->info('✅ Tailwind CSS v4 dark mode configured in app.css.');
+        $this->warn('⚠️ Important: Run "npm run build" after installation to compile assets!');
+    }
+
+    protected function buildAssets(): void
+    {
+        $this->info('🏗️ Building frontend assets...');
+        $this->newLine();
+
+        if (!File::exists(base_path('package.json'))) {
+            $this->warn('⚠️ No package.json found. Skipping build.');
+            return;
+        }
+
+        if ($this->confirm('Would you like to build your assets now? (npm run build)', true)) {
+            $this->line('⏳ Building assets... This may take a moment.');
+            
+            try {
+                $result = Process::timeout(300)->run(['npm', 'run', 'build']);
+
+                if ($result->successful()) {
+                    $this->info('✅ Assets built successfully!');
+                    $this->line('🎉 Your blog frontend is now ready!');
+                } else {
+                    $this->error('❌ Failed to build assets:');
+                    $this->line($result->errorOutput());
+                    $this->line('ℹ️ You can build manually later: npm run build');
+                }
+            } catch (\Exception $e) {
+                $this->error('❌ Error building assets: ' . $e->getMessage());
+                $this->line('ℹ️ You can build manually later: npm run build');
+            }
+        } else {
+            $this->warn('⚠️ Remember to run "npm run build" before visiting your blog!');
+        }
+    }
+
     protected function installWidgets(): void
     {
         $this->info('📊 Installing Blogr dashboard widgets...');
@@ -208,45 +486,72 @@ class BlogrInstallCommand extends Command
         // Check if package.json exists
         if (!File::exists(base_path('package.json'))) {
             $this->warn('⚠️ No package.json found. Skipping npm dependencies installation.');
-            $this->line('ℹ️ You can install @tailwindcss/typography manually: npm install -D @tailwindcss/typography');
+            $this->line('ℹ️ You need to install: npm install alpinejs @tailwindcss/typography -D');
             return;
         }
 
-        // Check if @tailwindcss/typography is already installed
         $packageJson = json_decode(File::get(base_path('package.json')), true);
+        
+        // Check Alpine.js
+        $hasAlpine = isset($packageJson['dependencies']['alpinejs']) || isset($packageJson['devDependencies']['alpinejs']);
+        
+        // Check @tailwindcss/typography
         $hasTypography = isset($packageJson['devDependencies']['@tailwindcss/typography']);
 
-        if ($hasTypography) {
-            $this->info('✅ @tailwindcss/typography is already installed.');
+        if ($hasAlpine && $hasTypography) {
+            $this->info('✅ All required npm packages are already installed.');
         } else {
-            if ($this->confirm('Would you like to install @tailwindcss/typography for better blog post styling?', true)) {
-                $this->installNpmPackage();
+            $packagesToInstall = [];
+            
+            if (!$hasAlpine) {
+                $packagesToInstall[] = 'alpinejs';
+            }
+            
+            if (!$hasTypography) {
+                $packagesToInstall[] = '@tailwindcss/typography';
+            }
+            
+            if ($this->confirm('Would you like to install the missing packages: ' . implode(', ', $packagesToInstall) . '?', true)) {
+                $this->installNpmPackages($packagesToInstall);
             } else {
-                $this->line('ℹ️ You can install it later: npm install -D @tailwindcss/typography');
+                $this->line('ℹ️ You can install them later: npm install ' . implode(' ', $packagesToInstall));
             }
         }
 
-        // Check and update CSS file
+        // Check and update CSS file for typography
         $this->updateCssFile();
     }
 
-    protected function installNpmPackage(): void
+    protected function installNpmPackages(array $packages): void
     {
-        $this->info('📦 Installing @tailwindcss/typography...');
+        $this->info('📦 Installing npm packages: ' . implode(', ', $packages) . '...');
 
         try {
-            $result = Process::run(['npm', 'install', '-D', '@tailwindcss/typography']);
+            $packageList = implode(' ', $packages);
+            $command = ['npm', 'install'];
+            
+            // Add packages
+            foreach ($packages as $package) {
+                $command[] = $package;
+            }
+            
+            // Alpine.js should be a regular dependency, typography as dev dependency
+            if (in_array('@tailwindcss/typography', $packages)) {
+                $command[] = '-D';
+            }
+            
+            $result = Process::timeout(300)->run($command);
 
             if ($result->successful()) {
-                $this->info('✅ @tailwindcss/typography installed successfully.');
+                $this->info('✅ npm packages installed successfully.');
             } else {
-                $this->error('❌ Failed to install @tailwindcss/typography:');
+                $this->error('❌ Failed to install npm packages:');
                 $this->line($result->errorOutput());
-                $this->line('ℹ️ You can install it manually: npm install -D @tailwindcss/typography');
+                $this->line('ℹ️ You can install them manually: npm install ' . $packageList);
             }
         } catch (\Exception $e) {
-            $this->error('❌ Error installing npm package: ' . $e->getMessage());
-            $this->line('ℹ️ You can install it manually: npm install -D @tailwindcss/typography');
+            $this->error('❌ Error installing npm packages: ' . $e->getMessage());
+            $this->line('ℹ️ You can install them manually: npm install ' . implode(' ', $packages));
         }
     }
 
@@ -319,15 +624,10 @@ class BlogrInstallCommand extends Command
             return;
         }
 
-        // Check if we can automatically add it
-        if (str_contains($content, '->plugins([') && str_contains($content, '])')) {
-            if ($this->confirm('Would you like to automatically add BlogrPlugin to your AdminPanelProvider?', true)) {
-                $this->updateAdminPanelProvider($content, $adminPanelPath);
-            } else {
-                $this->displayAdminPanelInstructions();
-            }
+        // Automatically add BlogrPlugin
+        if ($this->confirm('Would you like to automatically add BlogrPlugin to your AdminPanelProvider?', true)) {
+            $this->updateAdminPanelProvider($content, $adminPanelPath);
         } else {
-            $this->warn('⚠️ Could not automatically detect plugin configuration in AdminPanelProvider.');
             $this->displayAdminPanelInstructions();
         }
     }
@@ -336,19 +636,31 @@ class BlogrInstallCommand extends Command
     {
         // Add import if not present
         if (!str_contains($content, 'use Happytodev\Blogr\BlogrPlugin;')) {
+            // Find the last 'use' statement before the class declaration and add our import after it
             $content = preg_replace(
-                '/(use Filament\\.*;\s*)/',
-                "$1use Happytodev\Blogr\BlogrPlugin;\n",
-                $content
+                '/(use [^;]+;)\n+(?=\s*class)/s',
+                "$1\nuse Happytodev\\Blogr\\BlogrPlugin;\n\n",
+                $content,
+                1
             );
         }
 
-        // Add plugin to the plugins array
-        $content = preg_replace(
-            '/(->plugins\(\[)([^\]]*?)(\]\))/s',
-            "$1$2\n            BlogrPlugin::make(),$3",
-            $content
-        );
+        // Check if plugins array already exists
+        if (str_contains($content, '->plugins([')) {
+            // Add plugin to existing plugins array
+            $content = preg_replace(
+                '/(->plugins\(\[)([^\]]*?)(\]\))/s',
+                "$1$2\n                BlogrPlugin::make(),$3",
+                $content
+            );
+        } else {
+            // Create new plugins array before authMiddleware
+            $content = preg_replace(
+                '/(->authMiddleware\(\[)/s',
+                "->plugins([\n                BlogrPlugin::make(),\n            ])\n            $1",
+                $content
+            );
+        }
 
         File::put($adminPanelPath, $content);
         $this->info('✅ BlogrPlugin added to AdminPanelProvider automatically.');
@@ -396,18 +708,256 @@ class BlogrInstallCommand extends Command
         $this->info('🎯 Next steps:');
         $this->line('1. Access your Filament admin panel');
         $this->line('2. Go to "Blog Posts" to create your first post');
-        $this->line('3. Check out the tutorial posts (if installed)');
+        $this->line('3. Check out the tutorial posts and series (if installed)');
         $this->line('4. Configure settings in the "Blogr Settings" section');
         $this->line('5. Visit your blog at: ' . url(config('blogr.route.prefix', 'blog')));
         $this->newLine();
+
+        if ($this->option('skip-build') || $this->option('skip-npm')) {
+            $this->warn('⚠️ IMPORTANT: Don\'t forget to run "npm run build" before visiting your blog!');
+            $this->newLine();
+        }
 
         $this->line('📚 Useful commands:');
         $this->line('• php artisan blogr list-tutorials    - List tutorial posts');
         $this->line('• php artisan blogr remove-tutorials  - Remove tutorial posts');
         $this->line('• php artisan blogr install-tutorials - Install tutorial posts');
+        $this->line('• npm run build                       - Build frontend assets');
+        $this->line('• npm run dev                         - Watch and build assets (development)');
         $this->newLine();
 
         $this->line('📖 Documentation: https://github.com/happytodev/blogr');
         $this->line('🐛 Issues: https://github.com/happytodev/blogr/issues');
+        $this->newLine();
+        
+        $this->info('💡 Tip: Check out the THEME_SWITCHER.md file for troubleshooting the light/dark/auto mode feature.');
+    }
+
+    protected function configureUserModel(): void
+    {
+        $this->info('⚙️  Configuring User model with Spatie Permission traits...');
+
+        $userModelPath = app_path('Models/User.php');
+
+        if (!File::exists($userModelPath)) {
+            $this->warn('❌ User model not found at ' . $userModelPath);
+            return;
+        }
+
+        $content = File::get($userModelPath);
+
+        // Check if HasRoles trait is already imported
+        if (str_contains($content, 'use Spatie\Permission\Traits\HasRoles;')) {
+            $this->line('✅ HasRoles trait already imported in User model');
+        } else {
+            // Add the import after the Notifiable import
+            $pattern = '/(use Illuminate\\\\Notifications\\\\Notifiable;)/';
+            $replacement = '$1' . PHP_EOL . 'use Spatie\Permission\Traits\HasRoles;';
+            
+            $content = preg_replace($pattern, $replacement, $content);
+            $this->line('✅ Added HasRoles trait import');
+        }
+
+        // Check if HasRoles is already in the use statement of the class
+        // We need to check specifically in the class traits line, not the imports
+        $lines = explode("\n", $content);
+        $inClass = false;
+        $hasRolesInTraits = false;
+        
+        foreach ($lines as $line) {
+            if (preg_match('/^class\s+\w+/', $line)) {
+                $inClass = true;
+                continue;
+            }
+            
+            if ($inClass && preg_match('/^\s+use\s+\w/', $line) && !preg_match('/^\s*\/\*/', $line)) {
+                if (str_contains($line, 'HasRoles')) {
+                    $hasRolesInTraits = true;
+                }
+                break;
+            }
+        }
+        
+        if ($hasRolesInTraits) {
+            $this->line('✅ HasRoles trait already used in User model');
+        } else {
+            // Add HasRoles to the class traits
+            // Strategy: Find the line that starts with spaces + 'use' followed by trait names
+            // This is INSIDE the class, not the imports at the top
+            $lines = explode("\n", $content);
+            $inClass = false;
+            $modified = false;
+
+            foreach ($lines as $index => $line) {
+                // Detect when we enter the class
+                if (preg_match('/^class\s+\w+/', $line)) {
+                    $inClass = true;
+                    continue;
+                }
+                
+                // If we're in the class and find a line with traits (starting with spaces + use)
+                // Exclude comment lines
+                if ($inClass && preg_match('/^\s+use\s+\w/', $line) && !preg_match('/^\s*\/\*/', $line)) {
+                    if (!str_contains($line, 'HasRoles') && str_contains($line, 'HasFactory')) {
+                        // Add HasRoles after HasFactory
+                        $lines[$index] = str_replace('HasFactory,', 'HasFactory, HasRoles,', $line);
+                        $modified = true;
+                        break;
+                    }
+                }
+            }
+
+            if ($modified) {
+                $content = implode("\n", $lines);
+                $this->line('✅ Added HasRoles to User model traits');
+            } else {
+                $this->warn('⚠️  Could not automatically add HasRoles to User model traits');
+            }
+        }
+
+        File::put($userModelPath, $content);
+        $this->info('✅ User model configured successfully');
+    }
+
+    protected function ensureImagesArePublished(): void
+    {
+        $targetPath = public_path('vendor/blogr/images');
+        
+        // Check if images are already published
+        if (File::exists($targetPath) && count(File::files($targetPath)) >= 3) {
+            $this->line('✅ Blogr images already published');
+            return;
+        }
+
+        // Try to find the source images directory
+        $possiblePaths = [
+            base_path('vendor/happytodev/blogr/resources/images'),
+            __DIR__ . '/../../resources/images',
+        ];
+
+        $sourcePath = null;
+        foreach ($possiblePaths as $path) {
+            if (File::exists($path)) {
+                $sourcePath = $path;
+                break;
+            }
+        }
+
+        if (!$sourcePath) {
+            $this->warn('⚠️  Could not find Blogr images source directory');
+            $this->line('ℹ️  Images should be at: vendor/happytodev/blogr/resources/images/');
+            return;
+        }
+
+        // Create target directory if it doesn't exist
+        if (!File::exists($targetPath)) {
+            File::makeDirectory($targetPath, 0755, true);
+        }
+
+        // Copy images manually
+        try {
+            $imageFiles = File::files($sourcePath);
+            $copiedCount = 0;
+
+            foreach ($imageFiles as $file) {
+                $targetFile = $targetPath . '/' . $file->getFilename();
+                File::copy($file->getPathname(), $targetFile);
+                $copiedCount++;
+            }
+
+            if ($copiedCount > 0) {
+                $this->line("✅ Manually copied {$copiedCount} image(s) to public/vendor/blogr/images");
+            }
+        } catch (\Exception $e) {
+            $this->warn('⚠️  Error copying images: ' . $e->getMessage());
+            $this->line('ℹ️  You may need to manually copy images from vendor/happytodev/blogr/resources/images/');
+        }
+    }
+
+    protected function createRolesAndPermissions(): void
+    {
+        $this->info('👥 Creating roles and permissions...');
+
+        try {
+            // Run the RoleAndPermissionSeeder
+            $seeder = new \Happytodev\Blogr\Database\Seeders\RoleAndPermissionSeeder();
+            $seeder->setCommand($this);
+            $seeder->run();
+        } catch (\Exception $e) {
+            $this->warn('⚠️  Error creating roles and permissions: ' . $e->getMessage());
+            $this->line('ℹ️  You may need to create roles manually.');
+        }
+    }
+
+    /**
+     * Create test users with appropriate roles
+     */
+    protected function createTestUsers(): void
+    {
+        $this->info('� Creating test users...');
+
+        try {
+            $seederClass = \Happytodev\Blogr\Database\Seeders\TestUsersSeeder::class;
+            $seeder = new $seederClass();
+            $seeder->setCommand($this);
+            $seeder->run();
+        } catch (\Exception $e) {
+            $this->warn('⚠️  Error creating test users: ' . $e->getMessage());
+            $this->line('ℹ️  You may need to create users manually.');
+        }
+    }
+
+    /**
+     * Install UserResource for managing users in Filament
+     */
+    protected function installUserResource(): void
+    {
+        $this->info('📋 Installing UserResource for user management...');
+
+        // Define the paths
+        $stubsPath = __DIR__ . '/../../stubs';
+        $appPath = app_path();
+
+        $files = [
+            'UserResource.stub' => $appPath . '/Filament/Resources/UserResource.php',
+            'UserForm.stub' => $appPath . '/Filament/Resources/Users/Schemas/UserForm.php',
+            'UsersTable.stub' => $appPath . '/Filament/Resources/Users/Tables/UsersTable.php',
+            'ListUsers.stub' => $appPath . '/Filament/Resources/Users/Pages/ListUsers.php',
+            'CreateUser.stub' => $appPath . '/Filament/Resources/Users/Pages/CreateUser.php',
+            'EditUser.stub' => $appPath . '/Filament/Resources/Users/Pages/EditUser.php',
+        ];
+
+        $copiedCount = 0;
+        foreach ($files as $stub => $destination) {
+            $source = $stubsPath . '/' . $stub;
+            
+            // Check if the file already exists
+            if (file_exists($destination)) {
+                $this->line("   • " . basename($destination) . " already exists, skipping...");
+                continue;
+            }
+
+            // Create the directory if it doesn't exist
+            $directory = dirname($destination);
+            if (!is_dir($directory)) {
+                mkdir($directory, 0755, true);
+            }
+
+            // Copy the file
+            if (file_exists($source)) {
+                copy($source, $destination);
+                $this->line("   • Copied " . basename($destination));
+                $copiedCount++;
+            } else {
+                $this->warn("   ⚠️  Stub file not found: " . basename($stub));
+            }
+        }
+
+        if ($copiedCount > 0) {
+            $this->info("✅ UserResource installed successfully! ({$copiedCount} files)");
+            $this->line("   You can now manage users in the admin panel.");
+        } else {
+            $this->line("ℹ️  UserResource files already exist.");
+        }
     }
 }

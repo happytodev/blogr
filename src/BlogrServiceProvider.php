@@ -312,7 +312,6 @@ class BlogrServiceProvider extends PackageServiceProvider
             __DIR__ . '/../config/blogr.php' => config_path('blogr.php'),
             __DIR__ . '/../resources/views' => resource_path('views/vendor/blogr'),
             __DIR__ . '/../database/migrations' => database_path('migrations'),
-            __DIR__ . '/../resources/images' => public_path('storage/images'),
         ], 'blogr');
 
         // Load migrations

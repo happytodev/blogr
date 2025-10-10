@@ -169,9 +169,9 @@ You have to start with a fresh install of Laravel and Filament v4 or add this pa
 
 ## Installation
 
-### Install with blogr command
+### Automated Installation (Recommended)
 
-The easiest way to install Blogr is using the automated installation command. This command will guide you through the entire installation process and handle most configuration automatically.
+The easiest way to install Blogr is using our automated installation command. After installing the package via Composer, just run one command and let Blogr handle everything!
 
 1. **Install the package via Composer**
 
@@ -179,7 +179,55 @@ The easiest way to install Blogr is using the automated installation command. Th
 composer require happytodev/blogr
 ```
 
-2. **Install Alpine.js (required for theme switcher and interactive features)**
+2. **Run the automated installation**
+
+```bash
+php artisan blogr:install
+```
+
+**That's it!** 🎉 The installation command will:
+- ✅ Publish configuration and migration files
+- ✅ Run database migrations
+- ✅ Install tutorial content (optional)
+- ✅ Install series examples (optional)
+- ✅ Configure Alpine.js in your `resources/js/app.js`
+- ✅ Configure Tailwind CSS v4 dark mode in your `resources/css/app.css`
+- ✅ Install npm packages (alpinejs, @tailwindcss/typography)
+- ✅ Build frontend assets (`npm run build`)
+- ✅ Configure the Blogr plugin in your AdminPanelProvider
+
+All steps are interactive with confirmations, so you have full control over what gets installed.
+
+#### Available Options
+
+The `blogr:install` command supports several options to customize your installation:
+
+- `--skip-npm` - Skip npm dependencies installation
+- `--skip-tutorials` - Skip tutorial content installation
+- `--skip-series` - Skip series examples installation
+- `--skip-frontend` - Skip Alpine.js and Tailwind CSS configuration
+- `--skip-build` - Skip asset building step
+
+**Examples:**
+```bash
+# Install everything (recommended for new installations)
+php artisan blogr:install
+
+# Skip building assets (build later manually)
+php artisan blogr:install --skip-build
+
+# Skip all frontend configuration (configure manually)
+php artisan blogr:install --skip-frontend
+
+# Skip tutorial and series content
+php artisan blogr:install --skip-tutorials --skip-series
+```
+
+### Manual Installation (Advanced)
+
+If you prefer to configure everything manually or need more control, follow these detailed steps:
+
+#### 1. Install Alpine.js
 
 ```bash
 npm install alpinejs
@@ -228,7 +276,7 @@ Alpine.data('themeSwitch', () => ({
 Alpine.start()
 ```
 
-3. **Configure Tailwind CSS v4 for dark mode**
+#### 2. Configure Tailwind CSS v4 for dark mode
 
 Add the dark mode variant to your `resources/css/app.css`:
 
@@ -247,10 +295,39 @@ Add the dark mode variant to your `resources/css/app.css`:
 
 **⚠️ Important**: The `@variant dark (.dark &);` line is **required** for the theme switcher to work with Tailwind CSS v4.
 
-4. **Run the automated installation**
+#### 3. Publish configuration and migrations
 
 ```bash
-php artisan blogr:install
+php artisan vendor:publish --provider="Happytodev\Blogr\BlogrServiceProvider"
+```
+
+#### 4. Run migrations
+
+```bash
+php artisan migrate
+```
+
+#### 5. Add BlogrPlugin to your AdminPanelProvider
+
+Edit `app/Providers/Filament/AdminPanelProvider.php`:
+
+```php
+use Happytodev\Blogr\BlogrPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ... other configurations
+        ->plugins([
+            BlogrPlugin::make(),
+        ]);
+}
+```
+
+#### 6. Build assets
+
+```bash
+npm run build
 ```
 
 #### Available Options
