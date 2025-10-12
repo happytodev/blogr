@@ -19,7 +19,10 @@ class TestUsersSeeder extends Seeder
                 'slug' => 'admin-user',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
-                'bio' => 'Experienced administrator and content manager with a passion for creating quality content. Leading the editorial team and ensuring the blog maintains high standards.',
+                'bio' => [
+                    'en' => 'Experienced administrator and content manager with a passion for creating quality content. Leading the editorial team and ensuring the blog maintains high standards.',
+                    'fr' => 'Administrateur expérimenté et gestionnaire de contenu passionné par la création de contenu de qualité. Dirige l\'équipe éditoriale et garantit que le blog maintient des normes élevées.',
+                ],
                 'avatar' => 'https://ui-avatars.com/api/?name=Admin+User&color=7F9CF5&background=EBF4FF',
             ]
         );
@@ -37,7 +40,10 @@ class TestUsersSeeder extends Seeder
                 'slug' => 'writer-user',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
-                'bio' => 'Passionate writer and blogger focusing on technology, development, and best practices. Always eager to share knowledge and learn from the community.',
+                'bio' => [
+                    'en' => 'Passionate writer and blogger focusing on technology, development, and best practices. Always eager to share knowledge and learn from the community.',
+                    'fr' => 'Écrivain et blogueur passionné axé sur la technologie, le développement et les meilleures pratiques. Toujours désireux de partager ses connaissances et d\'apprendre de la communauté.',
+                ],
                 'avatar' => 'https://ui-avatars.com/api/?name=Writer+User&color=10B981&background=D1FAE5',
             ]
         );
