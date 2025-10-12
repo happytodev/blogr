@@ -20,7 +20,7 @@ return new class extends Migration
                 $table->string('avatar')->nullable()->after('slug');
             }
             if (!Schema::hasColumn('users', 'bio')) {
-                $table->text('bio')->nullable()->after('avatar');
+                $table->json('bio')->nullable()->after('avatar');
             }
         });
     }
