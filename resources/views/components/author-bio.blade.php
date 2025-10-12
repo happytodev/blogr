@@ -1,14 +1,22 @@
 @props(['author', 'compact' => false, 'locale' => null])
 
 @php
+    // Check if author exists
+    if (!$author) {
+        return;
+    }
+    
     $locale = $locale ?? app()->getLocale();
     $localesEnabled = config('blogr.locales.enabled', false);
+    $authorProfileEnabled = config('blogr.author_profile.enabled', true) && isset($author->slug) && !empty($author->slug);
     
-    // Build route parameters based on whether locales are enabled
-    if ($localesEnabled) {
-        $routeParams = ['locale' => $locale, 'userSlug' => $author->slug];
-    } else {
-        $routeParams = ['userSlug' => $author->slug];
+    // Build route parameters based on whether locales are enabled (only if slug exists)
+    if ($authorProfileEnabled) {
+        if ($localesEnabled) {
+            $routeParams = ['locale' => $locale, 'userSlug' => $author->slug];
+        } else {
+            $routeParams = ['userSlug' => $author->slug];
+        }
     }
 @endphp
 
@@ -29,7 +37,7 @@
 
         <div class="flex-1">
             <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">{{ __('Written by') }}</p>
-            @if(config('blogr.author_profile.enabled', true))
+            @if($authorProfileEnabled)
                 <a href="{{ route('blog.author', $routeParams) }}" 
                    class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     {{ $author->name }}
@@ -64,7 +72,7 @@
                     {{ __('About the author') }}
                 </p>
                 
-                @if(config('blogr.author_profile.enabled', true))
+                @if($authorProfileEnabled)
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                         <a href="{{ route('blog.author', $routeParams) }}" 
                            class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
@@ -84,7 +92,7 @@
                 @endif
 
                 <div class="flex items-center gap-4 text-sm">
-                    @if(config('blogr.author_profile.enabled', true))
+                    @if($authorProfileEnabled)
                         <a href="{{ route('blog.author', $routeParams) }}" 
                            class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-500 transition-colors shadow-sm">
                             {{ __('View all posts') }}
