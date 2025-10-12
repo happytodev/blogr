@@ -179,5 +179,12 @@
                 </div>
             @endforelse
         </div>
+
+        <!-- Pagination Links -->
+        @if($posts->hasPages())
+            <div class="mt-12">
+                {{ $posts->links() }}
+            </div>
+        @endif
     </div>
 @endsection
