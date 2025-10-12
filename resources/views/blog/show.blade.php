@@ -195,6 +195,9 @@
             {!! isset($displayData) ? $displayData['content'] : $post->getContentWithoutFrontmatter() !!}
         </div>
 
+        <!-- Author Bio Box -->
+        <x-blogr::author-bio :author="$post->author" :locale="$currentLocale" />
+
         <!-- Back to Blog Button -->
         <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
             <a href="{{ config('blogr.locales.enabled') ? route('blog.index', ['locale' => $currentLocale]) : route('blog.index') }}"
