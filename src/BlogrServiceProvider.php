@@ -197,7 +197,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                     ->name('blog.tag');
                     
                 $this->app['router']->get('{locale}/{slug}', [BlogController::class, 'show'])
-                    ->where(['locale' => $localePattern, 'slug' => '^(?!author|category|tag|series).*$'])
+                    ->where(['locale' => $localePattern, 'slug' => '.*']) // Allow any slug since specific routes are already defined
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
                         [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
@@ -256,7 +256,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                     ->name('blog.tag');
                     
                 $this->app['router']->get($fullPrefix . '/{slug}', [BlogController::class, 'show'])
-                    ->where(['locale' => $localePattern, 'slug' => '^(?!author|category|tag|series).*$'])
+                    ->where(['locale' => $localePattern, 'slug' => '.*']) // Allow any slug since specific routes are already defined
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
                         [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
@@ -277,7 +277,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                         $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
                         $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
                         $this->app['router']->get('/{slug}', [BlogController::class, 'show'])
-                            ->where('slug', '^(?!author|category|tag|series).*$')
+                            ->where('slug', '.*') // Allow any slug since specific routes are already defined
                             ->name('blog.show');
                     });
             } else {
@@ -293,7 +293,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                         $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
                         $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
                         $this->app['router']->get('/{slug}', [BlogController::class, 'show'])
-                            ->where('slug', '^(?!author|category|tag|series).*$')
+                            ->where('slug', '.*') // Allow any slug since specific routes are already defined
                             ->name('blog.show');
                     });
             }
