@@ -36,7 +36,7 @@ class BlogrInstallCommand extends Command
             return $default;
         }
         
-        return $this->forceableConfirm($question, $default);
+        return $this->confirm($question, $default);
     }
 
     public function handle(): int
