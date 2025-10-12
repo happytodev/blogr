@@ -34,7 +34,11 @@
 
                 @if($author->bio ?? false)
                     <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
-                        {{ $author->bio }}
+                        @if(is_array($author->bio))
+                            {{ $author->bio[$currentLocale] ?? $author->bio[config('blogr.locales.default', 'en')] ?? '' }}
+                        @else
+                            {{ $author->bio }}
+                        @endif
                     </p>
                 @endif
             </div>
