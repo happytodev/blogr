@@ -11,7 +11,10 @@ beforeEach(function () {
         'email' => 'john@example.com',
         'password' => Hash::make('password123'),
         'avatar' => 'avatars/john.jpg',
-        'bio' => 'This is John bio',
+        'bio' => [
+            'en' => 'This is John bio',
+            'fr' => 'Ceci est la bio de John',
+        ],
     ]);
 
     $this->category = Category::create([
@@ -47,7 +50,8 @@ test('author has bio and avatar attributes', function () {
         'published_at' => now(),
     ]);
 
-    expect($post->author->bio)->toBe('This is John bio');
+    expect($post->author->bio)->toBeArray();
+    expect($post->author->bio['en'])->toBe('This is John bio');
     expect($post->author->avatar)->toBe('avatars/john.jpg');
 });
 
