@@ -51,6 +51,9 @@ class BlogrInstallCommand extends Command
         // Step 2: Run migrations
         $this->runMigrations();
 
+        // Step 2.1: Create storage symbolic link (required for avatars)
+        $this->createStorageLink();
+
         // Step 2.5: Configure User model with HasRoles trait
         $this->configureUserModel();
 
@@ -176,6 +179,52 @@ class BlogrInstallCommand extends Command
                 return;
             }
             $this->info('⏭️ Continuing with installation...');
+        }
+    }
+
+    protected function createStorageLink(): void
+    {
+        $this->info('🔗 Creating storage symbolic link...');
+
+        // Check if link already exists
+        $publicStoragePath = public_path('storage');
+        
+        if (File::exists($publicStoragePath)) {
+            // Check if it's a valid symlink
+            if (is_link($publicStoragePath) && readlink($publicStoragePath) === storage_path('app/public')) {
+                $this->info('✅ Storage link already exists and is valid.');
+                return;
+            }
+            
+            // Invalid link or regular directory exists
+            $this->warn('⚠️ A file or directory already exists at public/storage');
+            
+            if ($this->forceableConfirm('Would you like to remove it and create the symbolic link?', false)) {
+                if (is_link($publicStoragePath)) {
+                    unlink($publicStoragePath);
+                } elseif (is_dir($publicStoragePath)) {
+                    File::deleteDirectory($publicStoragePath);
+                } else {
+                    File::delete($publicStoragePath);
+                }
+            } else {
+                $this->warn('⏭️ Skipping storage link creation. Avatar uploads may not work properly.');
+                $this->line('ℹ️ Run manually: php artisan storage:link');
+                return;
+            }
+        }
+
+        // Create the symbolic link
+        $result = Process::run(['php', 'artisan', 'storage:link']);
+
+        if ($result->successful()) {
+            $this->info('✅ Storage symbolic link created successfully.');
+            $this->line('   This enables avatar image uploads in the user profile.');
+        } else {
+            $this->warn('⚠️ Failed to create storage link:');
+            $this->line($result->errorOutput());
+            $this->line('ℹ️ Please run manually: php artisan storage:link');
+            $this->line('ℹ️ This is required for user avatar uploads to work properly.');
         }
     }
 
@@ -908,6 +957,23 @@ JS;
             } else {
                 $this->warn('⚠️  Could not automatically add HasRoles to User model traits');
             }
+        }
+
+        // Add slug, avatar and bio to $fillable array
+        if (!str_contains($content, "'slug'") && !str_contains($content, '"slug"')) {
+            // Find the $fillable array - match opening bracket to closing bracket
+            $pattern = '/(\$fillable\s*=\s*\[\s*[^\]]+?)(,\s*)(\];)/s';
+            if (preg_match($pattern, $content, $matches)) {
+                // Add slug, avatar and bio before the closing bracket
+                $replacement = $matches[1] . $matches[2] . "\n        'slug',\n        'avatar',\n        'bio'," . "\n    " . $matches[3];
+                $content = preg_replace($pattern, $replacement, $content, 1);
+                $this->line('✅ Added slug, avatar and bio to User model $fillable');
+            } else {
+                $this->warn('⚠️  Could not find $fillable array in User model');
+                $this->line('ℹ️  Please manually add "slug", "avatar" and "bio" to the $fillable array');
+            }
+        } else {
+            $this->line('✅ slug, avatar and bio already in User model $fillable');
         }
 
         File::put($userModelPath, $content);
