@@ -18,45 +18,60 @@ class EditProfile extends BaseEditProfile
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data = parent::mutateFormDataBeforeFill($data);
-        
-        // Ensure bio is included in the form data
-        $user = $this->getUser();
-        $data['bio'] = $user->bio;
-        
-        // For avatar in Filament v4, we DON'T set it here
-        // FileUpload will load it automatically from the model via getStateUsing
-        // Setting it here can cause the "loading" issue
+        // Ensure avatar is treated as a string, not parsed as datetime
+        // This prevents Carbon from trying to parse file paths
+        if (isset($data['avatar'])) {
+            $data['avatar'] = (string) $data['avatar'];
+        }
         
         return $data;
     }
-    
+
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data = parent::mutateFormDataBeforeSave($data);
         
-        // Ensure bio is saved
-        if (!isset($data['bio'])) {
-            $data['bio'] = $this->getUser()->bio;
-        }
-        
+        // Bio is automatically handled by Filament with the 'array' cast
         // Avatar is automatically handled by FileUpload component
-        // It will either be null (deleted), a string path (unchanged or new upload), or array (new upload)
         
         return $data;
     }
 
     public function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                $this->getNameFormComponent(),
-                $this->getEmailFormComponent(),
-                Textarea::make('bio')
-                    ->label('Biography')
+        // Get enabled locales from config
+        $localesEnabled = config('blogr.locales.enabled', false);
+        $availableLocales = config('blogr.locales.available', ['en' => 'English']);
+        
+        $bioComponents = [];
+        
+        if ($localesEnabled && count($availableLocales) > 1) {
+            // Multiple locales - create a textarea for each language
+            foreach ($availableLocales as $locale => $label) {
+                $bioComponents[] = Textarea::make("bio.{$locale}")
+                    ->label("Biography - {$label}")
                     ->maxLength(500)
                     ->rows(4)
-                    ->nullable(),
+                    ->nullable()
+                    ->helperText("Your biography in {$label}. Displayed on your author profile page.");
+            }
+        } else {
+            // Single locale - just use 'en' as default
+            $bioComponents[] = Textarea::make('bio.en')
+                ->label('Biography')
+                ->maxLength(500)
+                ->rows(4)
+                ->nullable()
+                ->helperText('Your biography. Displayed on your author profile page.');
+        }
+        
+        return $schema
+            ->components(array_merge([
+                $this->getNameFormComponent(),
+                $this->getEmailFormComponent(),
+            ], 
+            $bioComponents,
+            [
                 FileUpload::make('avatar')
                     ->label('Avatar')
                     ->image()
@@ -75,6 +90,6 @@ class EditProfile extends BaseEditProfile
                     ->nullable(),
                 $this->getPasswordFormComponent(),
                 $this->getPasswordConfirmationFormComponent(),
-            ]);
+            ]));
     }
 }
