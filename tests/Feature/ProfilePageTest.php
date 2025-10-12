@@ -27,13 +27,14 @@ test('profile page loads successfully', function () {
 test('can update bio', function () {
     Livewire::test(EditProfile::class)
         ->fillForm([
-            'bio' => 'This is my new bio',
+            'bio.en' => 'This is my new bio',
         ])
         ->call('save')
         ->assertHasNoErrors();
     
     $this->user->refresh();
-    expect($this->user->bio)->toBe('This is my new bio');
+    expect($this->user->bio)->toBeArray();
+    expect($this->user->bio['en'])->toBe('This is my new bio');
 });
 
 test('can update avatar', function () {
@@ -68,17 +69,18 @@ test('can update name and email from base form', function () {
 });
 
 test('bio field accepts null', function () {
-    $this->user->update(['bio' => 'Original bio']);
+    $this->user->update(['bio' => ['en' => 'Original bio']]);
     
     Livewire::test(EditProfile::class)
         ->fillForm([
-            'bio' => null,
+            'bio.en' => null,
         ])
         ->call('save')
         ->assertHasNoErrors();
     
     $this->user->refresh();
-    expect($this->user->bio)->toBeNull();
+    expect($this->user->bio)->toBeArray();
+    expect($this->user->bio['en'])->toBeNull();
 });
 
 test('name is required', function () {
@@ -108,11 +110,11 @@ test('email is required', function () {
 });
 
 test('existing bio is loaded in form', function () {
-    $this->user->update(['bio' => 'Existing bio text']);
+    $this->user->update(['bio' => ['en' => 'Existing bio text']]);
     
     Livewire::test(EditProfile::class)
         ->assertFormSet([
-            'bio' => 'Existing bio text',
+            'bio.en' => 'Existing bio text',
         ]);
 });
 
