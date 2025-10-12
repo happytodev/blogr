@@ -26,7 +26,7 @@ class BlogController
         // Handle locale
         $locale = $this->resolveLocale($locale);
         
-        // Get posts that have translations in this locale
+        // Get posts that have translations in this locale with pagination
         $posts = BlogPost::whereHas('translations', function($query) use ($locale) {
                 $query->where('locale', $locale);
             })
@@ -43,9 +43,8 @@ class BlogController
                 $query->whereNull('published_at')
                       ->orWhere('published_at', '<=', now());
             })
-            ->take(config('blogr.posts_per_page', 10))
-            ->get()
-            ->map(function ($post) use ($locale) {
+            ->paginate(config('blogr.posts_per_page', 10))
+            ->through(function ($post) use ($locale) {
                 // Get the translation for this locale
                 $translation = $post->translations->first();
                 
@@ -350,9 +349,8 @@ class BlogController
                       ->orWhere('published_at', '<=', now());
             })
             ->latest()
-            ->take(config('blogr.posts_per_page', 10))
-            ->get()
-            ->map(function ($post) {
+            ->paginate(config('blogr.posts_per_page', 10))
+            ->through(function ($post) {
                 if ($post->photo) {
                     $post->photo_url = Storage::temporaryUrl($post->photo, now()->addMinutes(5));
                 }
