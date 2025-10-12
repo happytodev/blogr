@@ -11,6 +11,7 @@ beforeEach(function () {
         'name' => 'Jane Author',
         'email' => 'jane@example.com',
         'password' => Hash::make('password123'),
+        'slug' => 'jane-author',
         'avatar' => 'avatars/jane.jpg',
         'bio' => 'Jane is an experienced writer with a passion for technology.',
     ]);
@@ -51,6 +52,7 @@ test('article page shows author initials when no avatar', function () {
         'name' => 'Bob Writer',
         'email' => 'bob@example.com',
         'password' => Hash::make('password123'),
+        'slug' => 'bob-writer',
         'bio' => 'Bob loves writing.',
     ]);
 
@@ -72,8 +74,11 @@ test('article page shows author initials when no avatar', function () {
 });
 
 test('article page links to author profile', function () {
+    // Enable locales temporarily for this test
+    config(['blogr.locales.enabled' => true]);
+    
     $response = $this->get(route('blog.show', ['locale' => 'en', 'slug' => $this->post->slug]));
     
     $response->assertStatus(200);
-    $response->assertSee(route('blog.author', $this->author->id));
+    $response->assertSee(route('blog.author', ['locale' => 'en', 'userSlug' => $this->author->slug]));
 });
