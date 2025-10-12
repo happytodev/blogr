@@ -18,12 +18,32 @@ class EditProfile extends BaseEditProfile
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // Ensure bio and avatar are included in the form data
+        $data = parent::mutateFormDataBeforeFill($data);
+        
+        // Ensure bio is included in the form data
         $user = $this->getUser();
         $data['bio'] = $user->bio;
-        $data['avatar'] = $user->avatar;
         
-        return parent::mutateFormDataBeforeFill($data);
+        // For avatar in Filament v4, we DON'T set it here
+        // FileUpload will load it automatically from the model via getStateUsing
+        // Setting it here can cause the "loading" issue
+        
+        return $data;
+    }
+    
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data = parent::mutateFormDataBeforeSave($data);
+        
+        // Ensure bio is saved
+        if (!isset($data['bio'])) {
+            $data['bio'] = $this->getUser()->bio;
+        }
+        
+        // Avatar is automatically handled by FileUpload component
+        // It will either be null (deleted), a string path (unchanged or new upload), or array (new upload)
+        
+        return $data;
     }
 
     public function form(Schema $schema): Schema
@@ -40,8 +60,18 @@ class EditProfile extends BaseEditProfile
                 FileUpload::make('avatar')
                     ->label('Avatar')
                     ->image()
+                    ->avatar()
                     ->disk('public')
                     ->directory('avatars')
+                    ->visibility('public')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                    ->maxSize(2048)
+                    ->imageEditor()
+                    ->imageCropAspectRatio('1:1')
+                    ->imageResizeTargetWidth('200')
+                    ->imageResizeTargetHeight('200')
+                    ->preserveFilenames()
+                    ->fetchFileInformation(false)
                     ->nullable(),
                 $this->getPasswordFormComponent(),
                 $this->getPasswordConfirmationFormComponent(),
