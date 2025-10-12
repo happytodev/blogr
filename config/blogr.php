@@ -24,6 +24,22 @@ return [
     'colors' => [
         'primary' => '#2dfaa1'
     ],
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Author Profile Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Enable or disable author profile pages and author bio display.
+    | When enabled, readers can click on author names to view their profile
+    | and all posts written by that author.
+    |
+    */
+    'author_profile' => [
+        'enabled' => true, // Enable author profile pages
+        'use_slug' => true, // Use slug instead of ID in URLs (requires 'slug' field in users table)
+    ],
+    
     /*
     |--------------------------------------------------------------------------
     | Reading Speed Configuration
@@ -231,5 +247,35 @@ return [
     'posts' => [
         'default_image' => '/vendor/blogr/images/default-post.svg', // Default image for posts without photo
         'show_language_switcher' => true, // Show available translations indicator on posts
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Author Bio Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure the author bio display on blog posts.
+    | You can choose to display the author information at the top,
+    | bottom, or not at all.
+    |
+    */
+    'author_bio' => [
+        'enabled' => true, // Enable/disable author bio display
+        'position' => 'bottom', // Options: 'top', 'bottom', 'both'
+        'compact' => false, // Use compact version (inline) instead of full bio box
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Author Profile
+    |--------------------------------------------------------------------------
+    |
+    | Configure the author profile pages. When enabled, each author will have
+    | a dedicated profile page accessible at /blog/author/{userId} that lists
+    | all their published posts.
+    |
+    */
+    'author_profile' => [
+        'enabled' => true, // Enable/disable author profile pages
     ],
 ];
