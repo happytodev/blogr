@@ -6,6 +6,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class UserForm
 {
@@ -15,6 +16,18 @@ class UserForm
             ->components([
                 TextInput::make('name')
                     ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function ($state, callable $set, $context) {
+                        // Only auto-generate slug on create, not on edit
+                        if ($context === 'create') {
+                            $set('slug', Str::slug($state));
+                        }
+                    })
+                    ->columnSpanFull(),
+                TextInput::make('slug')
+                    ->required()
+                    ->unique(ignoreRecord: true)
+                    ->helperText('Used in the author profile URL. Generated automatically from name.')
                     ->columnSpanFull(),
                 TextInput::make('email')
                     ->label('Email address')
