@@ -19,7 +19,9 @@ beforeEach(function () {
 });
 
 test('homepage paginates articles', function () {
-    // Create 15 articles (more than default per page)
+    // Create 15 articles
+    // NOTE: Articles are sorted by created_at DESC in the controller (.latest())
+    // When created at the same time, they appear in insertion order (1, 2, 3...)
     for ($i = 1; $i <= 15; $i++) {
         BlogPost::create([
             'title' => "Article $i",
@@ -28,22 +30,26 @@ test('homepage paginates articles', function () {
             'user_id' => $this->author->id,
             'category_id' => $this->category->id,
             'is_published' => true,
-            'published_at' => now()->subDays($i),
+            'published_at' => now()->subDays(15 - $i),
         ]);
     }
 
     $response = $this->get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200);
-    // Should see first 10 articles (default pagination)
+    // Should show 15 articles pagination info
+    $response->assertSee('results');
+
+    // First page shows first 10 articles (insertion order when created_at is same)
     $response->assertSee('Article 1');
     $response->assertSee('Article 10');
-    // Should not see article 11 on first page
+
+    // Should NOT see Article 11 (on page 2)
     $response->assertDontSee('Article 11');
 });
 
-test('homepage shows pagination links when needed', function () {
-    // Create 15 articles
+test('homepage shows pagination links', function () {
+    // Create 15 articles - will be shown in insertion order
     for ($i = 1; $i <= 15; $i++) {
         BlogPost::create([
             'title' => "Article $i",
@@ -52,7 +58,7 @@ test('homepage shows pagination links when needed', function () {
             'user_id' => $this->author->id,
             'category_id' => $this->category->id,
             'is_published' => true,
-            'published_at' => now()->subDays($i),
+            'published_at' => now()->subDays(15 - $i),
         ]);
     }
 
@@ -61,10 +67,19 @@ test('homepage shows pagination links when needed', function () {
     $response->assertStatus(200);
     // Should have pagination links (check for "Next" link)
     $response->assertSee('Next &raquo;', false); // false = don't escape HTML entities
+    
+    // Should show pagination info
+    $response->assertSee('Showing');
+    $response->assertSee('1');
+    $response->assertSee('to');
+    $response->assertSee('10');
+    $response->assertSee('of');
+    $response->assertSee('15');
 });
 
 test('category page paginates articles', function () {
     // Create 15 articles in same category
+    // Sorted by created_at DESC, but when created at same time, shown in insertion order
     for ($i = 1; $i <= 15; $i++) {
         BlogPost::create([
             'title' => "Tech Article $i",
@@ -73,13 +88,16 @@ test('category page paginates articles', function () {
             'user_id' => $this->author->id,
             'category_id' => $this->category->id,
             'is_published' => true,
-            'published_at' => now()->subDays($i),
+            'published_at' => now()->subDays(15 - $i),
         ]);
     }
 
     $response = $this->get(route('blog.category', ['locale' => 'en', 'categorySlug' => 'tech']));
     
     $response->assertStatus(200);
+    // Page 1 shows first 10 articles (insertion order)
     $response->assertSee('Tech Article 1');
+    $response->assertSee('Tech Article 10');
+    // Article 11 should NOT be on page 1
     $response->assertDontSee('Tech Article 11');
 });
