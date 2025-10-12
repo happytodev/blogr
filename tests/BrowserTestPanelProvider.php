@@ -4,6 +4,7 @@ namespace Happytodev\Blogr\Tests;
 
 use Filament\Panel;
 use Filament\PanelProvider;
+use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;
 use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 use Workbench\App\Models\User;
 
@@ -16,6 +17,7 @@ class BrowserTestPanelProvider extends PanelProvider
             ->id('test')
             ->path('admin')
             ->login()
+            ->profile(EditProfile::class)
             ->resources([
                 TagResource::class,
             ])
