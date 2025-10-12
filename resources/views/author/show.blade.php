@@ -7,7 +7,7 @@
         <div class="flex items-center gap-6 mb-6">
             {{-- Author Avatar --}}
             @if($author->avatar ?? false)
-                <img src="{{ $author->avatar }}" 
+                <img src="{{ url('storage/' . $author->avatar) }}" 
                      alt="{{ $author->name }}" 
                      class="w-24 h-24 rounded-full object-cover ring-4 ring-gray-200 dark:ring-gray-700">
             @else
