@@ -10,6 +10,7 @@ use Illuminate\Support\HtmlString;
 use Filament\FilamentServiceProvider;
 use Livewire\LivewireServiceProvider;
 use Filament\Forms\FormsServiceProvider;
+use Filament\Schemas\SchemasServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Happytodev\Blogr\BlogrServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
@@ -54,6 +55,7 @@ class TestCase extends Orchestra
             InfolistsServiceProvider::class,
             LivewireServiceProvider::class,
             NotificationsServiceProvider::class,
+            SchemasServiceProvider::class,
             SupportServiceProvider::class,
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
