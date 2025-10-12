@@ -13,7 +13,10 @@ beforeEach(function () {
         'password' => Hash::make('password123'),
         'slug' => 'jane-author',
         'avatar' => 'avatars/jane.jpg',
-        'bio' => 'Jane is an experienced writer with a passion for technology.',
+        'bio' => [
+            'en' => 'Jane is an experienced writer with a passion for technology.',
+            'fr' => 'Jane est une écrivaine expérimentée passionnée par la technologie.',
+        ],
     ]);
 
     $this->category = Category::create([
