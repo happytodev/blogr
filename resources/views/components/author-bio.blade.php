@@ -24,7 +24,7 @@
     {{-- Compact version (inline with post content) --}}
     <div {{ $attributes->merge(['class' => 'flex items-center gap-4 py-4 border-t border-b border-gray-200 dark:border-gray-700']) }}>
         @if($author->avatar ?? false)
-            <img src="{{ $author->avatar }}" 
+            <img src="{{ url('storage/' . $author->avatar) }}" 
                  alt="{{ $author->name }}" 
                  class="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700">
         @else
@@ -55,7 +55,7 @@
         <div class="flex gap-6">
             {{-- Author Avatar --}}
             @if($author->avatar ?? false)
-                <img src="{{ $author->avatar }}" 
+                <img src="{{ url('storage/' . $author->avatar) }}" 
                      alt="{{ $author->name }}" 
                      class="w-20 h-20 rounded-full object-cover ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">
             @else
