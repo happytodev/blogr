@@ -14,16 +14,20 @@ class UserForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->columnSpanFull(),
                 TextInput::make('email')
                     ->label('Email address')
                     ->email()
-                    ->required(),
-                DateTimePicker::make('email_verified_at'),
+                    ->required()
+                    ->columnSpanFull(),
+                DateTimePicker::make('email_verified_at')
+                    ->label('Email Verified At'),
                 TextInput::make('password')
                     ->password()
                     ->required()
-                    ->hiddenOn('edit'),
+                    ->hiddenOn('edit')
+                    ->helperText('Leave blank to keep current password on edit.'),
                 Select::make('role')
                     ->options(function () {
                         return \Spatie\Permission\Models\Role::pluck('name', 'name');
@@ -35,7 +39,8 @@ class UserForm
                     })
                     ->preload()
                     ->required()
-                    ->label('Role'),
+                    ->label('Role')
+                    ->helperText('Assign a role to this user. Avatar and bio are managed by users in their profile.'),
             ]);
     }
 }
