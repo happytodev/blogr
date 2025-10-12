@@ -628,71 +628,148 @@ JS;
 
         if (!File::exists($adminPanelPath)) {
             $this->warn('⚠️ AdminPanelProvider not found at: ' . $adminPanelPath);
-            $this->line('ℹ️ You need to manually add BlogrPlugin to your AdminPanelProvider.');
+            $this->line('ℹ️ You need to manually add BlogrPlugin and EditProfile to your AdminPanelProvider.');
             $this->displayAdminPanelInstructions();
             return;
         }
 
         $content = File::get($adminPanelPath);
+        $needsUpdate = false;
 
         // Check if BlogrPlugin is already added
-        if (str_contains($content, 'BlogrPlugin::make()')) {
-            $this->info('✅ BlogrPlugin is already configured in AdminPanelProvider.');
+        $hasPlugin = str_contains($content, 'BlogrPlugin::make()');
+        
+        // Check if EditProfile is already configured
+        $hasProfile = str_contains($content, '->profile(EditProfile::class)') || 
+                      str_contains($content, '->profile(\Happytodev\Blogr\Filament\Pages\Auth\EditProfile::class)');
+
+        if ($hasPlugin && $hasProfile) {
+            $this->info('✅ BlogrPlugin and EditProfile are already configured in AdminPanelProvider.');
             return;
         }
 
-        // Automatically add BlogrPlugin
-        if ($this->forceableConfirm('Would you like to automatically add BlogrPlugin to your AdminPanelProvider?', true)) {
-            $this->updateAdminPanelProvider($content, $adminPanelPath);
+        // Determine what needs to be added
+        $updateMessage = [];
+        if (!$hasPlugin) {
+            $updateMessage[] = 'BlogrPlugin';
+        }
+        if (!$hasProfile) {
+            $updateMessage[] = 'EditProfile page';
+        }
+
+        // Automatically add missing configurations
+        if ($this->forceableConfirm('Would you like to automatically add ' . implode(' and ', $updateMessage) . ' to your AdminPanelProvider?', true)) {
+            $this->updateAdminPanelProvider($content, $adminPanelPath, !$hasPlugin, !$hasProfile);
         } else {
-            $this->displayAdminPanelInstructions();
+            $this->displayAdminPanelInstructions(!$hasPlugin, !$hasProfile);
         }
     }
 
-    protected function updateAdminPanelProvider(string $content, string $adminPanelPath): void
+    protected function updateAdminPanelProvider(string $content, string $adminPanelPath, bool $addPlugin = true, bool $addProfile = true): void
     {
-        // Add import if not present
-        if (!str_contains($content, 'use Happytodev\Blogr\BlogrPlugin;')) {
-            // Find the last 'use' statement before the class declaration and add our import after it
+        $modified = false;
+
+        // Add BlogrPlugin import if needed and not present
+        if ($addPlugin && !str_contains($content, 'use Happytodev\Blogr\BlogrPlugin;')) {
             $content = preg_replace(
                 '/(use [^;]+;)\n+(?=\s*class)/s',
-                "$1\nuse Happytodev\\Blogr\\BlogrPlugin;\n\n",
+                "$1\nuse Happytodev\\Blogr\\BlogrPlugin;\n",
                 $content,
                 1
             );
+            $modified = true;
         }
 
-        // Check if plugins array already exists
-        if (str_contains($content, '->plugins([')) {
-            // Add plugin to existing plugins array
+        // Add EditProfile import if needed and not present
+        if ($addProfile && !str_contains($content, 'use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;')) {
             $content = preg_replace(
-                '/(->plugins\(\[)([^\]]*?)(\]\))/s',
-                "$1$2\n                BlogrPlugin::make(),$3",
-                $content
+                '/(use [^;]+;)\n+(?=\s*class)/s',
+                "$1\nuse Happytodev\\Blogr\\Filament\\Pages\\Auth\\EditProfile;\n",
+                $content,
+                1
             );
-        } else {
-            // Create new plugins array before authMiddleware
-            $content = preg_replace(
-                '/(->authMiddleware\(\[)/s',
-                "->plugins([\n                BlogrPlugin::make(),\n            ])\n            $1",
-                $content
-            );
+            $modified = true;
         }
 
-        File::put($adminPanelPath, $content);
-        $this->info('✅ BlogrPlugin added to AdminPanelProvider automatically.');
+        // Add BlogrPlugin to plugins array if needed
+        if ($addPlugin) {
+            if (str_contains($content, '->plugins([')) {
+                // Add plugin to existing plugins array
+                $content = preg_replace(
+                    '/(->plugins\(\[)([^\]]*?)(\]\))/s',
+                    "$1$2\n                BlogrPlugin::make(),$3",
+                    $content
+                );
+            } else {
+                // Create new plugins array before authMiddleware
+                $content = preg_replace(
+                    '/(->authMiddleware\(\[)/s',
+                    "->plugins([\n                BlogrPlugin::make(),\n            ])\n            $1",
+                    $content
+                );
+            }
+            $modified = true;
+            $this->info('✅ BlogrPlugin added to AdminPanelProvider.');
+        }
+
+        // Add ->profile(EditProfile::class) if needed
+        if ($addProfile) {
+            // Find the ->login() line and add ->profile() after it
+            if (str_contains($content, '->login()')) {
+                $content = preg_replace(
+                    '/(->login\(\))/',
+                    "$1\n            ->profile(EditProfile::class)",
+                    $content,
+                    1
+                );
+                $modified = true;
+                $this->info('✅ EditProfile page added to AdminPanelProvider.');
+            } else {
+                // If no ->login() found, add it after ->path()
+                if (str_contains($content, '->path(')) {
+                    $content = preg_replace(
+                        '/(->path\([^)]+\))/',
+                        "$1\n            ->profile(EditProfile::class)",
+                        $content,
+                        1
+                    );
+                    $modified = true;
+                    $this->info('✅ EditProfile page added to AdminPanelProvider.');
+                } else {
+                    $this->warn('⚠️ Could not automatically add EditProfile. Please add it manually.');
+                }
+            }
+        }
+
+        if ($modified) {
+            File::put($adminPanelPath, $content);
+            $this->info('✅ AdminPanelProvider updated successfully.');
+        }
     }
 
-    protected function displayAdminPanelInstructions(): void
+    protected function displayAdminPanelInstructions(bool $showPlugin = true, bool $showProfile = true): void
     {
         $this->newLine();
         $this->warn('📝 Manual step required:');
-        $this->line('Add this line to your AdminPanelProvider plugins array:');
-        $this->line('    ->plugin(BlogrPlugin::make())');
-        $this->newLine();
-        $this->line('And import the class:');
-        $this->line('use Happytodev\Blogr\BlogrPlugin;');
-        $this->newLine();
+        
+        if ($showPlugin) {
+            $this->line('1. Add BlogrPlugin to your AdminPanelProvider plugins array:');
+            $this->line('   ->plugins([');
+            $this->line('       BlogrPlugin::make(),');
+            $this->line('   ])');
+            $this->newLine();
+            $this->line('   Import: use Happytodev\Blogr\BlogrPlugin;');
+            $this->newLine();
+        }
+
+        if ($showProfile) {
+            $this->line(($showPlugin ? '2' : '1') . '. Add EditProfile page to enable user bio and avatar editing:');
+            $this->line('   ->login()');
+            $this->line('   ->profile(EditProfile::class)');
+            $this->newLine();
+            $this->line('   Import: use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;');
+            $this->newLine();
+        }
     }
 
     protected function promptForGitHubStar(): void
@@ -724,10 +801,11 @@ JS;
     {
         $this->info('🎯 Next steps:');
         $this->line('1. Access your Filament admin panel');
-        $this->line('2. Go to "Blog Posts" to create your first post');
-        $this->line('3. Check out the tutorial posts and series (if installed)');
-        $this->line('4. Configure settings in the "Blogr Settings" section');
-        $this->line('5. Visit your blog at: ' . url(config('blogr.route.prefix', 'blog')));
+        $this->line('2. Update your profile (bio and avatar) via the user menu → Edit Profile');
+        $this->line('3. Go to "Blog Posts" to create your first post');
+        $this->line('4. Check out the tutorial posts and series (if installed)');
+        $this->line('5. Configure settings in the "Blogr Settings" section');
+        $this->line('6. Visit your blog at: ' . url(config('blogr.route.prefix', 'blog')));
         $this->newLine();
 
         if ($this->option('skip-build') || $this->option('skip-npm')) {
