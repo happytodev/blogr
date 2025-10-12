@@ -18,9 +18,26 @@ class BlogrInstallCommand extends Command
                         {--skip-tutorials : Skip tutorial content installation}
                         {--skip-series : Skip series content installation}
                         {--skip-frontend : Skip frontend configuration (Alpine.js and Tailwind CSS)}
-                        {--skip-build : Skip npm run build at the end}';
+                        {--skip-build : Skip npm run build at the end}
+                        {--force : Non-interactive mode - answer yes to all prompts}';
 
     public $description = 'Install and configure Blogr with all necessary steps';
+
+    /**
+     * Helper method to handle confirm() with --force option
+     * If --force is set, always return the default value without prompting
+     */
+    protected function forceableConfirm(string $question, bool $default = false): bool
+    {
+        if ($this->option('force')) {
+            // In force mode, show what would be asked and use the default
+            $answer = $default ? 'yes' : 'no';
+            $this->line("<fg=gray>  {$question} [{$answer}]</>");
+            return $default;
+        }
+        
+        return $this->forceableConfirm($question, $default);
+    }
 
     public function handle(): int
     {
@@ -118,7 +135,7 @@ class BlogrInstallCommand extends Command
         ]);
 
         // Optionally publish Spatie Permission config
-        if ($this->confirm('Would you like to publish Spatie Permission configuration file?', false)) {
+        if ($this->forceableConfirm('Would you like to publish Spatie Permission configuration file?', false)) {
             $this->call('vendor:publish', [
                 '--provider' => 'Spatie\Permission\PermissionServiceProvider',
                 '--tag' => 'permission-config'
@@ -154,7 +171,7 @@ class BlogrInstallCommand extends Command
             $this->line('ℹ️ This might happen if migrations are already run or if you need to run them manually.');
             $this->line('ℹ️ You can try running: php artisan migrate');
 
-            if (!$this->confirm('Would you like to continue with the installation anyway?', true)) {
+            if (!$this->forceableConfirm('Would you like to continue with the installation anyway?', true)) {
                 $this->error('Installation cancelled.');
                 return;
             }
@@ -177,7 +194,7 @@ class BlogrInstallCommand extends Command
     {
         $this->info('📚 Installing tutorial content...');
 
-        if ($this->confirm('Would you like to install default tutorial content to help you get started?', true)) {
+        if ($this->forceableConfirm('Would you like to install default tutorial content to help you get started?', true)) {
             $this->call('blogr', ['action' => 'install-tutorials']);
             $this->info('✅ Tutorial content installed successfully.');
         } else {
@@ -189,7 +206,7 @@ class BlogrInstallCommand extends Command
     {
         $this->info('📖 Installing series content...');
 
-        if ($this->confirm('Would you like to install example series with posts to showcase the series feature?', true)) {
+        if ($this->forceableConfirm('Would you like to install example series with posts to showcase the series feature?', true)) {
             try {
                 // Run the BlogSeriesSeeder
                 $this->call('db:seed', [
@@ -238,7 +255,7 @@ class BlogrInstallCommand extends Command
             return;
         }
 
-        if ($this->confirm('Would you like to automatically configure Alpine.js in your app.js?', true)) {
+        if ($this->forceableConfirm('Would you like to automatically configure Alpine.js in your app.js?', true)) {
             $this->updateAppJs($appJsContent, $appJsPath);
         } else {
             $this->line('ℹ️ You need to manually configure Alpine.js. See README.md for instructions.');
@@ -347,7 +364,7 @@ JS;
             return;
         }
 
-        if ($this->confirm('Would you like to automatically configure Tailwind CSS v4 dark mode in your app.css?', true)) {
+        if ($this->forceableConfirm('Would you like to automatically configure Tailwind CSS v4 dark mode in your app.css?', true)) {
             $this->updateAppCss($cssContent, $cssPath);
         } else {
             $this->warn('⚠️ CRITICAL: You MUST add "@variant dark (.dark &);" to your app.css for the theme switcher to work!');
@@ -405,7 +422,7 @@ JS;
             return;
         }
 
-        if ($this->confirm('Would you like to build your assets now? (npm run build)', true)) {
+        if ($this->forceableConfirm('Would you like to build your assets now? (npm run build)', true)) {
             $this->line('⏳ Building assets... This may take a moment.');
             
             try {
@@ -511,7 +528,7 @@ JS;
                 $packagesToInstall[] = '@tailwindcss/typography';
             }
             
-            if ($this->confirm('Would you like to install the missing packages: ' . implode(', ', $packagesToInstall) . '?', true)) {
+            if ($this->forceableConfirm('Would you like to install the missing packages: ' . implode(', ', $packagesToInstall) . '?', true)) {
                 $this->installNpmPackages($packagesToInstall);
             } else {
                 $this->line('ℹ️ You can install them later: npm install ' . implode(' ', $packagesToInstall));
@@ -573,7 +590,7 @@ JS;
             return;
         }
 
-        if ($this->confirm('Would you like to automatically add the typography plugin to your CSS file?', true)) {
+        if ($this->forceableConfirm('Would you like to automatically add the typography plugin to your CSS file?', true)) {
             $this->updateCssContent($cssContent, $cssPath);
         } else {
             $this->line('ℹ️ You need to manually add: @plugin "@tailwindcss/typography"; to your resources/css/app.css file.');
@@ -625,7 +642,7 @@ JS;
         }
 
         // Automatically add BlogrPlugin
-        if ($this->confirm('Would you like to automatically add BlogrPlugin to your AdminPanelProvider?', true)) {
+        if ($this->forceableConfirm('Would you like to automatically add BlogrPlugin to your AdminPanelProvider?', true)) {
             $this->updateAdminPanelProvider($content, $adminPanelPath);
         } else {
             $this->displayAdminPanelInstructions();
@@ -681,7 +698,7 @@ JS;
     protected function promptForGitHubStar(): void
     {
         $this->newLine();
-        if ($this->confirm('⭐ Would you like to support Blogr by giving it a star on GitHub?', true)) {
+        if ($this->forceableConfirm('⭐ Would you like to support Blogr by giving it a star on GitHub?', true)) {
             $this->info('🌟 Thank you! Please visit: https://github.com/happytodev/blogr');
             $this->line('⭐ Click the star button at the top right of the page!');
             $this->newLine();
