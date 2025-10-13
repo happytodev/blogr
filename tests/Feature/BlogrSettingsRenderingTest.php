@@ -137,3 +137,23 @@ it('config values are properly loaded', function () {
     expect($page->seo_site_name)->toBeString();
     expect($page->seo_site_name)->not->toBeEmpty();
 });
+
+it('can load and save display settings', function () {
+    $page = app(BlogrSettings::class);
+    $page->mount();
+
+    // Test that display properties exist and are loaded
+    expect(property_exists($page, 'display_show_author_pseudo'))->toBe(true);
+    expect(property_exists($page, 'display_show_author_avatar'))->toBe(true);
+    
+    // Test default values
+    expect($page->display_show_author_pseudo)->toBe(true);
+    expect($page->display_show_author_avatar)->toBe(true);
+    
+    // Test that they can be modified
+    $page->display_show_author_pseudo = false;
+    $page->display_show_author_avatar = false;
+    
+    expect($page->display_show_author_pseudo)->toBe(false);
+    expect($page->display_show_author_avatar)->toBe(false);
+});

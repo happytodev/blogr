@@ -20,6 +20,7 @@ use Livewire\Features\SupportTesting\Testable;
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Commands\InstallUserManagementCommand;
 use Happytodev\Blogr\Http\Controllers\BlogController;
+use Happytodev\Blogr\Http\Controllers\AuthorController;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 
@@ -144,37 +145,124 @@ class BlogrServiceProvider extends PackageServiceProvider
                         return redirect("/{$defaultLocale}/{$prefix}");
                     });
             }            // Register localized routes with locale prefix
-            $this->app['router']
-                ->prefix('{locale}')
-                ->where(['locale' => $localePattern])
-                ->middleware(array_merge(
-                    config('blogr.route.middleware', ['web']),
-                    [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
-                ))
-                ->group(function () use ($prefix, $isHomepage) {
-                    if ($prefix === '' || $prefix === '/' || $isHomepage) {
-                        // Blog as homepage with locale
-                        $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
-                        $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
-                        $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
-                        $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
-                        $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
-                        $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
-                    } else {
-                        // Blog with prefix and locale
-                        $this->app['router']
-                            ->prefix($prefix)
-                            ->group(function () {
-                                $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
-                                $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
-                                $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
-                                $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
-                                $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
-                                $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
-                                $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
-                            });
-                    }
-                });
+            // Blog routes with locale - REFACTORED: No nested prefix groups to avoid Laravel parameter binding bug
+            if ($prefix === '' || $prefix === '/' || $isHomepage) {
+                // Blog as homepage with locale: /{locale}/
+                $this->app['router']->get('{locale}', [BlogController::class, 'index'])
+                    ->where('locale', $localePattern)
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.index');
+                    
+                $this->app['router']->get('{locale}/series', [BlogController::class, 'seriesIndex'])
+                    ->where('locale', $localePattern)
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.series.index');
+                    
+                $this->app['router']->get('{locale}/series/{seriesSlug}', [BlogController::class, 'series'])
+                    ->where(['locale' => $localePattern, 'seriesSlug' => '.*'])
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.series');
+                    
+                $this->app['router']->get('{locale}/author/{userSlug}', [AuthorController::class, 'show'])
+                    ->where(['locale' => $localePattern, 'userSlug' => '.*'])
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.author');
+                    
+                $this->app['router']->get('{locale}/category/{categorySlug}', [BlogController::class, 'category'])
+                    ->where(['locale' => $localePattern, 'categorySlug' => '.*'])
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.category');
+                    
+                $this->app['router']->get('{locale}/tag/{tagSlug}', [BlogController::class, 'tag'])
+                    ->where(['locale' => $localePattern, 'tagSlug' => '.*'])
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.tag');
+                    
+                $this->app['router']->get('{locale}/{slug}', [BlogController::class, 'show'])
+                    ->where(['locale' => $localePattern, 'slug' => '.*']) // Allow any slug since specific routes are already defined
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.show');
+            } else {
+                // Blog with prefix and locale: /{locale}/{prefix}/
+                $fullPrefix = '{locale}/' . $prefix;
+                
+                $this->app['router']->get($fullPrefix, [BlogController::class, 'index'])
+                    ->where('locale', $localePattern)
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.index');
+                    
+                $this->app['router']->get($fullPrefix . '/series', [BlogController::class, 'seriesIndex'])
+                    ->where('locale', $localePattern)
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.series.index');
+                    
+                $this->app['router']->get($fullPrefix . '/series/{seriesSlug}', [BlogController::class, 'series'])
+                    ->where(['locale' => $localePattern, 'seriesSlug' => '.*'])
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.series');
+                    
+                $this->app['router']->get($fullPrefix . '/author/{userSlug}', [AuthorController::class, 'show'])
+                    ->where(['locale' => $localePattern, 'userSlug' => '.*'])
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.author');
+                    
+                $this->app['router']->get($fullPrefix . '/category/{categorySlug}', [BlogController::class, 'category'])
+                    ->where(['locale' => $localePattern, 'categorySlug' => '.*'])
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.category');
+                    
+                $this->app['router']->get($fullPrefix . '/tag/{tagSlug}', [BlogController::class, 'tag'])
+                    ->where(['locale' => $localePattern, 'tagSlug' => '.*'])
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.tag');
+                    
+                $this->app['router']->get($fullPrefix . '/{slug}', [BlogController::class, 'show'])
+                    ->where(['locale' => $localePattern, 'slug' => '.*']) // Allow any slug since specific routes are already defined
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                    ))
+                    ->name('blog.show');
+            }
         } else {
             // Original non-localized routes
             if ($prefix === '' || $prefix === '/' || $isHomepage) {
@@ -185,9 +273,12 @@ class BlogrServiceProvider extends PackageServiceProvider
                         $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
                         $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
                         $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
+                        $this->app['router']->get('/author/{userSlug}', [AuthorController::class, 'show'])->name('blog.author');
                         $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
                         $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
-                        $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                        $this->app['router']->get('/{slug}', [BlogController::class, 'show'])
+                            ->where('slug', '.*') // Allow any slug since specific routes are already defined
+                            ->name('blog.show');
                     });
             } else {
                 // Blog route with prefix
@@ -198,9 +289,12 @@ class BlogrServiceProvider extends PackageServiceProvider
                         $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
                         $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
                         $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
-                        $this->app['router']->get('/{slug}', [BlogController::class, 'show'])->name('blog.show');
+                        $this->app['router']->get('/author/{userSlug}', [AuthorController::class, 'show'])->name('blog.author');
                         $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
                         $this->app['router']->get('/tag/{tagSlug}', [BlogController::class, 'tag'])->name('blog.tag');
+                        $this->app['router']->get('/{slug}', [BlogController::class, 'show'])
+                            ->where('slug', '.*') // Allow any slug since specific routes are already defined
+                            ->name('blog.show');
                     });
             }
         }

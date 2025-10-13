@@ -48,6 +48,11 @@
                     class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
                     {{ $post->category->name }}
                 </a>
+
+                <!-- Author Info -->
+                @if(config('blogr.display.show_author_pseudo') || config('blogr.display.show_author_avatar'))
+                    <x-blogr::author-info :author="$post->user" size="sm" />
+                @endif
             </div>
 
             <!-- Featured Image -->
@@ -194,6 +199,9 @@
                     prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-blue-900/20 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg">
             {!! isset($displayData) ? $displayData['content'] : $post->getContentWithoutFrontmatter() !!}
         </div>
+
+        <!-- Author Bio Box -->
+        <x-blogr::author-bio :author="$post->author" :locale="$currentLocale" />
 
         <!-- Back to Blog Button -->
         <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">

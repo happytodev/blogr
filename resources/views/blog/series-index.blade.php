@@ -58,6 +58,18 @@
                             </p>
                             @endif
                             
+                            <!-- Series Authors -->
+                            @if(config('blogr.display.show_series_authors'))
+                                @php
+                                    $seriesAuthors = $s->authors();
+                                @endphp
+                                @if(count($seriesAuthors) > 0)
+                                <div class="mb-4">
+                                    <x-blogr::series-authors :authors="$seriesAuthors" size="sm" />
+                                </div>
+                                @endif
+                            @endif
+                            
                             <!-- Published Date -->
                             @if($s->published_at)
                             <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">

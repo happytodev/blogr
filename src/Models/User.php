@@ -16,11 +16,15 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'email',
         'password',
         'email_verified_at',
+        'slug',
+        'avatar',
+        'bio',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'bio' => 'array',
     ];
 
     public function blogPosts()

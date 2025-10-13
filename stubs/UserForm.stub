@@ -6,6 +6,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class UserForm
 {
@@ -14,16 +15,32 @@ class UserForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function ($state, callable $set, $context) {
+                        // Only auto-generate slug on create, not on edit
+                        if ($context === 'create') {
+                            $set('slug', Str::slug($state));
+                        }
+                    })
+                    ->columnSpanFull(),
+                TextInput::make('slug')
+                    ->required()
+                    ->unique(ignoreRecord: true)
+                    ->helperText('Used in the author profile URL. Generated automatically from name.')
+                    ->columnSpanFull(),
                 TextInput::make('email')
                     ->label('Email address')
                     ->email()
-                    ->required(),
-                DateTimePicker::make('email_verified_at'),
+                    ->required()
+                    ->columnSpanFull(),
+                DateTimePicker::make('email_verified_at')
+                    ->label('Email Verified At'),
                 TextInput::make('password')
                     ->password()
                     ->required()
-                    ->hiddenOn('edit'),
+                    ->hiddenOn('edit')
+                    ->helperText('Leave blank to keep current password on edit.'),
                 Select::make('role')
                     ->options(function () {
                         return \Spatie\Permission\Models\Role::pluck('name', 'name');
@@ -35,7 +52,8 @@ class UserForm
                     })
                     ->preload()
                     ->required()
-                    ->label('Role'),
+                    ->label('Role')
+                    ->helperText('Assign a role to this user. Avatar and bio are managed by users in their profile.'),
             ]);
     }
 }

@@ -24,6 +24,22 @@ return [
     'colors' => [
         'primary' => '#2dfaa1'
     ],
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Author Profile Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Enable or disable author profile pages and author bio display.
+    | When enabled, readers can click on author names to view their profile
+    | and all posts written by that author.
+    |
+    */
+    'author_profile' => [
+        'enabled' => true, // Enable author profile pages
+        'use_slug' => true, // Use slug instead of ID in URLs (requires 'slug' field in users table)
+    ],
+    
     /*
     |--------------------------------------------------------------------------
     | Reading Speed Configuration
@@ -231,5 +247,52 @@ return [
     'posts' => [
         'default_image' => '/vendor/blogr/images/default-post.svg', // Default image for posts without photo
         'show_language_switcher' => true, // Show available translations indicator on posts
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Author Bio Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure the author bio display on blog posts.
+    | You can choose to display the author information at the top,
+    | bottom, or not at all.
+    |
+    */
+    'author_bio' => [
+        'enabled' => true, // Enable/disable author bio display
+        'position' => 'bottom', // Options: 'top', 'bottom', 'both'
+        'compact' => false, // Use compact version (inline) instead of full bio box
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Display Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure what author information is displayed on articles and series.
+    | These settings affect article cards, article detail pages, series cards,
+    | and series detail pages.
+    |
+    */
+    'display' => [
+        'show_author_pseudo' => true, // Show author pseudo/slug instead of full name
+        'show_author_avatar' => true, // Show author avatar thumbnail
+        'show_series_authors' => true, // Show series authors (avatars with tooltips) on series cards and pages
+        'series_authors_limit' => 4, // Maximum number of author avatars to display before showing "+X"
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Author Profile
+    |--------------------------------------------------------------------------
+    |
+    | Configure the author profile pages. When enabled, each author will have
+    | a dedicated profile page accessible at /blog/author/{userId} that lists
+    | all their published posts.
+    |
+    */
+    'author_profile' => [
+        'enabled' => true, // Enable/disable author profile pages
     ],
 ];

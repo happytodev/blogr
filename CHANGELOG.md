@@ -4,6 +4,69 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### ✨ Features
+
+- **Multi-Author Series Display**: Complete implementation of series authors visualization
+  - Added `display.show_series_authors` configuration option (default: true)
+  - Added `display.series_authors_limit` configuration to limit displayed avatars (default: 4)
+  - New `BlogSeries::authors()` method returns array of unique authors ordered by contribution
+  - New `series-authors` Blade component with overlapping avatars, tooltips, and clickable links
+  - Integrated in series index, series detail, and homepage featured sections
+  - Settings panel in Blogr admin to toggle and configure display
+
+- **Author Information Component**: Enhanced author display on articles
+  - New `author-info` Blade component showing avatar and pseudo
+  - Integrated in blog index cards and series article cards
+  - Configurable via `display.show_author_pseudo` and `display.show_author_avatar` settings
+  - Supports custom avatar images or auto-generated initials with gradient backgrounds
+  - Clickable links to author profile pages
+
+### 🎨 UI Improvements
+
+- **Series Authors Visualization**:
+  - Overlapping avatar design (-space-x-2) with elegant borders
+  - Hover animations with scale effect and colored ring
+  - Smart "+X" indicator when exceeding the configured limit
+  - Tooltips showing author pseudos on hover
+  - Responsive design with size variants (xs, sm, md, lg)
+  - Dark mode support throughout
+
+- **Article Cards Enhancement**:
+  - Added author information on all article cards
+  - Consistent styling across blog index, series pages, and featured sections
+  - Improved visual hierarchy with proper spacing
+
+### ⚙️ Configuration
+
+- **New Display Settings**:
+  - `display.show_series_authors`: Toggle series authors display
+  - `display.series_authors_limit`: Maximum avatars to display (1-10)
+  - Settings accessible via Admin > Blogr > Settings panel
+  - Real-time configuration updates via Filament form
+
+### 🧪 Testing
+
+- **New Test Suite**: `SeriesAuthorsDisplayTest`
+  - Configuration existence and defaults validation
+  - `BlogSeries::authors()` method functionality
+  - Unique authors and correct ordering
+  - Empty series handling
+  - Component rendering and conditional display
+- **Total Coverage**: 297 passing tests across 30+ test suites
+
+### 🐛 Bug Fixes
+
+- **Series Authors Component**: Fixed undefined variable error in Blade component
+  - Corrected variable declaration order in component template
+  - Removed problematic slot usage causing compilation errors
+- **View Caching**: Ensured proper cache clearing for component updates
+
+### 📚 Documentation
+
+- **Installation Guide**: Updated with series authors feature setup
+- **Configuration Reference**: Documented all new display settings
+- **Component Usage**: Examples for integrating series-authors in custom views
+- **Testing Guide**: Comprehensive test scenarios for multi-author features
 
 ## [v0.8.3](https://github.com/happytodev/blogr/compare/v0.8.3...v0.8.2) - 2025-10-10
 

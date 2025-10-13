@@ -126,6 +126,12 @@ class BlogPost extends Model
         return $this->belongsTo(User::class);
     }
 
+    // Alias for user() - more semantic for blog context
+    public function author()
+    {
+        return $this->user();
+    }
+
     // A blog post belongs to a category
     public function category()
     {

@@ -67,7 +67,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Structured Data (JSON-LD) -->
-    @if (config('blogr.seo.structured_data.enabled', true))
+    @if (config('blogr.seo.structured_data.enabled', true) && isset($seoData))
         <script type="application/ld+json">
             {!! \Happytodev\Blogr\Helpers\SEOHelper::generateJsonLd($seoData) !!}
         </script>

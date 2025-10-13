@@ -16,6 +16,7 @@ test('blog index page includes correct SEO meta tags', function () {
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
+        'slug' => 'test-user',
         'email_verified_at' => now(),
     ]);
     $category = Category::create([
@@ -54,6 +55,7 @@ test('blog post page includes correct SEO meta tags', function () {
         'name' => 'Test User',
         'email' => 'test2@example.com',
         'password' => 'password',
+        'slug' => 'test-user',
         'email_verified_at' => now(),
     ]);
     $category = Category::create([
@@ -88,6 +90,7 @@ test('blog post page includes JSON-LD structured data', function () {
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
+        'slug' => 'test-user',
         'email_verified_at' => now(),
     ]);
     $category = Category::create([
@@ -126,6 +129,7 @@ test('blog pages include valid JSON-LD when structured data is enabled', functio
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
+        'slug' => 'test-user',
         'email_verified_at' => now(),
     ]);
     $category = Category::create([
@@ -173,6 +177,7 @@ test('blog pages do not include JSON-LD when structured data is disabled', funct
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
+        'slug' => 'test-user',
         'email_verified_at' => now(),
     ]);
     $category = Category::create([
@@ -201,6 +206,7 @@ test('blog post page includes article tags in meta tags', function () {
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
+        'slug' => 'test-user',
         'email_verified_at' => now(),
     ]);
     $category = Category::create([
@@ -236,6 +242,7 @@ test('blog post page includes author information', function () {
         'name' => 'John Doe',
         'email' => 'john@example.com',
         'password' => 'password',
+        'slug' => 'john-doe',
         'email_verified_at' => now(),
     ]);
     $category = Category::create([
@@ -264,6 +271,7 @@ test('blog post page includes image meta tags when post has photo', function () 
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
+        'slug' => 'test-user',
         'email_verified_at' => now(),
     ]);
     $category = Category::create([
@@ -296,6 +304,7 @@ test('blog index page has correct robots meta tag', function () {
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
+        'slug' => 'test-user',
         'email_verified_at' => now(),
     ]);
     $category = Category::create([
@@ -334,6 +343,7 @@ test('blog post page includes canonical URL', function () {
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
+        'slug' => 'test-user',
         'email_verified_at' => now(),
     ]);
     $category = Category::create([

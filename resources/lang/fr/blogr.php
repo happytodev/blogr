@@ -43,6 +43,7 @@ return [
         'current' => 'actuel',
         'featured' => 'En vedette',
         'series' => 'Cette article fait partie de la série',
+        'authors' => 'Auteurs',
     ],
     
     // Dates

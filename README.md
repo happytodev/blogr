@@ -195,6 +195,14 @@ php artisan blogr:install
 - ✅ Install npm packages (alpinejs, @tailwindcss/typography)
 - ✅ Build frontend assets (`npm run build`)
 - ✅ Configure the Blogr plugin in your AdminPanelProvider
+- ✅ Configure the EditProfile page for user bio and avatar management
+- ✅ Create storage symbolic link (for user avatars)
+
+> **⚠️ Important**: If you skip the automated installation or encounter issues with avatar uploads showing permanent "Loading" state, make sure to run:
+> ```bash
+> php artisan storage:link
+> ```
+> This command is **required** for the avatar upload feature to work properly. See [STORAGE_CONFIGURATION.md](STORAGE_CONFIGURATION.md) for more details.
 
 All steps are interactive with confirmations, so you have full control over what gets installed.
 
@@ -814,7 +822,174 @@ class BlogStatsOverview extends BaseWidget
 }
 ```
 
-## 📚 Blog Series
+## � Author Profile & Bio
+
+Blogr provides comprehensive author profile and bio features to showcase your content creators and build trust with your readers.
+
+### Author Profile Page
+
+Each author has a dedicated profile page accessible at `/blog/author/{userId}` (or `/en/blog/author/{userId}` with localized routes).
+
+### Database Migration
+
+**Important:** Blogr automatically adds `avatar` and `bio` fields to your `users` table during installation.
+
+The migration `2025_10_11_000002_add_author_fields_to_users_table.php` adds:
+- `avatar` (string, nullable) - URL or path to author's profile picture
+- `bio` (text, nullable) - Author's biography text
+
+This migration is automatically run when you execute `php artisan blogr:install` or `php artisan migrate`.
+
+**Features:**
+- Author avatar (with automatic letter fallback if no image)
+- Author name and email
+- Author biography (if provided)
+- Statistics (number of published posts)
+- Paginated list of all published posts by the author
+- Full post cards with images, categories, tags, and reading time
+
+**Access an author profile:**
+```blade
+<a href="{{ route('blog.author', $post->user_id) }}">
+    View author profile
+</a>
+```
+
+**Note:** Author profile pages can be disabled in the settings if you don't want dedicated author pages.
+
+### Author Bio Component
+
+Display author information within blog posts using the customizable `author-bio` component.
+
+#### Usage
+
+**Full version** (bio box):
+```blade
+<x-blogr::author-bio :author="$post->user" />
+```
+
+**Compact version** (inline):
+```blade
+<x-blogr::author-bio :author="$post->user" :compact="true" />
+```
+
+#### Configuration
+
+Configure author features in **Admin Panel > Settings > Author Bio** or `config/blogr.php`:
+
+```php
+// Author profile pages
+'author_profile' => [
+    'enabled' => true, // Enable/disable author profile pages (/blog/author/{userId})
+],
+
+// Author bio component on posts
+'author_bio' => [
+    'enabled' => true,          // Enable/disable author bio display on posts
+    'position' => 'bottom',     // Options: 'top', 'bottom', 'both'
+    'compact' => false,         // Use compact version instead of full bio box
+],
+```
+
+**Settings Page Options:**
+- **Enable Author Profile Pages** - Allow/disallow access to `/blog/author/{userId}` pages
+- **Display Author Bio** - Show/hide author information on blog posts
+- **Author Bio Position** - Choose where to display (top, bottom, or both)
+- **Use Compact Version** - Toggle between full bio box and inline compact version
+
+#### Customization
+
+**Custom CSS classes:**
+```blade
+<x-blogr::author-bio 
+    :author="$post->user" 
+    class="my-8 shadow-lg" 
+/>
+```
+
+**Position control:**
+- `'top'` - Display at the beginning of the post
+- `'bottom'` - Display at the end of the post (default)
+- `'both'` - Display at both locations
+
+#### Author Model Fields
+
+The author bio component uses these User model fields:
+- `name` - Author name (required)
+- `email` - Contact email (optional, displayed with icon)
+- `avatar` - Profile picture URL (optional, shows letter fallback if missing)
+- `bio` - Author biography text (optional, not displayed if empty)
+
+**These fields are automatically added by the Blogr migration.** You can manage author information through the Filament User Resource:
+- Upload profile pictures (avatar field)
+- Write biography text (bio field)
+- Add contact information (email field)
+
+### Managing Author Profiles
+
+> **Note:** The Edit Profile page is automatically configured during installation via `php artisan blogr:install`. If you installed manually or the configuration is missing, add this to your `AdminPanelProvider.php`:
+> ```php
+> use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;
+> 
+> public function panel(Panel $panel): Panel
+> {
+>     return $panel
+>         // ... other configuration
+>         ->login()
+>         ->profile(EditProfile::class) // Add this line
+>         // ... rest of configuration
+> }
+> ```
+
+**Self-Service Profile Management:**
+
+All authenticated users can manage their own profile through a dedicated profile page:
+
+1. Click on your **user avatar** in the top-right corner
+2. Select **"Edit Profile"** from the dropdown menu
+3. You'll see two sections:
+
+#### Profile Information
+- **Name**: Your display name
+- **Email**: Your email address
+- **Profile Picture**: Upload an avatar (max 2MB, automatically cropped to circle)
+- **Biography**: Write a short bio (max 500 characters)
+
+#### Update Password
+- **Current Password**: Required to confirm changes
+- **New Password**: Set a new password (min 8 characters)
+- **Confirm Password**: Confirm your new password
+
+**For Administrators:**
+
+Administrators can manage user accounts (name, email, role) through:
+1. Go to **Admin Panel > Users**
+2. Click on a user to edit
+3. Modify administrative fields: name, email, email verification, role
+
+**Important Security Note:**
+- ✅ **Users can only edit their own profile** (avatar, bio, password)
+- ✅ **Admins cannot edit other users' personal information** (avatar, bio) - This respects user privacy
+- ✅ **Admins can manage roles and administrative fields** (name, email, role assignment)
+
+This separation ensures user privacy while giving administrators control over user accounts and permissions.
+
+**Behavior when author profile is disabled:**
+
+When you disable author profile pages in settings, the author-bio component will still display author information but without links to the profile page. The `/blog/author/{userId}` routes will return a 404 error.
+
+**Manual migration** (if needed):
+
+If for some reason the migration didn't run automatically, you can add these fields manually:
+
+```php
+Schema::table('users', function (Blueprint $table) {
+    $table->string('avatar')->nullable()->after('email');
+    $table->text('bio')->nullable()->after('avatar');
+});
+```
+
+## �📚 Blog Series
 
 Blog series allow you to organize related posts together, making it easier for readers to follow a tutorial or thematic content.
 

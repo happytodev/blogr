@@ -18,9 +18,26 @@ class BlogrInstallCommand extends Command
                         {--skip-tutorials : Skip tutorial content installation}
                         {--skip-series : Skip series content installation}
                         {--skip-frontend : Skip frontend configuration (Alpine.js and Tailwind CSS)}
-                        {--skip-build : Skip npm run build at the end}';
+                        {--skip-build : Skip npm run build at the end}
+                        {--force : Non-interactive mode - answer yes to all prompts}';
 
     public $description = 'Install and configure Blogr with all necessary steps';
+
+    /**
+     * Helper method to handle confirm() with --force option
+     * If --force is set, always return the default value without prompting
+     */
+    protected function forceableConfirm(string $question, bool $default = false): bool
+    {
+        if ($this->option('force')) {
+            // In force mode, show what would be asked and use the default
+            $answer = $default ? 'yes' : 'no';
+            $this->line("<fg=gray>  {$question} [{$answer}]</>");
+            return $default;
+        }
+        
+        return $this->confirm($question, $default);
+    }
 
     public function handle(): int
     {
@@ -33,6 +50,9 @@ class BlogrInstallCommand extends Command
 
         // Step 2: Run migrations
         $this->runMigrations();
+
+        // Step 2.1: Create storage symbolic link (required for avatars)
+        $this->createStorageLink();
 
         // Step 2.5: Configure User model with HasRoles trait
         $this->configureUserModel();
@@ -118,7 +138,7 @@ class BlogrInstallCommand extends Command
         ]);
 
         // Optionally publish Spatie Permission config
-        if ($this->confirm('Would you like to publish Spatie Permission configuration file?', false)) {
+        if ($this->forceableConfirm('Would you like to publish Spatie Permission configuration file?', false)) {
             $this->call('vendor:publish', [
                 '--provider' => 'Spatie\Permission\PermissionServiceProvider',
                 '--tag' => 'permission-config'
@@ -154,11 +174,57 @@ class BlogrInstallCommand extends Command
             $this->line('ℹ️ This might happen if migrations are already run or if you need to run them manually.');
             $this->line('ℹ️ You can try running: php artisan migrate');
 
-            if (!$this->confirm('Would you like to continue with the installation anyway?', true)) {
+            if (!$this->forceableConfirm('Would you like to continue with the installation anyway?', true)) {
                 $this->error('Installation cancelled.');
                 return;
             }
             $this->info('⏭️ Continuing with installation...');
+        }
+    }
+
+    protected function createStorageLink(): void
+    {
+        $this->info('🔗 Creating storage symbolic link...');
+
+        // Check if link already exists
+        $publicStoragePath = public_path('storage');
+        
+        if (File::exists($publicStoragePath)) {
+            // Check if it's a valid symlink
+            if (is_link($publicStoragePath) && readlink($publicStoragePath) === storage_path('app/public')) {
+                $this->info('✅ Storage link already exists and is valid.');
+                return;
+            }
+            
+            // Invalid link or regular directory exists
+            $this->warn('⚠️ A file or directory already exists at public/storage');
+            
+            if ($this->forceableConfirm('Would you like to remove it and create the symbolic link?', false)) {
+                if (is_link($publicStoragePath)) {
+                    unlink($publicStoragePath);
+                } elseif (is_dir($publicStoragePath)) {
+                    File::deleteDirectory($publicStoragePath);
+                } else {
+                    File::delete($publicStoragePath);
+                }
+            } else {
+                $this->warn('⏭️ Skipping storage link creation. Avatar uploads may not work properly.');
+                $this->line('ℹ️ Run manually: php artisan storage:link');
+                return;
+            }
+        }
+
+        // Create the symbolic link
+        $result = Process::run(['php', 'artisan', 'storage:link']);
+
+        if ($result->successful()) {
+            $this->info('✅ Storage symbolic link created successfully.');
+            $this->line('   This enables avatar image uploads in the user profile.');
+        } else {
+            $this->warn('⚠️ Failed to create storage link:');
+            $this->line($result->errorOutput());
+            $this->line('ℹ️ Please run manually: php artisan storage:link');
+            $this->line('ℹ️ This is required for user avatar uploads to work properly.');
         }
     }
 
@@ -177,7 +243,7 @@ class BlogrInstallCommand extends Command
     {
         $this->info('📚 Installing tutorial content...');
 
-        if ($this->confirm('Would you like to install default tutorial content to help you get started?', true)) {
+        if ($this->forceableConfirm('Would you like to install default tutorial content to help you get started?', true)) {
             $this->call('blogr', ['action' => 'install-tutorials']);
             $this->info('✅ Tutorial content installed successfully.');
         } else {
@@ -189,7 +255,7 @@ class BlogrInstallCommand extends Command
     {
         $this->info('📖 Installing series content...');
 
-        if ($this->confirm('Would you like to install example series with posts to showcase the series feature?', true)) {
+        if ($this->forceableConfirm('Would you like to install example series with posts to showcase the series feature?', true)) {
             try {
                 // Run the BlogSeriesSeeder
                 $this->call('db:seed', [
@@ -238,7 +304,7 @@ class BlogrInstallCommand extends Command
             return;
         }
 
-        if ($this->confirm('Would you like to automatically configure Alpine.js in your app.js?', true)) {
+        if ($this->forceableConfirm('Would you like to automatically configure Alpine.js in your app.js?', true)) {
             $this->updateAppJs($appJsContent, $appJsPath);
         } else {
             $this->line('ℹ️ You need to manually configure Alpine.js. See README.md for instructions.');
@@ -347,7 +413,7 @@ JS;
             return;
         }
 
-        if ($this->confirm('Would you like to automatically configure Tailwind CSS v4 dark mode in your app.css?', true)) {
+        if ($this->forceableConfirm('Would you like to automatically configure Tailwind CSS v4 dark mode in your app.css?', true)) {
             $this->updateAppCss($cssContent, $cssPath);
         } else {
             $this->warn('⚠️ CRITICAL: You MUST add "@variant dark (.dark &);" to your app.css for the theme switcher to work!');
@@ -405,7 +471,7 @@ JS;
             return;
         }
 
-        if ($this->confirm('Would you like to build your assets now? (npm run build)', true)) {
+        if ($this->forceableConfirm('Would you like to build your assets now? (npm run build)', true)) {
             $this->line('⏳ Building assets... This may take a moment.');
             
             try {
@@ -511,7 +577,7 @@ JS;
                 $packagesToInstall[] = '@tailwindcss/typography';
             }
             
-            if ($this->confirm('Would you like to install the missing packages: ' . implode(', ', $packagesToInstall) . '?', true)) {
+            if ($this->forceableConfirm('Would you like to install the missing packages: ' . implode(', ', $packagesToInstall) . '?', true)) {
                 $this->installNpmPackages($packagesToInstall);
             } else {
                 $this->line('ℹ️ You can install them later: npm install ' . implode(' ', $packagesToInstall));
@@ -573,7 +639,7 @@ JS;
             return;
         }
 
-        if ($this->confirm('Would you like to automatically add the typography plugin to your CSS file?', true)) {
+        if ($this->forceableConfirm('Would you like to automatically add the typography plugin to your CSS file?', true)) {
             $this->updateCssContent($cssContent, $cssPath);
         } else {
             $this->line('ℹ️ You need to manually add: @plugin "@tailwindcss/typography"; to your resources/css/app.css file.');
@@ -611,77 +677,154 @@ JS;
 
         if (!File::exists($adminPanelPath)) {
             $this->warn('⚠️ AdminPanelProvider not found at: ' . $adminPanelPath);
-            $this->line('ℹ️ You need to manually add BlogrPlugin to your AdminPanelProvider.');
+            $this->line('ℹ️ You need to manually add BlogrPlugin and EditProfile to your AdminPanelProvider.');
             $this->displayAdminPanelInstructions();
             return;
         }
 
         $content = File::get($adminPanelPath);
+        $needsUpdate = false;
 
         // Check if BlogrPlugin is already added
-        if (str_contains($content, 'BlogrPlugin::make()')) {
-            $this->info('✅ BlogrPlugin is already configured in AdminPanelProvider.');
+        $hasPlugin = str_contains($content, 'BlogrPlugin::make()');
+        
+        // Check if EditProfile is already configured
+        $hasProfile = str_contains($content, '->profile(EditProfile::class)') || 
+                      str_contains($content, '->profile(\Happytodev\Blogr\Filament\Pages\Auth\EditProfile::class)');
+
+        if ($hasPlugin && $hasProfile) {
+            $this->info('✅ BlogrPlugin and EditProfile are already configured in AdminPanelProvider.');
             return;
         }
 
-        // Automatically add BlogrPlugin
-        if ($this->confirm('Would you like to automatically add BlogrPlugin to your AdminPanelProvider?', true)) {
-            $this->updateAdminPanelProvider($content, $adminPanelPath);
+        // Determine what needs to be added
+        $updateMessage = [];
+        if (!$hasPlugin) {
+            $updateMessage[] = 'BlogrPlugin';
+        }
+        if (!$hasProfile) {
+            $updateMessage[] = 'EditProfile page';
+        }
+
+        // Automatically add missing configurations
+        if ($this->forceableConfirm('Would you like to automatically add ' . implode(' and ', $updateMessage) . ' to your AdminPanelProvider?', true)) {
+            $this->updateAdminPanelProvider($content, $adminPanelPath, !$hasPlugin, !$hasProfile);
         } else {
-            $this->displayAdminPanelInstructions();
+            $this->displayAdminPanelInstructions(!$hasPlugin, !$hasProfile);
         }
     }
 
-    protected function updateAdminPanelProvider(string $content, string $adminPanelPath): void
+    protected function updateAdminPanelProvider(string $content, string $adminPanelPath, bool $addPlugin = true, bool $addProfile = true): void
     {
-        // Add import if not present
-        if (!str_contains($content, 'use Happytodev\Blogr\BlogrPlugin;')) {
-            // Find the last 'use' statement before the class declaration and add our import after it
+        $modified = false;
+
+        // Add BlogrPlugin import if needed and not present
+        if ($addPlugin && !str_contains($content, 'use Happytodev\Blogr\BlogrPlugin;')) {
             $content = preg_replace(
                 '/(use [^;]+;)\n+(?=\s*class)/s',
-                "$1\nuse Happytodev\\Blogr\\BlogrPlugin;\n\n",
+                "$1\nuse Happytodev\\Blogr\\BlogrPlugin;\n",
                 $content,
                 1
             );
+            $modified = true;
         }
 
-        // Check if plugins array already exists
-        if (str_contains($content, '->plugins([')) {
-            // Add plugin to existing plugins array
+        // Add EditProfile import if needed and not present
+        if ($addProfile && !str_contains($content, 'use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;')) {
             $content = preg_replace(
-                '/(->plugins\(\[)([^\]]*?)(\]\))/s',
-                "$1$2\n                BlogrPlugin::make(),$3",
-                $content
+                '/(use [^;]+;)\n+(?=\s*class)/s',
+                "$1\nuse Happytodev\\Blogr\\Filament\\Pages\\Auth\\EditProfile;\n",
+                $content,
+                1
             );
-        } else {
-            // Create new plugins array before authMiddleware
-            $content = preg_replace(
-                '/(->authMiddleware\(\[)/s',
-                "->plugins([\n                BlogrPlugin::make(),\n            ])\n            $1",
-                $content
-            );
+            $modified = true;
         }
 
-        File::put($adminPanelPath, $content);
-        $this->info('✅ BlogrPlugin added to AdminPanelProvider automatically.');
+        // Add BlogrPlugin to plugins array if needed
+        if ($addPlugin) {
+            if (str_contains($content, '->plugins([')) {
+                // Add plugin to existing plugins array
+                $content = preg_replace(
+                    '/(->plugins\(\[)([^\]]*?)(\]\))/s',
+                    "$1$2\n                BlogrPlugin::make(),$3",
+                    $content
+                );
+            } else {
+                // Create new plugins array before authMiddleware
+                $content = preg_replace(
+                    '/(->authMiddleware\(\[)/s',
+                    "->plugins([\n                BlogrPlugin::make(),\n            ])\n            $1",
+                    $content
+                );
+            }
+            $modified = true;
+            $this->info('✅ BlogrPlugin added to AdminPanelProvider.');
+        }
+
+        // Add ->profile(EditProfile::class) if needed
+        if ($addProfile) {
+            // Find the ->login() line and add ->profile() after it
+            if (str_contains($content, '->login()')) {
+                $content = preg_replace(
+                    '/(->login\(\))/',
+                    "$1\n            ->profile(EditProfile::class)",
+                    $content,
+                    1
+                );
+                $modified = true;
+                $this->info('✅ EditProfile page added to AdminPanelProvider.');
+            } else {
+                // If no ->login() found, add it after ->path()
+                if (str_contains($content, '->path(')) {
+                    $content = preg_replace(
+                        '/(->path\([^)]+\))/',
+                        "$1\n            ->profile(EditProfile::class)",
+                        $content,
+                        1
+                    );
+                    $modified = true;
+                    $this->info('✅ EditProfile page added to AdminPanelProvider.');
+                } else {
+                    $this->warn('⚠️ Could not automatically add EditProfile. Please add it manually.');
+                }
+            }
+        }
+
+        if ($modified) {
+            File::put($adminPanelPath, $content);
+            $this->info('✅ AdminPanelProvider updated successfully.');
+        }
     }
 
-    protected function displayAdminPanelInstructions(): void
+    protected function displayAdminPanelInstructions(bool $showPlugin = true, bool $showProfile = true): void
     {
         $this->newLine();
         $this->warn('📝 Manual step required:');
-        $this->line('Add this line to your AdminPanelProvider plugins array:');
-        $this->line('    ->plugin(BlogrPlugin::make())');
-        $this->newLine();
-        $this->line('And import the class:');
-        $this->line('use Happytodev\Blogr\BlogrPlugin;');
-        $this->newLine();
+        
+        if ($showPlugin) {
+            $this->line('1. Add BlogrPlugin to your AdminPanelProvider plugins array:');
+            $this->line('   ->plugins([');
+            $this->line('       BlogrPlugin::make(),');
+            $this->line('   ])');
+            $this->newLine();
+            $this->line('   Import: use Happytodev\Blogr\BlogrPlugin;');
+            $this->newLine();
+        }
+
+        if ($showProfile) {
+            $this->line(($showPlugin ? '2' : '1') . '. Add EditProfile page to enable user bio and avatar editing:');
+            $this->line('   ->login()');
+            $this->line('   ->profile(EditProfile::class)');
+            $this->newLine();
+            $this->line('   Import: use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;');
+            $this->newLine();
+        }
     }
 
     protected function promptForGitHubStar(): void
     {
         $this->newLine();
-        if ($this->confirm('⭐ Would you like to support Blogr by giving it a star on GitHub?', true)) {
+        if ($this->forceableConfirm('⭐ Would you like to support Blogr by giving it a star on GitHub?', true)) {
             $this->info('🌟 Thank you! Please visit: https://github.com/happytodev/blogr');
             $this->line('⭐ Click the star button at the top right of the page!');
             $this->newLine();
@@ -707,10 +850,11 @@ JS;
     {
         $this->info('🎯 Next steps:');
         $this->line('1. Access your Filament admin panel');
-        $this->line('2. Go to "Blog Posts" to create your first post');
-        $this->line('3. Check out the tutorial posts and series (if installed)');
-        $this->line('4. Configure settings in the "Blogr Settings" section');
-        $this->line('5. Visit your blog at: ' . url(config('blogr.route.prefix', 'blog')));
+        $this->line('2. Update your profile (bio and avatar) via the user menu → Edit Profile');
+        $this->line('3. Go to "Blog Posts" to create your first post');
+        $this->line('4. Check out the tutorial posts and series (if installed)');
+        $this->line('5. Configure settings in the "Blogr Settings" section');
+        $this->line('6. Visit your blog at: ' . url(config('blogr.route.prefix', 'blog')));
         $this->newLine();
 
         if ($this->option('skip-build') || $this->option('skip-npm')) {
@@ -813,6 +957,23 @@ JS;
             } else {
                 $this->warn('⚠️  Could not automatically add HasRoles to User model traits');
             }
+        }
+
+        // Add slug, avatar and bio to $fillable array
+        if (!str_contains($content, "'slug'") && !str_contains($content, '"slug"')) {
+            // Find the $fillable array - match opening bracket to closing bracket
+            $pattern = '/(\$fillable\s*=\s*\[\s*[^\]]+?)(,\s*)(\];)/s';
+            if (preg_match($pattern, $content, $matches)) {
+                // Add slug, avatar and bio before the closing bracket
+                $replacement = $matches[1] . $matches[2] . "\n        'slug',\n        'avatar',\n        'bio'," . "\n    " . $matches[3];
+                $content = preg_replace($pattern, $replacement, $content, 1);
+                $this->line('✅ Added slug, avatar and bio to User model $fillable');
+            } else {
+                $this->warn('⚠️  Could not find $fillable array in User model');
+                $this->line('ℹ️  Please manually add "slug", "avatar" and "bio" to the $fillable array');
+            }
+        } else {
+            $this->line('✅ slug, avatar and bio already in User model $fillable');
         }
 
         File::put($userModelPath, $content);
