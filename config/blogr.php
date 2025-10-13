@@ -270,13 +270,16 @@ return [
     | Display Configuration
     |--------------------------------------------------------------------------
     |
-    | Configure what author information is displayed on articles.
-    | These settings affect both article cards and article detail pages.
+    | Configure what author information is displayed on articles and series.
+    | These settings affect article cards, article detail pages, series cards,
+    | and series detail pages.
     |
     */
     'display' => [
         'show_author_pseudo' => true, // Show author pseudo/slug instead of full name
         'show_author_avatar' => true, // Show author avatar thumbnail
+        'show_series_authors' => true, // Show series authors (avatars with tooltips) on series cards and pages
+        'series_authors_limit' => 4, // Maximum number of author avatars to display before showing "+X"
     ],
 
     /*
