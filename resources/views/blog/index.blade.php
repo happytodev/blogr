@@ -62,6 +62,18 @@
                         </p>
                         @endif
                         
+                        {{-- Series Authors --}}
+                        @if(config('blogr.display.show_series_authors'))
+                            @php
+                                $seriesAuthors = $series->authors();
+                            @endphp
+                            @if(count($seriesAuthors) > 0)
+                            <div class="mb-4">
+                                <x-blogr::series-authors :authors="$seriesAuthors" size="xs" />
+                            </div>
+                            @endif
+                        @endif
+                        
                         <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->slug]) }}" 
                            class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-sm group/link">
                             {{ __('blogr::blogr.series.view_series') }}
