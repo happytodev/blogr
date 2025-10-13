@@ -52,6 +52,35 @@ class BlogSeries extends Model
     }
 
     /**
+     * Get unique authors who contributed to this series.
+     * Authors are ordered by the number of posts they wrote (descending).
+     * Returns a simple array (not a collection) for easier caching.
+     *
+     * @return array Array of User objects with posts_count attribute
+     */
+    public function authors(): array
+    {
+        // Get all posts with their authors
+        $posts = $this->posts()->with('user')->get();
+        
+        // Group by user and count posts
+        $authorsWithCounts = $posts->groupBy('user_id')
+            ->map(function ($userPosts) {
+                $user = $userPosts->first()->user;
+                if ($user) {
+                    $user->posts_count = $userPosts->count();
+                }
+                return $user;
+            })
+            ->filter() // Remove null users
+            ->sortByDesc('posts_count') // Sort by post count
+            ->values()
+            ->toArray();
+        
+        return $authorsWithCounts;
+    }
+
+    /**
      * Get the translation for a specific locale.
      */
     public function translate(string $locale): ?BlogSeriesTranslation
