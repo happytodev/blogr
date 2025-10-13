@@ -27,6 +27,9 @@ return [
         'reading_time' => ':time min read',
         'min_read' => ':minutes min read',
         'untitled' => 'Untitled',
+        'translation_unavailable_title' => 'Translation not available',
+        'translation_unavailable_message' => 'This content is not available in :requested. Showing :showing version instead.',
+        'translation_available_in' => 'Available in',
     ],
 
     // Series
