@@ -84,6 +84,10 @@ class BlogrSettings extends Page
     public ?string $author_bio_position = null;
     public ?bool $author_bio_compact = null;
     public ?bool $author_profile_enabled = null;
+    public ?bool $display_show_author_pseudo = null;
+    public ?bool $display_show_author_avatar = null;
+    public ?bool $display_show_series_authors = null;
+    public ?int $display_series_authors_limit = null;
     public ?bool $locales_enabled = null;
     public ?string $locales_default = null;
     public ?string $locales_available = null;
@@ -239,6 +243,10 @@ class BlogrSettings extends Page
         $this->author_bio_position = $config['author_bio']['position'] ?? 'bottom';
         $this->author_bio_compact = $config['author_bio']['compact'] ?? false;
         $this->author_profile_enabled = $config['author_profile']['enabled'] ?? true;
+        $this->display_show_author_pseudo = $config['display']['show_author_pseudo'] ?? true;
+        $this->display_show_author_avatar = $config['display']['show_author_avatar'] ?? true;
+        $this->display_show_series_authors = $config['display']['show_series_authors'] ?? true;
+        $this->display_series_authors_limit = $config['display']['series_authors_limit'] ?? 4;
         $this->locales_enabled = $config['locales']['enabled'] ?? false;
         $this->locales_default = $config['locales']['default'] ?? 'en';
         $this->locales_available = is_array($config['locales']['available'] ?? [])
@@ -620,6 +628,29 @@ class BlogrSettings extends Page
                             ->default(true)
                             ->helperText('Allow users to access dedicated author profile pages at /blog/author/{userId}')
                             ->columnSpanFull(),
+                        Toggle::make('display_show_author_pseudo')
+                            ->label('Show Author Pseudo/Slug')
+                            ->default(true)
+                            ->helperText('Display author pseudo (slug) instead of full name in article cards and headers')
+                            ->columnSpanFull(),
+                        Toggle::make('display_show_author_avatar')
+                            ->label('Show Author Avatar')
+                            ->default(true)
+                            ->helperText('Display author avatar thumbnail in article cards and headers')
+                            ->columnSpanFull(),
+                        Toggle::make('display_show_series_authors')
+                            ->label('Show Series Authors')
+                            ->default(true)
+                            ->helperText('Display author avatars with tooltips on series cards and pages')
+                            ->columnSpanFull(),
+                        TextInput::make('display_series_authors_limit')
+                            ->label('Series Authors Display Limit')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(10)
+                            ->default(4)
+                            ->helperText('Maximum number of author avatars to show before displaying "+X" indicator')
+                            ->columnSpanFull(),
                         Toggle::make('author_bio_enabled')
                             ->label('Display Author Bio')
                             ->default(true)
@@ -771,6 +802,12 @@ class BlogrSettings extends Page
             ],
             'author_profile' => [
                 'enabled' => $this->author_profile_enabled,
+            ],
+            'display' => [
+                'show_author_pseudo' => $this->display_show_author_pseudo,
+                'show_author_avatar' => $this->display_show_author_avatar,
+                'show_series_authors' => $this->display_show_series_authors,
+                'series_authors_limit' => $this->display_series_authors_limit,
             ],
             'seo' => [
                 'site_name' => $this->getSeoSiteNames(),
