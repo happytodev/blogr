@@ -267,6 +267,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Display Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure what author information is displayed on articles.
+    | These settings affect both article cards and article detail pages.
+    |
+    */
+    'display' => [
+        'show_author_pseudo' => true, // Show author pseudo/slug instead of full name
+        'show_author_avatar' => true, // Show author avatar thumbnail
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Author Profile
     |--------------------------------------------------------------------------
     |
