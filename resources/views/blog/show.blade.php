@@ -48,6 +48,11 @@
                     class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
                     {{ $post->category->name }}
                 </a>
+
+                <!-- Author Info -->
+                @if(config('blogr.display.show_author_pseudo') || config('blogr.display.show_author_avatar'))
+                    <x-blogr::author-info :author="$post->user" size="sm" />
+                @endif
             </div>
 
             <!-- Featured Image -->

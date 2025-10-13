@@ -137,6 +137,13 @@
                             </p>
                         @endif
 
+                        <!-- Author Info -->
+                        @if(config('blogr.display.show_author_pseudo') || config('blogr.display.show_author_avatar'))
+                            <div class="mb-4">
+                                <x-blogr::author-info :author="$post->user" size="sm" />
+                            </div>
+                        @endif
+
                         <!-- Tags -->
                         @if ($post->tags->count())
                             <div class="mb-4 flex flex-wrap gap-2">
