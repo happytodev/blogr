@@ -42,6 +42,7 @@ return [
         'part_number' => 'Part :number',
         'featured' => 'Featured',
         'series' => 'This post is part of the series',
+        'authors' => 'Authors',
     ],
 
     // Dates

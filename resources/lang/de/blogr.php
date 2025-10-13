@@ -40,6 +40,7 @@ return [
         'started_on' => 'Begonnen am :date',
         'all_posts_in_series' => 'Alle Beiträge in dieser Serie',
         'part_number' => 'Teil :number',
+        'authors' => 'Autoren',
     ],
     
     // Dates
