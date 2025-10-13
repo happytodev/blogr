@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.9.1](https://github.com/happytodev/blogr/compare/v0.9.1...v0.9.0) - 2025-10-13
+
 ### ✨ Features
 
 - **Translation Fallback System**: Graceful handling of missing translations
