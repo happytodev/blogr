@@ -5,8 +5,11 @@ namespace Happytodev\Blogr\Filament\Pages\Auth;
 use Filament\Auth\Pages\EditProfile as BaseEditProfile;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class EditProfile extends BaseEditProfile
 {
@@ -56,6 +59,24 @@ class EditProfile extends BaseEditProfile
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data = parent::mutateFormDataBeforeSave($data);
+        
+        // Auto-generate slug from name if not provided
+        if (empty($data['slug']) && !empty($data['name'])) {
+            $baseSlug = Str::slug($data['name']);
+            $slug = $baseSlug;
+            $counter = 1;
+            
+            // Ensure uniqueness
+            $userModel = config('auth.providers.users.model', \App\Models\User::class);
+            while ($userModel::where('slug', $slug)
+                ->where('id', '!=', auth()->id())
+                ->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+            
+            $data['slug'] = $slug;
+        }
         
         // Bio is automatically handled by Filament with the 'array' cast
         // Avatar is automatically handled by FileUpload component
@@ -107,6 +128,17 @@ class EditProfile extends BaseEditProfile
             ->components(array_merge([
                 $this->getNameFormComponent(),
                 $this->getEmailFormComponent(),
+                TextInput::make('slug')
+                    ->label('Pseudo (Username)')
+                    ->maxLength(255)
+                    ->alphaDash()
+                    ->unique(
+                        table: config('auth.providers.users.model', \App\Models\User::class),
+                        column: 'slug',
+                        ignorable: fn () => auth()->user()
+                    )
+                    ->nullable()
+                    ->helperText('Your unique username. Leave empty to auto-generate from your name.'),
             ], 
             $bioComponents,
             [
