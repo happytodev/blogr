@@ -193,6 +193,16 @@ class BlogController
 
         $converter = new MarkdownConverter($environment);
 
+        // Get the best available translation
+        if (!$translation) {
+            $translation = $post->getDefaultTranslation();
+        }
+        
+        // If still no translation, show 404
+        if (!$translation) {
+            abort(404);
+        }
+
         // Get content without frontmatter from translation
         $contentWithoutFrontmatter = $this->getContentWithoutFrontmatter($translation->content);
 
@@ -207,6 +217,9 @@ class BlogController
 
         // Set converted content on post for backward compatibility with views
         $post->setAttribute('content', $convertedContent);
+        
+        // Check if current locale translation is available
+        $translationAvailable = $post->translations->contains('locale', $locale);
 
         // Prepare display data from translation
         $displayData = [
@@ -218,6 +231,8 @@ class BlogController
             'seo_title' => $translation->seo_title,
             'seo_description' => $translation->seo_description,
             'seo_keywords' => $translation->seo_keywords,
+            'translationAvailable' => $translationAvailable,
+            'currentTranslationLocale' => $translation->locale,
             'reading_time' => $translation->reading_time ?? $post->getEstimatedReadingTime(),
         ];
         

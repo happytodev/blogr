@@ -4,6 +4,43 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### ✨ Features
+
+- **Translation Fallback System**: Graceful handling of missing translations
+  - Posts without translations in requested language now show default translation instead of crashing
+  - New `translation-warning` Blade component displays visual alert when fallback occurs
+  - Internationalized warning messages in 4 languages (EN/FR/DE/ES)
+  - Quick-switch buttons to available translations directly from warning
+  - Enhanced `BlogController` with null-safety checks and fallback logic
+
+### 🎨 UI Improvements
+
+- **Translation Warning Component**:
+  - Yellow alert box with warning icon for high visibility
+  - Clear message explaining which language is being displayed
+  - List of available translations with quick-access links
+  - Fully responsive and dark mode compatible
+
+### 🧪 Testing
+
+- **Translation Fallback Tests** (new file: `TranslationFallbackTest.php`):
+  - ✅ Post with only English translation accessed in French shows English version
+  - ✅ Post with bilingual translations shows correct language version
+  - ✅ Unpublished post returns 404 even with translation
+  - ✅ Future published post returns 404
+  - Test coverage: 4 new passing tests ensuring translation safety
+
+### 🐛 Bug Fixes
+
+- **Critical: Translation Fallback Crash**: Fixed fatal error when switching languages on untranslated content
+  - **Root Cause**: BlogController attempted to read property 'content' on null when translation missing
+  - **Impact**: Production-breaking issue affecting all multilingual blogs
+  - **Solution**: Added comprehensive null safety checks with graceful fallback to default translation
+  - **User Experience**: Visual warning component replaces error page when translation unavailable
+  - **Error Prevention**: Returns 404 only if no translations exist at all
+  - **Testing**: 4 new tests ensure this cannot occur again
+
+
 ## [v0.9.0](https://github.com/happytodev/blogr/compare/v0.9.0...v0.8.3) - 2025-10-13
 
 ### ✨ Features
@@ -54,7 +91,7 @@ All notable changes to `blogr` will be documented in this file.
   - Unique authors and correct ordering
   - Empty series handling
   - Component rendering and conditional display
-- **Total Coverage**: 297 passing tests across 30+ test suites
+- **Total Coverage**: 301 passing tests across 30+ test suites
 
 ### 🐛 Bug Fixes
 

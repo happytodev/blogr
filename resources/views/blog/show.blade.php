@@ -8,6 +8,15 @@
 
 @section('content')
     <article class="container mx-auto px-4 py-12 max-w-4xl">
+        <!-- Translation Warning -->
+        @if(isset($displayData) && isset($displayData['translationAvailable']) && !$displayData['translationAvailable'])
+            <x-blogr::translation-warning 
+                :currentLocale="$currentLocale ?? app()->getLocale()"
+                :translationLocale="$displayData['currentTranslationLocale']"
+                :availableLocales="$post->translations->pluck('locale')->toArray()"
+            />
+        @endif
+        
         <!-- Language Indicator -->
         @if (isset($availableTranslations) && config('blogr.posts.show_language_switcher', true))
             <div class="mb-6">
