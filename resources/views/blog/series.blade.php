@@ -37,6 +37,21 @@
                     <p class="text-lg text-gray-600 dark:text-gray-300 mb-4">{{ $seriesTranslation->description }}</p>
                 @endif
                 
+                {{-- Series Authors --}}
+                @if(config('blogr.display.show_series_authors'))
+                    @php
+                        $seriesAuthors = $series->authors();
+                    @endphp
+                    @if(count($seriesAuthors) > 0)
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('blogr::blogr.series.authors') }}:</span>
+                            <x-blogr::series-authors :authors="$seriesAuthors" size="sm" />
+                        </div>
+                    </div>
+                    @endif
+                @endif
+                
                 <div class="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
                     <span class="inline-flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,6 +146,13 @@
                             <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">
                                 {{ $postTranslation->seo_description }}
                             </p>
+                        @endif
+                        
+                        <!-- Author Info -->
+                        @if($post->user)
+                            <div class="mb-4">
+                                <x-blogr::author-info :author="$post->user" size="sm" />
+                            </div>
                         @endif
                         
                         <!-- Read More Link -->
