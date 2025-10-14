@@ -123,7 +123,7 @@ class BlogController
         // Validate locale
         $locale = $this->resolveLocale($locale);
         
-        // Fetch translation first
+        // Try to fetch translation in requested locale first
         $translation = BlogPostTranslation::where('slug', $actualSlug)
             ->where('locale', $locale)
             ->with([
@@ -133,26 +133,27 @@ class BlogController
                 'post.series.translations',
                 'post.series.posts.translations'
             ])
-            ->first(); // Use first() instead of firstOrFail()
+            ->first();
         
-        if ($translation) {
-            $post = $translation->post;
-        } else {
-            // If no translation found, try to find post by slug directly (for non-localized posts)
-            $post = BlogPost::where('slug', $actualSlug)
+        // If not found in requested locale, try to find by slug alone (fallback)
+        if (!$translation) {
+            $translation = BlogPostTranslation::where('slug', $actualSlug)
                 ->with([
-                    'category.translations', 
-                    'tags.translations', 
-                    'translations',
-                    'series.translations',
-                    'series.posts.translations'
+                    'post.category.translations', 
+                    'post.tags.translations', 
+                    'post.translations',
+                    'post.series.translations',
+                    'post.series.posts.translations'
                 ])
                 ->first();
-                
-            if (!$post) {
-                abort(404);
-            }
         }
+        
+        // If still not found, throw 404
+        if (!$translation) {
+            abort(404);
+        }
+        
+        $post = $translation->post;
         
         // Check if post is published
         if (!$post->is_published) {
