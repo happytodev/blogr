@@ -304,13 +304,15 @@ it('displays consistent reading time between index and show pages', function () 
     ]);
 
     // Get reading time from the model (as used in index page)
+    $blogPost->load('translations');
     $indexReadingTime = $blogPost->getEstimatedReadingTime();
 
     // Simulate what happens in the controller show method
-    $post = BlogPost::with(['category', 'tags'])
-        ->where('slug', $blogPost->slug)
-        ->where('is_published', true)
+    $translation = \Happytodev\Blogr\Models\BlogPostTranslation::where('slug', $blogPost->slug)
+        ->with(['post.category', 'post.tags'])
         ->firstOrFail();
+    
+    $post = $translation->post;
 
     // Calculate reading time BEFORE adding TOC (as done in controller)
     $post->reading_time = $post->getEstimatedReadingTime();
