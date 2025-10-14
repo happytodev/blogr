@@ -76,7 +76,7 @@ class BlogPostPolicy
     /**
      * Determine whether the user can publish the blog post.
      */
-    public function publish($user, BlogPost $blogPost = null): bool
+    public function publish($user, ?BlogPost $blogPost = null): bool
     {
         return $user->hasRole('admin');
     }
