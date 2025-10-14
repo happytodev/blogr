@@ -13,26 +13,35 @@ class BlogPost extends Model
 {
     use HasFactory;
     
+    /**
+     * Temporary storage for translatable fields during creation
+     */
+    protected $pendingTranslationData = [];
+    
     protected $fillable = [
-        'title',
         'photo',
-        'content',
-        'slug',
         'user_id',
         'is_published',
         'published_at',
-        'meta_title',
-        'meta_description',
-        'meta_keywords',
-        'tldr',
         'category_id',
         'blog_series_id',
         'series_position',
         'default_locale',
+        'display_toc',
+        // Translatable fields (for backward compatibility - will be moved to translations)
+        'title',
+        'slug',
+        'content',
+        'tldr',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
     ];
 
     protected $casts = [
         'published_at' => 'datetime',
+        'is_published' => 'boolean',
+        'display_toc' => 'boolean',
     ];
 
     /**
@@ -60,6 +69,15 @@ class BlogPost extends Model
             if ($post->is_published && !$post->published_at) {
                 $post->published_at = now();
             }
+            
+            // Store translatable fields BEFORE they're removed
+            $translatableFields = ['title', 'slug', 'content', 'tldr', 'meta_title', 'meta_description', 'meta_keywords'];
+            foreach ($translatableFields as $field) {
+                if (isset($post->attributes[$field])) {
+                    $post->pendingTranslationData[$field] = $post->attributes[$field];
+                    unset($post->attributes[$field]);
+                }
+            }
         });
 
         static::updating(function ($post) {
@@ -75,6 +93,43 @@ class BlogPost extends Model
             if ($post->is_published && !$post->published_at) {
                 $post->published_at = now();
             }
+        });
+        
+        // After creating a post, create translation from pending data
+        static::created(function ($post) {
+            // If we have pending translatable data, create a translation
+            if (!empty($post->pendingTranslationData)) {
+                $locale = $post->default_locale ?? config('app.locale', 'en');
+                
+                // Map old field names to new ones
+                $fieldMapping = [
+                    'meta_title' => 'seo_title',
+                    'meta_description' => 'seo_description',
+                    'meta_keywords' => 'seo_keywords',
+                ];
+                
+                $translationData = [];
+                foreach ($post->pendingTranslationData as $key => $value) {
+                    // Map old field name to new one if needed
+                    $newKey = $fieldMapping[$key] ?? $key;
+                    $translationData[$newKey] = $value;
+                }
+                
+                $post->translations()->create(array_merge([
+                    'locale' => $locale,
+                ], $translationData));
+                
+                // Clear pending data
+                $post->pendingTranslationData = [];
+                
+                // Reload translations to make them available in accessors
+                $post->load('translations');
+            }
+        });
+        
+        // Before deleting a post, ensure translations are deleted (for SQLite compatibility)
+        static::deleting(function ($post) {
+            $post->translations()->delete();
         });
     }
 
@@ -166,6 +221,12 @@ class BlogPost extends Model
      */
     public function translate(string $locale): ?BlogPostTranslation
     {
+        // If translations are already loaded, use the collection
+        if ($this->relationLoaded('translations')) {
+            return $this->translations->where('locale', $locale)->first();
+        }
+        
+        // Otherwise, query the database
         return $this->translations()->where('locale', $locale)->first();
     }
 
@@ -238,6 +299,45 @@ class BlogPost extends Model
         
         $translation = $this->getDefaultTranslation();
         return $translation?->reading_time;
+    }
+
+    /**
+     * Get the meta_title attribute from translation (maps to seo_title)
+     */
+    public function getMetaTitleAttribute($value): ?string
+    {
+        if ($value) {
+            return $value;
+        }
+        
+        $translation = $this->getDefaultTranslation();
+        return $translation?->seo_title;
+    }
+
+    /**
+     * Get the meta_description attribute from translation (maps to seo_description)
+     */
+    public function getMetaDescriptionAttribute($value): ?string
+    {
+        if ($value) {
+            return $value;
+        }
+        
+        $translation = $this->getDefaultTranslation();
+        return $translation?->seo_description;
+    }
+
+    /**
+     * Get the meta_keywords attribute from translation (maps to seo_keywords)
+     */
+    public function getMetaKeywordsAttribute($value): ?string
+    {
+        if ($value) {
+            return $value;
+        }
+        
+        $translation = $this->getDefaultTranslation();
+        return $translation?->seo_keywords;
     }
 
     /**

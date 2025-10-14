@@ -145,5 +145,6 @@ test('blog post can have multiple translations', function () {
         'content' => 'Contenido ES',
     ]);
     
-    expect($post->translations)->toHaveCount(3); // 2 + default 'en'
+    $post->load('translations');
+    expect($post->translations)->toHaveCount(3); // EN (from hook) + FR + ES
 });

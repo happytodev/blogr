@@ -22,20 +22,23 @@ class BlogPostFactory extends Factory
     public function definition(): array
     {
         $title = fake()->sentence();
-
+        
         return [
-            'title' => $title,
             'photo' => null,
-            'content' => fake()->paragraphs(3, true),
-            'slug' => Str::slug($title),
             'user_id' => 1, // Default user ID, will be overridden in tests
             'is_published' => false,
             'published_at' => null,
+            'category_id' => Category::factory(),
+            'default_locale' => 'en',
+            'display_toc' => false,
+            // Translatable fields (will be auto-moved to translations by model hook)
+            'title' => $title,
+            'slug' => Str::slug($title) . '-' . Str::random(6), // Add random suffix for global uniqueness
+            'content' => fake()->paragraphs(3, true),
+            'tldr' => fake()->sentence(),
             'meta_title' => $title,
             'meta_description' => fake()->sentence(),
             'meta_keywords' => implode(', ', fake()->words(3)),
-            'tldr' => fake()->sentence(),
-            'category_id' => Category::factory(),
         ];
     }
 

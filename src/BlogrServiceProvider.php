@@ -398,9 +398,6 @@ class BlogrServiceProvider extends PackageServiceProvider
 
     public function boot()
     {
-        // Register Observers
-        BlogPost::observe(\Happytodev\Blogr\Observers\BlogPostObserver::class);
-        
         // Publishes the configuration and views
         $this->publishes([
             __DIR__ . '/../config/blogr.php' => config_path('blogr.php'),

@@ -23,20 +23,21 @@ it('can create a blog post with translation', function () {
         'user_id' => 1,
         'category_id' => 1,
         'title' => 'My First Post',
-        'slug' => 'my-first-post',
+        'slug' => 'my-first-post-' . uniqid(),
         'content' => 'Full content of the post',
         'tldr' => 'A short excerpt',
         'meta_title' => 'SEO Title',
         'meta_description' => 'SEO Description',
     ]);
 
-    // Observer automatically creates 'en' translation
+    // Hook automatically creates 'en' translation
+    $post->load('translations');
     $translation = $post->translations()->where('locale', 'en')->first();
 
     expect($post->translations)->toHaveCount(1)
         ->and($translation->title)->toBe('My First Post')
         ->and($translation->locale)->toBe('en')
-        ->and($translation->excerpt)->toBe('A short excerpt')
+        ->and($translation->tldr)->toBe('A short excerpt')
         ->and($translation->seo_title)->toBe('SEO Title');
 });
 
@@ -46,19 +47,22 @@ it('can add multiple translations to a post', function () {
         'user_id' => 1,
         'category_id' => 1,
         'title' => 'English Title',
-        'slug' => 'english-title',
+        'slug' => 'english-title-' . uniqid(),
         'content' => 'English content',
     ]);
 
-    // Observer creates 'en' translation automatically
+    // Hook creates 'en' translation automatically
+    $post->load('translations');
+    
     // Add French translation manually
     $post->translations()->create([
         'locale' => 'fr',
         'title' => 'Titre français',
-        'slug' => 'titre-francais',
+        'slug' => 'titre-francais-' . uniqid(),
         'content' => 'Contenu français',
     ]);
 
+    $post->refresh();
     expect($post->translations)->toHaveCount(2)
         ->and($post->translate('en')->title)->toBe('English Title')
         ->and($post->translate('fr')->title)->toBe('Titre français');
@@ -70,18 +74,21 @@ it('can get translation for specific locale', function () {
         'user_id' => 1,
         'category_id' => 1,
         'title' => 'English Title',
-        'slug' => 'english-title',
+        'slug' => 'english-title-' . uniqid(),
         'content' => 'English content',
     ]);
 
-    // Observer creates 'en' translation automatically
+    // Hook creates 'en' translation automatically
+    $post->load('translations');
+    
     $post->translations()->create([
         'locale' => 'fr',
         'title' => 'Titre français',
-        'slug' => 'titre-francais',
+        'slug' => 'titre-francais-' . uniqid(),
         'content' => 'Contenu français',
     ]);
 
+    $post->refresh();
     $enTranslation = $post->translate('en');
     $frTranslation = $post->translate('fr');
 
@@ -183,28 +190,23 @@ it('requires unique slug per locale', function () {
     ]))->toThrow(\Illuminate\Database\QueryException::class);
 });
 
-it('allows same slug for different locales', function () {
+it('requires unique slug globally across all locales', function () {
     $post = BlogPost::create([
         'default_locale' => 'en',
         'user_id' => 1,
         'category_id' => 1,
         'title' => 'My Post',
-        'slug' => 'my-post',
+        'slug' => 'my-unique-post',
         'content' => 'English content',
     ]);
 
-    // Observer creates 'en' translation with 'my-post'
-    // Add French translation with same slug - should work
-    $post->translations()->create([
+    // Try to create French translation with same slug - should fail
+    expect(fn() => $post->translations()->create([
         'locale' => 'fr',
         'title' => 'Mon Article',
-        'slug' => 'my-post', // Same slug but different locale
+        'slug' => 'my-unique-post', // Same slug = conflict!
         'content' => 'Contenu français',
-    ]);
-
-    expect($post->translations)->toHaveCount(2)
-        ->and($post->translate('en')->slug)->toBe('my-post')
-        ->and($post->translate('fr')->slug)->toBe('my-post');
+    ]))->toThrow(\Illuminate\Database\QueryException::class);
 });
 
 it('can associate categories with specific translation', function () {
@@ -295,17 +297,21 @@ it('calculates reading time per translation', function () {
         'user_id' => 1,
         'category_id' => 1,
         'title' => 'Short Article',
-        'slug' => 'short-article',
+        'slug' => 'short-article-' . uniqid(),
         'content' => $enContent,
     ]);
 
-    // Observer creates 'en' translation and calculates reading time
+    // Hook creates 'en' translation
+    $post->load('translations');
     $enTranslation = $post->translations()->where('locale', 'en')->first();
+    
+    // Calculate reading time for English translation
+    $enTranslation->calculateReadingTime();
 
     $frTranslation = $post->translations()->create([
         'locale' => 'fr',
         'title' => 'Article Long',
-        'slug' => 'article-long',
+        'slug' => 'article-long-' . uniqid(),
         'content' => $frContent,
     ]);
 

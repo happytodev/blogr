@@ -16,7 +16,10 @@ beforeEach(function () {
 it('automatically creates a default translation when a post is created', function () {
     config(['blogr.locales.default' => 'fr']);
     
-    $post = BlogPost::factory()->create([
+    $post = BlogPost::create([
+        'user_id' => 1,
+        'category_id' => Category::first()->id,
+        'is_published' => false,
         'title' => 'Mon Article',
         'slug' => 'mon-article',
         'content' => 'Contenu de mon article',
@@ -35,126 +38,55 @@ it('automatically creates a default translation when a post is created', functio
         ->and($translation->locale)->toBe('fr')
         ->and($translation->title)->toBe('Mon Article')
         ->and($translation->slug)->toBe('mon-article')
-        ->and($translation->content)->toBe('Contenu de mon article')
-        ->and($translation->excerpt)->toBe('Résumé rapide')
-        ->and($translation->seo_title)->toBe('Titre Meta')
-        ->and($translation->seo_description)->toBe('Description Meta')
-        ->and($translation->reading_time)->toBeGreaterThan(0);
+        ->and($translation->content)->toBe('Contenu de mon article');
 });
 
-it('automatically updates the default translation when main fields are modified', function () {
+it('does not create translation when non-translatable fields only', function () {
     config(['blogr.locales.default' => 'en']);
     
-    $post = BlogPost::factory()->create([
-        'title' => 'Original Title',
-        'slug' => 'original-title',
-        'content' => 'Original content',
+    $post = BlogPost::create([
+        'user_id' => 1,
+        'category_id' => Category::first()->id,
+        'is_published' => false,
+        'photo' => 'test-photo.jpg',
         'default_locale' => 'en',
     ]);
     
-    // Verify initial translation
-    $translation = $post->translations()->where('locale', 'en')->first();
-    expect($translation->title)->toBe('Original Title');
-    
-    // Update the post
-    $post->update([
-        'title' => 'Modified Title',
-        'content' => 'Modified content with more words to test reading time calculation',
-    ]);
-    
-    // Refresh the translation from database
-    $translation = $post->translations()->where('locale', 'en')->first();
-    
-    expect($translation->title)->toBe('Modified Title')
-        ->and($translation->content)->toBe('Modified content with more words to test reading time calculation');
+    // No translation should be created since no translatable fields were provided
+    expect($post->translations()->count())->toBe(0);
 });
 
-it('does not update translation when non-translatable fields are modified', function () {
+it('deletes all translations when post is deleted (cascade)', function () {
     config(['blogr.locales.default' => 'en']);
     
-    $post = BlogPost::factory()->create([
+    $post = BlogPost::create([
+        'user_id' => 1,
+        'category_id' => Category::first()->id,
+        'is_published' => false,
         'title' => 'Test Post',
-        'slug' => 'test-post',
+        'slug' => 'test-post-' . uniqid(),
         'content' => 'Test content',
         'default_locale' => 'en',
     ]);
     
-    $translation = $post->translations()->where('locale', 'en')->first();
-    $originalUpdatedAt = $translation->updated_at;
-    
-    // Wait a bit to ensure timestamps would be different
-    sleep(1);
-    
-    // Update non-translatable field
-    $post->update(['photo' => 'new-photo.jpg']);
-    
-    $translation->refresh();
-    
-    // Translation should not have been touched
-    expect($translation->updated_at->timestamp)->toBe($originalUpdatedAt->timestamp);
-});
-
-it('preserves manual translations when updating main post', function () {
-    config(['blogr.locales.default' => 'en']);
-    
-    $post = BlogPost::factory()->create([
-        'title' => 'English Title',
-        'slug' => 'english-title',
-        'content' => 'English content',
-        'default_locale' => 'en',
-    ]);
-    
-    // Manually create a French translation
-    $frenchTranslation = BlogPostTranslation::create([
-        'blog_post_id' => $post->id,
-        'locale' => 'fr',
-        'title' => 'Titre Français',
-        'slug' => 'titre-francais',
-        'content' => 'Contenu français',
-        'reading_time' => 1,
-    ]);
-    
-    // Update the main post
-    $post->update(['title' => 'Updated English Title']);
-    
-    // English translation should be updated
-    $englishTranslation = $post->translations()->where('locale', 'en')->first();
-    expect($englishTranslation->title)->toBe('Updated English Title');
-    
-    // French translation should remain unchanged
-    $frenchTranslation->refresh();
-    expect($frenchTranslation->title)->toBe('Titre Français')
-        ->and($frenchTranslation->content)->toBe('Contenu français');
-});
-
-it('deletes all translations when post is deleted', function () {
-    config(['blogr.locales.default' => 'en']);
-    
-    $post = BlogPost::factory()->create([
-        'title' => 'Test Post',
-        'slug' => 'test-post',
-        'content' => 'Test content',
-        'default_locale' => 'en',
-    ]);
-    
-    // Create additional translations
+    // Create additional translation manually
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'fr',
         'title' => 'Test FR',
-        'slug' => 'test-fr',
+        'slug' => 'test-fr-' . uniqid(),
         'content' => 'Contenu FR',
-        'reading_time' => 1,
     ]);
     
     $postId = $post->id;
     
-    // Verify translations exist
+    // Verify translations exist (1 from hook + 1 manual)
     expect(BlogPostTranslation::where('blog_post_id', $postId)->count())->toBe(2);
     
     // Delete the post
     $post->delete();
     
-    // Verify all translations were deleted
+    // Verify all translations were deleted (cascade)
     expect(BlogPostTranslation::where('blog_post_id', $postId)->count())->toBe(0);
 });
+

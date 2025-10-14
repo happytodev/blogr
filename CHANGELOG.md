@@ -4,6 +4,29 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### 🔧 Admin Interface Refactoring
+
+- **Translation-First Blog Post Form**: Complete restructuring of the admin edit interface
+  - **Main Content Section**: Moved Translations relation manager to top of page (after header)
+  - **Form Simplification**: Removed all translatable fields from main form (title, slug, content, SEO)
+  - **Metadata Focus**: Main form now only manages post metadata (photo, category, tags, series, publication)
+  - **Helper Text**: Added explanatory text for category/tags indicating automatic translation support
+  - **Persistent Display**: Relation manager now persists through Livewire updates (file uploads, etc.)
+  - **Ergonomic Layout**: Clear separation between content management and post metadata
+
+### 🧪 Testing
+
+- **Test Cleanup**: Removed obsolete `BlogPostFormTest.php` 
+  - Test was for frontmatter/TOC management in old single-table content system
+  - No longer relevant in Translation-First architecture
+  - All remaining tests pass: **286 tests, 895 assertions** ✅
+
+### 🐛 Bug Fixes
+
+- **PHP 8.4 Compatibility**: Fixed deprecated nullable parameter warning in `BlogPostPolicy::publish()`
+  - Changed implicit `= null` to explicit `?BlogPost $blogPost = null`
+  - Zero deprecated warnings in test suite
+
 ## [v0.9.1](https://github.com/happytodev/blogr/compare/v0.9.1...v0.9.0) - 2025-10-13
 
 ### ✨ Features
