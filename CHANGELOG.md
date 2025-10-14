@@ -4,6 +4,9 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+
+## [v0.10.0](https://github.com/happytodev/blogr/compare/v0.10.0...v0.9.1) - 2025-10-15
+
 ### 🔧 Admin Interface Refactoring
 
 - **Translation-First Blog Post Form**: Complete restructuring of the admin edit interface
