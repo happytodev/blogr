@@ -18,8 +18,18 @@ use Illuminate\Database\Eloquent\Model;
 class TranslationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'translations';
-    protected static ?string $title = 'Translations';
-    protected static string | BackedEnum | null $icon = 'heroicon-o-language';
+    protected static ?string $title = 'Main Content';
+    protected static string | BackedEnum | null $icon = 'heroicon-o-document-text';
+    
+    public function getHeading(): string
+    {
+        return 'Main Content';
+    }
+    
+    public function getDescription(): ?string
+    {
+        return '📝 This is where you add the main content of your blog post. Add a translation for each language you want to support. Click "Create" to add your first translation.';
+    }
 
     public function form(Schema $schema): Schema
     {
@@ -105,6 +115,13 @@ class TranslationsRelationManager extends RelationManager
                     $remaining = $max - strlen($state ?? '');
                     return "Optimal length: 150-160 characters. Remaining: $remaining / $max.";
                 })
+                ->columnSpan(2),
+            
+            Forms\Components\TextInput::make('seo_keywords')
+                ->label('SEO Keywords')
+                ->maxLength(255)
+                ->nullable()
+                ->helperText('Comma-separated keywords for SEO (e.g., laravel, php, tutorial)')
                 ->columnSpan(2),
         ])->columns(2);
     }
