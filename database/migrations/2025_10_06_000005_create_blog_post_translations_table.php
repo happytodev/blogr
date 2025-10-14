@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug');
             $table->text('excerpt')->nullable();
-            $table->longText('content');
+            $table->longText('content')->nullable(); // Nullable for flexibility
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             $table->string('seo_keywords')->nullable();
@@ -25,8 +25,8 @@ return new class extends Migration
             // Unique constraint: one translation per locale per post
             $table->unique(['blog_post_id', 'locale']);
             
-            // Unique constraint: slug must be unique per locale
-            $table->unique(['locale', 'slug']);
+            // Unique constraint: slug must be unique globally (across all locales)
+            $table->unique('slug');
         });
     }
 
