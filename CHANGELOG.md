@@ -4,6 +4,33 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### 🐛 Bug Fixes
+
+- **Series Images**: Fixed broken images after upload (403 Forbidden errors)
+  - **Root Cause**: Files were uploaded to `storage/app/private` instead of `storage/app/public`
+  - **Solution**: Configured FileUpload fields to use `->disk('public')` explicitly
+  - **Storage URLs**: Implemented smart URL generation with automatic fallback (temporary URLs for S3, regular URLs for local)
+
+### ✨ Features
+
+- **Per-Translation Photo Support for Series**: Series translations can now have their own photos
+  - **Migration**: Added `photo` column to `blog_series_translations` table
+  - **Form Enhancement**: Added photo upload field in series translation repeater with image editor
+  - **3-Level Fallback Logic**: Translation photo → Series photo → Any other translation photo
+  - **Applied in**: Series list (`seriesIndex()`), series detail (`series()`), and homepage
+  - **View Enhancement**: Added series image display in `series.blade.php` detail page
+
+- **Enhanced Repeater UI**: Improved visual styling for translation repeaters in both posts and series
+  - Flag emojis for 12+ languages (🇬🇧 🇫🇷 🇪🇸 🇩🇪 etc.)
+  - Styled labels with larger font, bold weight, and indigo color
+  - Uses `HtmlString` for proper HTML rendering
+
+### 🔧 Technical Improvements
+
+- **Storage Abstraction**: Created `getStorageUrl()` helper method for consistent URL generation across all controllers
+- **Disk Configuration**: All image uploads now explicitly use the `public` disk
+- **Test Coverage**: Added 7 comprehensive tests for series photo fallback functionality
+
 ## [v0.10.1](https://github.com/happytodev/blogr/compare/v0.10.1...v0.10.0) - 2025-10-15
 
 ### ✨ Features
