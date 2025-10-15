@@ -1,44 +1,22 @@
 <?php
 
+namespace Happytodev\Blogr\Database\Seeders;
 
-
-namespace Happytodev\Blogr\Database\Seeders;namespace Happytodev\Blogr\Database\Seeders;
-
-
-
-use Illuminate\Database\Seeder;class BlogPostSeeder
-
-use Happytodev\Blogr\Models\BlogPost;{
-
-use Happytodev\Blogr\Models\BlogPostTranslation;}
-
+use Illuminate\Database\Seeder;
+use Happytodev\Blogr\Models\BlogPost;
+use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
 
 class BlogPostSeeder extends Seeder
 {
-    private $user;
+    private \$user;
 
     public function run(): void
     {
         // Get the first user or create one
-        $this->user = \App\Models\User::first();
-        if (!$this->user) {
-            $this->user = \App\Models\User::create([
-                'name' => 'Blog Author',
-                'email' => 'author@example.com',
-                'password' => bcrypt('password'),
-            ]);
-        }
-
-        // Create categories
-        $categoryLaravel = Category::firstOrCreate(['slug' => 'laravel'], ['name' => 'Laravel']);
-        $categoryVue = Category::firstOrCreate(['slug' => 'vue-js'], ['name' => 'Vue.js']);
-        $categoryTutorial = Category::firstOrCreate(['slug' => 'tutorial'], ['name' => 'Tutorial']);
-        $categoryProductivity = Category::firstOrCreate(['slug' => 'productivity'], ['name' => 'Productivity']);
-
-        // Create tags
-        $tagBeginner = Tag::firstOrCreate(['slug' => 'beginner'], ['name' => 'Beginner']);
+        \$this->user = \App\Models\User::first();
+        if (!\$this->user) {
         $tagAdvanced = Tag::firstOrCreate(['slug' => 'advanced'], ['name' => 'Advanced']);
         $tagBestPractices = Tag::firstOrCreate(['slug' => 'best-practices'], ['name' => 'Best Practices']);
         $tagTips = Tag::firstOrCreate(['slug' => 'tips'], ['name' => 'Tips']);
