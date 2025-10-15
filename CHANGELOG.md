@@ -4,6 +4,9 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+
+## [v0.11.2](https://github.com/happytodev/blogr/compare/v0.11.2...v0.11.1) - 2025-10-15
+
 ### 🐛 Bug Fixes
 
 - **Installation Command**: Fixed double comma syntax error in User model casts ([Issue #115](https://github.com/happytodev/blogr/issues/115))
