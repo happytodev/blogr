@@ -82,10 +82,11 @@ class BlogPostResource extends Resource
         ];
     }
 
+    // Relation Manager removed - translations are now managed via Repeater in the form
     public static function getRelations(): array
     {
         return [
-            RelationManagers\TranslationsRelationManager::class,
+            // RelationManagers\TranslationsRelationManager::class, // Removed - using Repeater instead
         ];
     }
 }
