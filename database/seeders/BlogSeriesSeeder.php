@@ -272,17 +272,14 @@ class BlogSeriesSeeder extends Seeder
 
     private function createPost(array $data): void
     {
-        $post = BlogPost::firstOrCreate(
-            ['slug' => $data['slug']],
-            [
-                'blog_series_id' => $data['series']->id,
-                'series_position' => $data['position'],
-                'category_id' => $data['category']->id,
-                'user_id' => $this->user->id,
-                'is_published' => true,
-                'published_at' => $data['published_at'],
-            ]
-        );
+        $post = BlogPost::create([
+            'blog_series_id' => $data['series']->id,
+            'series_position' => $data['position'],
+            'category_id' => $data['category']->id,
+            'user_id' => $this->user->id,
+            'is_published' => true,
+            'published_at' => $data['published_at'],
+        ]);
 
         // Create or update translations
         foreach ($data['translations'] as $locale => $translation) {
@@ -308,8 +305,10 @@ class BlogSeriesSeeder extends Seeder
 
     private function info(string $message): void
     {
-        if (method_exists($this->command ?? null, 'info')) {
+        if (isset($this->command) && method_exists($this->command, 'info')) {
             $this->command->info($message);
+        } else {
+            echo $message . PHP_EOL;
         }
     }
 
