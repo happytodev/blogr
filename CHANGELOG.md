@@ -4,6 +4,29 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### 🐛 Bug Fixes
+
+- **Bio Display Fix**: Author bio now properly displays in multilingual contexts
+  - Installation command now automatically adds `'bio' => 'array'` cast to User model
+  - Supports both Laravel 11+ style (`casts()` method) and Laravel 10 style (`$casts` property)
+  - Prevents bio from displaying as raw JSON string
+  - Essential for proper multilingual bio support
+  - Added comprehensive documentation in README with manual configuration steps
+
+- **Reading Time Calculation**: Fixed reading time display on author pages for multilingual blogs
+  - Reading time now calculated from active translation content instead of main model content
+  - Added dynamic calculation in `AuthorController` using translation title and content
+  - Respects configured reading speed from `config('blogr.reading_speed.words_per_minute', 200)`
+  - View updated to use `ConfigHelper::getReadingTimeText()` for proper formatting
+
+### ✨ Features
+
+- **Auto Admin Role Assignment**: Installation command now automatically assigns admin role to first user
+  - Detects if user exists in database after installation
+  - Automatically assigns 'admin' role using Spatie Permission package
+  - Ensures immediate access to all Blogr features post-installation
+  - Skips if no users exist or if role assignment not needed
+
 ## [v0.11.0](https://github.com/happytodev/blogr/compare/v0.11.0...v0.10.2) - 2025-10-15
 
 ### 🐛 Bug Fixes

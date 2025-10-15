@@ -6,11 +6,12 @@ namespace Workbench\App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Workbench\Workbench\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -48,5 +49,13 @@ class User extends Authenticatable
             'password' => 'hashed',
             'bio' => 'array',
         ];
+    }
+
+    /**
+     * Get the guard name for Spatie Permission
+     */
+    public function guardName(): string
+    {
+        return 'web';
     }
 }

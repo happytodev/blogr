@@ -63,6 +63,9 @@ class BlogrInstallCommand extends Command
         // Step 2.7: Create test users with roles
         $this->createTestUsers();
 
+        // Step 2.7.5: Assign admin role to first user if exists
+        $this->assignAdminRoleToFirstUser();
+
         // Step 2.8: Install UserResource for managing users in Filament
         $this->installUserResource();
 
@@ -976,6 +979,59 @@ JS;
             $this->line('✅ slug, avatar and bio already in User model $fillable');
         }
 
+        // Add 'bio' => 'array' cast to ensure JSON is properly decoded
+        if (!str_contains($content, "'bio' => 'array'") && !str_contains($content, '"bio" => "array"')) {
+            // Strategy 1: Try to find the casts() method (Laravel 11+ style)
+            if (preg_match('/(protected function casts\(\)\s*:\s*array\s*\{[^}]*return\s*\[)([^\]]*?)(\];)/s', $content, $matches)) {
+                $before = $matches[1];
+                $castsContent = $matches[2];
+                $after = $matches[3];
+                
+                // Check if there's already content in the array
+                if (trim($castsContent) !== '') {
+                    // Add bio cast at the end
+                    $newCastsContent = rtrim($castsContent) . ",\n            'bio' => 'array',\n        ";
+                } else {
+                    // Empty array, add bio cast as first entry
+                    $newCastsContent = "\n            'bio' => 'array',\n        ";
+                }
+                
+                $content = str_replace(
+                    $matches[0],
+                    $before . $newCastsContent . $after,
+                    $content
+                );
+                $this->line('✅ Added bio array cast to User model casts() method');
+            }
+            // Strategy 2: Try to find the $casts property (Laravel 10 style)
+            elseif (preg_match('/(\$casts\s*=\s*\[)([^\]]*?)(\];)/s', $content, $matches)) {
+                $before = $matches[1];
+                $castsContent = $matches[2];
+                $after = $matches[3];
+                
+                // Check if there's already content in the array
+                if (trim($castsContent) !== '') {
+                    // Add bio cast at the end
+                    $newCastsContent = rtrim($castsContent) . ",\n        'bio' => 'array',\n    ";
+                } else {
+                    // Empty array, add bio cast as first entry
+                    $newCastsContent = "\n        'bio' => 'array',\n    ";
+                }
+                
+                $content = str_replace(
+                    $matches[0],
+                    $before . $newCastsContent . $after,
+                    $content
+                );
+                $this->line('✅ Added bio array cast to User model $casts property');
+            } else {
+                $this->warn('⚠️  Could not automatically add bio cast to User model');
+                $this->line('ℹ️  Please manually add \'bio\' => \'array\' to the $casts array or casts() method');
+            }
+        } else {
+            $this->line('✅ bio array cast already in User model');
+        }
+
         File::put($userModelPath, $content);
         $this->info('✅ User model configured successfully');
     }
@@ -1065,6 +1121,49 @@ JS;
         } catch (\Exception $e) {
             $this->warn('⚠️  Error creating test users: ' . $e->getMessage());
             $this->line('ℹ️  You may need to create users manually.');
+        }
+    }
+
+    /**
+     * Assign admin role to the first user if one exists
+     * This ensures immediate access to all Blogr features after installation
+     */
+    protected function assignAdminRoleToFirstUser(): void
+    {
+        try {
+            $userModel = config('auth.providers.users.model', \App\Models\User::class);
+            
+            // Check if any users exist (excluding test users we just created)
+            $existingUsers = $userModel::whereNotIn('email', [
+                'admin@demo.com',
+                'writer@demo.com',
+            ])->get();
+
+            if ($existingUsers->isEmpty()) {
+                $this->line('ℹ️  No existing users found to assign admin role.');
+                return;
+            }
+
+            // Get the first user
+            $firstUser = $existingUsers->first();
+
+            // Check if user already has any role
+            if (method_exists($firstUser, 'hasAnyRole') && $firstUser->hasAnyRole(['admin', 'writer'])) {
+                $this->line("✅ User '{$firstUser->name}' already has a role assigned.");
+                return;
+            }
+
+            // Assign admin role
+            if (method_exists($firstUser, 'assignRole')) {
+                $firstUser->assignRole('admin');
+                $this->info("✅ Admin role assigned to user: {$firstUser->name} ({$firstUser->email})");
+                $this->line('🎉 This user now has full access to all Blogr features!');
+            } else {
+                $this->warn('⚠️  User model does not have assignRole method. Make sure HasRoles trait is used.');
+            }
+        } catch (\Exception $e) {
+            $this->warn('⚠️  Error assigning admin role: ' . $e->getMessage());
+            $this->line('ℹ️  You can manually assign roles via: php artisan blogr:assign-role');
         }
     }
 
