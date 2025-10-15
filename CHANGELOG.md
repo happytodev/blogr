@@ -4,6 +4,53 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### ✨ Features
+
+- **Per-Translation Photo Support**: Each translation can now have its own photo with intelligent fallback
+  - **Migration**: Added `photo` column to `blog_post_translations` table
+  - **Form Enhancement**: Added `FileUpload` field in translation repeater with image editor, aspect ratios, and helper text
+  - **Fallback Logic**: Implements 3-level fallback system:
+    1. Photo from current translation
+    2. Photo from main post (if translation has no photo)
+    3. Photo from any other translation (if main post has no photo)
+  - **Applied in**: Both homepage cards (`index()`) and article detail pages (`show()`)
+  - **Storage**: Uses temporary URLs with 1-hour expiry for secure access
+
+### 🎨 UI Improvements
+
+- **Enhanced Repeater Headers**: Translation repeater items now feature improved visual styling
+  - **Flag Emojis**: Language-specific flag emojis for 12+ locales (🇬🇧 🇫🇷 🇪🇸 🇩🇪 🇮🇹 etc.)
+  - **Styled Labels**: Larger font (1.1rem), bold weight, and indigo color (#6366f1)
+  - **Rich Information**: Displays locale code, post title, and slug in hierarchical layout
+  - **HTML Rendering**: Uses `HtmlString` for proper rendering instead of escaped HTML
+
+- **Translation Form Reorganization**: 
+  - Moved "Content & Translations" section to top of form for better workflow
+  - Repeater with collapsible items for each translation
+  - Added photo upload capability per translation with helpful guidance text
+
+### 🧪 Testing
+
+- **New Test Suite**: `TranslationPhotoFallbackTest.php` with 7 comprehensive tests
+  - Tests translation-specific photo display
+  - Tests fallback to main post photo
+  - Tests fallback to other translation photos
+  - Tests model fillable attributes
+  - Tests storage and retrieval operations
+  - Tests homepage card photo display
+  - **All 293 tests passing** (906 assertions) ✅
+
+### 📝 Technical Details
+
+- **Modified Files**:
+  - `src/Http/Controllers/BlogController.php`: Added photo fallback logic in `index()` and `show()` methods
+  - `src/Filament/Resources/BlogPosts/BlogPostForm.php`: Enhanced with flags, styling, and photo upload
+  - `src/Models/BlogPostTranslation.php`: Added `photo` to `$fillable` array
+  - `database/migrations/2025_10_15_000001_add_photo_to_blog_post_translations_table.php`: New migration
+
+- **Dependencies**: 
+  - Added `use Illuminate\Support\HtmlString;` for safe HTML rendering in Filament
+
 
 ## [v0.10.0](https://github.com/happytodev/blogr/compare/v0.10.0...v0.9.1) - 2025-10-15
 
