@@ -8,11 +8,17 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Tabs;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Happytodev\Blogr\Models\Category;
+use Illuminate\Support\HtmlString;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogPost;
 use Illuminate\Support\Str;
@@ -23,6 +29,160 @@ class BlogPostForm
     {
         return $schema
             ->components([
+                // Translations Section - MOVED TO TOP
+                Section::make('Content & Translations')
+                    ->description('Add content for each language')
+                    ->schema([
+                        Repeater::make('translations')
+                            ->relationship('translations')
+                            ->schema([
+                                Select::make('locale')
+                                    ->label('Language')
+                                    ->options(function () {
+                                        $availableLocales = config('blogr.locales.available', ['en']);
+                                        return collect($availableLocales)->mapWithKeys(function ($locale) {
+                                            return [$locale => strtoupper($locale)];
+                                        });
+                                    })
+                                    ->required()
+                                    ->reactive()
+                                    ->distinct()
+                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                    ->columnSpan(1),
+                                
+                                TextInput::make('title')
+                                    ->label('Title')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                                        if ($state && !$get('slug')) {
+                                            $set('slug', Str::slug($state));
+                                        }
+                                    })
+                                    ->columnSpan(2),
+                                
+                                TextInput::make('slug')
+                                    ->label('Slug')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->helperText('URL-friendly version of the title')
+                                    ->columnSpan(2),
+                                
+                                FileUpload::make('photo')
+                                    ->label('Cover Image (Optional)')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatios([
+                                        null,
+                                        '16:9',
+                                        '4:3',
+                                        '1:1',
+                                    ])
+                                    ->directory('blog-photos')
+                                    ->nullable()
+                                    ->helperText('Leave empty to use the main post image or another translation\'s image')
+                                    ->columnSpanFull(),
+                                
+                                Textarea::make('excerpt')
+                                    ->label('Excerpt')
+                                    ->rows(3)
+                                    ->maxLength(500)
+                                    ->helperText('Short description (max 500 characters)')
+                                    ->columnSpanFull(),
+                                
+                                TextInput::make('tldr')
+                                    ->label('TL;DR')
+                                    ->maxLength(255)
+                                    ->helperText('Too Long; Didn\'t Read - A very short summary')
+                                    ->columnSpanFull(),
+                                
+                                MarkdownEditor::make('content')
+                                    ->label('Content')
+                                    ->required()
+                                    ->toolbarButtons([
+                                        'attachFiles',
+                                        'blockquote',
+                                        'bold',
+                                        'bulletList',
+                                        'codeBlock',
+                                        'heading',
+                                        'italic',
+                                        'link',
+                                        'orderedList',
+                                        'redo',
+                                        'strike',
+                                        'table',
+                                        'undo',
+                                    ])
+                                    ->columnSpanFull(),
+                                
+                                TextInput::make('seo_title')
+                                    ->label('SEO Title')
+                                    ->maxLength(60)
+                                    ->helperText('Leave empty to use post title (recommended max: 60 characters)')
+                                    ->columnSpan(2),
+                                
+                                Textarea::make('seo_description')
+                                    ->label('SEO Description')
+                                    ->rows(2)
+                                    ->maxLength(160)
+                                    ->helperText('Leave empty to use excerpt (recommended max: 160 characters)')
+                                    ->columnSpan(2),
+                                
+                                TextInput::make('seo_keywords')
+                                    ->label('SEO Keywords')
+                                    ->maxLength(255)
+                                    ->helperText('Comma-separated keywords')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(4)
+                            ->defaultItems(1)
+                            ->addActionLabel('Add Translation')
+                            ->collapsible()
+                            ->cloneable()
+                            ->itemLabel(function (array $state): HtmlString {
+                                $locale = $state['locale'] ?? 'new';
+                                $title = $state['title'] ?? '';
+                                $slug = $state['slug'] ?? '';
+                                
+                                // Map of locale to flag emoji
+                                $flags = [
+                                    'en' => '🇬🇧',
+                                    'fr' => '🇫🇷',
+                                    'es' => '🇪🇸',
+                                    'de' => '🇩🇪',
+                                    'it' => '🇮🇹',
+                                    'pt' => '🇵🇹',
+                                    'nl' => '🇳🇱',
+                                    'pl' => '🇵🇱',
+                                    'ru' => '🇷🇺',
+                                    'ja' => '🇯🇵',
+                                    'zh' => '🇨🇳',
+                                    'ar' => '🇸🇦',
+                                ];
+                                
+                                $flag = $flags[$locale] ?? '🌐';
+                                $localeUpper = strtoupper($locale === 'new' ? 'NEW' : $locale);
+                                
+                                $label = "<span style='font-size: 1.1rem; font-weight: 600; color: #6366f1;'>{$flag} {$localeUpper}</span>";
+                                
+                                if ($title) {
+                                    $label .= "<span style='color: #374151; margin-left: 0.5rem;'>- {$title}</span>";
+                                }
+                                
+                                if ($slug) {
+                                    $label .= "<span style='color: #6b7280; margin-left: 0.5rem; font-size: 0.9rem;'>({$slug})</span>";
+                                }
+                                
+                                return new HtmlString($label);
+                            })
+                            ->columnSpanFull()
+                            ->minItems(1)
+                            ->reorderable(false),
+                    ])
+                    ->columnSpanFull(),
+                
                 // Metadata Section
                 Section::make('Post Metadata')
                     ->description('Configure the post settings and associations')
