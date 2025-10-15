@@ -18,6 +18,7 @@ class BlogPostTranslation extends Model
         'locale',
         'title',
         'slug',
+        'photo',
         'excerpt',
         'content',
         'tldr',
