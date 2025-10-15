@@ -19,6 +19,7 @@ use Happytodev\Blogr\Policies\BlogPostPolicy;
 use Livewire\Features\SupportTesting\Testable;
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Commands\InstallUserManagementCommand;
+use Happytodev\Blogr\Commands\MigratePostsToTranslations;
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Happytodev\Blogr\Http\Controllers\AuthorController;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -420,6 +421,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                 BlogrCommand::class,
                 BlogrInstallCommand::class,
                 InstallUserManagementCommand::class,
+                MigratePostsToTranslations::class,
             ]);
         }
 
