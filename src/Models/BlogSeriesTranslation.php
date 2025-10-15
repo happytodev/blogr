@@ -17,6 +17,7 @@ class BlogSeriesTranslation extends Model
         'locale',
         'title',
         'description',
+        'photo',
         'seo_title',
         'seo_description',
     ];
