@@ -17,13 +17,19 @@
         <!-- Series Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse ($series as $s)
-                <div class="group bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 border-2 border-blue-200 dark:border-blue-800 flex flex-col">
+                <div class="group bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
                     <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $s->slug]) }}" class="flex-grow flex flex-col">
                         <!-- Series Image -->
                         <div class="relative h-48 overflow-hidden">
-                            <img src="{{ $s->photo_url }}" 
-                                 alt="{{ $s->translated_title ?? $s->title }}"
-                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                            @if($s->photo_url)
+                                <img src="{{ $s->photo_url }}" 
+                                     alt="{{ $s->translated_title ?? $s->title }}"
+                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                            @else
+                                <img src="{{ asset(config('blogr.series.default_image', '/vendor/blogr/images/default-series.svg')) }}" 
+                                     alt="{{ $s->translated_title ?? $s->title }}"
+                                     class="w-full h-full object-cover opacity-50">
+                            @endif
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                             
                             <!-- Posts Count Badge -->
