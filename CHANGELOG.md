@@ -4,15 +4,82 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### 🐛 Bug Fixes
+
+- **Test Fixes**: Fixed failing `AuthorDisplaySettingsTest`
+  - Added `author_profile.enabled => false` config to prevent author slug appearing in URLs when testing pseudo display settings
+  - Test now correctly validates that author pseudo is hidden when `show_author_pseudo` is disabled
+
+### 📚 Documentation
+
+- **Code Coverage Setup**: Added comprehensive guide `CODE_COVERAGE_SETUP.md`
+  - Xdebug installation instructions for macOS
+  - PCOV alternative configuration (faster than Xdebug)
+  - phpunit.xml coverage configuration
+  - Troubleshooting common issues
+  - Useful commands and aliases
+
+### 🎨 UI Improvements
+
+- **Author Page Improvements**: Major redesign of author profile pages
+  - **Container Width**: Changed from `max-w-6xl` to `max-w-7xl` to match homepage consistency
+  - **Author Bio Display**: Bio now prominently displayed in header section above article list with enhanced styling
+  - **Card Layout Consistency**: Author page cards now match homepage/series card styling exactly
+    - Category badges positioned absolutely in top-left corner (same as homepage)
+    - Reading time badges in top-right corner with clock icon (using `getFormattedReadingTime()` method)
+    - Image height increased from 48 to 56 (h-56) to match other pages
+    - Added `group` hover effects and scale transitions on images
+    - Rounded corners changed from `rounded-lg` to `rounded-xl`
+    - Shadow upgraded from `shadow-md` to `shadow-lg` with `hover:shadow-2xl`
+    - Added `transform hover:-translate-y-1` lift effect
+  
+- **Clickable Elements**: Enhanced interactivity across all listing pages
+  - **Author Avatars**: Now clickable and link to author profile page when enabled
+  - **Post Images**: All post card images wrapped in clickable links to articles
+  - **Series Images**: Series card images now clickable and link to series pages
+  - Added hover opacity transitions on clickable author info components
+  
+- **Visual Refinements**: Removed blue borders for cleaner design
+  - Removed `border-2 border-blue-200 dark:border-blue-800` from featured series cards on homepage
+  - Removed blue border from series header on individual series pages
+  - Removed blue border from series cards on series index page
+  - Cleaner, more modern card appearance with focus on content
+
+- **Default Images for Posts and Series**: Added fallback to default images across all views
+  - Blog posts without photos now display default image from `config('blogr.posts.default_image')`
+  - Series without photos now display default image from `config('blogr.series.default_image')`
+  - Applied to all listing pages: index, category, tag, series, series-index, author
+  - Default images display with reduced opacity (50%) and centered icon overlay
+  - Consistent visual experience even when images are not uploaded
+  - Configurable in `config/blogr.php` for easy customization
+
+- **Unified Author Page Layout**: Author profile page now uses consistent card layout
+  - Migrated from horizontal list layout to vertical 3-column grid matching other blog pages
+  - Cards display: photo, category badge, reading time, title, excerpt, tags, published date, and "Read more" button
+  - Uses same CSS Grid `auto-rows-fr` for equal row heights
+  - Bottom section (tags + date + read more) aligned at card bottom using `mt-auto`
+  - Improved `AuthorController` to handle translated content and photo fallback logic (translation photo > post photo > any translation photo)
+  - Added `getStorageUrl()` helper method for smart URL generation (temporary URLs for cloud, regular for local)
+  - Better visual consistency across all listing pages (index, category, tag, series, author)
+
+- **Blog Card Layout**: Improved consistency and alignment across all blog card layouts
+  - Author information and "Read more" button now displayed side-by-side on the same line
+  - Both elements always aligned at the bottom of cards using flexbox
+  - Added visual separator (border-top) for better content hierarchy
+  - Cards on the same row have equal heights with `auto-rows-fr` in CSS Grid
+  - Applied to: Homepage (`index`), Category pages, Tag pages, and Series detail pages
+  - Creates uniform card appearance with better visual balance and professional look
+
 
 ## [v0.10.2](https://github.com/happytodev/blogr/compare/v0.10.2...v0.10.1) - 2025-10-15
 
 ### 🐛 Bug Fixes
 
-- **Series Images**: Fixed broken images after upload (403 Forbidden errors)
+- **Blog & Series Images**: Fixed broken images after upload (403 Forbidden errors)
   - **Root Cause**: Files were uploaded to `storage/app/private` instead of `storage/app/public`
-  - **Solution**: Configured FileUpload fields to use `->disk('public')` explicitly
+  - **Solution**: Configured all FileUpload fields (blog posts, series, translations) to use `->disk('public')` explicitly
   - **Storage URLs**: Implemented smart URL generation with automatic fallback (temporary URLs for S3, regular URLs for local)
+  - **Affected Files**: BlogPostForm.php (3 fields), BlogSeriesForm.php (2 fields)
 
 ### ✨ Features
 

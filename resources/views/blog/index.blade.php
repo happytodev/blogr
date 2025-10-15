@@ -31,12 +31,18 @@
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($featuredSeries as $series)
-                <div class="group bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 border-2 border-blue-200 dark:border-blue-800">
-                    @if($series->photo)
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="{{ $series->photo_url }}" 
-                             alt="{{ $series->translated_title ?? $series->slug }}"
-                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                <div class="group bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
+                    <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->slug]) }}" class="block">
+                        <div class="relative h-48 overflow-hidden">
+                            @if($series->photo_url)
+                                <img src="{{ $series->photo_url }}" 
+                                     alt="{{ $series->translated_title ?? $series->slug }}"
+                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                            @else
+                            <img src="{{ asset(config('blogr.series.default_image', '/vendor/blogr/images/default-series.svg')) }}" 
+                                 alt="{{ $series->translated_title ?? $series->slug }}"
+                                 class="w-full h-full object-cover opacity-50">
+                        @endif
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4 right-4">
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-600 text-white">
@@ -47,13 +53,10 @@
                             </span>
                         </div>
                     </div>
-                    @endif
                     
                     <div class="p-6">
                         <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                            <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->slug]) }}">
-                                {{ $series->translated_title ?? $series->slug }}
-                            </a>
+                            {{ $series->translated_title ?? $series->slug }}
                         </h3>
                         
                         @if($series->translated_description)
@@ -74,14 +77,14 @@
                             @endif
                         @endif
                         
-                        <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->slug]) }}" 
-                           class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-sm group/link">
+                        <div class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-sm group/link">
                             {{ __('blogr::blogr.series.view_series') }}
                             <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                             </svg>
-                        </a>
+                        </div>
                     </div>
+                    </a>
                 </div>
                 @endforeach
             </div>
@@ -90,9 +93,9 @@
 
         <!-- Posts Grid -->
         <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Latest Articles</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
             @forelse ($posts as $post)
-                <article class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                <article class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
                     <!-- Post Image -->
                     <div class="relative h-56 bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden">
                         <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug]) }}" class="block h-full">
@@ -140,52 +143,58 @@
 
                         <!-- Excerpt or TL;DR -->
                         @if ($post->translated_excerpt ?? $post->excerpt)
-                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3 flex-grow">
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">
                                 {{ $post->translated_excerpt ?? $post->excerpt }}
                             </p>
                         @elseif ($post->translated_tldr ?? $post->tldr)
-                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3 flex-grow italic">
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3 italic">
                                 <span class="font-semibold">TL;DR:</span> {{ $post->translated_tldr ?? $post->tldr }}
                             </p>
                         @endif
 
-                        <!-- Author Info -->
-                        @if(config('blogr.display.show_author_pseudo') || config('blogr.display.show_author_avatar'))
-                            <div class="mb-4">
-                                <x-blogr::author-info :author="$post->user" size="sm" />
-                            </div>
-                        @endif
+                        <!-- Bottom Section: Tags + Author + Read More (always at bottom) -->
+                        <div class="mt-auto space-y-4">
+                            <!-- Tags -->
+                            @if ($post->tags->count())
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach ($post->tags->take(3) as $tag)
+                                        @php
+                                            $tagTranslation = $tag->translate($currentLocale);
+                                            $tagName = $tagTranslation ? $tagTranslation->name : $tag->name;
+                                            $tagSlug = $tagTranslation ? $tagTranslation->slug : $tag->slug;
+                                        @endphp
+                                        <a href="{{ config('blogr.locales.enabled') ? route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) : route('blog.tag', ['tagSlug' => $tagSlug]) }}"
+                                           class="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs px-2.5 py-1 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
+                                            #{{ $tagName }}
+                                        </a>
+                                    @endforeach
+                                    @if($post->tags->count() > 3)
+                                        <span class="inline-block text-blue-600 dark:text-blue-400 text-xs px-2.5 py-1">
+                                            +{{ $post->tags->count() - 3 }}
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
 
-                        <!-- Tags -->
-                        @if ($post->tags->count())
-                            <div class="mb-4 flex flex-wrap gap-2">
-                                @foreach ($post->tags->take(3) as $tag)
-                                    @php
-                                        $tagTranslation = $tag->translate($currentLocale);
-                                        $tagName = $tagTranslation ? $tagTranslation->name : $tag->name;
-                                        $tagSlug = $tagTranslation ? $tagTranslation->slug : $tag->slug;
-                                    @endphp
-                                    <a href="{{ config('blogr.locales.enabled') ? route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) : route('blog.tag', ['tagSlug' => $tagSlug]) }}"
-                                       class="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs px-2.5 py-1 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
-                                        #{{ $tagName }}
-                                    </a>
-                                @endforeach
-                                @if($post->tags->count() > 3)
-                                    <span class="inline-block text-blue-600 dark:text-blue-400 text-xs px-2.5 py-1">
-                                        +{{ $post->tags->count() - 3 }}
-                                    </span>
+                            <!-- Author + Read More -->
+                            <div class="pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                                <!-- Author Info -->
+                                @if(config('blogr.display.show_author_pseudo') || config('blogr.display.show_author_avatar'))
+                                    <div class="flex-shrink-0">
+                                        <x-blogr::author-info :author="$post->user" size="sm" />
+                                    </div>
                                 @endif
-                            </div>
-                        @endif
 
-                        <!-- Read More Button -->
-                        <a href="{{ config('blogr.locales.enabled') ? route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug]) : route('blog.show', ['slug' => $post->translated_slug]) }}" 
-                           class="mt-auto inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold group/link">
-                            {{ __('blogr::blogr.ui.read_more') }}
-                            <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </a>
+                                <!-- Read More Button -->
+                                <a href="{{ config('blogr.locales.enabled') ? route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug]) : route('blog.show', ['slug' => $post->translated_slug]) }}" 
+                                   class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold group/link ml-auto">
+                                    {{ __('blogr::blogr.ui.read_more') }}
+                                    <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </article>
             @empty

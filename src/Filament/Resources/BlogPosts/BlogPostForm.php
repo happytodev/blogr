@@ -72,6 +72,7 @@ class BlogPostForm
                                 FileUpload::make('photo')
                                     ->label('Cover Image (Optional)')
                                     ->image()
+                                    ->disk('public')
                                     ->imageEditor()
                                     ->imageEditorAspectRatios([
                                         null,
@@ -190,6 +191,7 @@ class BlogPostForm
                         FileUpload::make('photo')
                             ->label('Cover Image')
                             ->image()
+                            ->disk('public')
                             ->imageEditor()
                             ->imageEditorAspectRatios([
                                 null,

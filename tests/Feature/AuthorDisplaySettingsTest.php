@@ -50,6 +50,7 @@ test('article card shows author pseudo when setting is enabled', function () {
 
 test('article card hides author pseudo when setting is disabled', function () {
     config(['blogr.display.show_author_pseudo' => false]);
+    config(['blogr.author_profile.enabled' => false]); // Disable author profile to prevent slug in URL
 
     $response = $this->get(route('blog.index', ['locale' => 'en']));
 

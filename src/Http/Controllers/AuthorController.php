@@ -4,10 +4,28 @@ namespace Happytodev\Blogr\Http\Controllers;
 
 use Happytodev\Blogr\Models\BlogPost;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AuthorController extends Controller
 {
+    /**
+     * Generate a storage URL (temporary for cloud, regular for local).
+     */
+    private function getStorageUrl(string $path): string
+    {
+        // Use the 'public' disk for series and post images
+        $disk = Storage::disk('public');
+        
+        try {
+            // Try to generate temporary URL (works for S3, etc.)
+            return $disk->temporaryUrl($path, now()->addHours(1));
+        } catch (\RuntimeException $e) {
+            // Fallback to regular URL for local driver
+            return $disk->url($path);
+        }
+    }
+    
     /**
      * Display the author's profile page with their published posts
      */
@@ -17,6 +35,7 @@ class AuthorController extends Controller
         // When locales are enabled: $localeOrSlug = locale, $userSlug = slug
         // When locales are disabled: $localeOrSlug = slug, $userSlug = null
         $actualSlug = $userSlug ?? $localeOrSlug;
+        $locale = $userSlug ? $localeOrSlug : app()->getLocale();
         
         // Check if author profile feature is enabled
         if (!config('blogr.author_profile.enabled', true)) {
@@ -29,19 +48,70 @@ class AuthorController extends Controller
         // Find the author by slug
         $author = $userModel::where('slug', $actualSlug)->firstOrFail();
         
-        // Get published posts by this author
-        $posts = BlogPost::with(['category', 'tags', 'user'])
+        // Get published posts by this author with translations
+        $posts = BlogPost::with([
+                'category.translations', 
+                'tags.translations', 
+                'translations',
+                'user'
+            ])
             ->where('user_id', $author->id)
             ->where('is_published', true)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
             ->orderBy('published_at', 'desc')
-            ->paginate(config('blogr.posts_per_page', 10));
+            ->paginate(config('blogr.posts_per_page', 10))
+            ->through(function ($post) use ($locale) {
+                // Get the translation for this locale
+                $translation = $post->translations->firstWhere('locale', $locale);
+                
+                // If no translation in requested locale, try default translation
+                if (!$translation) {
+                    $translation = $post->getDefaultTranslation();
+                }
+                
+                // Override post attributes with translation, with fallback to model accessors
+                $post->translated_title = $translation?->title ?? $post->title;
+                $post->translated_slug = $translation?->slug ?? $post->slug;
+                $post->translated_tldr = $translation?->tldr ?? $post->tldr;
+                
+                // Calculate reading time from translation content
+                if ($translation && $translation->content) {
+                    $readingSpeed = config('blogr.reading_speed.words_per_minute', 200);
+                    $text = ($translation->title ?? '') . ' ' . $translation->content;
+                    $plainText = strip_tags($text);
+                    $wordCount = str_word_count($plainText);
+                    $minutes = floor($wordCount / $readingSpeed);
+                    $post->reading_time = $wordCount > 0 ? max(1, (int)$minutes) : 0;
+                } else {
+                    $post->reading_time = 0;
+                }
+                
+                // Photo fallback logic: translation photo > post photo > any other translation photo
+                $photoToUse = null;
+                
+                if ($translation?->photo) {
+                    $photoToUse = $translation->photo;
+                } elseif ($post->photo) {
+                    $photoToUse = $post->photo;
+                } else {
+                    $anyTranslationWithPhoto = $post->translations->first(fn($t) => !empty($t->photo));
+                    if ($anyTranslationWithPhoto) {
+                        $photoToUse = $anyTranslationWithPhoto->photo;
+                    }
+                }
+                
+                if ($photoToUse) {
+                    $post->photo_url = $this->getStorageUrl($photoToUse);
+                }
+                
+                return $post;
+            });
         
         return view('blogr::author.show', [
             'author' => $author,
             'posts' => $posts,
-            'currentLocale' => app()->getLocale(),
+            'currentLocale' => $locale,
         ]);
     }
 }
