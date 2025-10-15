@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Repeater;
+use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
@@ -40,6 +41,7 @@ class BlogSeriesForm
                         FileUpload::make('photo')
                             ->label('Series Image')
                             ->image()
+                            ->disk('public')
                             ->directory('series-images')
                             ->visibility('public')
                             ->imageEditor()
@@ -91,6 +93,19 @@ class BlogSeriesForm
                                     ->rows(3)
                                     ->columnSpan(2),
                                 
+                                FileUpload::make('photo')
+                                    ->label('Translation Image')
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('series-images')
+                                    ->visibility('public')
+                                    ->imageEditor()
+                                    ->imageCropAspectRatio('16:9')
+                                    ->imageResizeTargetWidth('1200')
+                                    ->imageResizeTargetHeight('675')
+                                    ->helperText('Optional: Translation-specific image. Falls back to main series image if empty.')
+                                    ->columnSpan(2),
+                                
                                 TextInput::make('seo_title')
                                     ->label('SEO Title')
                                     ->maxLength(255)
@@ -106,11 +121,37 @@ class BlogSeriesForm
                             ])
                             ->columns(2)
                             ->collapsible()
-                            ->itemLabel(fn (array $state): ?string => 
-                                isset($state['title']) && isset($state['locale']) 
-                                    ? "{$state['locale']}: {$state['title']}" 
-                                    : null
-                            )
+                            ->itemLabel(function (array $state): HtmlString {
+                                $locale = $state['locale'] ?? 'new';
+                                $title = $state['title'] ?? '';
+                                
+                                // Map of locale to flag emoji
+                                $flags = [
+                                    'en' => '🇬🇧',
+                                    'fr' => '🇫🇷',
+                                    'es' => '🇪🇸',
+                                    'de' => '🇩🇪',
+                                    'it' => '🇮🇹',
+                                    'pt' => '🇵🇹',
+                                    'nl' => '🇳🇱',
+                                    'pl' => '🇵🇱',
+                                    'ru' => '🇷🇺',
+                                    'ja' => '🇯🇵',
+                                    'zh' => '🇨🇳',
+                                    'ar' => '🇸🇦',
+                                ];
+                                
+                                $flag = $flags[$locale] ?? '🌐';
+                                $localeUpper = strtoupper($locale === 'new' ? 'NEW' : $locale);
+                                
+                                $label = "<span style='font-size: 1.1rem; font-weight: 600; color: #6366f1;'>{$flag} {$localeUpper}</span>";
+                                
+                                if ($title) {
+                                    $label .= "<span style='color: #374151; margin-left: 0.5rem;'>- {$title}</span>";
+                                }
+                                
+                                return new HtmlString($label);
+                            })
                             ->addActionLabel('Add Translation')
                             ->defaultItems(0),
                     ])

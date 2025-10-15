@@ -128,7 +128,19 @@ class BlogSeries extends Model
     public function getPhotoUrlAttribute(): string
     {
         if ($this->photo) {
-            return Storage::url($this->photo);
+            // Use the 'public' disk for series images
+            $disk = Storage::disk('public');
+            
+            try {
+                // Try to generate temporary URL (works for S3, etc.)
+                return $disk->temporaryUrl(
+                    $this->photo,
+                    now()->addHours(1)
+                );
+            } catch (\RuntimeException $e) {
+                // Fallback to regular URL for local driver
+                return $disk->url($this->photo);
+            }
         }
         
         // Return default series image from config

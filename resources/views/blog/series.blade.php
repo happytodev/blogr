@@ -11,17 +11,28 @@
     ]" />
     
     {{-- Series Header --}}
-    <div class="mb-12 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg p-8 border-2 border-blue-200 dark:border-blue-800">
-        <div class="flex items-start gap-4 mb-4">
-            <div class="flex-shrink-0">
-                <div class="w-16 h-16 bg-blue-600 dark:bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                    </svg>
+    <div class="mb-12 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg overflow-hidden border-2 border-blue-200 dark:border-blue-800">
+        {{-- Series Image --}}
+        @if($series->photo_url)
+        <div class="relative h-64 w-full overflow-hidden">
+            <img src="{{ $series->photo_url }}" 
+                 alt="{{ $seriesTranslation?->title ?? $series->slug }}"
+                 class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"></div>
+        </div>
+        @endif
+        
+        <div class="p-8">
+            <div class="flex items-start gap-4 mb-4">
+                <div class="flex-shrink-0">
+                    <div class="w-16 h-16 bg-blue-600 dark:bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="flex-grow">
+                
+                <div class="flex-grow">
                 <div class="flex items-center gap-3 mb-2">
                     <h1 class="text-4xl font-bold text-gray-900 dark:text-white">
                         {{ $seriesTranslation?->title ?? $series->slug }}
