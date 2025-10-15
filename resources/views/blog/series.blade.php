@@ -11,16 +11,20 @@
     ]" />
     
     {{-- Series Header --}}
-    <div class="mb-12 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg overflow-hidden border-2 border-blue-200 dark:border-blue-800">
+    <div class="mb-12 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg overflow-hidden">
         {{-- Series Image --}}
-        @if($series->photo_url)
         <div class="relative h-64 w-full overflow-hidden">
-            <img src="{{ $series->photo_url }}" 
-                 alt="{{ $seriesTranslation?->title ?? $series->slug }}"
-                 class="w-full h-full object-cover">
+            @if($series->photo_url)
+                <img src="{{ $series->photo_url }}" 
+                     alt="{{ $seriesTranslation?->title ?? $series->slug }}"
+                     class="w-full h-full object-cover">
+            @else
+                <img src="{{ asset(config('blogr.series.default_image', '/vendor/blogr/images/default-series.svg')) }}" 
+                     alt="{{ $seriesTranslation?->title ?? $series->slug }}"
+                     class="w-full h-full object-cover opacity-50">
+            @endif
             <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"></div>
         </div>
-        @endif
         
         <div class="p-8">
             <div class="flex items-start gap-4 mb-4">
@@ -90,14 +94,14 @@
     @if($posts->count() > 0)
     <div class="mt-12">
         <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">{{ __('blogr::blogr.series.all_posts_in_series') }}</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
             @foreach($posts as $post)
                 @php
                     $currentLocale = app()->getLocale();
                     $postTranslation = $post->translate($currentLocale) ?? $post->getDefaultTranslation();
                 @endphp
                 
-                <article class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
+                <article class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
                     <!-- Post Image -->
                     <div class="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden">
                         <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug ?? $postTranslation?->slug ?? $post->slug]) }}" class="block h-full">
@@ -106,6 +110,9 @@
                                      alt="{{ $postTranslation?->title }}" 
                                      class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                             @else
+                                <img src="{{ asset(config('blogr.posts.default_image', '/vendor/blogr/images/default-post.svg')) }}" 
+                                     alt="{{ $postTranslation?->title }}"
+                                     class="absolute inset-0 w-full h-full object-cover opacity-50">
                                 <div class="absolute inset-0 flex items-center justify-center">
                                     <svg class="w-16 h-16 text-white opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -137,7 +144,7 @@
                     </div>
                     
                     <!-- Post Content -->
-                    <div class="p-6">
+                    <div class="p-6 flex-grow flex flex-col">
                         <!-- Date -->
                         @if($post->published_at)
                         <div class="text-xs text-gray-500 dark:text-gray-400 mb-3">
@@ -159,21 +166,24 @@
                             </p>
                         @endif
                         
-                        <!-- Author Info -->
-                        @if($post->user)
-                            <div class="mb-4">
-                                <x-blogr::author-info :author="$post->user" size="sm" />
-                            </div>
-                        @endif
-                        
-                        <!-- Read More Link -->
-                        <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug ?? $postTranslation?->slug ?? $post->slug]) }}" 
-                           class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-sm group/link">
-                            {{ __('blogr::blogr.ui.read_post') }}
-                            <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                        </a>
+                        <!-- Bottom Section: Author + Read More (always at bottom) -->
+                        <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                            <!-- Author Info -->
+                            @if($post->user)
+                                <div class="flex-shrink-0">
+                                    <x-blogr::author-info :author="$post->user" size="sm" />
+                                </div>
+                            @endif
+                            
+                            <!-- Read More Link -->
+                            <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug ?? $postTranslation?->slug ?? $post->slug]) }}" 
+                               class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-sm group/link ml-auto">
+                                {{ __('blogr::blogr.ui.read_post') }}
+                                <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
                 </article>
             @endforeach
