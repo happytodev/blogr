@@ -21,6 +21,23 @@ use League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension;
 
 class BlogController
 {
+    /**
+     * Generate a storage URL (temporary for cloud, regular for local).
+     */
+    private function getStorageUrl(string $path): string
+    {
+        // Use the 'public' disk for series and post images
+        $disk = Storage::disk('public');
+        
+        try {
+            // Try to generate temporary URL (works for S3, etc.)
+            return $disk->temporaryUrl($path, now()->addHours(1));
+        } catch (\RuntimeException $e) {
+            // Fallback to regular URL for local driver
+            return $disk->url($path);
+        }
+    }
+    
     public function index($locale = null)
     {
         // Handle locale
@@ -72,10 +89,7 @@ class BlogController
                 }
                 
                 if ($photoToUse) {
-                    $post->photo_url = Storage::temporaryUrl(
-                        $photoToUse,
-                        now()->addHours(1) // URL valid for 1 hour
-                    );
+                    $post->photo_url = $this->getStorageUrl($photoToUse);
                 }
                 return $post;
             });
@@ -106,10 +120,7 @@ class BlogController
                 $series->translated_description = $translation?->description ?? $series->description;
                 
                 if ($series->photo) {
-                    $series->photo_url = Storage::temporaryUrl(
-                        $series->photo,
-                        now()->addHours(1)
-                    );
+                    $series->photo_url = $this->getStorageUrl($series->photo);
                 }
                 return $series;
             });
@@ -278,10 +289,7 @@ class BlogController
         }
         
         if ($photoToUse) {
-            $post->photo_url = Storage::temporaryUrl(
-                $photoToUse,
-                now()->addHours(1)
-            );
+            $post->photo_url = $this->getStorageUrl($photoToUse);
         }
         
         // Get available translations for language switcher
@@ -434,7 +442,7 @@ class BlogController
             ->paginate(config('blogr.posts_per_page', 10))
             ->through(function ($post) {
                 if ($post->photo) {
-                    $post->photo_url = Storage::temporaryUrl($post->photo, now()->addMinutes(5));
+                    $post->photo_url = $this->getStorageUrl($post->photo);
                 }
                 return $post;
             });
@@ -509,7 +517,7 @@ class BlogController
             ->get()
             ->map(function ($post) {
                 if ($post->photo) {
-                    $post->photo_url = Storage::temporaryUrl($post->photo, now()->addMinutes(5));
+                    $post->photo_url = $this->getStorageUrl($post->photo);
                 }
                 return $post;
             });
@@ -535,8 +543,27 @@ class BlogController
             ->get()
             ->map(function ($s) use ($locale) {
                 $translation = $s->translate($locale) ?? $s->getDefaultTranslation();
-                $s->title = $translation?->title ?? $s->slug;
-                $s->description = $translation?->description ?? '';
+                $s->translated_title = $translation?->title ?? $s->slug;
+                $s->translated_description = $translation?->description ?? '';
+                
+                // Photo fallback logic: translation photo > series photo > any other translation photo
+                $photoToUse = null;
+                
+                if ($translation?->photo) {
+                    $photoToUse = $translation->photo;
+                } elseif ($s->photo) {
+                    $photoToUse = $s->photo;
+                } else {
+                    $anyTranslationWithPhoto = $s->translations->first(fn($t) => !empty($t->photo));
+                    if ($anyTranslationWithPhoto) {
+                        $photoToUse = $anyTranslationWithPhoto->photo;
+                    }
+                }
+                
+                if ($photoToUse) {
+                    $s->photo_url = $this->getStorageUrl($photoToUse);
+                }
+                
                 return $s;
             });
         
@@ -603,15 +630,31 @@ class BlogController
                 $post->translated_excerpt = $translation?->excerpt ?? $post->excerpt;
                 
                 if ($post->photo) {
-                    $post->photo_url = Storage::temporaryUrl(
-                        $post->photo,
-                        now()->addHours(1)
-                    );
+                    $post->photo_url = $this->getStorageUrl($post->photo);
                 }
                 return $post;
             });
 
         $seriesTranslation = $series->translate($locale) ?? $series->getDefaultTranslation();
+        
+        // Photo fallback logic for series: translation photo > series photo > any other translation photo
+        $photoToUse = null;
+        
+        if ($seriesTranslation?->photo) {
+            $photoToUse = $seriesTranslation->photo;
+        } elseif ($series->photo) {
+            $photoToUse = $series->photo;
+        } else {
+            $series->load('translations');
+            $anyTranslationWithPhoto = $series->translations->first(fn($t) => !empty($t->photo));
+            if ($anyTranslationWithPhoto) {
+                $photoToUse = $anyTranslationWithPhoto->photo;
+            }
+        }
+        
+        if ($photoToUse) {
+            $series->photo_url = $this->getStorageUrl($photoToUse);
+        }
         
         $seoData = [
             'title' => $seriesTranslation?->seo_title ?? $seriesTranslation?->title ?? $series->slug,
