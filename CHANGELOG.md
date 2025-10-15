@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.10.1](https://github.com/happytodev/blogr/compare/v0.10.1...v0.10.0) - 2025-10-15
+
 ### ✨ Features
 
 - **Per-Translation Photo Support**: Each translation can now have its own photo with intelligent fallback
