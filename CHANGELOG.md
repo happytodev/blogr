@@ -4,6 +4,14 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### 🐛 Bug Fixes
+
+- **Installation Command**: Fixed double comma syntax error in User model casts ([Issue #115](https://github.com/happytodev/blogr/issues/115))
+  - Installation script now properly removes trailing commas before adding `'bio' => 'array'` cast
+  - Prevents `Cannot use empty array elements in arrays` fatal error
+  - Added test to verify no double commas are created during installation
+
+
 ## [v0.11.1](https://github.com/happytodev/blogr/compare/v0.11.1...v0.11.0) - 2025-10-15
 
 ### 🐛 Bug Fixes
