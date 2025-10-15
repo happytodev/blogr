@@ -7,7 +7,7 @@
         "filamentphp",
         "blogr"
     ],
-    "version": "0.11.0",
+    "version": "0.11.1",
     "homepage": "https://github.com/happytodev/blogr",
     "support": {
         "issues": "https://github.com/happytodev/blogr/issues",

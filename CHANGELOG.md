@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.11.1](https://github.com/happytodev/blogr/compare/v0.11.1...v0.11.0) - 2025-10-15
+
 ### 🐛 Bug Fixes
 
 - **Bio Display Fix**: Author bio now properly displays in multilingual contexts
