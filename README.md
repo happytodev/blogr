@@ -984,10 +984,34 @@ If for some reason the migration didn't run automatically, you can add these fie
 
 ```php
 Schema::table('users', function (Blueprint $table) {
-    $table->string('avatar')->nullable()->after('email');
-    $table->text('bio')->nullable()->after('avatar');
+    $table->string('slug')->unique()->nullable()->after('email');
+    $table->string('avatar')->nullable()->after('slug');
+    $table->json('bio')->nullable()->after('avatar');
 });
 ```
+
+**Important:** The `bio` field uses a JSON column type and must be cast as an array in your User model. The installation command automatically adds this cast, but if needed, you can add it manually:
+
+```php
+// In your User model
+protected function casts(): array
+{
+    return [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'bio' => 'array',  // Required for multilingual bio support
+    ];
+}
+
+// OR for Laravel 10 and earlier
+protected $casts = [
+    'email_verified_at' => 'datetime',
+    'password' => 'hashed',
+    'bio' => 'array',  // Required for multilingual bio support
+];
+```
+
+This cast is essential for proper bio display in multilingual contexts, as it automatically decodes the JSON data into an array.
 
 ## �📚 Blog Series
 
