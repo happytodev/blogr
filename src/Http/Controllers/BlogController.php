@@ -33,9 +33,7 @@ class BlogController
             ->with([
                 'category.translations', 
                 'tags.translations', 
-                'translations' => function($query) use ($locale) {
-                    $query->where('locale', $locale);
-                }
+                'translations' // Load all translations for photo fallback
             ])
             ->latest()
             ->where('is_published', true)
@@ -46,19 +44,36 @@ class BlogController
             ->paginate(config('blogr.posts_per_page', 10))
             ->through(function ($post) use ($locale) {
                 // Get the translation for this locale
-                $translation = $post->translations->first();
+                $translation = $post->translations->firstWhere('locale', $locale);
                 
-                // Override post attributes with translation
-                if ($translation) {
-                    $post->translated_title = $translation->title;
-                    $post->translated_slug = $translation->slug;
-                    $post->translated_excerpt = $translation->excerpt;
-                    $post->translated_tldr = $translation->tldr;
+                // If no translation in requested locale, try default translation
+                if (!$translation) {
+                    $translation = $post->getDefaultTranslation();
                 }
                 
-                if ($post->photo) {
+                // Override post attributes with translation, with fallback to model accessors
+                $post->translated_title = $translation?->title ?? $post->title;
+                $post->translated_slug = $translation?->slug ?? $post->slug;
+                $post->translated_excerpt = $translation?->excerpt ?? $post->excerpt;
+                $post->translated_tldr = $translation?->tldr ?? $post->tldr;
+                
+                // Photo fallback logic: translation photo > post photo > any other translation photo
+                $photoToUse = null;
+                
+                if ($translation?->photo) {
+                    $photoToUse = $translation->photo;
+                } elseif ($post->photo) {
+                    $photoToUse = $post->photo;
+                } else {
+                    $anyTranslationWithPhoto = $post->translations->first(fn($t) => !empty($t->photo));
+                    if ($anyTranslationWithPhoto) {
+                        $photoToUse = $anyTranslationWithPhoto->photo;
+                    }
+                }
+                
+                if ($photoToUse) {
                     $post->photo_url = Storage::temporaryUrl(
-                        $post->photo,
+                        $photoToUse,
                         now()->addHours(1) // URL valid for 1 hour
                     );
                 }
@@ -80,10 +95,16 @@ class BlogController
             ->get()
             ->map(function ($series) use ($locale) {
                 $translation = $series->translations->first();
-                if ($translation) {
-                    $series->translated_title = $translation->title;
-                    $series->translated_description = $translation->description;
+                
+                // If no translation in requested locale, try default translation
+                if (!$translation) {
+                    $translation = $series->getDefaultTranslation();
                 }
+                
+                // Set translated properties with fallback to model accessors
+                $series->translated_title = $translation?->title ?? $series->title;
+                $series->translated_description = $translation?->description ?? $series->description;
+                
                 if ($series->photo) {
                     $series->photo_url = Storage::temporaryUrl(
                         $series->photo,
@@ -237,10 +258,28 @@ class BlogController
             'reading_time' => $translation->reading_time ?? $post->getEstimatedReadingTime(),
         ];
         
-        // Add photo URL if exists
-        if ($post->photo) {
+        // Add photo URL with fallback logic: translation photo > post photo
+        $photoToUse = null;
+        
+        // First, check if the current translation has a photo
+        if ($translation->photo) {
+            $photoToUse = $translation->photo;
+        }
+        // If not, try to get photo from the post's main photo
+        elseif ($post->photo) {
+            $photoToUse = $post->photo;
+        }
+        // If still no photo, try to get photo from any other translation
+        else {
+            $anyTranslationWithPhoto = $post->translations->first(fn($t) => !empty($t->photo));
+            if ($anyTranslationWithPhoto) {
+                $photoToUse = $anyTranslationWithPhoto->photo;
+            }
+        }
+        
+        if ($photoToUse) {
             $post->photo_url = Storage::temporaryUrl(
-                $post->photo,
+                $photoToUse,
                 now()->addHours(1)
             );
         }
@@ -302,18 +341,28 @@ class BlogController
         if ($post->series) {
             // Translate the series itself
             $seriesTranslation = $post->series->translations->firstWhere('locale', $locale);
-            if ($seriesTranslation) {
-                $post->series->translated_title = $seriesTranslation->title;
-                $post->series->translated_description = $seriesTranslation->description;
+            
+            // If no translation in requested locale, try default translation
+            if (!$seriesTranslation) {
+                $seriesTranslation = $post->series->getDefaultTranslation();
             }
+            
+            // Set translated properties with fallback to model accessors
+            $post->series->translated_title = $seriesTranslation?->title ?? $post->series->title;
+            $post->series->translated_description = $seriesTranslation?->description ?? $post->series->description;
             
             // Translate each post in the series
             $post->series->posts->each(function ($seriesPost) use ($locale) {
                 $seriesTranslation = $seriesPost->translations->firstWhere('locale', $locale);
-                if ($seriesTranslation) {
-                    $seriesPost->translated_slug = $seriesTranslation->slug;
-                    $seriesPost->translated_title = $seriesTranslation->title;
+                
+                // If translation not found in requested locale, try default translation
+                if (!$seriesTranslation) {
+                    $seriesTranslation = $seriesPost->getDefaultTranslation();
                 }
+                
+                // Always set translated properties with fallback to model accessors
+                $seriesPost->translated_slug = $seriesTranslation?->slug ?? $seriesPost->slug;
+                $seriesPost->translated_title = $seriesTranslation?->title ?? $seriesPost->title;
             });
         }
 
@@ -542,11 +591,16 @@ class BlogController
             ->map(function ($post) use ($locale) {
                 // Add translated slug for each post
                 $translation = $post->translations->firstWhere('locale', $locale);
-                if ($translation) {
-                    $post->translated_slug = $translation->slug;
-                    $post->translated_title = $translation->title;
-                    $post->translated_excerpt = $translation->excerpt;
+                
+                // If no translation in requested locale, try default translation
+                if (!$translation) {
+                    $translation = $post->getDefaultTranslation();
                 }
+                
+                // Set translated properties with fallback to model accessors
+                $post->translated_slug = $translation?->slug ?? $post->slug;
+                $post->translated_title = $translation?->title ?? $post->title;
+                $post->translated_excerpt = $translation?->excerpt ?? $post->excerpt;
                 
                 if ($post->photo) {
                     $post->photo_url = Storage::temporaryUrl(
