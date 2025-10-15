@@ -21,7 +21,7 @@
         </div>
 
         <!-- Posts Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
             @foreach ($posts as $post)
                 @php
                     $postTranslation = $post->translations->first();
@@ -30,7 +30,7 @@
                     $postExcerpt = $postTranslation ? $postTranslation->excerpt : $post->excerpt;
                     $postTldr = $postTranslation ? $postTranslation->tldr : $post->tldr;
                 @endphp
-                <article class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                <article class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
                     <!-- Post Image -->
                     <div class="relative h-56 bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden">
                         <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $postSlug]) }}" class="block h-full">
@@ -83,52 +83,58 @@
 
                         <!-- Excerpt or TL;DR -->
                         @if ($postExcerpt)
-                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3 flex-grow">
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">
                                 {{ $postExcerpt }}
                             </p>
                         @elseif ($postTldr)
-                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3 flex-grow italic">
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3 italic">
                                 <span class="font-semibold">TL;DR:</span> {{ $postTldr }}
                             </p>
                         @endif
 
-                        <!-- Author Info -->
-                        @if(config('blogr.display.show_author_pseudo') || config('blogr.display.show_author_avatar'))
-                            <div class="mb-4">
-                                <x-blogr::author-info :author="$post->user" size="sm" />
-                            </div>
-                        @endif
+                        <!-- Bottom Section: Tags + Author + Read More (always at bottom) -->
+                        <div class="mt-auto space-y-4">
+                            <!-- Tags -->
+                            @if ($post->tags->count())
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach ($post->tags->take(3) as $postTag)
+                                        @php
+                                            $tagTranslation = $postTag->translate($currentLocale);
+                                            $tagName = $tagTranslation ? $tagTranslation->name : $postTag->name;
+                                            $tagSlug = $tagTranslation ? $tagTranslation->slug : $postTag->slug;
+                                        @endphp
+                                        <a href="{{ route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) }}"
+                                           class="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs px-2.5 py-1 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
+                                            #{{ $tagName }}
+                                        </a>
+                                    @endforeach
+                                    @if($post->tags->count() > 3)
+                                        <span class="inline-block text-gray-500 dark:text-gray-400 text-xs px-2.5 py-1">
+                                            +{{ $post->tags->count() - 3 }}
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
 
-                        <!-- Tags -->
-                        @if ($post->tags->count())
-                            <div class="mb-4 flex flex-wrap gap-2">
-                                @foreach ($post->tags->take(3) as $postTag)
-                                    @php
-                                        $tagTranslation = $postTag->translate($currentLocale);
-                                        $tagName = $tagTranslation ? $tagTranslation->name : $postTag->name;
-                                        $tagSlug = $tagTranslation ? $tagTranslation->slug : $postTag->slug;
-                                    @endphp
-                                    <a href="{{ route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) }}"
-                                       class="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs px-2.5 py-1 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
-                                        #{{ $tagName }}
-                                    </a>
-                                @endforeach
-                                @if($post->tags->count() > 3)
-                                    <span class="inline-block text-gray-500 dark:text-gray-400 text-xs px-2.5 py-1">
-                                        +{{ $post->tags->count() - 3 }}
-                                    </span>
+                            <!-- Author + Read More -->
+                            <div class="pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                                <!-- Author Info -->
+                                @if(config('blogr.display.show_author_pseudo') || config('blogr.display.show_author_avatar'))
+                                    <div class="flex-shrink-0">
+                                        <x-blogr::author-info :author="$post->user" size="sm" />
+                                    </div>
                                 @endif
-                            </div>
-                        @endif
 
-                        <!-- Read More Link -->
-                        <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $postSlug]) }}" 
-                           class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-sm group/link mt-auto">
-                            Read more
-                            <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </a>
+                                <!-- Read More Link -->
+                                <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $postSlug]) }}" 
+                                   class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-sm group/link ml-auto">
+                                    Read more
+                                    <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </article>
             @endforeach
