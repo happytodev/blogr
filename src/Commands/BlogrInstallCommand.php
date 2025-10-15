@@ -989,8 +989,11 @@ JS;
                 
                 // Check if there's already content in the array
                 if (trim($castsContent) !== '') {
-                    // Add bio cast at the end
-                    $newCastsContent = rtrim($castsContent) . ",\n            'bio' => 'array',\n        ";
+                    // Remove trailing commas and whitespace, then add bio cast
+                    $cleanContent = rtrim($castsContent);
+                    // Remove trailing comma if present
+                    $cleanContent = rtrim($cleanContent, ',');
+                    $newCastsContent = $cleanContent . ",\n            'bio' => 'array',\n        ";
                 } else {
                     // Empty array, add bio cast as first entry
                     $newCastsContent = "\n            'bio' => 'array',\n        ";
@@ -1011,8 +1014,11 @@ JS;
                 
                 // Check if there's already content in the array
                 if (trim($castsContent) !== '') {
-                    // Add bio cast at the end
-                    $newCastsContent = rtrim($castsContent) . ",\n        'bio' => 'array',\n    ";
+                    // Remove trailing commas and whitespace, then add bio cast
+                    $cleanContent = rtrim($castsContent);
+                    // Remove trailing comma if present
+                    $cleanContent = rtrim($cleanContent, ',');
+                    $newCastsContent = $cleanContent . ",\n        'bio' => 'array',\n    ";
                 } else {
                     // Empty array, add bio cast as first entry
                     $newCastsContent = "\n        'bio' => 'array',\n    ";
