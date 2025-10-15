@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.11.0](https://github.com/happytodev/blogr/compare/v0.11.0...v0.10.2) - 2025-10-15
+
 ### 🐛 Bug Fixes
 
 - **Test Fixes**: Fixed failing `AuthorDisplaySettingsTest`
