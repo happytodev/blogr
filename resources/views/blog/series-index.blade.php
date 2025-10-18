@@ -18,7 +18,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse ($series as $s)
                 <div class="group bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
-                    <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $s->slug]) }}" class="flex-grow flex flex-col">
+                    <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $s->translated_slug ?? $s->slug]) }}" class="flex-grow flex flex-col">
                         <!-- Series Image -->
                         <div class="relative h-48 overflow-hidden">
                             @if($s->photo_url)
