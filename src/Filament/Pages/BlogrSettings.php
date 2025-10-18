@@ -16,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Happytodev\Blogr\Helpers\ColorHelper;
 
 class BlogrSettings extends Page
 {
@@ -36,9 +37,24 @@ class BlogrSettings extends Page
     public ?bool $route_frontend_enabled = null;
     public ?bool $route_homepage = null;
     public ?string $colors_primary = null;
-    public ?string $blog_index_cards_colors_background = null;
-    public ?string $blog_index_cards_colors_top_border = null;
     public ?int $reading_speed_words_per_minute = null;
+    
+    // Appearance Colors (Card Backgrounds)
+    public ?string $appearance_blog_card_bg = null;
+    public ?string $appearance_blog_card_bg_dark = null;
+    public ?string $appearance_series_card_bg = null;
+    public ?string $appearance_series_card_bg_dark = null;
+    
+    // Theme Colors
+    public ?string $theme_primary_color_dark = null;
+    public ?string $theme_primary_color_hover = null;
+    public ?string $theme_primary_color_hover_dark = null;
+    public ?string $theme_category_bg = null;
+    public ?string $theme_category_bg_dark = null;
+    public ?string $theme_tag_bg = null;
+    public ?string $theme_tag_bg_dark = null;
+    public ?string $theme_author_bg = null;
+    public ?string $theme_author_bg_dark = null;
     public ?string $reading_time_text_format = null;
     public ?string $reading_time_text_en = null;
     public ?string $reading_time_text_fr = null;
@@ -92,7 +108,7 @@ class BlogrSettings extends Page
     public ?string $locales_default = null;
     public ?string $locales_available = null;
     public ?bool $series_enabled = null;
-    public ?string $series_default_image = null;
+    public ?array $series_default_image = null; // FileUpload expects array
     
     // UI Settings - Navigation
     public ?bool $navigation_enabled = null;
@@ -109,6 +125,11 @@ class BlogrSettings extends Page
     public ?string $footer_github = null;
     public ?string $footer_linkedin = null;
     public ?string $footer_facebook = null;
+    public ?string $footer_bluesky = null;
+    public ?string $footer_youtube = null;
+    public ?string $footer_instagram = null;
+    public ?string $footer_tiktok = null;
+    public ?string $footer_mastodon = null;
     
     // UI Settings - Theme
     public ?string $theme_default = null;
@@ -129,9 +150,24 @@ class BlogrSettings extends Page
         $this->route_frontend_enabled = $config['route']['frontend']['enabled'] ?? true;
         $this->route_homepage = $config['route']['homepage'] ?? false;
         $this->colors_primary = $config['colors']['primary'] ?? '#3b82f6';
-        $this->blog_index_cards_colors_background = $config['blog_index']['cards']['colors']['background'] ?? 'bg-white';
-        $this->blog_index_cards_colors_top_border = $config['blog_index']['cards']['colors']['top_border'] ?? 'border-t-4 border-blue-500';
         $this->reading_speed_words_per_minute = $config['reading_speed']['words_per_minute'] ?? 200;
+        
+        // Load appearance colors (card backgrounds)
+        $this->appearance_blog_card_bg = $config['ui']['appearance']['blog_card_bg'] ?? '#ffffff';
+        $this->appearance_blog_card_bg_dark = $config['ui']['appearance']['blog_card_bg_dark'] ?? '#1f2937';
+        $this->appearance_series_card_bg = $config['ui']['appearance']['series_card_bg'] ?? '#f9fafb';
+        $this->appearance_series_card_bg_dark = $config['ui']['appearance']['series_card_bg_dark'] ?? '#374151';
+        
+        // Load theme colors
+        $this->theme_primary_color_dark = $config['ui']['theme']['primary_color_dark'] ?? '#9b0ab8';
+        $this->theme_primary_color_hover = $config['ui']['theme']['primary_color_hover'] ?? '#d946ef';
+        $this->theme_primary_color_hover_dark = $config['ui']['theme']['primary_color_hover_dark'] ?? '#a855f7';
+        $this->theme_category_bg = $config['ui']['theme']['category_bg'] ?? '#e0f2fe';
+        $this->theme_category_bg_dark = $config['ui']['theme']['category_bg_dark'] ?? '#0c4a6e';
+        $this->theme_tag_bg = $config['ui']['theme']['tag_bg'] ?? '#d1fae5';
+        $this->theme_tag_bg_dark = $config['ui']['theme']['tag_bg_dark'] ?? '#065f46';
+        $this->theme_author_bg = $config['ui']['theme']['author_bg'] ?? '#fef3c7';
+        $this->theme_author_bg_dark = $config['ui']['theme']['author_bg_dark'] ?? '#78350f';
         
         // Load reading time text format (supports both string and array formats)
         $textFormat = $config['reading_time']['text_format'] ?? 'Reading time: {time}';
@@ -253,7 +289,12 @@ class BlogrSettings extends Page
             ? implode(', ', $config['locales']['available'])
             : 'en, fr, es, de';
         $this->series_enabled = $config['series']['enabled'] ?? true;
-        $this->series_default_image = $config['series']['default_image'] ?? '/vendor/blogr/images/default-series.svg';
+        
+        // FileUpload expects array, but config stores string - convert
+        $defaultImage = $config['series']['default_image'] ?? '/vendor/blogr/images/default-series.svg';
+        $this->series_default_image = is_string($defaultImage) && !empty($defaultImage) 
+            ? [$defaultImage] 
+            : (is_array($defaultImage) ? $defaultImage : null);
         
         // UI Settings
         $this->navigation_enabled = $config['ui']['navigation']['enabled'] ?? true;
@@ -269,6 +310,11 @@ class BlogrSettings extends Page
         $this->footer_github = $config['ui']['footer']['social_links']['github'] ?? '';
         $this->footer_linkedin = $config['ui']['footer']['social_links']['linkedin'] ?? '';
         $this->footer_facebook = $config['ui']['footer']['social_links']['facebook'] ?? '';
+        $this->footer_bluesky = $config['ui']['footer']['social_links']['bluesky'] ?? '';
+        $this->footer_youtube = $config['ui']['footer']['social_links']['youtube'] ?? '';
+        $this->footer_instagram = $config['ui']['footer']['social_links']['instagram'] ?? '';
+        $this->footer_tiktok = $config['ui']['footer']['social_links']['tiktok'] ?? '';
+        $this->footer_mastodon = $config['ui']['footer']['social_links']['mastodon'] ?? '';
         
         $this->theme_default = $config['ui']['theme']['default'] ?? 'light';
         $this->theme_primary_color = $config['ui']['theme']['primary_color'] ?? '#3b82f6';
@@ -294,38 +340,23 @@ class BlogrSettings extends Page
                             ->placeholder('blog')
                             ->helperText('URL prefix for blog routes')
                             ->required(),
-                        Toggle::make('route_frontend_enabled')
+                            Toggle::make('route_frontend_enabled')
                             ->label('Enable Frontend Routes')
                             ->helperText('Enable frontend routes for the blog')
                             ->default(true)
                             ->required(),
-                        Toggle::make('route_homepage')
+                            Toggle::make('route_homepage')
                             ->label('Enable Homepage')
                             ->helperText('When enabled, the blog index becomes the homepage. You must comment out the default root route in routes/web.php to avoid conflicts.')
                             ->default(false)
                             ->columnSpan(2),
+                            ColorPicker::make('colors_primary')
+                                ->label('Primary Color (Admin Panel)')
+                                ->helperText('This is the primary color used in the Filament admin panel')
+                                ->default('#FA2C36')
+                                ->required(),
                     ])
                     ->columns(2),
-
-                Section::make('Appearance')
-                    ->description('Visual customization options')
-                    ->schema([
-                        ColorPicker::make('colors_primary')
-                            ->label('Primary Color')
-                            ->default('#FA2C36')
-                            ->required(),
-
-                        TextInput::make('blog_index_cards_colors_background')
-                            ->label('Card Background Color')
-                            ->placeholder('bg-green-50')
-                            ->helperText('Tailwind CSS class for card background'),
-
-                        TextInput::make('blog_index_cards_colors_top_border')
-                            ->label('Card Border Color')
-                            ->placeholder('border-green-600')
-                            ->helperText('Tailwind CSS class for card top border'),
-                    ])
-                    ->columns(3),
 
                 Section::make('Reading Time')
                     ->description('Reading time calculation and display settings')
@@ -395,11 +426,13 @@ class BlogrSettings extends Page
                             $fields[] = TextInput::make("seo_site_name_{$locale}")
                                 ->label("Site Name ({$localeName})")
                                 ->placeholder('My Blog')
+                                ->helperText('The name of your website/brand (e.g., "My Blog"). Used in meta tags and browser title suffix.')
                                 ->required();
                             
                             $fields[] = TextInput::make("seo_default_title_{$locale}")
                                 ->label("Default Title ({$localeName})")
                                 ->placeholder('Blog')
+                                ->helperText('The default title for blog pages without a specific title (e.g., "Blog", "Articles"). This appears as the main page title.')
                                 ->required();
                             
                             $fields[] = Textarea::make("seo_default_description_{$locale}")
@@ -456,11 +489,15 @@ class BlogrSettings extends Page
                             ->label('Enable Series')
                             ->default(true)
                             ->helperText('Allow grouping blog posts into series'),
-                        TextInput::make('series_default_image')
+                        FileUpload::make('series_default_image')
                             ->label('Default Series Image')
-                            ->required()
+                            ->image()
+                            ->disk('public')
+                            ->directory('blogr/series')
+                            ->visibility('public')
+                            ->imagePreviewHeight('100')
                             ->default('/vendor/blogr/images/default-series.svg')
-                            ->helperText('Path to the default image for series without a custom photo (e.g., /vendor/blogr/images/default-series.svg or /images/my-default.jpg)')
+                            ->helperText('Upload a default image for series without a custom photo. Accepts images only.')
                             ->columnSpan(2),
                     ])
                     ->columns(2),
@@ -492,26 +529,31 @@ class BlogrSettings extends Page
                         Toggle::make('navigation_enabled')
                             ->label('Enable Navigation Bar')
                             ->default(true)
+                            ->live()
                             ->helperText('Show the navigation bar at the top of every page'),
                         
                         Toggle::make('navigation_sticky')
                             ->label('Sticky Navigation')
                             ->default(true)
+                            ->visible(fn (Get $get) => $get('navigation_enabled'))
                             ->helperText('Keep navigation bar visible when scrolling'),
                         
                         Toggle::make('navigation_show_logo')
                             ->label('Show Site Logo/Name')
                             ->default(true)
+                            ->visible(fn (Get $get) => $get('navigation_enabled'))
                             ->helperText('Display your site name in the navigation bar'),
                         
                         Toggle::make('navigation_show_language_switcher')
                             ->label('Show Language Switcher')
                             ->default(true)
+                            ->visible(fn (Get $get) => $get('navigation_enabled'))
                             ->helperText('Allow users to switch between available languages'),
                         
                         Toggle::make('navigation_show_theme_switcher')
                             ->label('Show Theme Switcher')
                             ->default(true)
+                            ->visible(fn (Get $get) => $get('navigation_enabled'))
                             ->helperText('Allow users to switch between light/dark/auto themes'),
                     ])
                     ->columns(2),
@@ -538,7 +580,8 @@ class BlogrSettings extends Page
                             ->default(false)
                             ->live()
                             ->helperText('Display social media icons in footer')
-                            ->visible(fn (Get $get) => $get('footer_enabled')),
+                            ->visible(fn (Get $get) => $get('footer_enabled'))
+                            ->columnSpanFull(),
                         
                         TextInput::make('footer_twitter')
                             ->label('Twitter/X URL')
@@ -563,11 +606,41 @@ class BlogrSettings extends Page
                             ->url()
                             ->placeholder('https://facebook.com/yourusername')
                             ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                        
+                        TextInput::make('footer_bluesky')
+                            ->label('Bluesky URL')
+                            ->url()
+                            ->placeholder('https://bsky.app/profile/yourusername.bsky.social')
+                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                        
+                        TextInput::make('footer_youtube')
+                            ->label('YouTube URL')
+                            ->url()
+                            ->placeholder('https://youtube.com/@yourusername')
+                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                        
+                        TextInput::make('footer_instagram')
+                            ->label('Instagram URL')
+                            ->url()
+                            ->placeholder('https://instagram.com/yourusername')
+                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                        
+                        TextInput::make('footer_tiktok')
+                            ->label('TikTok URL')
+                            ->url()
+                            ->placeholder('https://tiktok.com/@yourusername')
+                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                        
+                        TextInput::make('footer_mastodon')
+                            ->label('Mastodon URL')
+                            ->url()
+                            ->placeholder('https://mastodon.social/@yourusername')
+                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
                     ])
                     ->columns(2),
 
                 Section::make('Theme Settings')
-                    ->description('Configure default theme and appearance')
+                    ->description('Configure theme colors and appearance')
                     ->schema([
                         Select::make('theme_default')
                             ->label('Default Theme')
@@ -577,12 +650,77 @@ class BlogrSettings extends Page
                                 'auto' => 'Auto (System Preference)',
                             ])
                             ->default('light')
-                            ->helperText('Users can override this in their browser'),
+                            ->helperText('Users can override this in their browser')
+                            ->columnSpan(2),
                         
+                        // Primary Colors
                         ColorPicker::make('theme_primary_color')
-                            ->label('Primary Color')
-                            ->default('#3b82f6')
-                            ->helperText('Main accent color used throughout the blog'),
+                            ->label('Primary Color (Light Mode)')
+                            ->default('#c20be5')
+                            ->helperText('Main accent color for links and interactive elements')
+                            ->columnSpan(1),
+                        ColorPicker::make('theme_primary_color_dark')
+                            ->label('Primary Color (Dark Mode)')
+                            ->default('#9b0ab8')
+                            ->columnSpan(1),
+                        ColorPicker::make('theme_primary_color_hover')
+                            ->label('Primary Hover (Light Mode)')
+                            ->default('#d946ef')
+                            ->columnSpan(1),
+                        ColorPicker::make('theme_primary_color_hover_dark')
+                            ->label('Primary Hover (Dark Mode)')
+                            ->default('#a855f7')
+                            ->columnSpan(1),
+                        
+                        // Blog Card Colors
+                        ColorPicker::make('appearance_blog_card_bg')
+                            ->label('Blog Post Card Background (Light Mode)')
+                            ->default('#ffffff')
+                            ->columnSpan(1),
+                        ColorPicker::make('appearance_blog_card_bg_dark')
+                            ->label('Blog Post Card Background (Dark Mode)')
+                            ->default('#1f2937')
+                            ->columnSpan(1),
+                        
+                        // Series Card Colors
+                        ColorPicker::make('appearance_series_card_bg')
+                            ->label('Series Card Background (Light Mode)')
+                            ->default('#f9fafb')
+                            ->columnSpan(1),
+                        ColorPicker::make('appearance_series_card_bg_dark')
+                            ->label('Series Card Background (Dark Mode)')
+                            ->default('#374151')
+                            ->columnSpan(1),
+                        
+                        // Category Colors
+                        ColorPicker::make('theme_category_bg')
+                            ->label('Category Badge (Light Mode)')
+                            ->default('#e0f2fe')
+                            ->columnSpan(1),
+                        ColorPicker::make('theme_category_bg_dark')
+                            ->label('Category Badge (Dark Mode)')
+                            ->default('#0c4a6e')
+                            ->columnSpan(1),
+                        
+                        // Tag Colors
+                        ColorPicker::make('theme_tag_bg')
+                            ->label('Tag Badge (Light Mode)')
+                            ->default('#d1fae5')
+                            ->columnSpan(1),
+                        ColorPicker::make('theme_tag_bg_dark')
+                            ->label('Tag Badge (Dark Mode)')
+                            ->default('#065f46')
+                            ->columnSpan(1),
+                        
+                        // Author Colors
+                        ColorPicker::make('theme_author_bg')
+                            ->label('Author Bio (Light Mode)')
+                            ->default('#fef3c7')
+                            ->columnSpan(1),
+                        ColorPicker::make('theme_author_bg_dark')
+                            ->label('Author Bio (Dark Mode)')
+                            ->default('#78350f')
+                            ->columnSpan(1),
                     ])
                     ->columns(2),
 
@@ -626,7 +764,11 @@ class BlogrSettings extends Page
                         Toggle::make('author_profile_enabled')
                             ->label('Enable Author Profile Pages')
                             ->default(true)
-                            ->helperText('Allow users to access dedicated author profile pages at /blog/author/{userId}')
+                            ->helperText(function () {
+                                $prefix = config('blogr.route.prefix', 'blog');
+                                $prefix = $prefix ? "/{$prefix}" : '';
+                                return "Allow users to access dedicated author profile pages at {$prefix}/author/{userSlug}";
+                            })
                             ->columnSpanFull(),
                         Toggle::make('display_show_author_pseudo')
                             ->label('Show Author Pseudo/Slug')
@@ -767,14 +909,6 @@ class BlogrSettings extends Page
             'colors' => [
                 'primary' => $this->colors_primary,
             ],
-            'blog_index' => [
-                'cards' => [
-                    'colors' => [
-                        'background' => $this->blog_index_cards_colors_background,
-                        'top_border' => $this->blog_index_cards_colors_top_border,
-                    ],
-                ],
-            ],
             'reading_speed' => [
                 'words_per_minute' => $this->reading_speed_words_per_minute,
             ],
@@ -789,7 +923,10 @@ class BlogrSettings extends Page
             ],
             'series' => [
                 'enabled' => $this->series_enabled,
-                'default_image' => $this->series_default_image,
+                // Convert array back to string for config storage
+                'default_image' => is_array($this->series_default_image) && !empty($this->series_default_image)
+                    ? $this->series_default_image[0]
+                    : ($this->series_default_image ?? '/vendor/blogr/images/default-series.svg'),
             ],
             'toc' => [
                 'enabled' => $this->toc_enabled,
@@ -847,11 +984,31 @@ class BlogrSettings extends Page
                         'github' => $this->footer_github,
                         'linkedin' => $this->footer_linkedin,
                         'facebook' => $this->footer_facebook,
+                        'bluesky' => $this->footer_bluesky,
+                        'youtube' => $this->footer_youtube,
+                        'instagram' => $this->footer_instagram,
+                        'tiktok' => $this->footer_tiktok,
+                        'mastodon' => $this->footer_mastodon,
                     ],
                 ],
                 'theme' => [
                     'default' => $this->theme_default,
                     'primary_color' => $this->theme_primary_color,
+                    'primary_color_dark' => $this->theme_primary_color_dark,
+                    'primary_color_hover' => $this->theme_primary_color_hover,
+                    'primary_color_hover_dark' => $this->theme_primary_color_hover_dark,
+                    'category_bg' => $this->theme_category_bg,
+                    'category_bg_dark' => $this->theme_category_bg_dark,
+                    'tag_bg' => $this->theme_tag_bg,
+                    'tag_bg_dark' => $this->theme_tag_bg_dark,
+                    'author_bg' => $this->theme_author_bg,
+                    'author_bg_dark' => $this->theme_author_bg_dark,
+                ],
+                'appearance' => [
+                    'blog_card_bg' => $this->appearance_blog_card_bg,
+                    'blog_card_bg_dark' => $this->appearance_blog_card_bg_dark,
+                    'series_card_bg' => $this->appearance_series_card_bg,
+                    'series_card_bg_dark' => $this->appearance_series_card_bg_dark,
                 ],
                 'posts' => [
                     'default_image' => $this->posts_default_image,
