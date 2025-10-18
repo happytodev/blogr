@@ -6,6 +6,103 @@
     @endphp
 @endsection
 
+@push('styles')
+<style>
+    /* General link hover style - only underline when hovering the link itself */
+    /* Target content links specifically (paragraphs, lists, etc.) */
+    .prose p a:hover,
+    .prose li a:hover,
+    .prose td a:hover,
+    .prose blockquote a:hover,
+    .prose h1 a:not(.heading-permalink):hover,
+    .prose h2 a:not(.heading-permalink):hover,
+    .prose h3 a:not(.heading-permalink):hover,
+    .prose h4 a:not(.heading-permalink):hover,
+    .prose h5 a:not(.heading-permalink):hover,
+    .prose h6 a:not(.heading-permalink):hover {
+        text-decoration: underline !important;
+        color: var(--color-primary-hover) !important;
+    }
+    
+    .dark .prose p a:hover,
+    .dark .prose li a:hover,
+    .dark .prose td a:hover,
+    .dark .prose blockquote a:hover,
+    .dark .prose h1 a:not(.heading-permalink):hover,
+    .dark .prose h2 a:not(.heading-permalink):hover,
+    .dark .prose h3 a:not(.heading-permalink):hover,
+    .dark .prose h4 a:not(.heading-permalink):hover,
+    .dark .prose h5 a:not(.heading-permalink):hover,
+    .dark .prose h6 a:not(.heading-permalink):hover {
+        color: var(--color-primary-hover-dark) !important;
+    }
+    
+    /* Table of Contents Styles */
+    .prose .toc {
+        background-color: rgb(249 250 251);
+        border-left: 4px solid rgb(59 130 246);
+        padding: 1rem;
+        border-radius: 0 0.5rem 0.5rem 0;
+        margin-bottom: 1.5rem;
+    }
+    
+    .dark .prose .toc {
+        background-color: rgb(31 41 55 / 0.5);
+        border-left-color: rgb(96 165 250);
+    }
+    
+    .prose .toc a {
+        text-decoration: none !important;
+        color: rgb(55 65 81);
+        transition: color 0.2s;
+    }
+    
+    .dark .prose .toc a {
+        color: rgb(209 213 219);
+    }
+    
+    .prose .toc a:hover {
+        color: var(--color-primary-hover);
+        text-decoration: underline !important;
+    }
+    
+    .dark .prose .toc a:hover {
+        color: var(--color-primary-hover-dark);
+    }
+    
+    /* Heading Permalink Styles */
+    .prose .heading-permalink {
+        text-decoration: none !important;
+        color: rgb(156 163 175);
+        opacity: 0;
+        transition: opacity 0.2s, color 0.2s;
+        margin-left: 0.5rem;
+    }
+    
+    .dark .prose .heading-permalink {
+        color: rgb(75 85 99);
+    }
+    
+    .prose h1:hover .heading-permalink,
+    .prose h2:hover .heading-permalink,
+    .prose h3:hover .heading-permalink,
+    .prose h4:hover .heading-permalink,
+    .prose h5:hover .heading-permalink,
+    .prose h6:hover .heading-permalink {
+        opacity: 1;
+    }
+    
+    .prose .heading-permalink:hover {
+        color: var(--color-primary-hover) !important;
+        text-decoration: none !important;
+    }
+    
+    .dark .prose .heading-permalink:hover {
+        color: var(--color-primary-hover-dark) !important;
+    }
+</style>
+@endpush
+
 @section('content')
     <article class="container mx-auto px-4 py-12 max-w-4xl">
         <!-- Translation Warning -->
@@ -18,7 +115,7 @@
         @endif
         
         <!-- Language Indicator -->
-        @if (isset($availableTranslations) && config('blogr.posts.show_language_switcher', true))
+        @if (isset($availableTranslations) && config('blogr.ui.posts.show_language_switcher', true))
             <div class="mb-6">
                 @include('blogr::components.post-language-indicator', [
                     'translations' => $availableTranslations,
@@ -54,7 +151,7 @@
                 @endif
 
                 <a href="{{ config('blogr.locales.enabled') ? route('blog.category', ['locale' => $currentLocale, 'categorySlug' => $post->category->slug]) : route('blog.category', ['categorySlug' => $post->category->slug]) }}"
-                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[var(--color-category-bg)] dark:bg-[var(--color-category-bg-dark)] text-blue-800 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
                     {{ $post->category->name }}
                 </a>
 
@@ -91,8 +188,8 @@
 
         <!-- TL;DR Box -->
         @if ($displayData['tldr'] ?? $post->tldr)
-            <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-6 mb-8 rounded-r-xl">
-                <p class="font-bold text-blue-900 dark:text-blue-300 mb-2 flex items-center">
+            <div class="bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary-dark)]/20 border-l-4 border-[var(--color-primary)] dark:border-[var(--color-primary-dark)] p-6 mb-8 rounded-r-xl">
+                <p class="font-bold text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] mb-2 flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -188,11 +285,20 @@
                         $tagSlug = $tagTranslation ? $tagTranslation->slug : $tag->slug;
                     @endphp
                     <a href="{{ config('blogr.locales.enabled') ? route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) : route('blog.tag', ['tagSlug' => $tagSlug]) }}"
-                        class="inline-block bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 text-sm px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                        {{-- class="inline-block bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 text-sm px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"> --}}
+                        class="inline-block bg-[var(--color-tag-bg)] dark:bg-[var(--color-tag-bg-dark)] text-gray-900 dark:text-white text-xs px-2.5 py-1 rounded-full hover:opacity-90 transition-colors">
                         #{{ $tagName }}
                     </a>
                 @endforeach
             </div>
+        @endif
+
+        <!-- Author Bio Box (Top Position) -->
+        @if(config('blogr.author_bio.enabled', true) && in_array(config('blogr.author_bio.position', 'bottom'), ['top', 'both']))
+            <x-blogr::author-bio 
+                :author="$post->author" 
+                :locale="$currentLocale"
+                :compact="config('blogr.author_bio.compact', false)" />
         @endif
 
         <!-- Post Content -->
@@ -200,22 +306,27 @@
             class="prose prose-lg dark:prose-invert max-w-none
                     prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white
                     prose-p:text-gray-700 dark:prose-p:text-gray-300
-                    prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
+                    prose-a:text-[var(--color-primary)] dark:prose-a:text-[var(--color-primary-dark)] prose-a:no-underline
                     prose-strong:text-gray-900 dark:prose-strong:text-white
                     prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
                     prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950 prose-pre:text-gray-100
                     prose-img:rounded-xl prose-img:shadow-lg
-                    prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-blue-900/20 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg">
+                    prose-blockquote:border-[var(--color-primary)] prose-blockquote:bg-[var(--color-primary)]/10 dark:prose-blockquote:bg-[var(--color-primary-dark)]/20 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg">
             {!! isset($displayData) ? $displayData['content'] : $post->getContentWithoutFrontmatter() !!}
         </div>
 
-        <!-- Author Bio Box -->
-        <x-blogr::author-bio :author="$post->author" :locale="$currentLocale" />
+        <!-- Author Bio Box (Bottom Position) -->
+        @if(config('blogr.author_bio.enabled', true) && in_array(config('blogr.author_bio.position', 'bottom'), ['bottom', 'both']))
+            <x-blogr::author-bio 
+                :author="$post->author" 
+                :locale="$currentLocale"
+                :compact="config('blogr.author_bio.compact', false)" />
+        @endif
 
         <!-- Back to Blog Button -->
         <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
             <a href="{{ config('blogr.locales.enabled') ? route('blog.index', ['locale' => $currentLocale]) : route('blog.index') }}"
-                class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold group">
+                class="inline-flex items-center text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] font-semibold group">
                 <svg class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
