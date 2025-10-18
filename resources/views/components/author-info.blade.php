@@ -42,7 +42,8 @@
             </div>
         @endif
         
-        <span class="text-gray-700 dark:text-gray-300">{{ $displayName }}</span>
+        {{-- Display name with tooltip showing full text --}}
+        <span class="text-gray-700 dark:text-gray-300 truncate max-w-[10rem]" title="{{ $displayName }}">{{ $displayName }}</span>
     </a>
 @else
     <div {{ $attributes->merge(['class' => 'flex items-center gap-2']) }}>
@@ -58,7 +59,7 @@
             </div>
         @endif
         
-        <span class="text-gray-700 dark:text-gray-300">{{ $displayName }}</span>
+        <span class="text-gray-700 dark:text-gray-300 truncate max-w-[10rem]" title="{{ $displayName }}">{{ $displayName }}</span>
     </div>
 @endif
 @endif
