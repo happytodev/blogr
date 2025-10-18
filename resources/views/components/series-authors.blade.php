@@ -34,6 +34,10 @@
                 $authorSlug = is_array($author) ? ($author['slug'] ?? null) : ($author->slug ?? null);
                 $authorAvatar = is_array($author) ? ($author['avatar'] ?? null) : ($author->avatar ?? null);
                 
+                // Respect show_author_pseudo setting
+                $showPseudo = config('blogr.display.show_author_pseudo', true);
+                $displayName = $showPseudo && $authorSlug ? $authorSlug : $authorName;
+                
                 // Get initials for fallback
                 $initials = collect(explode(' ', $authorName))
                     ->map(fn($word) => strtoupper(substr($word, 0, 1)))
@@ -57,11 +61,13 @@
                 }
             @endphp
             
+            @php $showAvatar = config('blogr.display.show_author_avatar', true); @endphp
+            @if($showAvatar)
             <div class="relative group">
                 @if($authorUrl)
                     <a href="{{ $authorUrl }}" 
                        class="block {{ $avatarSize }} rounded-full border-2 border-white dark:border-gray-800 overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700 hover:ring-blue-500 dark:hover:ring-blue-400 transition-all duration-200 hover:scale-110 hover:z-10"
-                       title="{{ $authorSlug ?? $authorName }}">
+                       title="{{ $displayName }}">
                 @else
                     <div class="{{ $avatarSize }} rounded-full border-2 border-white dark:border-gray-800 overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700">
                 @endif
@@ -82,14 +88,8 @@
                     </div>
                 @endif
                 
-                {{-- Tooltip --}}
-                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 dark:bg-gray-700 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-20 shadow-lg">
-                    {{ $authorSlug ?? $authorName }}
-                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-                        <div class="border-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
-                    </div>
-                </div>
             </div>
+            @endif
         @endforeach
         
         @if($remainingCount > 0)
