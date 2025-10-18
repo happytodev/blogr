@@ -51,6 +51,31 @@
         border-left-color: rgb(96 165 250);
     }
     
+    /* Remove bullet points from TOC lists */
+    .prose .toc ul,
+    .prose .toc ol {
+        list-style-type: none;
+        padding-left: 0;
+        margin-left: 0;
+    }
+    
+    .prose .toc ul ul,
+    .prose .toc ol ol {
+        padding-left: 1rem;
+    }
+    
+    .prose .toc li {
+        list-style-type: none;
+    }
+    
+    .prose .toc li::before {
+        content: none;
+    }
+    
+    .prose .toc li::marker {
+        content: none;
+    }
+    
     .prose .toc a {
         text-decoration: none !important;
         color: rgb(55 65 81);
@@ -74,15 +99,30 @@
     .prose .heading-permalink {
         text-decoration: none !important;
         color: rgb(156 163 175);
+        @if(($permalinkConfig['visibility'] ?? 'hover') === 'hover')
         opacity: 0;
+        @else
+        opacity: 1;
+        @endif
         transition: opacity 0.2s, color 0.2s;
+        @php
+            $spacing = $permalinkConfig['spacing'] ?? 'after';
+        @endphp
+        @if($spacing === 'before')
         margin-left: 0.5rem;
+        @elseif($spacing === 'after')
+        margin-right: 0.5rem;
+        @elseif($spacing === 'both')
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+        @endif
     }
     
     .dark .prose .heading-permalink {
         color: rgb(75 85 99);
     }
     
+    @if(($permalinkConfig['visibility'] ?? 'hover') === 'hover')
     .prose h1:hover .heading-permalink,
     .prose h2:hover .heading-permalink,
     .prose h3:hover .heading-permalink,
@@ -91,6 +131,7 @@
     .prose h6:hover .heading-permalink {
         opacity: 1;
     }
+    @endif
     
     .prose .heading-permalink:hover {
         color: var(--color-primary-hover) !important;
@@ -200,8 +241,8 @@
             </div>
         @endif
 
-        <!-- Series Box (if part of a series) -->
-        @if ($post->series)
+        <!-- Series Box (if part of a series AND series is published) -->
+        @if ($post->series && $post->series->isPublished())
             <div
                 class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-l-4 border-purple-500 p-6 mb-8 rounded-r-xl shadow-lg">
                 <div class="flex items-start justify-between mb-4">
@@ -335,4 +376,147 @@
             </a>
         </div>
     </article>
+    
+    <!-- Permalink Copy to Clipboard Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle permalink clicks
+            document.querySelectorAll('.heading-permalink').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Get the full URL with hash
+                    const url = window.location.origin + window.location.pathname + this.getAttribute('href');
+                    
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(url).then(function() {
+                        // Show temporary notification
+                        const notification = document.createElement('div');
+                        notification.textContent = 'Link copied to clipboard!';
+                        notification.style.cssText = `
+                            position: fixed;
+                            top: 20px;
+                            right: 20px;
+                            background: var(--color-primary);
+                            color: white;
+                            padding: 12px 24px;
+                            border-radius: 8px;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                            z-index: 10000;
+                            animation: slideIn 0.3s ease;
+                        `;
+                        
+                        document.body.appendChild(notification);
+                        
+                        // Remove notification after 2 seconds
+                        setTimeout(function() {
+                            notification.style.animation = 'slideOut 0.3s ease';
+                            setTimeout(function() {
+                                notification.remove();
+                            }, 300);
+                        }, 2000);
+                    }).catch(function(err) {
+                        console.error('Failed to copy link:', err);
+                    });
+                });
+            });
+            
+            // Handle smooth scroll with offset for TOC links and anchor links
+            function handleAnchorClick(e) {
+                const href = this.getAttribute('href');
+                
+                // Check if it's an anchor link (starts with #)
+                if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    
+                    const targetId = href.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Check if navigation is sticky
+                        const navEnabled = {{ config('blogr.ui.navigation.enabled', true) ? 'true' : 'false' }};
+                        const navSticky = {{ config('blogr.ui.navigation.sticky', true) ? 'true' : 'false' }};
+                        
+                        // Calculate offset (96px = 6rem for sticky nav, 16px = 1rem otherwise)
+                        const offset = (navEnabled && navSticky) ? 96 : 16;
+                        
+                        // Get element position
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - offset;
+                        
+                        // Smooth scroll to position
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Update URL hash
+                        history.pushState(null, null, href);
+                    }
+                }
+            }
+            
+            // Apply to all TOC links
+            document.querySelectorAll('.toc a').forEach(function(link) {
+                link.addEventListener('click', handleAnchorClick);
+            });
+            
+            // Apply to all anchor links in the page
+            document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+                // Don't apply to permalink symbols (they copy instead)
+                if (!link.classList.contains('heading-permalink')) {
+                    link.addEventListener('click', handleAnchorClick);
+                }
+            });
+            
+            // Handle initial page load with hash
+            if (window.location.hash) {
+                setTimeout(function() {
+                    const targetId = window.location.hash.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const navEnabled = {{ config('blogr.ui.navigation.enabled', true) ? 'true' : 'false' }};
+                        const navSticky = {{ config('blogr.ui.navigation.sticky', true) ? 'true' : 'false' }};
+                        const offset = (navEnabled && navSticky) ? 96 : 16;
+                        
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - offset;
+                        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 100); // Small delay to ensure page is fully loaded
+            }
+        });
+        
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 @endsection
