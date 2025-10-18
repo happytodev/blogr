@@ -21,7 +21,7 @@
                     <img src="{{ asset(config('blogr.series.default_image', '/vendor/blogr/images/default-series.svg')) }}"
                         alt="{{ $seriesTranslation?->title ?? $series->slug }}" class="w-full h-full object-cover opacity-50">
                 @endif
-                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"></div>
+                {{-- <div class="inset-0 bg-gradient-to-b from-transparent to-black/30"></div> --}}
             </div>
 
             <div class="p-8">
