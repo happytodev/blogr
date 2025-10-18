@@ -26,7 +26,7 @@
         if ($series) {
             $breadcrumbs[] = [
                 'label' => $seriesTranslation?->title ?? $series->slug,
-                'url' => route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->slug]),
+                'url' => route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->getTranslatedSlug($currentLocale)]),
             ];
         }
     }
