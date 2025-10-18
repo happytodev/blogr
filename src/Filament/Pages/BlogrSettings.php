@@ -7,6 +7,7 @@ use Filament\Pages\Page;
 use Illuminate\Support\Facades\File;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Textarea;
@@ -17,6 +18,7 @@ use Filament\Notifications\Notification;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Happytodev\Blogr\Helpers\ColorHelper;
+
 
 class BlogrSettings extends Page
 {
@@ -96,6 +98,9 @@ class BlogrSettings extends Page
     public ?string $seo_structured_data_organization_logo = null;
     public ?bool $toc_enabled = null;
     public ?bool $toc_strict_mode = null;
+    public ?string $heading_permalink_symbol = null;
+    public ?string $heading_permalink_spacing = null;
+    public ?string $heading_permalink_visibility = null;
     public ?bool $author_bio_enabled = null;
     public ?string $author_bio_position = null;
     public ?bool $author_bio_compact = null;
@@ -275,6 +280,9 @@ class BlogrSettings extends Page
         $this->seo_structured_data_organization_logo = $config['seo']['structured_data']['organization']['logo'] ?? '';
         $this->toc_enabled = $config['toc']['enabled'] ?? true;
         $this->toc_strict_mode = $config['toc']['strict_mode'] ?? false;
+        $this->heading_permalink_symbol = $config['heading_permalink']['symbol'] ?? '#';
+        $this->heading_permalink_spacing = $config['heading_permalink']['spacing'] ?? 'after';
+        $this->heading_permalink_visibility = $config['heading_permalink']['visibility'] ?? 'hover';
         $this->author_bio_enabled = $config['author_bio']['enabled'] ?? true;
         $this->author_bio_position = $config['author_bio']['position'] ?? 'bottom';
         $this->author_bio_compact = $config['author_bio']['compact'] ?? false;
@@ -326,492 +334,559 @@ class BlogrSettings extends Page
     protected function getFormSchema(): array
     {
         return [
-                Section::make('General Settings')
-                    ->description('Basic blog configuration')
-                    ->schema([
-                        TextInput::make('posts_per_page')
-                            ->label('Posts Per Page')
-                            ->numeric()
-                            ->minValue(1)
-                            ->maxValue(100)
-                            ->required(),
-                        TextInput::make('route_prefix')
-                            ->label('Route Prefix')
-                            ->placeholder('blog')
-                            ->helperText('URL prefix for blog routes')
-                            ->required(),
-                            Toggle::make('route_frontend_enabled')
-                            ->label('Enable Frontend Routes')
-                            ->helperText('Enable frontend routes for the blog')
-                            ->default(true)
-                            ->required(),
-                            Toggle::make('route_homepage')
-                            ->label('Enable Homepage')
-                            ->helperText('When enabled, the blog index becomes the homepage. You must comment out the default root route in routes/web.php to avoid conflicts.')
-                            ->default(false)
-                            ->columnSpan(2),
-                            ColorPicker::make('colors_primary')
-                                ->label('Primary Color (Admin Panel)')
-                                ->helperText('This is the primary color used in the Filament admin panel')
-                                ->default('#FA2C36')
-                                ->required(),
-                    ])
-                    ->columns(2),
+            Tabs::make('Settings')
+                ->tabs([
+                    // ========================================
+                    // GENERAL TAB
+                    // ========================================
+                    Tabs\Tab::make('General')
+                        ->icon('heroicon-o-cog-6-tooth')
+                        ->schema([
+                            Section::make('General Settings')
+                                ->description('Basic blog configuration')
+                                ->schema([
+                                    TextInput::make('posts_per_page')
+                                        ->label('Posts Per Page')
+                                        ->numeric()
+                                        ->minValue(1)
+                                        ->maxValue(100)
+                                        ->required(),
+                                    TextInput::make('route_prefix')
+                                        ->label('Route Prefix')
+                                        ->placeholder('blog')
+                                        ->helperText('URL prefix for blog routes')
+                                        ->required(),
+                                    Toggle::make('route_frontend_enabled')
+                                        ->label('Enable Frontend Routes')
+                                        ->helperText('Enable frontend routes for the blog')
+                                        ->default(true)
+                                        ->required(),
+                                    Toggle::make('route_homepage')
+                                        ->label('Enable Homepage')
+                                        ->helperText('When enabled, the blog index becomes the homepage. You must comment out the default root route in routes/web.php to avoid conflicts.')
+                                        ->default(false)
+                                        ->columnSpan(2),
+                                    ColorPicker::make('colors_primary')
+                                        ->label('Primary Color (Admin Panel)')
+                                        ->helperText('This is the primary color used in the Filament admin panel')
+                                        ->default('#FA2C36')
+                                        ->required(),
+                                ])
+                                ->columns(2),
 
-                Section::make('Reading Time')
-                    ->description('Reading time calculation and display settings')
-                    ->schema(function () {
-                        $availableLocales = config('blogr.locales.available', ['en']);
-                        $localeNames = [
-                            'en' => 'English',
-                            'fr' => 'Français',
-                            'es' => 'Español',
-                            'de' => 'Deutsch',
-                        ];
-                        
-                        $fields = [
-                            Toggle::make('reading_time_enabled')
-                                ->label('Enable Reading Time Display')
-                                ->default(true)
-                                ->columnSpan(2),
-                            TextInput::make('reading_speed_words_per_minute')
-                                ->label('Words Per Minute')
-                                ->numeric()
-                                ->minValue(100)
-                                ->default(200)
-                                ->maxValue(400)
-                                ->step(50)
-                                ->helperText('Average reading speed for calculating reading time')
-                                ->required()
-                                ->columnSpan(2),
-                        ];
-                        
-                        // Add text inputs for each available locale
-                        foreach ($availableLocales as $locale) {
-                            $localeName = $localeNames[$locale] ?? strtoupper($locale);
-                            $fields[] = TextInput::make("reading_time_text_{$locale}")
-                                ->label("Reading Time Text ({$localeName})")
-                                ->placeholder(match($locale) {
-                                    'en' => 'Reading time: {time}',
-                                    'fr' => 'Temps de lecture : {time}',
-                                    'es' => 'Tiempo de lectura: {time}',
-                                    'de' => 'Lesezeit: {time}',
-                                    default => 'Reading time: {time}',
+                            Section::make('Reading Time')
+                                ->description('Reading time calculation and display settings')
+                                ->schema(function () {
+                                    $availableLocales = config('blogr.locales.available', ['en']);
+                                    $localeNames = [
+                                        'en' => 'English',
+                                        'fr' => 'Français',
+                                        'es' => 'Español',
+                                        'de' => 'Deutsch',
+                                    ];
+                                    
+                                    $fields = [
+                                        Toggle::make('reading_time_enabled')
+                                            ->label('Enable Reading Time Display')
+                                            ->default(true)
+                                            ->columnSpan(2),
+                                        TextInput::make('reading_speed_words_per_minute')
+                                            ->label('Words Per Minute')
+                                            ->numeric()
+                                            ->minValue(100)
+                                            ->default(200)
+                                            ->maxValue(400)
+                                            ->step(50)
+                                            ->helperText('Average reading speed for calculating reading time')
+                                            ->required()
+                                            ->columnSpan(2),
+                                    ];
+                                    
+                                    // Add text inputs for each available locale
+                                    foreach ($availableLocales as $locale) {
+                                        $localeName = $localeNames[$locale] ?? strtoupper($locale);
+                                        $fields[] = TextInput::make("reading_time_text_{$locale}")
+                                            ->label("Reading Time Text ({$localeName})")
+                                            ->placeholder(match($locale) {
+                                                'en' => 'Reading time: {time}',
+                                                'fr' => 'Temps de lecture : {time}',
+                                                'es' => 'Tiempo de lectura: {time}',
+                                                'de' => 'Lesezeit: {time}',
+                                                default => 'Reading time: {time}',
+                                            })
+                                            ->helperText('Use {time} as placeholder for the reading time')
+                                            ->required();
+                                    }
+                                    
+                                    return $fields;
                                 })
-                                ->helperText('Use {time} as placeholder for the reading time')
-                                ->required();
-                        }
-                        
-                        return $fields;
-                    })
-                    ->columns(2),
+                                ->columns(2),
 
-                Section::make('SEO Settings')
-                    ->description('Search engine optimization configuration')
-                    ->schema(function () {
-                        $availableLocales = config('blogr.locales.available', ['en']);
-                        $localeNames = [
-                            'en' => 'English',
-                            'fr' => 'Français',
-                            'es' => 'Español',
-                            'de' => 'Deutsch',
-                        ];
-                        
-                        $fields = [];
-                        
-                        // Add translatable fields for each locale
-                        foreach ($availableLocales as $locale) {
-                            $localeName = $localeNames[$locale] ?? strtoupper($locale);
-                            
-                            $fields[] = TextInput::make("seo_site_name_{$locale}")
-                                ->label("Site Name ({$localeName})")
-                                ->placeholder('My Blog')
-                                ->helperText('The name of your website/brand (e.g., "My Blog"). Used in meta tags and browser title suffix.')
-                                ->required();
-                            
-                            $fields[] = TextInput::make("seo_default_title_{$locale}")
-                                ->label("Default Title ({$localeName})")
-                                ->placeholder('Blog')
-                                ->helperText('The default title for blog pages without a specific title (e.g., "Blog", "Articles"). This appears as the main page title.')
-                                ->required();
-                            
-                            $fields[] = Textarea::make("seo_default_description_{$locale}")
-                                ->label("Default Description ({$localeName})")
-                                ->placeholder('Discover our latest articles and insights')
-                                ->rows(2)
-                                ->required()
-                                ->columnSpan(2);
-                            
-                            $fields[] = Textarea::make("seo_default_keywords_{$locale}")
-                                ->label("Default Keywords ({$localeName})")
-                                ->placeholder('blog, articles, news, insights')
-                                ->rows(2)
-                                ->helperText('Comma-separated keywords for SEO meta tags')
-                                ->required()
-                                ->columnSpan(2);
-                        }
-                        
-                        $fields[] = TextInput::make('seo_twitter_handle')
-                            ->label('Twitter Handle')
-                            ->placeholder('@yourhandle');
-                        
-                        $fields[] = TextInput::make('seo_facebook_app_id')
-                            ->label('Facebook App ID');
-                        
-                        return $fields;
-                    })
-                    ->columns(2),
+                            Section::make('Series Settings')
+                                ->description('Configure blog series and default images')
+                                ->schema([
+                                    Toggle::make('series_enabled')
+                                        ->label('Enable Series')
+                                        ->default(true)
+                                        ->helperText('Allow grouping blog posts into series'),
+                                    FileUpload::make('series_default_image')
+                                        ->label('Default Series Image')
+                                        ->image()
+                                        ->disk('public')
+                                        ->directory('blogr/series')
+                                        ->visibility('public')
+                                        ->imagePreviewHeight('100')
+                                        ->default('/vendor/blogr/images/default-series.svg')
+                                        ->helperText('Upload a default image for series without a custom photo. Accepts images only.')
+                                        ->columnSpan(2),
+                                ])
+                                ->columns(2),
 
-                Section::make('Structured Data')
-                    ->description('Schema.org structured data settings')
-                    ->schema([
-                        Toggle::make('seo_structured_data_enabled')
-                            ->label('Enable Structured Data')
-                            ->default(true),
-                        TextInput::make('seo_structured_data_organization_name')
-                            ->label('Organization Name')
-                            ->placeholder('My Blog'),
-                        TextInput::make('seo_structured_data_organization_url')
-                            ->label('Organization URL')
-                            ->placeholder('https://yourwebsite.com')
-                            ->url(),
-                        TextInput::make('seo_structured_data_organization_logo')
-                            ->label('Organization Logo')
-                            ->placeholder('https://yourwebsite.com/images/logo.png')
-                            ->url(),
-                    ])
-                    ->columns(2),
+                            Section::make('Multilingual Settings')
+                                ->description('Configure available locales and default locale for translations')
+                                ->schema([
+                                    Toggle::make('locales_enabled')
+                                        ->label('Enable Localized Routes')
+                                        ->default(false)
+                                        ->helperText('Enable URL structure like /{locale}/blog/... (e.g., /en/blog/my-post, /fr/blog/mon-article)'),
+                                    TextInput::make('locales_default')
+                                        ->label('Default Locale')
+                                        ->required()
+                                        ->default('en')
+                                        ->helperText('The default locale used when no translation is available'),
+                                    Textarea::make('locales_available')
+                                        ->label('Available Locales')
+                                        ->required()
+                                        ->default('en, fr, es, de')
+                                        ->rows(2)
+                                        ->helperText('Comma-separated list of available locales (e.g., en, fr, es, de)'),
+                                ])
+                                ->columns(2),
+                        ]),
 
-                Section::make('Series Settings')
-                    ->description('Configure blog series and default images')
-                    ->schema([
-                        Toggle::make('series_enabled')
-                            ->label('Enable Series')
-                            ->default(true)
-                            ->helperText('Allow grouping blog posts into series'),
-                        FileUpload::make('series_default_image')
-                            ->label('Default Series Image')
-                            ->image()
-                            ->disk('public')
-                            ->directory('blogr/series')
-                            ->visibility('public')
-                            ->imagePreviewHeight('100')
-                            ->default('/vendor/blogr/images/default-series.svg')
-                            ->helperText('Upload a default image for series without a custom photo. Accepts images only.')
-                            ->columnSpan(2),
-                    ])
-                    ->columns(2),
+                    // ========================================
+                    // SEO TAB
+                    // ========================================
+                    Tabs\Tab::make('SEO')
+                        ->icon('heroicon-o-magnifying-glass')
+                        ->schema([
+                            Section::make('SEO Settings')
+                                ->description('Search engine optimization configuration')
+                                ->schema(function () {
+                                    $availableLocales = config('blogr.locales.available', ['en']);
+                                    $localeNames = [
+                                        'en' => 'English',
+                                        'fr' => 'Français',
+                                        'es' => 'Español',
+                                        'de' => 'Deutsch',
+                                    ];
+                                    
+                                    $fields = [];
+                                    
+                                    // Add translatable fields for each locale
+                                    foreach ($availableLocales as $locale) {
+                                        $localeName = $localeNames[$locale] ?? strtoupper($locale);
+                                        
+                                        $fields[] = TextInput::make("seo_site_name_{$locale}")
+                                            ->label("Site Name ({$localeName})")
+                                            ->placeholder('My Blog')
+                                            ->helperText('The name of your website/brand (e.g., "My Blog"). Used in meta tags and browser title suffix.')
+                                            ->required();
+                                        
+                                        $fields[] = TextInput::make("seo_default_title_{$locale}")
+                                            ->label("Default Title ({$localeName})")
+                                            ->placeholder('Blog')
+                                            ->helperText('The default title for blog pages without a specific title (e.g., "Blog", "Articles"). This appears as the main page title.')
+                                            ->required();
+                                        
+                                        $fields[] = Textarea::make("seo_default_description_{$locale}")
+                                            ->label("Default Description ({$localeName})")
+                                            ->placeholder('Discover our latest articles and insights')
+                                            ->rows(2)
+                                            ->required()
+                                            ->columnSpan(2);
+                                        
+                                        $fields[] = Textarea::make("seo_default_keywords_{$locale}")
+                                            ->label("Default Keywords ({$localeName})")
+                                            ->placeholder('blog, articles, news, insights')
+                                            ->rows(2)
+                                            ->helperText('Comma-separated keywords for SEO meta tags')
+                                            ->required()
+                                            ->columnSpan(2);
+                                    }
+                                    
+                                    $fields[] = TextInput::make('seo_twitter_handle')
+                                        ->label('Twitter Handle')
+                                        ->placeholder('@yourhandle');
+                                    
+                                    $fields[] = TextInput::make('seo_facebook_app_id')
+                                        ->label('Facebook App ID');
+                                    
+                                    return $fields;
+                                })
+                                ->columns(2),
 
-                Section::make('Multilingual Settings')
-                    ->description('Configure available locales and default locale for translations')
-                    ->schema([
-                        Toggle::make('locales_enabled')
-                            ->label('Enable Localized Routes')
-                            ->default(false)
-                            ->helperText('Enable URL structure like /{locale}/blog/... (e.g., /en/blog/my-post, /fr/blog/mon-article)'),
-                        TextInput::make('locales_default')
-                            ->label('Default Locale')
-                            ->required()
-                            ->default('en')
-                            ->helperText('The default locale used when no translation is available'),
-                        Textarea::make('locales_available')
-                            ->label('Available Locales')
-                            ->required()
-                            ->default('en, fr, es, de')
-                            ->rows(2)
-                            ->helperText('Comma-separated list of available locales (e.g., en, fr, es, de)'),
-                    ])
-                    ->columns(2),
+                            Section::make('Structured Data')
+                                ->description('Schema.org structured data settings')
+                                ->schema([
+                                    Toggle::make('seo_structured_data_enabled')
+                                        ->label('Enable Structured Data')
+                                        ->default(true),
+                                    TextInput::make('seo_structured_data_organization_name')
+                                        ->label('Organization Name')
+                                        ->placeholder('My Blog'),
+                                    TextInput::make('seo_structured_data_organization_url')
+                                        ->label('Organization URL')
+                                        ->placeholder('https://yourwebsite.com')
+                                        ->url(),
+                                    TextInput::make('seo_structured_data_organization_logo')
+                                        ->label('Organization Logo')
+                                        ->placeholder('https://yourwebsite.com/images/logo.png')
+                                        ->url(),
+                                ])
+                                ->columns(2),
+                        ]),
 
-                Section::make('Navigation Bar')
-                    ->description('Configure the top navigation bar appearance and behavior')
-                    ->schema([
-                        Toggle::make('navigation_enabled')
-                            ->label('Enable Navigation Bar')
-                            ->default(true)
-                            ->live()
-                            ->helperText('Show the navigation bar at the top of every page'),
-                        
-                        Toggle::make('navigation_sticky')
-                            ->label('Sticky Navigation')
-                            ->default(true)
-                            ->visible(fn (Get $get) => $get('navigation_enabled'))
-                            ->helperText('Keep navigation bar visible when scrolling'),
-                        
-                        Toggle::make('navigation_show_logo')
-                            ->label('Show Site Logo/Name')
-                            ->default(true)
-                            ->visible(fn (Get $get) => $get('navigation_enabled'))
-                            ->helperText('Display your site name in the navigation bar'),
-                        
-                        Toggle::make('navigation_show_language_switcher')
-                            ->label('Show Language Switcher')
-                            ->default(true)
-                            ->visible(fn (Get $get) => $get('navigation_enabled'))
-                            ->helperText('Allow users to switch between available languages'),
-                        
-                        Toggle::make('navigation_show_theme_switcher')
-                            ->label('Show Theme Switcher')
-                            ->default(true)
-                            ->visible(fn (Get $get) => $get('navigation_enabled'))
-                            ->helperText('Allow users to switch between light/dark/auto themes'),
-                    ])
-                    ->columns(2),
+                    // ========================================
+                    // APPEARANCE TAB
+                    // ========================================
+                    Tabs\Tab::make('Appearance')
+                        ->icon('heroicon-o-paint-brush')
+                        ->schema([
+                            Section::make('Theme Settings')
+                                ->description('Configure theme colors and appearance')
+                                ->schema([
+                                    Select::make('theme_default')
+                                        ->label('Default Theme')
+                                        ->options([
+                                            'light' => 'Light Mode',
+                                            'dark' => 'Dark Mode',
+                                            'auto' => 'Auto (System Preference)',
+                                        ])
+                                        ->default('light')
+                                        ->helperText('Users can override this in their browser')
+                                        ->columnSpan(2),
+                                    
+                                    // Primary Colors
+                                    ColorPicker::make('theme_primary_color')
+                                        ->label('Primary Color (Light Mode)')
+                                        ->default('#c20be5')
+                                        ->helperText('Main accent color for links and interactive elements')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_primary_color_dark')
+                                        ->label('Primary Color (Dark Mode)')
+                                        ->default('#9b0ab8')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_primary_color_hover')
+                                        ->label('Primary Hover (Light Mode)')
+                                        ->default('#d946ef')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_primary_color_hover_dark')
+                                        ->label('Primary Hover (Dark Mode)')
+                                        ->default('#a855f7')
+                                        ->columnSpan(1),
+                                    
+                                    // Blog Card Colors
+                                    ColorPicker::make('appearance_blog_card_bg')
+                                        ->label('Blog Post Card Background (Light Mode)')
+                                        ->default('#ffffff')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('appearance_blog_card_bg_dark')
+                                        ->label('Blog Post Card Background (Dark Mode)')
+                                        ->default('#1f2937')
+                                        ->columnSpan(1),
+                                    
+                                    // Series Card Colors
+                                    ColorPicker::make('appearance_series_card_bg')
+                                        ->label('Series Card Background (Light Mode)')
+                                        ->default('#f9fafb')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('appearance_series_card_bg_dark')
+                                        ->label('Series Card Background (Dark Mode)')
+                                        ->default('#374151')
+                                        ->columnSpan(1),
+                                    
+                                    // Category Colors
+                                    ColorPicker::make('theme_category_bg')
+                                        ->label('Category Badge (Light Mode)')
+                                        ->default('#e0f2fe')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_category_bg_dark')
+                                        ->label('Category Badge (Dark Mode)')
+                                        ->default('#0c4a6e')
+                                        ->columnSpan(1),
+                                    
+                                    // Tag Colors
+                                    ColorPicker::make('theme_tag_bg')
+                                        ->label('Tag Badge (Light Mode)')
+                                        ->default('#d1fae5')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_tag_bg_dark')
+                                        ->label('Tag Badge (Dark Mode)')
+                                        ->default('#065f46')
+                                        ->columnSpan(1),
+                                    
+                                    // Author Colors
+                                    ColorPicker::make('theme_author_bg')
+                                        ->label('Author Bio (Light Mode)')
+                                        ->default('#fef3c7')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_author_bg_dark')
+                                        ->label('Author Bio (Dark Mode)')
+                                        ->default('#78350f')
+                                        ->columnSpan(1),
+                                ])
+                                ->columns(2),
 
-                Section::make('Footer Configuration')
-                    ->description('Customize your blog footer appearance and content')
-                    ->schema([
-                        Toggle::make('footer_enabled')
-                            ->label('Enable Footer')
-                            ->default(true)
-                            ->live()
-                            ->helperText('Show footer at the bottom of every page'),
-                        
-                        Textarea::make('footer_text')
-                            ->label('Footer Text')
-                            ->default('© ' . date('Y') . ' My Blog. All rights reserved.')
-                            ->helperText('Supports HTML. Use <br> for line breaks.')
-                            ->rows(3)
-                            ->visible(fn (Get $get) => $get('footer_enabled'))
-                            ->columnSpanFull(),
-                        
-                        Toggle::make('footer_show_social_links')
-                            ->label('Show Social Media Links')
-                            ->default(false)
-                            ->live()
-                            ->helperText('Display social media icons in footer')
-                            ->visible(fn (Get $get) => $get('footer_enabled'))
-                            ->columnSpanFull(),
-                        
-                        TextInput::make('footer_twitter')
-                            ->label('Twitter/X URL')
-                            ->url()
-                            ->placeholder('https://twitter.com/yourusername')
-                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                        
-                        TextInput::make('footer_github')
-                            ->label('GitHub URL')
-                            ->url()
-                            ->placeholder('https://github.com/yourusername')
-                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                        
-                        TextInput::make('footer_linkedin')
-                            ->label('LinkedIn URL')
-                            ->url()
-                            ->placeholder('https://linkedin.com/in/yourusername')
-                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                        
-                        TextInput::make('footer_facebook')
-                            ->label('Facebook URL')
-                            ->url()
-                            ->placeholder('https://facebook.com/yourusername')
-                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                        
-                        TextInput::make('footer_bluesky')
-                            ->label('Bluesky URL')
-                            ->url()
-                            ->placeholder('https://bsky.app/profile/yourusername.bsky.social')
-                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                        
-                        TextInput::make('footer_youtube')
-                            ->label('YouTube URL')
-                            ->url()
-                            ->placeholder('https://youtube.com/@yourusername')
-                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                        
-                        TextInput::make('footer_instagram')
-                            ->label('Instagram URL')
-                            ->url()
-                            ->placeholder('https://instagram.com/yourusername')
-                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                        
-                        TextInput::make('footer_tiktok')
-                            ->label('TikTok URL')
-                            ->url()
-                            ->placeholder('https://tiktok.com/@yourusername')
-                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                        
-                        TextInput::make('footer_mastodon')
-                            ->label('Mastodon URL')
-                            ->url()
-                            ->placeholder('https://mastodon.social/@yourusername')
-                            ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                    ])
-                    ->columns(2),
+                            Section::make('Post Display Settings')
+                                ->description('Configure how blog posts are displayed')
+                                ->schema([
+                                    FileUpload::make('posts_default_image')
+                                        ->label('Default Post Image')
+                                        ->image()
+                                        ->imageEditor()
+                                        ->directory('blog/defaults')
+                                        ->visibility('public')
+                                        ->helperText('Used when a post has no featured image')
+                                        ->acceptedFileTypes(['image/*'])
+                                        ->maxSize(2048)
+                                        ->columnSpanFull(),
+                                    
+                                    Toggle::make('posts_show_language_switcher')
+                                        ->label('Show Language Availability')
+                                        ->default(true)
+                                        ->helperText('Display available translations on post pages'),
+                                ])
+                                ->columns(2),
+                        ]),
 
-                Section::make('Theme Settings')
-                    ->description('Configure theme colors and appearance')
-                    ->schema([
-                        Select::make('theme_default')
-                            ->label('Default Theme')
-                            ->options([
-                                'light' => 'Light Mode',
-                                'dark' => 'Dark Mode',
-                                'auto' => 'Auto (System Preference)',
-                            ])
-                            ->default('light')
-                            ->helperText('Users can override this in their browser')
-                            ->columnSpan(2),
-                        
-                        // Primary Colors
-                        ColorPicker::make('theme_primary_color')
-                            ->label('Primary Color (Light Mode)')
-                            ->default('#c20be5')
-                            ->helperText('Main accent color for links and interactive elements')
-                            ->columnSpan(1),
-                        ColorPicker::make('theme_primary_color_dark')
-                            ->label('Primary Color (Dark Mode)')
-                            ->default('#9b0ab8')
-                            ->columnSpan(1),
-                        ColorPicker::make('theme_primary_color_hover')
-                            ->label('Primary Hover (Light Mode)')
-                            ->default('#d946ef')
-                            ->columnSpan(1),
-                        ColorPicker::make('theme_primary_color_hover_dark')
-                            ->label('Primary Hover (Dark Mode)')
-                            ->default('#a855f7')
-                            ->columnSpan(1),
-                        
-                        // Blog Card Colors
-                        ColorPicker::make('appearance_blog_card_bg')
-                            ->label('Blog Post Card Background (Light Mode)')
-                            ->default('#ffffff')
-                            ->columnSpan(1),
-                        ColorPicker::make('appearance_blog_card_bg_dark')
-                            ->label('Blog Post Card Background (Dark Mode)')
-                            ->default('#1f2937')
-                            ->columnSpan(1),
-                        
-                        // Series Card Colors
-                        ColorPicker::make('appearance_series_card_bg')
-                            ->label('Series Card Background (Light Mode)')
-                            ->default('#f9fafb')
-                            ->columnSpan(1),
-                        ColorPicker::make('appearance_series_card_bg_dark')
-                            ->label('Series Card Background (Dark Mode)')
-                            ->default('#374151')
-                            ->columnSpan(1),
-                        
-                        // Category Colors
-                        ColorPicker::make('theme_category_bg')
-                            ->label('Category Badge (Light Mode)')
-                            ->default('#e0f2fe')
-                            ->columnSpan(1),
-                        ColorPicker::make('theme_category_bg_dark')
-                            ->label('Category Badge (Dark Mode)')
-                            ->default('#0c4a6e')
-                            ->columnSpan(1),
-                        
-                        // Tag Colors
-                        ColorPicker::make('theme_tag_bg')
-                            ->label('Tag Badge (Light Mode)')
-                            ->default('#d1fae5')
-                            ->columnSpan(1),
-                        ColorPicker::make('theme_tag_bg_dark')
-                            ->label('Tag Badge (Dark Mode)')
-                            ->default('#065f46')
-                            ->columnSpan(1),
-                        
-                        // Author Colors
-                        ColorPicker::make('theme_author_bg')
-                            ->label('Author Bio (Light Mode)')
-                            ->default('#fef3c7')
-                            ->columnSpan(1),
-                        ColorPicker::make('theme_author_bg_dark')
-                            ->label('Author Bio (Dark Mode)')
-                            ->default('#78350f')
-                            ->columnSpan(1),
-                    ])
-                    ->columns(2),
+                    // ========================================
+                    // CONTENT TAB
+                    // ========================================
+                    Tabs\Tab::make('Content')
+                        ->icon('heroicon-o-document-text')
+                        ->schema([
+                            Section::make('Table of Contents')
+                                ->description('Table of contents configuration for blog posts')
+                                ->schema([
+                                    Toggle::make('toc_enabled')
+                                        ->label('Enable Table of Contents by Default')
+                                        ->default(true)
+                                        ->helperText('Enable TOC globally. Individual posts can override this unless strict mode is enabled.'),
+                                    Toggle::make('toc_strict_mode')
+                                        ->label('Strict Mode')
+                                        ->default(false)
+                                        ->helperText('When enabled, individual posts cannot override the global TOC setting.'),
+                                ]),
 
-                Section::make('Post Display Settings')
-                    ->description('Configure how blog posts are displayed')
-                    ->schema([
-                        FileUpload::make('posts_default_image')
-                            ->label('Default Post Image')
-                            ->image()
-                            ->imageEditor()
-                            ->directory('blog/defaults')
-                            ->visibility('public')
-                            ->helperText('Used when a post has no featured image')
-                            ->acceptedFileTypes(['image/*'])
-                            ->maxSize(2048)
-                            ->columnSpanFull(),
-                        
-                        Toggle::make('posts_show_language_switcher')
-                            ->label('Show Language Availability')
-                            ->default(true)
-                            ->helperText('Display available translations on post pages'),
-                    ])
-                    ->columns(2),
+                            Section::make('Heading Permalinks')
+                                ->description('Configure heading anchor links appearance')
+                                ->schema([
+                                    TextInput::make('heading_permalink_symbol')
+                                        ->label('Permalink Symbol')
+                                        ->default('#')
+                                        ->maxLength(5)
+                                        ->helperText('Character to display next to headings (e.g., #, §, ¶, 🔗)'),
+                                    Select::make('heading_permalink_spacing')
+                                        ->label('Spacing')
+                                        ->options([
+                                            'none' => 'No spacing',
+                                            'before' => 'Space before symbol',
+                                            'after' => 'Space after symbol',
+                                            'both' => 'Space before and after',
+                                        ])
+                                        ->default('after')
+                                        ->helperText('Add spacing around the permalink symbol'),
+                                    Select::make('heading_permalink_visibility')
+                                        ->label('Visibility')
+                                        ->options([
+                                            'always' => 'Always visible',
+                                            'hover' => 'Visible on hover only',
+                                        ])
+                                        ->default('hover')
+                                        ->helperText('Control when permalink symbols are visible'),
+                                ])
+                                ->columns(3),
 
-                Section::make('Table of Contents')
-                    ->description('Table of contents configuration for blog posts')
-                    ->schema([
-                        Toggle::make('toc_enabled')
-                            ->label('Enable Table of Contents by Default')
-                            ->default(true)
-                            ->helperText('Enable TOC globally. Individual posts can override this unless strict mode is enabled.'),
-                        Toggle::make('toc_strict_mode')
-                            ->label('Strict Mode')
-                            ->default(false)
-                            ->helperText('When enabled, individual posts cannot override the global TOC setting.'),
-                    ]),
+                            Section::make('Author Bio')
+                                ->description('Configure how author information is displayed on blog posts')
+                                ->schema([
+                                    Toggle::make('author_profile_enabled')
+                                        ->label('Enable Author Profile Pages')
+                                        ->default(true)
+                                        ->helperText(function () {
+                                            $prefix = config('blogr.route.prefix', 'blog');
+                                            $prefix = $prefix ? "/{$prefix}" : '';
+                                            return "Allow users to access dedicated author profile pages at {$prefix}/author/{userSlug}";
+                                        })
+                                        ->columnSpanFull(),
+                                    Toggle::make('display_show_author_pseudo')
+                                        ->label('Show Author Pseudo/Slug')
+                                        ->default(true)
+                                        ->helperText('Display author pseudo (slug) instead of full name in article cards and headers')
+                                        ->columnSpanFull(),
+                                    Toggle::make('display_show_author_avatar')
+                                        ->label('Show Author Avatar')
+                                        ->default(true)
+                                        ->helperText('Display author avatar thumbnail in article cards and headers')
+                                        ->columnSpanFull(),
+                                    Toggle::make('display_show_series_authors')
+                                        ->label('Show Series Authors')
+                                        ->default(true)
+                                        ->helperText('Display author avatars with tooltips on series cards and pages')
+                                        ->columnSpanFull(),
+                                    TextInput::make('display_series_authors_limit')
+                                        ->label('Series Authors Display Limit')
+                                        ->numeric()
+                                        ->minValue(1)
+                                        ->maxValue(10)
+                                        ->default(4)
+                                        ->helperText('Maximum number of author avatars to show before displaying "+X" indicator')
+                                        ->columnSpanFull(),
+                                    Toggle::make('author_bio_enabled')
+                                        ->label('Display Author Bio')
+                                        ->default(true)
+                                        ->helperText('Show author information on blog posts'),
+                                    Select::make('author_bio_position')
+                                        ->label('Author Bio Position')
+                                        ->options([
+                                            'top' => 'Top of post',
+                                            'bottom' => 'Bottom of post',
+                                            'both' => 'Both top and bottom',
+                                        ])
+                                        ->default('bottom')
+                                        ->helperText('Where to display the author bio on post pages'),
+                                    Toggle::make('author_bio_compact')
+                                        ->label('Use Compact Version')
+                                        ->default(false)
+                                        ->helperText('Use a compact inline version instead of the full bio box'),
+                                ])
+                                ->columns(3),
+                        ]),
 
-                Section::make('Author Bio')
-                    ->description('Configure how author information is displayed on blog posts')
-                    ->schema([
-                        Toggle::make('author_profile_enabled')
-                            ->label('Enable Author Profile Pages')
-                            ->default(true)
-                            ->helperText(function () {
-                                $prefix = config('blogr.route.prefix', 'blog');
-                                $prefix = $prefix ? "/{$prefix}" : '';
-                                return "Allow users to access dedicated author profile pages at {$prefix}/author/{userSlug}";
-                            })
-                            ->columnSpanFull(),
-                        Toggle::make('display_show_author_pseudo')
-                            ->label('Show Author Pseudo/Slug')
-                            ->default(true)
-                            ->helperText('Display author pseudo (slug) instead of full name in article cards and headers')
-                            ->columnSpanFull(),
-                        Toggle::make('display_show_author_avatar')
-                            ->label('Show Author Avatar')
-                            ->default(true)
-                            ->helperText('Display author avatar thumbnail in article cards and headers')
-                            ->columnSpanFull(),
-                        Toggle::make('display_show_series_authors')
-                            ->label('Show Series Authors')
-                            ->default(true)
-                            ->helperText('Display author avatars with tooltips on series cards and pages')
-                            ->columnSpanFull(),
-                        TextInput::make('display_series_authors_limit')
-                            ->label('Series Authors Display Limit')
-                            ->numeric()
-                            ->minValue(1)
-                            ->maxValue(10)
-                            ->default(4)
-                            ->helperText('Maximum number of author avatars to show before displaying "+X" indicator')
-                            ->columnSpanFull(),
-                        Toggle::make('author_bio_enabled')
-                            ->label('Display Author Bio')
-                            ->default(true)
-                            ->helperText('Show author information on blog posts'),
-                        Select::make('author_bio_position')
-                            ->label('Author Bio Position')
-                            ->options([
-                                'top' => 'Top of post',
-                                'bottom' => 'Bottom of post',
-                                'both' => 'Both top and bottom',
-                            ])
-                            ->default('bottom')
-                            ->helperText('Where to display the author bio on post pages'),
-                        Toggle::make('author_bio_compact')
-                            ->label('Use Compact Version')
-                            ->default(false)
-                            ->helperText('Use a compact inline version instead of the full bio box'),
-                    ])
-                    ->columns(3),
+                    // ========================================
+                    // NAVIGATION TAB
+                    // ========================================
+                    Tabs\Tab::make('Navigation')
+                        ->icon('heroicon-o-bars-3')
+                        ->schema([
+                            Section::make('Navigation Bar')
+                                ->description('Configure the top navigation bar appearance and behavior')
+                                ->schema([
+                                    Toggle::make('navigation_enabled')
+                                        ->label('Enable Navigation Bar')
+                                        ->default(true)
+                                        ->live()
+                                        ->helperText('Show the navigation bar at the top of every page'),
+                                    
+                                    Toggle::make('navigation_sticky')
+                                        ->label('Sticky Navigation')
+                                        ->default(true)
+                                        ->visible(fn (Get $get) => $get('navigation_enabled'))
+                                        ->helperText('Keep navigation bar visible when scrolling'),
+                                    
+                                    Toggle::make('navigation_show_logo')
+                                        ->label('Show Site Logo/Name')
+                                        ->default(true)
+                                        ->visible(fn (Get $get) => $get('navigation_enabled'))
+                                        ->helperText('Display your site name in the navigation bar'),
+                                    
+                                    Toggle::make('navigation_show_language_switcher')
+                                        ->label('Show Language Switcher')
+                                        ->default(true)
+                                        ->visible(fn (Get $get) => $get('navigation_enabled'))
+                                        ->helperText('Allow users to switch between available languages'),
+                                    
+                                    Toggle::make('navigation_show_theme_switcher')
+                                        ->label('Show Theme Switcher')
+                                        ->default(true)
+                                        ->visible(fn (Get $get) => $get('navigation_enabled'))
+                                        ->helperText('Allow users to switch between light/dark/auto themes'),
+                                ])
+                                ->columns(2),
+
+                            Section::make('Footer Configuration')
+                                ->description('Customize your blog footer appearance and content')
+                                ->schema([
+                                    Toggle::make('footer_enabled')
+                                        ->label('Enable Footer')
+                                        ->default(true)
+                                        ->live()
+                                        ->helperText('Show footer at the bottom of every page'),
+                                    
+                                    Textarea::make('footer_text')
+                                        ->label('Footer Text')
+                                        ->default('© ' . date('Y') . ' My Blog. All rights reserved.')
+                                        ->helperText('Supports HTML. Use <br> for line breaks.')
+                                        ->rows(3)
+                                        ->visible(fn (Get $get) => $get('footer_enabled'))
+                                        ->columnSpanFull(),
+                                    
+                                    Toggle::make('footer_show_social_links')
+                                        ->label('Show Social Media Links')
+                                        ->default(false)
+                                        ->live()
+                                        ->helperText('Display social media icons in footer')
+                                        ->visible(fn (Get $get) => $get('footer_enabled'))
+                                        ->columnSpanFull(),
+                                    
+                                    TextInput::make('footer_twitter')
+                                        ->label('Twitter/X URL')
+                                        ->url()
+                                        ->placeholder('https://twitter.com/yourusername')
+                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                                    
+                                    TextInput::make('footer_github')
+                                        ->label('GitHub URL')
+                                        ->url()
+                                        ->placeholder('https://github.com/yourusername')
+                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                                    
+                                    TextInput::make('footer_linkedin')
+                                        ->label('LinkedIn URL')
+                                        ->url()
+                                        ->placeholder('https://linkedin.com/in/yourusername')
+                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                                    
+                                    TextInput::make('footer_facebook')
+                                        ->label('Facebook URL')
+                                        ->url()
+                                        ->placeholder('https://facebook.com/yourusername')
+                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                                    
+                                    TextInput::make('footer_bluesky')
+                                        ->label('Bluesky URL')
+                                        ->url()
+                                        ->placeholder('https://bsky.app/profile/yourusername.bsky.social')
+                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                                    
+                                    TextInput::make('footer_youtube')
+                                        ->label('YouTube URL')
+                                        ->url()
+                                        ->placeholder('https://youtube.com/@yourusername')
+                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                                    
+                                    TextInput::make('footer_instagram')
+                                        ->label('Instagram URL')
+                                        ->url()
+                                        ->placeholder('https://instagram.com/yourusername')
+                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                                    
+                                    TextInput::make('footer_tiktok')
+                                        ->label('TikTok URL')
+                                        ->url()
+                                        ->placeholder('https://tiktok.com/@yourusername')
+                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                                    
+                                    TextInput::make('footer_mastodon')
+                                        ->label('Mastodon URL')
+                                        ->url()
+                                        ->placeholder('https://mastodon.social/@yourusername')
+                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                                ])
+                                ->columns(2),
+                        ]),
+                ]),
             ];
     }
 
@@ -931,6 +1006,11 @@ class BlogrSettings extends Page
             'toc' => [
                 'enabled' => $this->toc_enabled,
                 'strict_mode' => $this->toc_strict_mode,
+            ],
+            'heading_permalink' => [
+                'symbol' => $this->heading_permalink_symbol,
+                'spacing' => $this->heading_permalink_spacing,
+                'visibility' => $this->heading_permalink_visibility,
             ],
             'author_bio' => [
                 'enabled' => $this->author_bio_enabled,
