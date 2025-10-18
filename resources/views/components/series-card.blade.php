@@ -5,7 +5,7 @@
 @endphp
 
 <div class="group bg-[var(--color-series-card-bg)] dark:bg-[var(--color-series-card-bg-dark)] rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
-    <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->slug]) }}"
+    <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->translated_slug ?? $series->slug]) }}"
         class="block">
         <div class="relative h-48 overflow-hidden">
             @if ($series->photo_url)
@@ -25,7 +25,7 @@
                             d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
                         </path>
                     </svg>
-                    {{ $series->posts->count() }} {{ $series->posts->count() > 1 ? __('blogr::blogr.series.posts_count', ['count' => $series->posts->count()]) : __('blogr::blogr.ui.read_post') }}
+                    {{ $series->posts->count() > 1 ? __('blogr::blogr.series.posts_count', ['count' => $series->posts->count()]) : __('blogr::blogr.ui.read_post') }}
                 </span>
             </div>
         </div>
@@ -56,7 +56,7 @@
                 @endif
 
                 {{-- View Series Link --}}
-                <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->slug]) }}"
+                <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->translated_slug ?? $series->slug]) }}"
                     class="inline-flex items-center text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] font-semibold text-sm group/link ml-auto"
                     onclick="event.stopPropagation();">
                     {{ __('blogr::blogr.series.view_series') }}
