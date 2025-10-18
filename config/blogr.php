@@ -143,6 +143,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Heading Permalink Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure the heading permalinks (anchor links) appearance.
+    | The symbol appears next to headings and allows direct linking.
+    |
+    */
+    'heading_permalink' => [
+        'symbol' => '#', // Character to use for the permalink (e.g., '#', '§', '¶', '🔗')
+        'spacing' => 'after', // Spacing: 'none', 'before', 'after', 'both'
+        'visibility' => 'hover', // Visibility: 'always' or 'hover'
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | SEO Configuration
     |--------------------------------------------------------------------------
     |
