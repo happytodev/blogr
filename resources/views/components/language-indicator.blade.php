@@ -25,7 +25,7 @@
             @endphp
             
             @if($isCurrent)
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--color-primary)]/20 dark:bg-[var(--color-primary-dark)]/30 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]">
                     {{ strtoupper($translation['locale']) }}
                 </span>
             @else
