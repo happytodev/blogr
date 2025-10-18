@@ -20,9 +20,9 @@
 @endphp
 
 @if($series && ($previous || $next))
-<nav class="series-navigation bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 my-8" {{ $attributes }}>
+<nav class="series-navigation bg-gradient-to-r from-[var(--color-series-card-bg)] to-indigo-50 dark:from-[var(--color-series-card-bg-dark)] dark:to-gray-900 border border-[var(--color-primary)]/30 dark:border-[var(--color-primary-dark)]/30 rounded-lg p-6 my-8" {{ $attributes }}>
     <div class="mb-4">
-        <div class="flex items-center text-sm text-blue-600 font-semibold mb-2">
+        <div class="flex items-center text-sm text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] font-semibold mb-2">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
             </svg>
@@ -39,15 +39,15 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         @if($previous)
         <a href="{{ route('blog.show', ['slug' => $previousTranslation?->slug ?? $previous->slug]) }}" 
-           class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all group">
+           class="flex items-center p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-[var(--color-primary)] dark:hover:border-[var(--color-primary-dark)] hover:shadow-md transition-all group">
             <div class="flex-shrink-0 mr-3">
-                <svg class="w-6 h-6 text-blue-500 group-hover:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] group-hover:text-[var(--color-primary-hover)] dark:group-hover:text-[var(--color-primary-hover-dark)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
             </div>
             <div class="flex-grow">
-                <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">Previous</div>
-                <div class="text-sm font-semibold text-gray-900 group-hover:text-blue-700 line-clamp-2">
+                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Previous</div>
+                <div class="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-[var(--color-primary-hover)] dark:group-hover:text-[var(--color-primary-hover-dark)] line-clamp-2">
                     {{ $previousTranslation?->title ?? 'Previous post' }}
                 </div>
             </div>
@@ -61,15 +61,15 @@
         
         @if($next)
         <a href="{{ route('blog.show', ['slug' => $nextTranslation?->slug ?? $next->slug]) }}" 
-           class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all group">
+           class="flex items-center p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-[var(--color-primary)] dark:hover:border-[var(--color-primary-dark)] hover:shadow-md transition-all group">
             <div class="flex-grow text-right">
-                <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">Next</div>
-                <div class="text-sm font-semibold text-gray-900 group-hover:text-blue-700 line-clamp-2">
+                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Next</div>
+                <div class="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-[var(--color-primary-hover)] dark:group-hover:text-[var(--color-primary-hover-dark)] line-clamp-2">
                     {{ $nextTranslation?->title ?? 'Next post' }}
                 </div>
             </div>
             <div class="flex-shrink-0 ml-3">
-                <svg class="w-6 h-6 text-blue-500 group-hover:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] group-hover:text-[var(--color-primary-hover)] dark:group-hover:text-[var(--color-primary-hover-dark)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
             </div>
