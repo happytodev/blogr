@@ -16,8 +16,8 @@ return [
     'blog_index' => [
         'cards' => [
             'colors' => [
-                'background' => 'bg-green-50', // Background color of blog index cards
-                'top_border' => 'border-green-600', // Border color of blog index cards
+                // Background color with dark mode support (use empty string to remove)
+                'background' => 'bg-white dark:bg-gray-800',
             ]
         ]
     ],
@@ -215,10 +215,37 @@ return [
                 'github' => 'https://github.com/happytodev', // GitHub URL
                 'linkedin' => 'https://linkedin.com/company/happytodev', // LinkedIn URL
                 'facebook' => 'https://facebook.com/happytodev', // Facebook URL
+                'bluesky' => '', // Bluesky URL (e.g., https://bsky.app/profile/username.bsky.social)
+                'youtube' => '', // YouTube URL (e.g., https://youtube.com/@username)
+                'instagram' => '', // Instagram URL (e.g., https://instagram.com/username)
+                'tiktok' => '', // TikTok URL (e.g., https://tiktok.com/@username)
+                'mastodon' => '', // Mastodon URL (e.g., https://mastodon.social/@username)
             ],
         ],
+        'appearance' => [
+            // Blog post card colors
+            'blog_card_bg' => '#ffffff', // Blog card background (light mode)
+            'blog_card_bg_dark' => '#1f2937', // Blog card background (dark mode)
+            // Series card colors
+            'series_card_bg' => '#f9fafb', // Series card background (light mode)
+            'series_card_bg_dark' => '#1f2937', // Series card background (dark mode)
+        ],
         'theme' => [
-            'default' => 'light', // Default theme: 'light', 'dark', or 'auto'
+            'default' => 'dark', // Default theme: 'light', 'dark', or 'auto'
+            // Primary colors
+            'primary_color' => '#c20be5', // Primary color (violet/magenta)
+            'primary_color_dark' => '#e166fa', // Primary color for dark mode
+            'primary_color_hover' => '#d946ef', // Primary color on hover
+            'primary_color_hover_dark' => '#e49df2', // Primary color on hover (dark mode)
+            // Category colors
+            'category_bg' => '#e0f2fe', // Category background (light blue)
+            'category_bg_dark' => '#0c4a6e', // Category background (dark mode)
+            // Tag colors
+            'tag_bg' => '#68fc12', // Tag background (light green)
+            'tag_bg_dark' => '#48b00d', // Tag background (dark mode)
+            // Author colors
+            'author_bg' => '#f2e2f9', // Author background (light amber)
+            'author_bg_dark' => '#9b0ab8', // Author background (dark mode)
         ],
     ],
 
