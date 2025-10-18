@@ -13,7 +13,7 @@
 @endphp
 
 @if($posts->count() > 0)
-<div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-l-4 border-purple-500 p-6 mb-8 rounded-r-xl shadow-lg" {{ $attributes }}>
+<div class="xl:w-9/12 xl:mx-auto bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-l-4 border-purple-500 p-6 mb-8 rounded-r-xl shadow-lg" {{ $attributes }}>
     <div class="flex items-start justify-between mb-4">
         <div class="flex items-center flex-grow">
             <svg class="w-6 h-6 text-purple-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,7 +64,7 @@
                     @else
                         @if($isPublished)
                             <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $postTranslation?->slug ?? $post->slug]) }}" 
-                               class="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:underline">
+                               class="relative z-10 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:underline">
                                 {{ $postTranslation?->title ?? __('blogr::blogr.ui.untitled') }}
                             </a>
                         @else
@@ -84,7 +84,7 @@
 
     <div class="pt-4 border-t border-purple-200 dark:border-purple-700">
         <a href="{{ route('blog.series.index', ['locale' => $currentLocale]) }}" 
-           class="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 hover:underline text-sm inline-flex items-center">
+           class="relative z-10 text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 hover:underline text-sm inline-flex items-center">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
             </svg>
