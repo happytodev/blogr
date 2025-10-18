@@ -55,7 +55,7 @@
     </div>
 
     <!-- Post Content -->
-    <div class="p-6 flex-grow flex flex-col">
+    <div class="p-6 flex-grow flex flex-col relative z-10">
         <!-- Title -->
         <h2 class="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-[var(--color-primary-hover)] dark:group-hover:text-[var(--color-primary-hover-dark)] transition-colors line-clamp-2">
             <a href="{{ config('blogr.locales.enabled') ? route('blog.show', ['locale' => $currentLocale, 'slug' => $postSlug]) : route('blog.show', ['slug' => $postSlug]) }}">
