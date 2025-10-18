@@ -30,6 +30,7 @@ return [
         'translation_unavailable_title' => 'Translation not available',
         'translation_unavailable_message' => 'This content is not available in :requested. Showing :showing version instead.',
         'translation_available_in' => 'Available in',
+        'about_the_author' => 'About the author',
     ],
 
     // Series
@@ -46,6 +47,7 @@ return [
         'featured' => 'Featured',
         'series' => 'This post is part of the series',
         'authors' => 'Authors',
+        'featured_series' => 'Featured Series',
     ],
 
     // Dates
@@ -53,5 +55,10 @@ return [
         'published_on' => 'Published on :date',
         'updated_on' => 'Updated on :date',
         'draft' => 'Draft',
+    ],
+
+    // Settings
+    'settings' => [
+        'save' => 'Save Settings',
     ],
 ];

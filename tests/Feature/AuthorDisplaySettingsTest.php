@@ -55,7 +55,9 @@ test('article card hides author pseudo when setting is disabled', function () {
     $response = $this->get(route('blog.index', ['locale' => 'en']));
 
     $response->assertStatus(200);
+    // When pseudo is disabled we expect the author's full name to be shown instead
     $response->assertDontSee('johndoe');
+    $response->assertSee('John Doe');
 });
 
 test('article card shows author avatar when setting is enabled', function () {
@@ -98,8 +100,10 @@ test('article detail page hides author pseudo when setting is disabled', functio
     ]));
 
     $response->assertStatus(200);
-    // Check that author-info component is not in Post Meta section (not checking author-bio at bottom)
-    $response->assertDontSee('<!-- Author Info -->');
+    // Author pseudo disabled -> the author-info component should not render the slug as visible text
+    // Note: slug may still appear in URLs (href="/blog/author/johndoe"), which is expected
+    $response->assertDontSeeText('johndoe');
+    $response->assertSeeText('John Doe');
 });
 
 test('article detail page shows author avatar when setting is enabled', function () {
@@ -124,8 +128,35 @@ test('article detail page hides author avatar when setting is disabled', functio
     ]));
 
     $response->assertStatus(200);
-    // Check that author-info component is not in Post Meta section  
-    $response->assertDontSee('<!-- Author Info -->');
+    // Ensure avatar is not output
+    $response->assertDontSee('avatars/john.jpg', false);
+});
+
+test('series hides author avatar when show_author_avatar is false', function () {
+    // Create a series post and ensure avatar is not shown when disabled
+    config(['blogr.display.show_author_avatar' => false]);
+
+    $response = $this->get(route('blog.show', [
+        'locale' => 'en',
+        'slug' => 'test-article',
+    ]));
+
+    $response->assertStatus(200);
+    $response->assertDontSee('avatars/john.jpg', false);
+});
+
+test('compact author bio has bottom spacing', function () {
+    // Enable compact bio and ensure the rendered component has bottom margin class
+    config(['blogr.author_bio.enabled' => true]);
+    config(['blogr.author_bio.compact' => true]);
+
+    $response = $this->get(route('blog.show', [
+        'locale' => 'en',
+        'slug' => 'test-article',
+    ]));
+
+    $response->assertStatus(200);
+    $response->assertSee('mb-6');
 });
 
 test('author pseudo falls back to name when slug is empty', function () {

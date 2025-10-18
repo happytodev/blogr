@@ -66,6 +66,35 @@
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Color System CSS Variables -->
+    <style>
+        :root {
+            /* Primary Colors */
+            --color-primary: {{ config('blogr.ui.theme.primary_color', '#c20be5') }};
+            --color-primary-dark: {{ config('blogr.ui.theme.primary_color_dark', '#9b0ab8') }};
+            --color-primary-hover: {{ config('blogr.ui.theme.primary_color_hover', '#d946ef') }};
+            --color-primary-hover-dark: {{ config('blogr.ui.theme.primary_color_hover_dark', '#a855f7') }};
+            
+            /* Card Colors */
+            --color-blog-card-bg: {{ config('blogr.ui.appearance.blog_card_bg', '#ffffff') }};
+            --color-blog-card-bg-dark: {{ config('blogr.ui.appearance.blog_card_bg_dark', '#1f2937') }};
+            --color-series-card-bg: {{ config('blogr.ui.appearance.series_card_bg', '#f9fafb') }};
+            --color-series-card-bg-dark: {{ config('blogr.ui.appearance.series_card_bg_dark', '#374151') }};
+            
+            /* Category Colors */
+            --color-category-bg: {{ config('blogr.ui.theme.category_bg', '#e0f2fe') }};
+            --color-category-bg-dark: {{ config('blogr.ui.theme.category_bg_dark', '#0c4a6e') }};
+            
+            /* Tag Colors */
+            --color-tag-bg: {{ config('blogr.ui.theme.tag_bg', '#d1fae5') }};
+            --color-tag-bg-dark: {{ config('blogr.ui.theme.tag_bg_dark', '#065f46') }};
+            
+            /* Author Colors */
+            --color-author-bg: {{ config('blogr.ui.theme.author_bg', '#fef3c7') }};
+            --color-author-bg-dark: {{ config('blogr.ui.theme.author_bg_dark', '#78350f') }};
+        }
+    </style>
+
     <!-- Structured Data (JSON-LD) -->
     @if (config('blogr.seo.structured_data.enabled', true) && isset($seoData))
         <script type="application/ld+json">
@@ -74,6 +103,7 @@
     @endif
 
     @stack('head')
+    @stack('styles')
     
     <!-- Dark mode initialization script (runs before page render to prevent flash) -->
     <script>

@@ -85,6 +85,11 @@ class BlogSeries extends Model
      */
     public function translate(string $locale): ?BlogSeriesTranslation
     {
+        // Use loaded translations if available, otherwise query
+        if ($this->relationLoaded('translations')) {
+            return $this->translations->firstWhere('locale', $locale);
+        }
+        
         return $this->translations()->where('locale', $locale)->first();
     }
 
@@ -93,7 +98,34 @@ class BlogSeries extends Model
      */
     public function getDefaultTranslation(): ?BlogSeriesTranslation
     {
-        return $this->translate('en') ?? $this->translations()->first();
+        $enTranslation = $this->translate('en');
+        
+        if ($enTranslation) {
+            return $enTranslation;
+        }
+        
+        // Use loaded translations if available
+        if ($this->relationLoaded('translations')) {
+            return $this->translations->first();
+        }
+        
+        return $this->translations()->first();
+    }
+
+    /**
+     * Get the translated slug for a specific locale.
+     * Falls back to base slug if no translation exists or if translation slug is empty.
+     */
+    public function getTranslatedSlug(string $locale): string
+    {
+        $translation = $this->translate($locale);
+        
+        // Return translated slug only if it exists and is not empty
+        if ($translation && !empty($translation->slug)) {
+            return $translation->slug;
+        }
+        
+        return $this->slug;
     }
 
     /**
@@ -167,10 +199,17 @@ class BlogSeries extends Model
 
     /**
      * Check if the series is published.
+     * Returns true if published_at is null (always published) or if the date is in the past.
      */
     public function isPublished(): bool
     {
-        return $this->published_at !== null && $this->published_at->isPast();
+        // If published_at is null, the series is always published
+        if ($this->published_at === null) {
+            return true;
+        }
+        
+        // Otherwise, check if the published_at date is in the past
+        return $this->published_at->isPast();
     }
 
     /**

@@ -27,9 +27,10 @@ class BlogSeriesForm
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255)
-                            ->helperText('Unique identifier for the series (e.g., "learn-laravel")')
+                            ->helperText('Fallback identifier for the series. Use translated slugs in translations section for localized URLs.')
                             ->placeholder('my-series-slug')
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->hidden(),
                         
                         TextInput::make('position')
                             ->label('Display Order')
@@ -86,6 +87,13 @@ class BlogSeriesForm
                                     ->label('Title')
                                     ->required()
                                     ->maxLength(255)
+                                    ->columnSpan(2),
+                                
+                                TextInput::make('slug')
+                                    ->label('Translated Slug')
+                                    ->maxLength(255)
+                                    ->helperText('Optional: Localized URL slug for this language (e.g., "apprendre-laravel" for FR, "learn-laravel" for EN). Falls back to main slug if empty.')
+                                    ->placeholder('translated-slug')
                                     ->columnSpan(2),
                                 
                                 Textarea::make('description')

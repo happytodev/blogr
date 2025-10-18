@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table(config('blogr.tables.prefix', '') . 'blog_posts', function (Blueprint $table) {
-            $table->boolean('display_toc')->default(false)->after('default_locale');
+            $table->boolean('display_toc')->nullable()->after('default_locale');
         });
     }
 

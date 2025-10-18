@@ -7,3 +7,34 @@
 }
 
 @variant dark (.dark &);
+
+/* Table of Contents Styles */
+.prose .toc {
+    @apply bg-gray-50 dark:bg-gray-800/50 border-l-4 border-blue-500 dark:border-blue-400 p-4 rounded-r-lg mb-6;
+}
+
+.prose .toc a {
+    @apply no-underline text-gray-700 dark:text-gray-300 transition-colors;
+}
+
+.prose .toc a:hover {
+    @apply text-blue-600 dark:text-blue-400 underline;
+}
+
+/* Heading Permalink Styles */
+.prose .heading-permalink {
+    @apply no-underline text-gray-400 dark:text-gray-600 opacity-0 transition-opacity ml-2;
+}
+
+.prose h1:hover .heading-permalink,
+.prose h2:hover .heading-permalink,
+.prose h3:hover .heading-permalink,
+.prose h4:hover .heading-permalink,
+.prose h5:hover .heading-permalink,
+.prose h6:hover .heading-permalink {
+    @apply opacity-100;
+}
+
+.prose .heading-permalink:hover {
+    @apply text-blue-600 dark:text-blue-400;
+}

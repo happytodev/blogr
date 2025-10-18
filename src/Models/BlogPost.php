@@ -646,7 +646,7 @@ class BlogPost extends Model
 
     /**
      * Check if TOC should be displayed for this post
-     * Takes into account global settings and frontmatter override
+     * Priority: strict_mode global > display_toc field > frontmatter disable_toc > global setting
      *
      * @return bool
      */
@@ -655,20 +655,23 @@ class BlogPost extends Model
         $globalEnabled = config('blogr.toc.enabled', true);
         $strictMode = config('blogr.toc.strict_mode', false);
 
-        // If strict mode is enabled, always use global setting
+        // If strict mode is enabled, always use global setting (highest priority)
         if ($strictMode) {
             return $globalEnabled;
         }
 
-        // If not in strict mode, check frontmatter override
-        $frontmatter = $this->extractFrontmatter();
-
-        // If frontmatter explicitly sets disable_toc, use that value
-        if (isset($frontmatter['disable_toc'])) {
-            return !$frontmatter['disable_toc']; // disable_toc: true means TOC is disabled, so return false
+        // Second check: use display_toc field from database if explicitly set
+        if ($this->display_toc !== null) {
+            return (bool) $this->display_toc;
         }
 
-        // Otherwise, use global setting
+        // Third check: legacy frontmatter support
+        $frontmatter = $this->extractFrontmatter();
+        if (isset($frontmatter['disable_toc'])) {
+            return !$frontmatter['disable_toc'];
+        }
+
+        // Fourth check: global setting
         return $globalEnabled;
     }
 
