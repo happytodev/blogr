@@ -66,7 +66,7 @@
             <div class="relative group">
                 @if($authorUrl)
                     <a href="{{ $authorUrl }}" 
-                       class="block {{ $avatarSize }} rounded-full border-2 border-white dark:border-gray-800 overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700 hover:ring-blue-500 dark:hover:ring-blue-400 transition-all duration-200 hover:scale-110 hover:z-10"
+                       class="block {{ $avatarSize }} rounded-full border-2 border-white dark:border-gray-800 overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700 hover:ring-[var(--color-primary)] dark:hover:ring-[var(--color-primary-dark)] transition-all duration-200 hover:scale-110 hover:z-10"
                        title="{{ $displayName }}">
                 @else
                     <div class="{{ $avatarSize }} rounded-full border-2 border-white dark:border-gray-800 overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700">
