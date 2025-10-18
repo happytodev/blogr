@@ -6,6 +6,15 @@ All notable changes to `blogr` will be documented in this file.
 
 ### 🐛 Bug Fixes
 
+- **Author Bio Settings**: Fixed author bio settings not working properly ([Issue #116](https://github.com/happytodev/blogr/issues/116))
+  - The `author_bio.enabled` setting now correctly controls bio visibility
+  - The `author_bio.compact` setting now properly switches between compact and full display
+  - The `author_bio.position` setting now works correctly (top/bottom/both)
+  - Added conditional rendering in `show.blade.php` to check all config settings
+  - Component now receives `compact` parameter from configuration
+  - Added comprehensive TDD tests (10 tests) to verify all settings combinations
+  - **Breaking**: Sites with published views must update `resources/views/vendor/blogr/blog/show.blade.php`
+
 - **Installation Command**: Fixed double comma syntax error in User model casts ([Issue #115](https://github.com/happytodev/blogr/issues/115))
   - Installation script now properly removes trailing commas before adding `'bio' => 'array'` cast
   - Prevents `Cannot use empty array elements in arrays` fatal error
