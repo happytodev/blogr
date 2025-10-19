@@ -6,7 +6,7 @@
             <!-- Logo / Site Name -->
             @if(config('blogr.ui.navigation.show_logo', true))
             <div class="flex-shrink-0">
-                <a href="{{ route('blog.index', ['locale' => $currentLocale]) }}" class="text-2xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <a href="{{ route('blog.index', ['locale' => $currentLocale]) }}" class="text-2xl font-bold text-gray-900 dark:text-white hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] transition-colors">
                     {{ \Happytodev\Blogr\Helpers\ConfigHelper::getSeoSiteName($currentLocale) }}
                 </a>
             </div>
@@ -37,15 +37,41 @@
                          x-transition:leave-end="transform opacity-0 scale-95"
                          class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
                         <div class="py-1" role="menu">
-                            @foreach($availableLocales as $locale)
+                                                        @foreach($availableLocales as $locale)
                             @php
                                 // Get current route and replace locale parameter
                                 $currentRouteName = request()->route()->getName();
                                 $currentParams = request()->route()->parameters();
                                 $currentParams['locale'] = $locale;
+                                
+                                // Handle special case for series routes - use translated slug
+                                if (str_contains($currentRouteName, 'blog.series') && isset($currentParams['seriesSlug'])) {
+                                    // Check if we have the series model available in the view
+                                    if (isset($currentSeries) && $currentSeries instanceof \Happytodev\Blogr\Models\BlogSeries) {
+                                        $currentParams['seriesSlug'] = $currentSeries->getTranslatedSlug($locale);
+                                    } else {
+                                        // Fallback: try to get series from route parameters
+                                        $routeSeries = request()->route('seriesSlug');
+                                        if ($routeSeries instanceof \Happytodev\Blogr\Models\BlogSeries) {
+                                            $currentParams['seriesSlug'] = $routeSeries->getTranslatedSlug($locale);
+                                        } elseif (is_string($routeSeries) || is_string($currentParams['seriesSlug'])) {
+                                            // If we only have the slug string, try to find the series
+                                            $slugToFind = is_string($routeSeries) ? $routeSeries : $currentParams['seriesSlug'];
+                                            $series = \Happytodev\Blogr\Models\BlogSeries::where('slug', $slugToFind)
+                                                ->orWhereHas('translations', function($q) use ($slugToFind) {
+                                                    $q->where('slug', $slugToFind);
+                                                })
+                                                ->with('translations')
+                                                ->first();
+                                            if ($series) {
+                                                $currentParams['seriesSlug'] = $series->getTranslatedSlug($locale);
+                                            }
+                                        }
+                                    }
+                                }
                             @endphp
                             <a href="{{ route($currentRouteName, $currentParams) }}" 
-                               class="block px-4 py-2 text-sm {{ $locale === $currentLocale ? 'bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} transition-colors"
+                               class="block px-4 py-2 text-sm {{ $locale === $currentLocale ? 'bg-gray-100 dark:bg-gray-700 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} transition-colors"
                                role="menuitem">
                                 <span class="uppercase font-semibold">{{ $locale }}</span>
                                 <span class="ml-2 text-xs">

@@ -4,12 +4,12 @@
             {{ $this->form }}
         </div>
 
-        <div class="flex justify-end !pt-12 !mt-8 border-t">
+        <div class="flex justify-end !pt-16 !mt-16 border-t-2 border-gray-200 dark:border-gray-700" style="margin-top: 16px;">
             <x-filament::button
                 type="submit"
                 color="primary"
             >
-                Save Settings
+                {{ __('blogr::blogr.settings.save') }}
             </x-filament::button>
         </div>
     </form>

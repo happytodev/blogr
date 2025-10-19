@@ -33,6 +33,7 @@ it('displays blog post with title, category, tags, TLDR and TOC correctly', func
         'user_id' => $user->id,
         'category_id' => $category->id,
         'published_at' => now(),
+        'display_toc' => true,
     ]);
 
     // Attach tags to the blog post
@@ -800,7 +801,7 @@ it('global TOC setting works end-to-end', function () {
     $user = User::factory()->create();
     $category = Category::factory()->create();
 
-    // Create a post without frontmatter (should use global setting)
+    // Create a post without display_toc set (should use global setting)
     $post = BlogPost::create([
         'title' => 'Post Using Global TOC Setting',
         'content' => "# Introduction\n\nThis post uses global TOC setting.\n\n## Section 1\n\nContent here.\n\n## Section 2\n\nMore content.",
@@ -810,6 +811,7 @@ it('global TOC setting works end-to-end', function () {
         'user_id' => $user->id,
         'category_id' => $category->id,
         'published_at' => now(),
+        'display_toc' => null, // Explicitly set to null to use global setting
     ]);
 
     // Test with global TOC enabled

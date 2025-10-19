@@ -30,6 +30,7 @@ return [
         'translation_unavailable_title' => 'Traduction non disponible',
         'translation_unavailable_message' => 'Ce contenu n\'est pas disponible en :requested. Version :showing affichée à la place.',
         'translation_available_in' => 'Disponible en',
+        'about_the_author' => 'À propos de l\'auteur',
     ],
     
     // Series
@@ -47,6 +48,7 @@ return [
         'featured' => 'En vedette',
         'series' => 'Cette article fait partie de la série',
         'authors' => 'Auteurs',
+        'featured_series' => 'Séries en vedette',
     ],
     
     // Dates
@@ -54,5 +56,10 @@ return [
         'published_on' => 'Publié le :date',
         'updated_on' => 'Mis à jour le :date',
         'draft' => 'Brouillon',
+    ],
+
+    // Settings
+    'settings' => [
+        'save' => 'Enregistrer les paramètres',
     ],
 ];

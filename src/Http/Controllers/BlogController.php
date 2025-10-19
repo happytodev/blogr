@@ -6,6 +6,7 @@ use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Helpers\SEOHelper;
 use Happytodev\Blogr\Helpers\ConfigHelper;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
@@ -98,17 +99,12 @@ class BlogController
         $featuredSeries = BlogSeries::where('is_featured', true)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
-            ->with(['translations' => function($query) use ($locale) {
-                $query->where('locale', $locale);
-            }, 'posts' => function($query) {
-                $query->where('is_published', true)
-                      ->orderBy('series_position');
-            }])
+            ->with('translations') // Load all translations for photo fallback
             ->orderBy('position')
             ->take(3)
             ->get()
             ->map(function ($series) use ($locale) {
-                $translation = $series->translations->first();
+                $translation = $series->translate($locale);
                 
                 // If no translation in requested locale, try default translation
                 if (!$translation) {
@@ -118,10 +114,27 @@ class BlogController
                 // Set translated properties with fallback to model accessors
                 $series->translated_title = $translation?->title ?? $series->title;
                 $series->translated_description = $translation?->description ?? $series->description;
+                $series->translated_slug = $series->getTranslatedSlug($locale);
                 
-                if ($series->photo) {
-                    $series->photo_url = $this->getStorageUrl($series->photo);
+                // Photo fallback logic for series: translation photo > series photo > any other translation photo
+                $photoToUse = null;
+                
+                if ($translation?->photo) {
+                    $photoToUse = $translation->photo;
+                } elseif ($series->photo) {
+                    $photoToUse = $series->photo;
+                } else {
+                    $anyTranslationWithPhoto = $series->translations->first(fn($t) => !empty($t->photo));
+                    if ($anyTranslationWithPhoto) {
+                        $photoToUse = $anyTranslationWithPhoto->photo;
+                    }
                 }
+                
+                // Set the photo to use (this will override the accessor's default behavior)
+                if ($photoToUse) {
+                    $series->setAttribute('photo', $photoToUse);
+                }
+                
                 return $series;
             });
 
@@ -196,17 +209,34 @@ class BlogController
             abort(404);
         }
         
+        // Load permalink configuration
+        $permalinkConfig = config('blogr.heading_permalink', [
+            'symbol' => '#',
+            'spacing' => 'after',
+            'visibility' => 'hover',
+        ]);
+        
+        // Determine insert position based on spacing preference
+        // If user wants space 'after' symbol, we insert 'before' the heading text
+        // If user wants space 'before' symbol, we insert 'after' the heading text
+        $insertPosition = match($permalinkConfig['spacing']) {
+            'before' => 'after',  // Space before symbol = insert after heading
+            'after' => 'before',  // Space after symbol = insert before heading
+            'both' => 'before',   // Space on both sides = insert before (CSS handles both)
+            default => 'before',
+        };
+        
         // Prepare markdown converter
         $environment = new Environment([
             'heading_permalink' => [
                 'html_class' => 'heading-permalink',
                 'id_prefix' => '',
                 'fragment_prefix' => '',
-                'insert' => 'before',
+                'insert' => $insertPosition,
                 'min_heading_level' => 1,
                 'max_heading_level' => 6,
                 'title' => 'Permalink',
-                'symbol' => '#',
+                'symbol' => $permalinkConfig['symbol'],
                 'aria_hidden' => true,
             ],
             'table_of_contents' => [
@@ -379,7 +409,8 @@ class BlogController
             'displayData' => $displayData,
             'currentLocale' => $locale,
             'availableTranslations' => $availableTranslations,
-            'seoData' => $seoData
+            'seoData' => $seoData,
+            'permalinkConfig' => $permalinkConfig,
         ]);
     }
 
@@ -545,6 +576,7 @@ class BlogController
                 $translation = $s->translate($locale) ?? $s->getDefaultTranslation();
                 $s->translated_title = $translation?->title ?? $s->slug;
                 $s->translated_description = $translation?->description ?? '';
+                $s->translated_slug = $s->getTranslatedSlug($locale);
                 
                 // Photo fallback logic: translation photo > series photo > any other translation photo
                 $photoToUse = null;
@@ -560,8 +592,9 @@ class BlogController
                     }
                 }
                 
+                // Set the photo to use (this will override the accessor's default behavior)
                 if ($photoToUse) {
-                    $s->photo_url = $this->getStorageUrl($photoToUse);
+                    $s->setAttribute('photo', $photoToUse);
                 }
                 
                 return $s;
@@ -601,9 +634,22 @@ class BlogController
         // Validate locale
         $locale = $this->resolveLocale($locale);
         
-        $series = \Happytodev\Blogr\Models\BlogSeries::where('slug', $actualSlug)
+        // Try to find series by translated slug first
+        $series = \Happytodev\Blogr\Models\BlogSeries::whereHas('translations', function ($query) use ($actualSlug, $locale) {
+            $query->where('locale', $locale)
+                  ->where('slug', $actualSlug);
+        })
+            ->with('translations') // Load translations eagerly
             ->published()
-            ->firstOrFail();
+            ->first();
+        
+        // If not found by translated slug, try base slug (backward compatibility)
+        if (!$series) {
+            $series = \Happytodev\Blogr\Models\BlogSeries::where('slug', $actualSlug)
+                ->with('translations') // Load translations eagerly
+                ->published()
+                ->firstOrFail();
+        }
         
         $posts = $series->posts()
             ->with(['translations'])
@@ -652,16 +698,21 @@ class BlogController
             }
         }
         
+        // Set the photo to use (this will override the accessor's default behavior)
         if ($photoToUse) {
-            $series->photo_url = $this->getStorageUrl($photoToUse);
+            // Temporarily replace the photo attribute so the accessor uses the right one
+            $series->setAttribute('photo', $photoToUse);
         }
+        
+        // Get translated slug for canonical URL
+        $translatedSlug = $series->getTranslatedSlug($locale);
         
         $seoData = [
             'title' => $seriesTranslation?->seo_title ?? $seriesTranslation?->title ?? $series->slug,
             'description' => $seriesTranslation?->seo_description ?? $seriesTranslation?->description ?? '',
             'canonical' => $localesEnabled 
-                ? route('blog.series', ['locale' => $locale, 'seriesSlug' => $actualSlug])
-                : route('blog.series', ['seriesSlug' => $actualSlug]),
+                ? route('blog.series', ['locale' => $locale, 'seriesSlug' => $translatedSlug])
+                : route('blog.series', ['seriesSlug' => $translatedSlug]),
         ];
 
         return View::make('blogr::blog.series', [
@@ -670,7 +721,7 @@ class BlogController
             'posts' => $posts,
             'currentLocale' => $locale,
             'seoData' => $seoData
-        ]);
+        ])->with('currentSeries', $series); // Share series for navigation component
     }
 
     /**

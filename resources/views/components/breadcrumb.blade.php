@@ -26,7 +26,7 @@
         if ($series) {
             $breadcrumbs[] = [
                 'label' => $seriesTranslation?->title ?? $series->slug,
-                'url' => route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->slug]),
+                'url' => route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->getTranslatedSlug($currentLocale)]),
             ];
         }
     }
@@ -47,7 +47,7 @@
         @endif
         
         @if(isset($breadcrumb['url']) && $index < count($breadcrumbs) - 1)
-            <a href="{{ $breadcrumb['url'] }}" class="hover:text-blue-600 transition-colors">
+            <a href="{{ $breadcrumb['url'] }}" class="hover:text-[var(--color-primary-hover)] transition-colors">
                 {{ $breadcrumb['label'] }}
             </a>
         @else

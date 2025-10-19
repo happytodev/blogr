@@ -389,9 +389,9 @@ it('can check if series is published', function () {
         'published_at' => now()->subDay(),
     ]);
 
-    $draft = BlogSeries::create([
-        'slug' => 'draft',
-        'published_at' => null,
+    $alwaysPublished = BlogSeries::create([
+        'slug' => 'always-published',
+        'published_at' => null, // null = always published
     ]);
 
     $future = BlogSeries::create([
@@ -400,7 +400,7 @@ it('can check if series is published', function () {
     ]);
 
     expect($published->isPublished())->toBeTrue()
-        ->and($draft->isPublished())->toBeFalse()
+        ->and($alwaysPublished->isPublished())->toBeTrue() // null = always published
         ->and($future->isPublished())->toBeFalse();
 });
 

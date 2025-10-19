@@ -13,17 +13,17 @@
 @endphp
 
 @if($posts->count() > 0)
-<div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-l-4 border-purple-500 p-6 mb-8 rounded-r-xl shadow-lg" {{ $attributes }}>
+<div class="xl:w-9/12 xl:mx-auto bg-gradient-to-r from-[var(--color-primary)]/5 to-pink-50 dark:from-[var(--color-primary-dark)]/20 dark:to-pink-900/20 border-l-4 border-[var(--color-primary)] dark:border-[var(--color-primary-dark)] p-6 mb-8 rounded-r-xl shadow-lg" {{ $attributes }}>
     <div class="flex items-start justify-between mb-4">
         <div class="flex items-center flex-grow">
-            <svg class="w-6 h-6 text-purple-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-6 h-6 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
             </svg>
             <div>
-                <div class="text-xs uppercase tracking-wide text-purple-600 dark:text-purple-400 font-semibold mb-1">
+                <div class="text-xs uppercase tracking-wide text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] font-semibold mb-1">
                     {{ __('blogr::blogr.series.series') }}
                 </div>
-                <h3 class="text-lg font-bold text-purple-900 dark:text-purple-300">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">
                     {{ $seriesTranslation?->title ?? $series->slug }}
                 </h3>
             </div>
@@ -54,17 +54,17 @@
             @endphp
             
             <div class="flex items-start">
-                <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold mr-3 {{ $isCurrentPost ? 'bg-purple-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400' }}">
+                <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold mr-3 {{ $isCurrentPost ? 'bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400' }}">
                     {{ $post->series_position }}
                 </div>
                 <div class="flex-grow">
                     @if($isCurrentPost)
-                        <span class="font-semibold text-purple-900 dark:text-purple-300">{{ $postTranslation?->title ?? __('blogr::blogr.ui.untitled') }}</span>
-                        <span class="ml-2 text-xs text-purple-600 dark:text-purple-400">({{ __('blogr::blogr.series.current') }})</span>
+                        <span class="font-semibold text-gray-900 dark:text-gray-100">{{ $postTranslation?->title ?? __('blogr::blogr.ui.untitled') }}</span>
+                        <span class="ml-2 text-xs text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]">({{ __('blogr::blogr.series.current') }})</span>
                     @else
                         @if($isPublished)
                             <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $postTranslation?->slug ?? $post->slug]) }}" 
-                               class="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:underline">
+                               class="relative z-10 text-gray-700 dark:text-gray-300 hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] hover:underline">
                                 {{ $postTranslation?->title ?? __('blogr::blogr.ui.untitled') }}
                             </a>
                         @else
@@ -82,9 +82,9 @@
         @endforeach
     </div>
 
-    <div class="pt-4 border-t border-purple-200 dark:border-purple-700">
+    <div class="pt-4 border-t border-[var(--color-primary)]/30 dark:border-[var(--color-primary-dark)]/50">
         <a href="{{ route('blog.series.index', ['locale' => $currentLocale]) }}" 
-           class="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 hover:underline text-sm inline-flex items-center">
+           class="relative z-10 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] hover:underline text-sm inline-flex items-center">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
             </svg>
