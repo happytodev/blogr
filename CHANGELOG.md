@@ -4,6 +4,107 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### ✨ Features
+
+- **CSS Variables Theming System**: Complete theming system with CSS variables for colors
+  - Primary, category, tag, and author colors with dark mode support
+  - Hover effects and link styling using CSS variables
+  - Applied across navigation, footer, cards, breadcrumbs, and all components
+  - `ColorHelper` class for automatic dark mode color adjustments
+
+- **Blog Series Translations**: Full translation support for series
+  - Added `slug` column to `blog_series_translations` table for localized URLs
+  - Series routes now use translated slugs (`/blog/series/{translatedSlug}`)
+  - Automatic slug generation and fallback to default locale
+  - Updated navigation, breadcrumbs, and cards to use translated slugs
+
+- **Publication Date Configuration**: Granular control over date display
+  - Master toggle: `ui.dates.show_publication_date` (global enable/disable)
+  - `ui.dates.show_publication_date_on_cards` - Show dates on post cards
+  - `ui.dates.show_publication_date_on_articles` - Show dates on article pages
+  - Replaces deprecated `ui.blog_post_card.show_publication_date`
+
+- **Default Image Management**: Improved fallback logic for post images
+  - `BlogPost::getPhotoUrlAttribute()` with priority chain:
+    1. Post photo (database)
+    2. `config('blogr.posts.default_image')`
+    3. Legacy `config('blogr.default_cover_image')` (backward compatibility)
+    4. Hardcoded fallback: `/vendor/blogr/images/default-post.svg`
+  - Works with translated content and author pages
+
+- **Tags Position Configuration**: Control where tags appear on articles
+  - `ui.posts.tags_position` setting: `'top'` or `'bottom'`
+  - Configurable via BlogrSettings admin panel
+
+- **Heading Permalink Configuration**: Customizable anchor links for headings
+  - Symbol: `'#'`, `'§'`, `'¶'`, `'🔗'`, etc.
+  - Spacing: `'none'`, `'before'`, `'after'`, `'both'`
+  - Visibility: `'always'` or `'hover'`
+  - Copy-to-clipboard functionality with visual feedback
+
+- **Author Profile Enhancements**:
+  - Bio rendered as Markdown with `MarkdownHelper` class
+  - Avatar with gradient background using primary colors
+  - Improved hover effects with primary color ring
+  - Publication date visibility respects global settings
+  - Author name tooltip on avatar hover
+  - Proper display of pseudo vs full name based on `display.show_author_pseudo`
+
+- **Blog Post Card Component**: New reusable `blog-post-card.blade.php`
+  - Translation support with automatic locale detection
+  - Dynamic content rendering (title, excerpt, image, tags)
+  - Consistent styling across index, category, tag, and author views
+
+- **Series Card Component**: New reusable `series-card.blade.php`
+  - Responsive design with author avatars
+  - Author limit display (`series_authors_limit` config)
+  - Translated slug support for all links
+
+### 🔧 Improvements
+
+- **Table of Contents Styling**: Enhanced TOC appearance and functionality
+- **Author Bio Component**: Improved rendering with markdown support and avatar display options
+- **Series Navigation**: Better layout and responsiveness with CSS variables
+- **Language Switcher**: Updated styling for better visibility and theming
+- **Footer Social Links**: Added Bluesky, YouTube, Instagram, TikTok, Mastodon support
+- **Breadcrumb Navigation**: Improved hover effects and translated slug support
+- **BlogrSettings**: Enhanced admin panel with better tab structure and color options
+- **Translations**: Added French translations for author information and featured series
+
+### 🐛 Bug Fixes
+
+- **Photo Fallback Logic**: Fixed default images not loading on author pages
+  - Author page now correctly uses `config('blogr.posts.default_image')`
+  - Proper asset() path resolution for vendor images
+  - Consistent fallback across all views
+
+- **TOC Display Logic**: Clarified priority checks in `BlogPost` model
+  - Fixed nullable `display_toc` column in migration
+  - Proper cascade: post setting → strict mode → global setting
+
+- **Series Image Overlay**: Commented out gradient overlay for better image visibility
+
+### 🧪 Tests
+
+- Added comprehensive feature tests for:
+  - Author profile enhancements (layout, bio, dates, avatars)
+  - Author avatar hover effects
+  - Publication date display and fallback logic
+  - Photo URL attribute and fallback chain
+  - Blog series slug generation and translations
+  - Settings configuration and persistence
+- Total: 449 passing tests
+
+### 📚 Documentation
+
+- Updated config comments to clarify image publication paths
+- Added inline documentation for new helpers and methods
+
+### ⚠️ Breaking Changes
+
+- **Deprecated Config**: `ui.blog_post_card.show_publication_date` replaced by `ui.dates.*` settings
+- **Migration Required**: New `slug` column in `blog_series_translations` table
+
 
 ## [v0.11.2](https://github.com/happytodev/blogr/compare/v0.11.2...v0.11.1) - 2025-10-15
 
