@@ -173,15 +173,17 @@
 
             <!-- Post Meta -->
             <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
-                <span class="flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                        </path>
-                    </svg>
-                    {{ $post->published_at?->locale($currentLocale ?? app()->getLocale())->isoFormat('LL') ?? __('blogr::blogr.date.draft') }}
-                </span>
+                @if (config('blogr.ui.dates.show_publication_date', true) && config('blogr.ui.dates.show_publication_date_on_articles', true))
+                    <span class="flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        {{ $post->published_at?->locale($currentLocale ?? app()->getLocale())->isoFormat('LL') ?? __('blogr::blogr.date.draft') }}
+                    </span>
+                @endif>
 
                 @if (config('blogr.reading_time.enabled', true))
                     <span class="flex items-center">
@@ -315,8 +317,16 @@
         @endif
 
 
-        <!-- Tags -->
-        @if ($post->tags->count())
+        <!-- Author Bio Box (Top Position) -->
+        @if(config('blogr.author_bio.enabled', true) && in_array(config('blogr.author_bio.position', 'bottom'), ['top', 'both']))
+            <x-blogr::author-bio 
+                :author="$post->author" 
+                :locale="$currentLocale"
+                :compact="config('blogr.author_bio.compact', false)" />
+        @endif
+
+        <!-- Tags (Top Position) -->
+        @if ($post->tags->count() && config('blogr.ui.posts.tags_position', 'bottom') === 'top')
             <div class="mb-8 flex flex-wrap gap-2">
                 <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Tags:</span>
                 @foreach ($post->tags as $tag)
@@ -326,20 +336,11 @@
                         $tagSlug = $tagTranslation ? $tagTranslation->slug : $tag->slug;
                     @endphp
                     <a href="{{ config('blogr.locales.enabled') ? route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) : route('blog.tag', ['tagSlug' => $tagSlug]) }}"
-                        {{-- class="inline-block bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 text-sm px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"> --}}
                         class="inline-block bg-[var(--color-tag-bg)] dark:bg-[var(--color-tag-bg-dark)] text-gray-900 dark:text-white text-xs px-2.5 py-1 rounded-full hover:opacity-90 transition-colors">
                         #{{ $tagName }}
                     </a>
                 @endforeach
             </div>
-        @endif
-
-        <!-- Author Bio Box (Top Position) -->
-        @if(config('blogr.author_bio.enabled', true) && in_array(config('blogr.author_bio.position', 'bottom'), ['top', 'both']))
-            <x-blogr::author-bio 
-                :author="$post->author" 
-                :locale="$currentLocale"
-                :compact="config('blogr.author_bio.compact', false)" />
         @endif
 
         <!-- Post Content -->
@@ -355,6 +356,24 @@
                     prose-blockquote:border-[var(--color-primary)] prose-blockquote:bg-[var(--color-primary)]/10 dark:prose-blockquote:bg-[var(--color-primary-dark)]/20 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg">
             {!! isset($displayData) ? $displayData['content'] : $post->getContentWithoutFrontmatter() !!}
         </div>
+
+        <!-- Tags (Bottom Position) -->
+        @if ($post->tags->count() && config('blogr.ui.posts.tags_position', 'bottom') === 'bottom')
+            <div class="mb-8 flex flex-wrap gap-2">
+                <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Tags:</span>
+                @foreach ($post->tags as $tag)
+                    @php
+                        $tagTranslation = $tag->translate($currentLocale);
+                        $tagName = $tagTranslation ? $tagTranslation->name : $tag->name;
+                        $tagSlug = $tagTranslation ? $tagTranslation->slug : $tag->slug;
+                    @endphp
+                    <a href="{{ config('blogr.locales.enabled') ? route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) : route('blog.tag', ['tagSlug' => $tagSlug]) }}"
+                        class="inline-block bg-[var(--color-tag-bg)] dark:bg-[var(--color-tag-bg-dark)] text-gray-900 dark:text-white text-xs px-2.5 py-1 rounded-full hover:opacity-90 transition-colors">
+                        #{{ $tagName }}
+                    </a>
+                @endforeach
+            </div>
+        @endif
 
         <!-- Author Bio Box (Bottom Position) -->
         @if(config('blogr.author_bio.enabled', true) && in_array(config('blogr.author_bio.position', 'bottom'), ['bottom', 'both']))
