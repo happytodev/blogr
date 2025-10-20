@@ -341,6 +341,32 @@ class BlogPost extends Model
     }
 
     /**
+     * Get the photo URL attribute.
+     */
+    public function getPhotoUrlAttribute(): string
+    {
+        if ($this->photo) {
+            // Use the 'public' disk for post images
+            $disk = \Illuminate\Support\Facades\Storage::disk('public');
+            
+            try {
+                // Try to generate temporary URL (works for S3, etc.)
+                return $disk->temporaryUrl(
+                    $this->photo,
+                    now()->addHours(1)
+                );
+            } catch (\RuntimeException $e) {
+                // Fallback to regular URL for local driver
+                return $disk->url($this->photo);
+            }
+        }
+        
+        // Return default post image from config
+        $defaultImage = config('blogr.default_cover_image', '/images/default-cover.svg');
+        return asset($defaultImage);
+    }
+
+    /**
      * Get the next post in the series
      */
     public function nextInSeries(): ?BlogPost
