@@ -221,6 +221,9 @@ return [
             'show_language_switcher' => true, // Show language switcher in navigation
             'show_theme_switcher' => true, // Show day/night/auto theme switcher
         ],
+        'blog_post_card' => [
+            'show_publication_date' => true, // Show publication date on blog post cards
+        ],
         'footer' => [
             'enabled' => true, // Show footer
             'text' => '© 2025 My Blog. All rights reserved.', // Footer text (supports HTML)
