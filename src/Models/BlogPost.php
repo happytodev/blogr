@@ -361,8 +361,12 @@ class BlogPost extends Model
             }
         }
         
-        // Return default post image from config
-        $defaultImage = config('blogr.default_cover_image', '/images/default-cover.svg');
+        // Return default post image from config. Prefer the new posts.default_image
+        // but keep backward compatibility with legacy 'blogr.default_cover_image'.
+        $defaultImage = config('blogr.posts.default_image')
+            ?? config('blogr.default_cover_image')
+            ?? '/vendor/blogr/images/default-post.svg';
+
         return asset($defaultImage);
     }
 
