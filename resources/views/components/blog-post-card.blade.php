@@ -64,7 +64,7 @@
         </h2>
 
         <!-- Publication Date -->
-        @if ($post->published_at && config('blogr.ui.blog_post_card.show_publication_date', true))
+        @if ($post->published_at && config('blogr.ui.dates.show_publication_date', true) && config('blogr.ui.dates.show_publication_date_on_cards', true))
             @php
                 // Set Carbon locale for date formatting
                 $carbonDate = $post->published_at->copy()->locale($currentLocale);
