@@ -29,21 +29,21 @@
 @endphp
 
 @if($authorProfileEnabled)
-    <a href="{{ route('blog.author', $routeParams) }}" {{ $attributes->merge(['class' => 'flex items-center gap-2 hover:opacity-80 transition-opacity']) }}>
+    <a href="{{ route('blog.author', $routeParams) }}" {{ $attributes->merge(['class' => 'flex items-center gap-2']) }}>
         @if($showAvatar && $author->avatar)
             <img 
                 src="{{ Storage::disk('public')->url($author->avatar) }}" 
                 alt="{{ $displayName }}"
-                class="{{ $avatarClass }} rounded-full object-cover"
+                class="{{ $avatarClass }} rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700 hover:ring-[var(--color-primary)] dark:hover:ring-[var(--color-primary-dark)] transition-all duration-200"
             />
         @elseif($showAvatar)
-            <div class="{{ $avatarClass }} rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center font-semibold text-gray-700 dark:text-gray-200">
+            <div class="{{ $avatarClass }} rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center font-semibold text-white ring-2 ring-gray-200 dark:ring-gray-700 hover:ring-[var(--color-primary)] dark:hover:ring-[var(--color-primary-dark)] transition-all duration-200">
                 {{ strtoupper(substr($displayName, 0, 1)) }}
             </div>
         @endif
         
         {{-- Display name with tooltip showing full text --}}
-        <span class="text-gray-700 dark:text-gray-300 truncate max-w-[10rem]" title="{{ $displayName }}">{{ $displayName }}</span>
+        <span class="text-gray-700 dark:text-gray-300 hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] truncate max-w-[10rem] transition-colors" title="{{ $displayName }}">{{ $displayName }}</span>
     </a>
 @else
     <div {{ $attributes->merge(['class' => 'flex items-center gap-2']) }}>
@@ -51,10 +51,10 @@
             <img 
                 src="{{ Storage::disk('public')->url($author->avatar) }}" 
                 alt="{{ $displayName }}"
-                class="{{ $avatarClass }} rounded-full object-cover"
+                class="{{ $avatarClass }} rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
             />
         @elseif($showAvatar)
-            <div class="{{ $avatarClass }} rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center font-semibold text-gray-700 dark:text-gray-200">
+            <div class="{{ $avatarClass }} rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center font-semibold text-white ring-2 ring-gray-200 dark:ring-gray-700">
                 {{ strtoupper(substr($displayName, 0, 1)) }}
             </div>
         @endif
