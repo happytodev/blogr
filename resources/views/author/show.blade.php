@@ -3,38 +3,30 @@
 @section('content')
     <div class="container mx-auto px-4 py-12 max-w-7xl">
         {{-- Author Profile Header --}}
-        <div class="mb-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-8">
-            <div class="flex items-center gap-6 mb-6">
+        <div class="mb-12">
+            {{-- Author Avatar and Name --}}
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-6">
                 {{-- Author Avatar --}}
-                @if($author->avatar ?? false)
+                @php $showAvatar = config('blogr.display.show_author_avatar', true); @endphp
+                @if($showAvatar && ($author->avatar ?? false))
                     <img src="{{ url('storage/' . $author->avatar) }}" 
                          alt="{{ $author->name }}" 
                          class="w-24 h-24 rounded-full object-cover ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">
-                @else
-                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">
+                @elseif($showAvatar)
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">
                         <span class="text-3xl font-bold text-white">
                             {{ strtoupper(substr($author->name, 0, 1)) }}
                         </span>
                     </div>
                 @endif
 
-                <div class="flex-1">
+                <div class="flex-1 text-center md:text-left">
                     <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-3">
                         {{ $author->name }}
                     </h1>
-                    
-                    @if($author->bio ?? false)
-                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg mb-4">
-                            @if(is_array($author->bio))
-                                {{ $author->bio[$currentLocale] ?? $author->bio[config('blogr.locales.default', 'en')] ?? '' }}
-                            @else
-                                {{ $author->bio }}
-                            @endif
-                        </p>
-                    @endif
 
                     {{-- Author Stats --}}
-                    <div class="flex gap-6 text-sm">
+                    <div class="flex gap-6 text-sm justify-center md:justify-start">
                         <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -45,6 +37,18 @@
                     </div>
                 </div>
             </div>
+            
+            {{-- Author Bio with same styling as article pages --}}
+            @if(!empty($bioHtml))
+                <div class="bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary-dark)]/20 border-l-4 border-[var(--color-primary)] dark:border-[var(--color-primary-dark)] p-6 rounded-r-xl">
+                    <p class="text-sm font-semibold dark:text-white text-gray-900 uppercase tracking-wide mb-3">
+                        {{ __('blogr::blogr.ui.about_the_author') }}
+                    </p>
+                    <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
+                        {!! $bioHtml !!}
+                    </div>
+                </div>
+            @endif
         </div>
 
     {{-- Author's Posts --}}
@@ -139,9 +143,22 @@
                                 {{-- Published Date + Read More --}}
                                 <div class="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
                                     {{-- Published Date --}}
-                                    <time datetime="{{ $post->published_at->format('Y-m-d') }}" class="text-sm text-gray-600 dark:text-gray-400">
-                                        {{ $post->published_at->format('M d, Y') }}
-                                    </time>
+                                    @if($post->published_at && config('blogr.ui.dates.show_publication_date', true) && config('blogr.ui.dates.show_publication_date_on_cards', true))
+                                        @php
+                                            // Set Carbon locale for date formatting
+                                            $carbonDate = $post->published_at->copy()->locale($currentLocale);
+                                        @endphp
+                                        <time datetime="{{ $post->published_at->toIso8601String() }}" class="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                </path>
+                                            </svg>
+                                            {{ $carbonDate->isoFormat('LL') }}
+                                        </time>
+                                    @else
+                                        <div></div>
+                                    @endif
                                     
                                     {{-- Read More Link --}}
                                     <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug]) }}" 
