@@ -2,6 +2,7 @@
 
 namespace Happytodev\Blogr\Http\Controllers;
 
+use Happytodev\Blogr\Helpers\MarkdownHelper;
 use Happytodev\Blogr\Models\BlogPost;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -47,6 +48,11 @@ class AuthorController extends Controller
         
         // Find the author by slug
         $author = $userModel::where('slug', $actualSlug)->firstOrFail();
+        
+        // Ensure bio is cast as array if it's JSON
+        if (is_string($author->bio) && str_starts_with($author->bio, '{')) {
+            $author->bio = json_decode($author->bio, true);
+        }
         
         // Get published posts by this author with translations
         $posts = BlogPost::with([
@@ -108,10 +114,25 @@ class AuthorController extends Controller
                 return $post;
             });
         
+        // Extract and render bio markdown
+        $bioHtml = '';
+        if (!empty($author->bio)) {
+            if (is_array($author->bio)) {
+                $bioText = $author->bio[$locale] ?? $author->bio[config('blogr.locales.default', 'en')] ?? '';
+            } else {
+                $bioText = $author->bio;
+            }
+            
+            if (!empty($bioText)) {
+                $bioHtml = MarkdownHelper::toHtml($bioText);
+            }
+        }
+        
         return view('blogr::author.show', [
             'author' => $author,
             'posts' => $posts,
             'currentLocale' => $locale,
+            'bioHtml' => $bioHtml,
         ]);
     }
 }
