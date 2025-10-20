@@ -122,6 +122,9 @@ class BlogrSettings extends Page
     public ?bool $navigation_show_language_switcher = null;
     public ?bool $navigation_show_theme_switcher = null;
     
+    // UI Settings - Blog Post Card
+    public ?bool $blog_post_card_show_publication_date = null;
+    
     // UI Settings - Footer
     public ?bool $footer_enabled = null;
     public ?string $footer_text = null;
@@ -310,6 +313,8 @@ class BlogrSettings extends Page
         $this->navigation_show_logo = $config['ui']['navigation']['show_logo'] ?? true;
         $this->navigation_show_language_switcher = $config['ui']['navigation']['show_language_switcher'] ?? true;
         $this->navigation_show_theme_switcher = $config['ui']['navigation']['show_theme_switcher'] ?? true;
+        
+        $this->blog_post_card_show_publication_date = $config['ui']['blog_post_card']['show_publication_date'] ?? true;
         
         $this->footer_enabled = $config['ui']['footer']['enabled'] ?? true;
         $this->footer_text = $config['ui']['footer']['text'] ?? '© ' . date('Y') . ' My Blog. All rights reserved.';
@@ -651,6 +656,11 @@ class BlogrSettings extends Page
                                         ->acceptedFileTypes(['image/*'])
                                         ->maxSize(2048)
                                         ->columnSpanFull(),
+                                    
+                                    Toggle::make('blog_post_card_show_publication_date')
+                                        ->label('Show Publication Date on Cards')
+                                        ->default(true)
+                                        ->helperText('Display publication date on blog post cards (index, category, tag pages)'),
                                     
                                     Toggle::make('posts_show_language_switcher')
                                         ->label('Show Language Availability')
@@ -1054,6 +1064,9 @@ class BlogrSettings extends Page
                     'show_logo' => $this->navigation_show_logo,
                     'show_language_switcher' => $this->navigation_show_language_switcher,
                     'show_theme_switcher' => $this->navigation_show_theme_switcher,
+                ],
+                'blog_post_card' => [
+                    'show_publication_date' => $this->blog_post_card_show_publication_date,
                 ],
                 'footer' => [
                     'enabled' => $this->footer_enabled,
