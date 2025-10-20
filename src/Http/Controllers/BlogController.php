@@ -89,8 +89,9 @@ class BlogController
                     }
                 }
                 
+                // Set the photo to use (this will override the accessor's default behavior)
                 if ($photoToUse) {
-                    $post->photo_url = $this->getStorageUrl($photoToUse);
+                    $post->setAttribute('photo', $photoToUse);
                 }
                 return $post;
             });
@@ -318,8 +319,9 @@ class BlogController
             }
         }
         
+        // Set the photo to use (this will override the accessor's default behavior)
         if ($photoToUse) {
-            $post->photo_url = $this->getStorageUrl($photoToUse);
+            $post->setAttribute('photo', $photoToUse);
         }
         
         // Get available translations for language switcher
@@ -471,9 +473,28 @@ class BlogController
             })
             ->latest()
             ->paginate(config('blogr.posts_per_page', 10))
-            ->through(function ($post) {
-                if ($post->photo) {
-                    $post->photo_url = $this->getStorageUrl($post->photo);
+            ->through(function ($post) use ($currentLocale) {
+                $translation = $post->translations->firstWhere('locale', $currentLocale);
+                
+                if (!$translation) {
+                    $translation = $post->getDefaultTranslation();
+                }
+                
+                // Photo fallback logic: translation photo > post photo > any other translation photo
+                $photoToUse = null;
+                if ($translation?->photo) {
+                    $photoToUse = $translation->photo;
+                } elseif ($post->photo) {
+                    $photoToUse = $post->photo;
+                } else {
+                    $anyTranslationWithPhoto = $post->translations->first(fn($t) => !empty($t->photo));
+                    if ($anyTranslationWithPhoto) {
+                        $photoToUse = $anyTranslationWithPhoto->photo;
+                    }
+                }
+                
+                if ($photoToUse) {
+                    $post->setAttribute('photo', $photoToUse);
                 }
                 return $post;
             });
@@ -546,9 +567,28 @@ class BlogController
             ->latest()
             ->take(config('blogr.posts_per_page', 10))
             ->get()
-            ->map(function ($post) {
-                if ($post->photo) {
-                    $post->photo_url = $this->getStorageUrl($post->photo);
+            ->map(function ($post) use ($currentLocale) {
+                $translation = $post->translations->firstWhere('locale', $currentLocale);
+                
+                if (!$translation) {
+                    $translation = $post->getDefaultTranslation();
+                }
+                
+                // Photo fallback logic: translation photo > post photo > any other translation photo
+                $photoToUse = null;
+                if ($translation?->photo) {
+                    $photoToUse = $translation->photo;
+                } elseif ($post->photo) {
+                    $photoToUse = $post->photo;
+                } else {
+                    $anyTranslationWithPhoto = $post->translations->first(fn($t) => !empty($t->photo));
+                    if ($anyTranslationWithPhoto) {
+                        $photoToUse = $anyTranslationWithPhoto->photo;
+                    }
+                }
+                
+                if ($photoToUse) {
+                    $post->setAttribute('photo', $photoToUse);
                 }
                 return $post;
             });
@@ -675,8 +715,21 @@ class BlogController
                 $post->translated_title = $translation?->title ?? $post->title;
                 $post->translated_excerpt = $translation?->excerpt ?? $post->excerpt;
                 
-                if ($post->photo) {
-                    $post->photo_url = $this->getStorageUrl($post->photo);
+                // Photo fallback logic: translation photo > post photo > any other translation photo
+                $photoToUse = null;
+                if ($translation?->photo) {
+                    $photoToUse = $translation->photo;
+                } elseif ($post->photo) {
+                    $photoToUse = $post->photo;
+                } else {
+                    $anyTranslationWithPhoto = $post->translations->first(fn($t) => !empty($t->photo));
+                    if ($anyTranslationWithPhoto) {
+                        $photoToUse = $anyTranslationWithPhoto->photo;
+                    }
+                }
+                
+                if ($photoToUse) {
+                    $post->setAttribute('photo', $photoToUse);
                 }
                 return $post;
             });
