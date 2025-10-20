@@ -122,7 +122,15 @@ class BlogrSettings extends Page
     public ?bool $navigation_show_language_switcher = null;
     public ?bool $navigation_show_theme_switcher = null;
     
-    // UI Settings - Blog Post Card
+    // UI Settings - Dates
+    public ?bool $dates_show_publication_date = null;
+    public ?bool $dates_show_publication_date_on_cards = null;
+    public ?bool $dates_show_publication_date_on_articles = null;
+    
+    // UI Settings - Posts
+    public ?string $posts_tags_position = null;
+    
+    // UI Settings - Blog Post Card (DEPRECATED)
     public ?bool $blog_post_card_show_publication_date = null;
     
     // UI Settings - Footer
@@ -313,6 +321,12 @@ class BlogrSettings extends Page
         $this->navigation_show_logo = $config['ui']['navigation']['show_logo'] ?? true;
         $this->navigation_show_language_switcher = $config['ui']['navigation']['show_language_switcher'] ?? true;
         $this->navigation_show_theme_switcher = $config['ui']['navigation']['show_theme_switcher'] ?? true;
+        
+        $this->dates_show_publication_date = $config['ui']['dates']['show_publication_date'] ?? true;
+        $this->dates_show_publication_date_on_cards = $config['ui']['dates']['show_publication_date_on_cards'] ?? true;
+        $this->dates_show_publication_date_on_articles = $config['ui']['dates']['show_publication_date_on_articles'] ?? true;
+        
+        $this->posts_tags_position = $config['ui']['posts']['tags_position'] ?? 'bottom';
         
         $this->blog_post_card_show_publication_date = $config['ui']['blog_post_card']['show_publication_date'] ?? true;
         
@@ -657,15 +671,46 @@ class BlogrSettings extends Page
                                         ->maxSize(2048)
                                         ->columnSpanFull(),
                                     
-                                    Toggle::make('blog_post_card_show_publication_date')
-                                        ->label('Show Publication Date on Cards')
+                                    Toggle::make('dates_show_publication_date')
+                                        ->label('Enable Publication Dates')
                                         ->default(true)
-                                        ->helperText('Display publication date on blog post cards (index, category, tag pages)'),
+                                        ->helperText('Master toggle for all publication dates. When disabled, no dates will be shown.')
+                                        ->live()
+                                        ->columnSpanFull(),
+                                    
+                                    Toggle::make('dates_show_publication_date_on_cards')
+                                        ->label('Show Dates on Blog Cards')
+                                        ->default(true)
+                                        ->helperText('Display publication date on blog post cards (index, category, tag pages)')
+                                        ->disabled(fn (Get $get): bool => !$get('dates_show_publication_date')),
+                                    
+                                    Toggle::make('dates_show_publication_date_on_articles')
+                                        ->label('Show Dates on Article Pages')
+                                        ->default(true)
+                                        ->helperText('Display publication date on article detail pages')
+                                        ->disabled(fn (Get $get): bool => !$get('dates_show_publication_date')),
+                                    
+                                    Select::make('posts_tags_position')
+                                        ->label('Tags Position')
+                                        ->options([
+                                            'top' => 'Top of Article',
+                                            'bottom' => 'Bottom of Article',
+                                        ])
+                                        ->default('bottom')
+                                        ->helperText('Position of tags on article detail pages')
+                                        ->native(false),
                                     
                                     Toggle::make('posts_show_language_switcher')
                                         ->label('Show Language Availability')
                                         ->default(true)
                                         ->helperText('Display available translations on post pages'),
+                                    
+                                    Toggle::make('blog_post_card_show_publication_date')
+                                        ->label('Show Publication Date on Cards (DEPRECATED)')
+                                        ->default(true)
+                                        ->helperText('⚠️ Deprecated - Use "Enable Publication Dates" settings above')
+                                        ->disabled(true)
+                                        ->hidden(),
                                 ])
                                 ->columns(2),
                         ]),
@@ -1065,6 +1110,16 @@ class BlogrSettings extends Page
                     'show_language_switcher' => $this->navigation_show_language_switcher,
                     'show_theme_switcher' => $this->navigation_show_theme_switcher,
                 ],
+                'dates' => [
+                    'show_publication_date' => $this->dates_show_publication_date,
+                    'show_publication_date_on_cards' => $this->dates_show_publication_date_on_cards,
+                    'show_publication_date_on_articles' => $this->dates_show_publication_date_on_articles,
+                ],
+                'posts' => [
+                    'tags_position' => $this->posts_tags_position,
+                    'default_image' => $this->posts_default_image,
+                    'show_language_switcher' => $this->posts_show_language_switcher,
+                ],
                 'blog_post_card' => [
                     'show_publication_date' => $this->blog_post_card_show_publication_date,
                 ],
@@ -1102,10 +1157,6 @@ class BlogrSettings extends Page
                     'blog_card_bg_dark' => $this->appearance_blog_card_bg_dark,
                     'series_card_bg' => $this->appearance_series_card_bg,
                     'series_card_bg_dark' => $this->appearance_series_card_bg_dark,
-                ],
-                'posts' => [
-                    'default_image' => $this->posts_default_image,
-                    'show_language_switcher' => $this->posts_show_language_switcher,
                 ],
             ],
         ];
