@@ -115,8 +115,8 @@ test('post uses default cover image when no photos are available anywhere', func
     $response = $this->get(route('blog.show', ['locale' => 'en', 'slug' => 'title-without-photo']));
     
     $response->assertOk();
-    // Should return default cover image from config
-    $defaultCover = config('blogr.default_cover_image', '/images/default-cover.svg');
+    // Should return default cover image from config (prefer posts.default_image, fallback to legacy default_cover_image)
+    $defaultCover = config('blogr.posts.default_image') ?? config('blogr.default_cover_image', '/images/default-cover.svg');
     expect($response->viewData('post')->photo_url)->toContain($defaultCover);
 });
 

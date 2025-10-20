@@ -25,7 +25,8 @@ it('displays publication date on blog cards when setting is enabled by default',
     ]);
     
     // Default setting should be enabled (true)
-    expect(config('blogr.ui.blog_post_card.show_publication_date'))->toBeTrue();
+    expect(config('blogr.ui.dates.show_publication_date'))->toBeTrue();
+    expect(config('blogr.ui.dates.show_publication_date_on_cards'))->toBeTrue();
     
     $response = $this->get(route('blog.index', ['locale' => 'en']));
     
@@ -37,7 +38,8 @@ it('hides publication date on blog cards when setting is disabled', function () 
     Storage::fake('public');
     
     // Disable the setting
-    config(['blogr.ui.blog_post_card.show_publication_date' => false]);
+    config(['blogr.ui.dates.show_publication_date' => true]);
+    config(['blogr.ui.dates.show_publication_date_on_cards' => false]);
     
     $user = User::factory()->create();
     $category = Category::factory()->create();
@@ -66,7 +68,8 @@ it('hides publication date on blog cards when setting is disabled', function () 
 it('respects show_publication_date setting on category pages', function () {
     Storage::fake('public');
     
-    config(['blogr.ui.blog_post_card.show_publication_date' => false]);
+    config(['blogr.ui.dates.show_publication_date' => true]);
+    config(['blogr.ui.dates.show_publication_date_on_cards' => false]);
     
     $user = User::factory()->create();
     $category = Category::factory()->create(['slug' => 'tech']);
@@ -93,7 +96,8 @@ it('respects show_publication_date setting on category pages', function () {
 it('respects show_publication_date setting on tag pages', function () {
     Storage::fake('public');
     
-    config(['blogr.ui.blog_post_card.show_publication_date' => false]);
+    config(['blogr.ui.dates.show_publication_date' => true]);
+    config(['blogr.ui.dates.show_publication_date_on_cards' => false]);
     
     $user = User::factory()->create();
     $category = Category::factory()->create();
