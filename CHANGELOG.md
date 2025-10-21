@@ -4,6 +4,15 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### ✨ Features
+
+- **Automated Filament Panel Authorization**: The `blogr:install` command now automatically configures the User model for Filament panel access
+  - Adds `FilamentUser` interface implementation to `app/Models/User.php`
+  - Implements `canAccessPanel()` method with domain-based authorization for security
+  - Temporarily allow all users; customize as needed by using for example email domain check (`str_ends_with($this->email, '@' . config('app.domain'))`) instead of hardcoded `return true`
+  - Handles edge cases: existing configuration, multiple interfaces, preserves use statement order
+  - Comprehensive test coverage with 6 tests (`UserModelFilamentConfigurationTest`, `BlogrInstallFilamentConfigTest`)
+
 ## [v0.12.2](https://github.com/happytodev/blogr/compare/v0.12.2...v0.12.1) - 2025-10-21
 
 ### 🐛 Bug Fixes
