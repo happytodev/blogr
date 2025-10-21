@@ -5,7 +5,6 @@
     $postTranslation = $post->translate($currentLocale);
     $postSlug = $postTranslation ? $postTranslation->slug : $post->slug;
     $postTitle = $postTranslation ? $postTranslation->title : $post->title;
-    $postExcerpt = $postTranslation ? $postTranslation->excerpt : $post->excerpt;
     $postTldr = $postTranslation ? $postTranslation->tldr : $post->tldr;
 @endphp
 
@@ -81,14 +80,10 @@
             </div>
         @endif
 
-        <!-- Excerpt or TL;DR -->
-        @if ($postExcerpt)
+        <!-- TL;DR -->
+        @if ($postTldr)
             <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">
-                {{ $postExcerpt }}
-            </p>
-        @elseif ($postTldr)
-            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3 italic">
-                <span class="font-semibold">TL;DR:</span> {{ $postTldr }}
+                {{ $postTldr }}
             </p>
         @endif
 
