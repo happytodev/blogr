@@ -4,6 +4,14 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### 🐛 Bug Fixes
+
+- **Series Author Links**: Fixed missing locale prefix in author profile links on series pages
+  - Author links now correctly include locale parameter (`/en/blog/author/...` instead of `/blog/author/...`)
+  - Ensured consistent URL generation using `route()` helper across all components
+  - Added comprehensive tests for multilingual author link generation (`SeriesAuthorLinkTest`, `SeriesAuthorLinkLocaleTest`)
+  - Created `LocalizedTestCase` for proper multilingual testing environment
+
 ## [v0.12.1](https://github.com/happytodev/blogr/compare/v0.12.1...v0.12.0) - 2025-10-21
 
 ### 🔧 Improvements
