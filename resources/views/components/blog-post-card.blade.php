@@ -5,7 +5,6 @@
     $postTranslation = $post->translate($currentLocale);
     $postSlug = $postTranslation ? $postTranslation->slug : $post->slug;
     $postTitle = $postTranslation ? $postTranslation->title : $post->title;
-    $postExcerpt = $postTranslation ? $postTranslation->excerpt : $post->excerpt;
     $postTldr = $postTranslation ? $postTranslation->tldr : $post->tldr;
 @endphp
 
@@ -63,14 +62,28 @@
             </a>
         </h2>
 
-        <!-- Excerpt or TL;DR -->
-        @if ($postExcerpt)
+        <!-- Publication Date -->
+        @if ($post->published_at && config('blogr.ui.dates.show_publication_date', true) && config('blogr.ui.dates.show_publication_date_on_cards', true))
+            @php
+                // Set Carbon locale for date formatting
+                $carbonDate = $post->published_at->copy()->locale($currentLocale);
+            @endphp
+            <div class="text-sm text-gray-500 dark:text-gray-400 mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                    </path>
+                </svg>
+                <time datetime="{{ $post->published_at->toIso8601String() }}">
+                    {{ $carbonDate->isoFormat('LL') }}
+                </time>
+            </div>
+        @endif
+
+        <!-- TL;DR -->
+        @if ($postTldr)
             <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">
-                {{ $postExcerpt }}
-            </p>
-        @elseif ($postTldr)
-            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3 italic">
-                <span class="font-semibold">TL;DR:</span> {{ $postTldr }}
+                {{ $postTldr }}
             </p>
         @endif
 

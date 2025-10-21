@@ -90,6 +90,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | Configure default image for blog posts without a featured image.
+    | Images are published from vendor/happytodev/blogr/resources/images
+    | to public/vendor/blogr/images during installation.
     |
     */
     'posts' => [
@@ -103,6 +105,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | Configure blog series settings including default images.
+    | Images are published from vendor/happytodev/blogr/resources/images
+    | to public/vendor/blogr/images during installation.
     |
     */
     'series' => [
@@ -139,6 +143,8 @@ return [
     'toc' => [
         'enabled' => true, // TOC Globally Enabled (TGE): Enable/disable TOC globally by default
         'strict_mode' => false, // TOC Strict Mode (TSM): If true, individual posts cannot override global setting
+        'position' => 'center', // TOC Position: 'center' (inline), 'left' (sticky sidebar), or 'right' (sticky sidebar)
+        'collapsible' => true, // TOC Collapsible: Allow users to collapse/expand the entire TOC by clicking the title
     ],
 
     /*
@@ -221,6 +227,17 @@ return [
             'show_language_switcher' => true, // Show language switcher in navigation
             'show_theme_switcher' => true, // Show day/night/auto theme switcher
         ],
+        'dates' => [
+            'show_publication_date' => true, // Master toggle: Enable publication dates
+            'show_publication_date_on_cards' => true, // Show dates on blog post cards (requires master enabled)
+            'show_publication_date_on_articles' => true, // Show dates on article detail pages (requires master enabled)
+        ],
+        'posts' => [
+            'tags_position' => 'bottom', // Position of tags on article page: 'top' or 'bottom'
+        ],
+        'blog_post_card' => [
+            'show_publication_date' => true, // Show publication date on blog post cards (DEPRECATED - use ui.dates instead)
+        ],
         'footer' => [
             'enabled' => true, // Show footer
             'text' => '© 2025 My Blog. All rights reserved.', // Footer text (supports HTML)
@@ -284,6 +301,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | Configure post-specific settings like default images, language indicators, etc.
+    | Images are published from vendor/happytodev/blogr/resources/images
+    | to public/vendor/blogr/images during installation.
     |
     */
     'posts' => [
@@ -336,5 +355,24 @@ return [
     */
     'author_profile' => [
         'enabled' => true, // Enable/disable author profile pages
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | RSS Feed Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure RSS feed settings including items limit and description.
+    | RSS feeds are available at:
+    | - Main feed: /feed or /{locale}/feed
+    | - Category feed: /{locale}/feed/category/{slug}
+    | - Tag feed: /{locale}/feed/tag/{slug}
+    |
+    */
+    'rss' => [
+        'enabled' => true, // Enable/disable RSS feeds
+        'items_limit' => 20, // Maximum number of items in the feed
+        'description' => 'Latest blog posts', // Default feed description
+        'cache_duration' => 3600, // Cache duration in seconds (1 hour)
     ],
 ];

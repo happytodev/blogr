@@ -72,12 +72,10 @@ class BlogController
                 // Override post attributes with translation, with fallback to model accessors
                 $post->translated_title = $translation?->title ?? $post->title;
                 $post->translated_slug = $translation?->slug ?? $post->slug;
-                $post->translated_excerpt = $translation?->excerpt ?? $post->excerpt;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
                 
                 // Photo fallback logic: translation photo > post photo > any other translation photo
                 $photoToUse = null;
-                
                 if ($translation?->photo) {
                     $photoToUse = $translation->photo;
                 } elseif ($post->photo) {
@@ -89,8 +87,9 @@ class BlogController
                     }
                 }
                 
+                // Set the photo to use (this will override the accessor's default behavior)
                 if ($photoToUse) {
-                    $post->photo_url = $this->getStorageUrl($photoToUse);
+                    $post->setAttribute('photo', $photoToUse);
                 }
                 return $post;
             });
@@ -226,6 +225,16 @@ class BlogController
             default => 'before',
         };
         
+        // Get TOC position from config
+        $tocPosition = config('blogr.toc.position', 'center');
+        $isSidebarToc = in_array($tocPosition, ['left', 'right']);
+        $tocHtmlClass = 'toc blogr-toc-' . $tocPosition;
+        if ($isSidebarToc) {
+            $tocHtmlClass .= ' blogr-toc-sidebar';
+        } else {
+            $tocHtmlClass .= ' blogr-toc-center';
+        }
+
         // Prepare markdown converter
         $environment = new Environment([
             'heading_permalink' => [
@@ -246,7 +255,7 @@ class BlogController
                 'min_heading_level' => 2,
                 'max_heading_level' => 6,
                 'normalize' => 'relative',
-                'html_class' => 'toc',
+                'html_class' => $tocHtmlClass,
             ],
         ]);
 
@@ -270,10 +279,30 @@ class BlogController
         $contentWithoutFrontmatter = $this->getContentWithoutFrontmatter($translation->content);
 
         // Only add TOC if it should be displayed
+        $tocHtml = null;
         if ($post->shouldDisplayToc()) {
             $tocTitle = __('blogr::blogr.ui.table_of_contents');
             $markdownWithToc = "# {$tocTitle}\n\n[[TOC]]\n\n" . $contentWithoutFrontmatter;
             $convertedContent = $converter->convert($markdownWithToc)->getContent();
+            
+            // If TOC is in sidebar (left/right), extract it from content
+            if ($isSidebarToc) {
+                // Extract both the H1 title and the TOC list together
+                // Pattern: <h1>...Table of Contents...</h1> followed by <ul class="toc">...</ul>
+                $tocPattern = '/<h1[^>]*>.*?' . preg_quote($tocTitle, '/') . '.*?<\/h1>\s*<ul\s+[^>]*class="[^"]*\btoc\b[^"]*"[^>]*>[\s\S]*?<\/ul>/is';
+                
+                if (preg_match($tocPattern, $convertedContent, $matches)) {
+                    // Store the entire TOC (title + list) for sidebar
+                    $tocHtml = $matches[0];
+                    
+                    // Remove it from the main content
+                    $convertedContent = str_replace($tocHtml, '', $convertedContent);
+                    
+                    // Clean up any double line breaks that might have been created
+                    $convertedContent = preg_replace('/(<\/h1>\s*){2,}/', '</h1>', $convertedContent);
+                    $convertedContent = preg_replace('/(\s*<p>\s*<\/p>\s*)+/', '', $convertedContent);
+                }
+            }
         } else {
             $convertedContent = $converter->convert($contentWithoutFrontmatter)->getContent();
         }
@@ -289,7 +318,6 @@ class BlogController
             'title' => $translation->title,
             'slug' => $translation->slug,
             'content' => $convertedContent,
-            'excerpt' => $translation->excerpt,
             'tldr' => $translation->tldr,
             'seo_title' => $translation->seo_title,
             'seo_description' => $translation->seo_description,
@@ -318,8 +346,9 @@ class BlogController
             }
         }
         
+        // Set the photo to use (this will override the accessor's default behavior)
         if ($photoToUse) {
-            $post->photo_url = $this->getStorageUrl($photoToUse);
+            $post->setAttribute('photo', $photoToUse);
         }
         
         // Get available translations for language switcher
@@ -411,6 +440,9 @@ class BlogController
             'availableTranslations' => $availableTranslations,
             'seoData' => $seoData,
             'permalinkConfig' => $permalinkConfig,
+            'tocPosition' => $tocPosition,
+            'tocHtml' => $tocHtml,
+            'tocCollapsible' => config('blogr.toc.collapsible', true),
         ]);
     }
 
@@ -471,9 +503,28 @@ class BlogController
             })
             ->latest()
             ->paginate(config('blogr.posts_per_page', 10))
-            ->through(function ($post) {
-                if ($post->photo) {
-                    $post->photo_url = $this->getStorageUrl($post->photo);
+            ->through(function ($post) use ($currentLocale) {
+                $translation = $post->translations->firstWhere('locale', $currentLocale);
+                
+                if (!$translation) {
+                    $translation = $post->getDefaultTranslation();
+                }
+                
+                // Photo fallback logic: translation photo > post photo > any other translation photo
+                $photoToUse = null;
+                if ($translation?->photo) {
+                    $photoToUse = $translation->photo;
+                } elseif ($post->photo) {
+                    $photoToUse = $post->photo;
+                } else {
+                    $anyTranslationWithPhoto = $post->translations->first(fn($t) => !empty($t->photo));
+                    if ($anyTranslationWithPhoto) {
+                        $photoToUse = $anyTranslationWithPhoto->photo;
+                    }
+                }
+                
+                if ($photoToUse) {
+                    $post->setAttribute('photo', $photoToUse);
                 }
                 return $post;
             });
@@ -546,9 +597,28 @@ class BlogController
             ->latest()
             ->take(config('blogr.posts_per_page', 10))
             ->get()
-            ->map(function ($post) {
-                if ($post->photo) {
-                    $post->photo_url = $this->getStorageUrl($post->photo);
+            ->map(function ($post) use ($currentLocale) {
+                $translation = $post->translations->firstWhere('locale', $currentLocale);
+                
+                if (!$translation) {
+                    $translation = $post->getDefaultTranslation();
+                }
+                
+                // Photo fallback logic: translation photo > post photo > any other translation photo
+                $photoToUse = null;
+                if ($translation?->photo) {
+                    $photoToUse = $translation->photo;
+                } elseif ($post->photo) {
+                    $photoToUse = $post->photo;
+                } else {
+                    $anyTranslationWithPhoto = $post->translations->first(fn($t) => !empty($t->photo));
+                    if ($anyTranslationWithPhoto) {
+                        $photoToUse = $anyTranslationWithPhoto->photo;
+                    }
+                }
+                
+                if ($photoToUse) {
+                    $post->setAttribute('photo', $photoToUse);
                 }
                 return $post;
             });
@@ -673,10 +743,23 @@ class BlogController
                 // Set translated properties with fallback to model accessors
                 $post->translated_slug = $translation?->slug ?? $post->slug;
                 $post->translated_title = $translation?->title ?? $post->title;
-                $post->translated_excerpt = $translation?->excerpt ?? $post->excerpt;
+                $post->translated_tldr = $translation?->tldr ?? $post->tldr;
                 
-                if ($post->photo) {
-                    $post->photo_url = $this->getStorageUrl($post->photo);
+                // Photo fallback logic: translation photo > post photo > any other translation photo
+                $photoToUse = null;
+                if ($translation?->photo) {
+                    $photoToUse = $translation->photo;
+                } elseif ($post->photo) {
+                    $photoToUse = $post->photo;
+                } else {
+                    $anyTranslationWithPhoto = $post->translations->first(fn($t) => !empty($t->photo));
+                    if ($anyTranslationWithPhoto) {
+                        $photoToUse = $anyTranslationWithPhoto->photo;
+                    }
+                }
+                
+                if ($photoToUse) {
+                    $post->setAttribute('photo', $photoToUse);
                 }
                 return $post;
             });

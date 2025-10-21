@@ -87,7 +87,7 @@ it('can display translated post in French', function () {
         'title' => 'Titre Français',
         'slug' => 'titre-francais',
         'content' => 'Contenu en français',
-        'excerpt' => 'Extrait français',
+        'tldr' => 'Extrait français',
     ]);
     
     $response = $this->get('/fr/blog/titre-francais');
@@ -124,7 +124,7 @@ it('provides translations for language switcher', function () {
         'title' => 'Titre Français',
         'slug' => 'titre-francais',
         'content' => 'Contenu français',
-        'excerpt' => 'Extrait français',
+        'tldr' => 'Extrait français',
     ]);
     
     $response = $this->get('/en/blog/english-slug');

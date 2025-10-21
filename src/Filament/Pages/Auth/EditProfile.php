@@ -4,15 +4,18 @@ namespace Happytodev\Blogr\Filament\Pages\Auth;
 
 use Filament\Auth\Pages\EditProfile as BaseEditProfile;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class EditProfile extends BaseEditProfile
 {
+    protected Width | string | null $maxWidth = Width::FiveExtraLarge;
+    
     public function getErrorBag()
     {
         $bag = parent::getErrorBag();
@@ -105,23 +108,43 @@ class EditProfile extends BaseEditProfile
         $bioComponents = [];
         
         if ($localesEnabled && count($normalizedLocales) > 1) {
-            // Multiple locales - create a textarea for each language
+            // Multiple locales - create a markdown editor for each language
             foreach ($normalizedLocales as $locale => $label) {
-                $bioComponents[] = Textarea::make("bio.{$locale}")
+                $bioComponents[] = MarkdownEditor::make("bio.{$locale}")
                     ->label("Biography - {$label}")
-                    ->maxLength(500)
-                    ->rows(4)
+                    ->maxLength(2000)
                     ->nullable()
-                    ->helperText("Your biography in {$label}. Displayed on your author profile page.");
+                    ->helperText("Your biography in {$label}. Displayed on your author profile page. Supports Markdown formatting.")
+                    ->toolbarButtons([
+                        'bold',
+                        'italic',
+                        'strike',
+                        'link',
+                        'heading',
+                        'bulletList',
+                        'orderedList',
+                        'blockquote',
+                        'codeBlock',
+                    ]);
             }
         } else {
             // Single locale - just use 'en' as default
-            $bioComponents[] = Textarea::make('bio.en')
+            $bioComponents[] = MarkdownEditor::make('bio.en')
                 ->label('Biography')
-                ->maxLength(500)
-                ->rows(4)
+                ->maxLength(2000)
                 ->nullable()
-                ->helperText('Your biography. Displayed on your author profile page.');
+                ->helperText('Your biography. Displayed on your author profile page. Supports Markdown formatting.')
+                ->toolbarButtons([
+                    'bold',
+                    'italic',
+                    'strike',
+                    'link',
+                    'heading',
+                    'bulletList',
+                    'orderedList',
+                    'blockquote',
+                    'codeBlock',
+                ]);
         }
         
         return $schema

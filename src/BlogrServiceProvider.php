@@ -22,6 +22,7 @@ use Happytodev\Blogr\Commands\InstallUserManagementCommand;
 use Happytodev\Blogr\Commands\MigratePostsToTranslations;
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Happytodev\Blogr\Http\Controllers\AuthorController;
+use Happytodev\Blogr\Http\Controllers\RssFeedController;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 
@@ -197,6 +198,24 @@ class BlogrServiceProvider extends PackageServiceProvider
                     ))
                     ->name('blog.tag');
                     
+                // RSS Feed routes with locale (homepage mode - MUST be before {slug} catch-all)
+                if (config('blogr.rss.enabled', true)) {
+                    $this->app['router']->get('{locale}/feed', [RssFeedController::class, 'index'])
+                        ->where('locale', $localePattern)
+                        ->middleware(config('blogr.route.middleware', ['web']))
+                        ->name('blog.feed');
+                    
+                    $this->app['router']->get('{locale}/feed/category/{categorySlug}', [RssFeedController::class, 'category'])
+                        ->where(['locale' => $localePattern, 'categorySlug' => '.*'])
+                        ->middleware(config('blogr.route.middleware', ['web']))
+                        ->name('blog.feed.category');
+                    
+                    $this->app['router']->get('{locale}/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])
+                        ->where(['locale' => $localePattern, 'tagSlug' => '.*'])
+                        ->middleware(config('blogr.route.middleware', ['web']))
+                        ->name('blog.feed.tag');
+                }
+                    
                 $this->app['router']->get('{locale}/{slug}', [BlogController::class, 'show'])
                     ->where(['locale' => $localePattern, 'slug' => '.*']) // Allow any slug since specific routes are already defined
                     ->middleware(array_merge(
@@ -256,6 +275,24 @@ class BlogrServiceProvider extends PackageServiceProvider
                     ))
                     ->name('blog.tag');
                     
+                // RSS Feed routes with locale (MUST be before {slug} catch-all)
+                if (config('blogr.rss.enabled', true)) {
+                    $this->app['router']->get($fullPrefix . '/feed', [RssFeedController::class, 'index'])
+                        ->where('locale', $localePattern)
+                        ->middleware(config('blogr.route.middleware', ['web']))
+                        ->name('blog.feed');
+                    
+                    $this->app['router']->get($fullPrefix . '/feed/category/{categorySlug}', [RssFeedController::class, 'category'])
+                        ->where(['locale' => $localePattern, 'categorySlug' => '.*'])
+                        ->middleware(config('blogr.route.middleware', ['web']))
+                        ->name('blog.feed.category');
+                    
+                    $this->app['router']->get($fullPrefix . '/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])
+                        ->where(['locale' => $localePattern, 'tagSlug' => '.*'])
+                        ->middleware(config('blogr.route.middleware', ['web']))
+                        ->name('blog.feed.tag');
+                }
+                    
                 $this->app['router']->get($fullPrefix . '/{slug}', [BlogController::class, 'show'])
                     ->where(['locale' => $localePattern, 'slug' => '.*']) // Allow any slug since specific routes are already defined
                     ->middleware(array_merge(
@@ -280,6 +317,13 @@ class BlogrServiceProvider extends PackageServiceProvider
                         $this->app['router']->get('/{slug}', [BlogController::class, 'show'])
                             ->where('slug', '.*') // Allow any slug since specific routes are already defined
                             ->name('blog.show');
+                        
+                        // RSS Feed routes (no locale)
+                        if (config('blogr.rss.enabled', true)) {
+                            $this->app['router']->get('/feed', [RssFeedController::class, 'index'])->name('blog.feed');
+                            $this->app['router']->get('/feed/category/{categorySlug}', [RssFeedController::class, 'category'])->name('blog.feed.category');
+                            $this->app['router']->get('/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])->name('blog.feed.tag');
+                        }
                     });
             } else {
                 // Blog route with prefix
@@ -296,6 +340,13 @@ class BlogrServiceProvider extends PackageServiceProvider
                         $this->app['router']->get('/{slug}', [BlogController::class, 'show'])
                             ->where('slug', '.*') // Allow any slug since specific routes are already defined
                             ->name('blog.show');
+                        
+                        // RSS Feed routes (no locale)
+                        if (config('blogr.rss.enabled', true)) {
+                            $this->app['router']->get('/feed', [RssFeedController::class, 'index'])->name('blog.feed');
+                            $this->app['router']->get('/feed/category/{categorySlug}', [RssFeedController::class, 'category'])->name('blog.feed.category');
+                            $this->app['router']->get('/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])->name('blog.feed.tag');
+                        }
                     });
             }
         }

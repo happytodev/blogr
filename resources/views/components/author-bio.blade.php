@@ -95,13 +95,13 @@
                 @endif
 
                 @if($author->bio ?? false)
-                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                    <div class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 prose prose-sm dark:prose-invert max-w-none">
                         @if(is_array($author->bio))
-                            {{ $author->bio[$locale] ?? $author->bio[config('blogr.locales.default', 'en')] ?? '' }}
+                            {!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($author->bio[$locale] ?? $author->bio[config('blogr.locales.default', 'en')] ?? '') !!}
                         @else
-                            {{ $author->bio }}
+                            {!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($author->bio) !!}
                         @endif
-                    </p>
+                    </div>
                 @endif
 
                 <div class="flex items-center gap-4 text-sm">

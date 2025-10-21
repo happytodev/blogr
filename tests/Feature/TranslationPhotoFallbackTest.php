@@ -94,7 +94,7 @@ test('translation falls back to another translation photo when main post has no 
     expect($response->viewData('post')->photo_url)->toContain('en-image.jpg');
 });
 
-test('post has no photo_url when no photos are available anywhere', function () {
+test('post uses default cover image when no photos are available anywhere', function () {
     $post = BlogPost::create([
         'user_id' => $this->user->id,
         'category_id' => $this->category->id,
@@ -115,7 +115,9 @@ test('post has no photo_url when no photos are available anywhere', function () 
     $response = $this->get(route('blog.show', ['locale' => 'en', 'slug' => 'title-without-photo']));
     
     $response->assertOk();
-    expect(isset($response->viewData('post')->photo_url))->toBeFalse();
+    // Should return default cover image from config (prefer posts.default_image, fallback to legacy default_cover_image)
+    $defaultCover = config('blogr.posts.default_image') ?? config('blogr.default_cover_image', '/images/default-cover.svg');
+    expect($response->viewData('post')->photo_url)->toContain($defaultCover);
 });
 
 test('photo field is fillable in BlogPostTranslation model', function () {
@@ -161,7 +163,7 @@ test('homepage index shows translation specific photo in EN cards', function () 
         'title' => 'English Title',
         'slug' => 'english-title',
         'content' => 'Content',
-        'excerpt' => 'Excerpt',
+        'tldr' => 'Excerpt',
         'photo' => 'photos/en-photo.jpg', // Translation-specific photo
     ]);
 
@@ -172,7 +174,7 @@ test('homepage index shows translation specific photo in EN cards', function () 
         'title' => 'Titre Français',
         'slug' => 'titre-francais',
         'content' => 'Contenu',
-        'excerpt' => 'Extrait',
+        'tldr' => 'Extrait',
     ]);
 
     // Test EN homepage - should show EN translation photo

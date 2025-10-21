@@ -4,6 +4,7 @@ namespace Happytodev\Blogr\Filament\Pages;
 
 use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\File;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
@@ -98,6 +99,7 @@ class BlogrSettings extends Page
     public ?string $seo_structured_data_organization_logo = null;
     public ?bool $toc_enabled = null;
     public ?bool $toc_strict_mode = null;
+    public ?string $toc_position = null;
     public ?string $heading_permalink_symbol = null;
     public ?string $heading_permalink_spacing = null;
     public ?string $heading_permalink_visibility = null;
@@ -122,6 +124,17 @@ class BlogrSettings extends Page
     public ?bool $navigation_show_language_switcher = null;
     public ?bool $navigation_show_theme_switcher = null;
     
+    // UI Settings - Dates
+    public ?bool $dates_show_publication_date = null;
+    public ?bool $dates_show_publication_date_on_cards = null;
+    public ?bool $dates_show_publication_date_on_articles = null;
+    
+    // UI Settings - Posts
+    public ?string $posts_tags_position = null;
+    
+    // UI Settings - Blog Post Card (DEPRECATED)
+    public ?bool $blog_post_card_show_publication_date = null;
+    
     // UI Settings - Footer
     public ?bool $footer_enabled = null;
     public ?string $footer_text = null;
@@ -143,6 +156,15 @@ class BlogrSettings extends Page
     // UI Settings - Posts
     public ?string $posts_default_image = null;
     public ?bool $posts_show_language_switcher = null;
+
+    /**
+     * Check if the current user can access this page
+     * Only admins should be able to access settings
+     */
+    public static function canAccess(): bool
+    {
+        return Filament::auth()->user()->hasRole('admin');
+    }
 
     public function mount(): void
     {
@@ -280,6 +302,7 @@ class BlogrSettings extends Page
         $this->seo_structured_data_organization_logo = $config['seo']['structured_data']['organization']['logo'] ?? '';
         $this->toc_enabled = $config['toc']['enabled'] ?? true;
         $this->toc_strict_mode = $config['toc']['strict_mode'] ?? false;
+        $this->toc_position = $config['toc']['position'] ?? 'center';
         $this->heading_permalink_symbol = $config['heading_permalink']['symbol'] ?? '#';
         $this->heading_permalink_spacing = $config['heading_permalink']['spacing'] ?? 'after';
         $this->heading_permalink_visibility = $config['heading_permalink']['visibility'] ?? 'hover';
@@ -310,6 +333,14 @@ class BlogrSettings extends Page
         $this->navigation_show_logo = $config['ui']['navigation']['show_logo'] ?? true;
         $this->navigation_show_language_switcher = $config['ui']['navigation']['show_language_switcher'] ?? true;
         $this->navigation_show_theme_switcher = $config['ui']['navigation']['show_theme_switcher'] ?? true;
+        
+        $this->dates_show_publication_date = $config['ui']['dates']['show_publication_date'] ?? true;
+        $this->dates_show_publication_date_on_cards = $config['ui']['dates']['show_publication_date_on_cards'] ?? true;
+        $this->dates_show_publication_date_on_articles = $config['ui']['dates']['show_publication_date_on_articles'] ?? true;
+        
+        $this->posts_tags_position = $config['ui']['posts']['tags_position'] ?? 'bottom';
+        
+        $this->blog_post_card_show_publication_date = $config['ui']['blog_post_card']['show_publication_date'] ?? true;
         
         $this->footer_enabled = $config['ui']['footer']['enabled'] ?? true;
         $this->footer_text = $config['ui']['footer']['text'] ?? '© ' . date('Y') . ' My Blog. All rights reserved.';
@@ -652,10 +683,46 @@ class BlogrSettings extends Page
                                         ->maxSize(2048)
                                         ->columnSpanFull(),
                                     
+                                    Toggle::make('dates_show_publication_date')
+                                        ->label('Enable Publication Dates')
+                                        ->default(true)
+                                        ->helperText('Master toggle for all publication dates. When disabled, no dates will be shown.')
+                                        ->live()
+                                        ->columnSpanFull(),
+                                    
+                                    Toggle::make('dates_show_publication_date_on_cards')
+                                        ->label('Show Dates on Blog Cards')
+                                        ->default(true)
+                                        ->helperText('Display publication date on blog post cards (index, category, tag pages)')
+                                        ->disabled(fn (Get $get): bool => !$get('dates_show_publication_date')),
+                                    
+                                    Toggle::make('dates_show_publication_date_on_articles')
+                                        ->label('Show Dates on Article Pages')
+                                        ->default(true)
+                                        ->helperText('Display publication date on article detail pages')
+                                        ->disabled(fn (Get $get): bool => !$get('dates_show_publication_date')),
+                                    
+                                    Select::make('posts_tags_position')
+                                        ->label('Tags Position')
+                                        ->options([
+                                            'top' => 'Top of Article',
+                                            'bottom' => 'Bottom of Article',
+                                        ])
+                                        ->default('bottom')
+                                        ->helperText('Position of tags on article detail pages')
+                                        ->native(false),
+                                    
                                     Toggle::make('posts_show_language_switcher')
                                         ->label('Show Language Availability')
                                         ->default(true)
                                         ->helperText('Display available translations on post pages'),
+                                    
+                                    Toggle::make('blog_post_card_show_publication_date')
+                                        ->label('Show Publication Date on Cards (DEPRECATED)')
+                                        ->default(true)
+                                        ->helperText('⚠️ Deprecated - Use "Enable Publication Dates" settings above')
+                                        ->disabled(true)
+                                        ->hidden(),
                                 ])
                                 ->columns(2),
                         ]),
@@ -677,6 +744,15 @@ class BlogrSettings extends Page
                                         ->label('Strict Mode')
                                         ->default(false)
                                         ->helperText('When enabled, individual posts cannot override the global TOC setting.'),
+                                    Select::make('toc_position')
+                                        ->label('TOC Position')
+                                        ->options([
+                                            'center' => 'Center (inline with content)',
+                                            'left' => 'Left sidebar (sticky)',
+                                            'right' => 'Right sidebar (sticky)',
+                                        ])
+                                        ->default('center')
+                                        ->helperText('Position of the table of contents: center (default inline behavior), or sticky sidebar on left/right'),
                                 ]),
 
                             Section::make('Heading Permalinks')
@@ -1006,6 +1082,7 @@ class BlogrSettings extends Page
             'toc' => [
                 'enabled' => $this->toc_enabled,
                 'strict_mode' => $this->toc_strict_mode,
+                'position' => $this->toc_position ?? 'center',
             ],
             'heading_permalink' => [
                 'symbol' => $this->heading_permalink_symbol,
@@ -1055,6 +1132,19 @@ class BlogrSettings extends Page
                     'show_language_switcher' => $this->navigation_show_language_switcher,
                     'show_theme_switcher' => $this->navigation_show_theme_switcher,
                 ],
+                'dates' => [
+                    'show_publication_date' => $this->dates_show_publication_date,
+                    'show_publication_date_on_cards' => $this->dates_show_publication_date_on_cards,
+                    'show_publication_date_on_articles' => $this->dates_show_publication_date_on_articles,
+                ],
+                'posts' => [
+                    'tags_position' => $this->posts_tags_position,
+                    'default_image' => $this->posts_default_image,
+                    'show_language_switcher' => $this->posts_show_language_switcher,
+                ],
+                'blog_post_card' => [
+                    'show_publication_date' => $this->blog_post_card_show_publication_date,
+                ],
                 'footer' => [
                     'enabled' => $this->footer_enabled,
                     'text' => $this->footer_text,
@@ -1089,10 +1179,6 @@ class BlogrSettings extends Page
                     'blog_card_bg_dark' => $this->appearance_blog_card_bg_dark,
                     'series_card_bg' => $this->appearance_series_card_bg,
                     'series_card_bg_dark' => $this->appearance_series_card_bg_dark,
-                ],
-                'posts' => [
-                    'default_image' => $this->posts_default_image,
-                    'show_language_switcher' => $this->posts_show_language_switcher,
                 ],
             ],
         ];

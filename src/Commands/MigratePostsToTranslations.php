@@ -40,7 +40,6 @@ class MigratePostsToTranslations extends Command
                 'title' => $post->getAttributes()['title'] ?? $post->title,
                 'slug' => $post->getAttributes()['slug'] ?? $post->slug,
                 'content' => $post->getAttributes()['content'] ?? $post->content,
-                'excerpt' => $post->getAttributes()['excerpt'] ?? null,
                 'tldr' => $post->getAttributes()['tldr'] ?? null,
                 'seo_title' => $post->getAttributes()['meta_title'] ?? null,
                 'seo_description' => $post->getAttributes()['meta_description'] ?? null,

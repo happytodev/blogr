@@ -21,7 +21,7 @@ test('links in post content have proper hover styles', function () {
         'title' => 'Test Post with Links',
         'slug' => 'test-post-with-links',
         'content' => "This is a paragraph with [a link](https://example.com).\n\n## Section\n\nAnother paragraph with [another link](https://example.org).",
-        'excerpt' => 'Test post',
+        'tldr' => 'Test post',
     ]);
 
     $response = $this->get(route('blog.show', ['locale' => 'en', 'slug' => 'test-post-with-links']));
@@ -58,7 +58,7 @@ test('links in lists have proper hover styles', function () {
         'title' => 'Test Post with List Links',
         'slug' => 'test-post-with-list-links',
         'content' => "Here is a list:\n\n- Item 1 with [link one](https://example.com)\n- Item 2 with [link two](https://example.org)\n- Item 3",
-        'excerpt' => 'Test post with lists',
+        'tldr' => 'Test post with lists',
     ]);
 
     $response = $this->get(route('blog.show', ['locale' => 'en', 'slug' => 'test-post-with-list-links']));
