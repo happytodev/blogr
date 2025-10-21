@@ -58,6 +58,48 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - Table of contents is automatically generated
 - TOC could be deactivate for a post 
 - User could define if TOC is activated by default or not for every post
+- **TOC positioning**: Three-position system (center, left sidebar, or right sidebar)
+  - Center mode: inline with content (traditional layout)
+  - Sidebar modes: sticky TOC that stays visible during scroll
+  - Configurable via admin settings
+
+### RSS Feed System
+
+- **Complete RSS 2.0 feed** with multilingual support
+- Multiple feed routes:
+  - Main feed: `/{locale}/blog/feed`
+  - Category feeds: `/{locale}/blog/feed/category/{slug}`
+  - Tag feeds: `/{locale}/blog/feed/tag/{slug}`
+- Automatic language detection per locale
+- 1-hour public cache for performance
+- Configurable items limit (default: 20)
+- Uses TL;DR field for description with automatic fallback
+
+### Theming & Customization
+
+- **CSS Variables theming system**: Complete color customization
+  - Primary, category, tag, and author colors
+  - Dark mode support with automatic color adjustments
+  - Applied across all components (navigation, footer, cards, breadcrumbs)
+- **Publication dates**: Granular control over date display
+  - Global toggle for all publication dates
+  - Separate controls for cards and article pages
+- **Tags positioning**: Choose to display tags at top or bottom of articles
+- **Heading permalinks**: Customizable anchor links
+  - Multiple symbols: `#`, `§`, `¶`, `🔗`, etc.
+  - Configurable spacing (none, before, after, both)
+  - Visibility options (always or on hover)
+  - Copy-to-clipboard functionality
+
+### Author Features
+
+- **Enhanced author profiles**:
+  - Bio rendered as Markdown
+  - Avatar with gradient background using theme colors
+  - Hover effects with tooltips
+  - Configurable display (pseudo vs full name)
+  - Proper bio positioning (top, bottom, or both)
+  - Compact mode option
 
 ### SEO
 
@@ -121,6 +163,37 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 
 ## Roadmap
 
+### RC1 (ETA 2025-10-31)
+
+- [ ] Title of blog post in the widget 'recent blog posts' should be clickable
+- [ ] Add a link to the public blog url
+- [ ] Add the theme capability to Blogr
+- [ ] Improve tables in app
+- [ ] Admins must receive a notification when a post is saved by a writer
+- [ ] Tests and reviews for the v1
+- [ ] More to come...
+
+### Beta 3 (ETA 2025-09-30)
+
+- [x] Multilingual
+- [x] Series of posts
+- [x] Add a writer role, which can write a post but not publish it
+- [X] Add a RSS feed for the blog posts
+- [x] Collapsible TOC
+- [x] TOC can be centered above content or sticky on left or right side of content
+- [x] Customizable colours
+- [x] Series are translatables
+- [x] Add publications date and manage them in settings
+- [x] Writer role can't read or modify settings
+- [x] Improve settings page with tabs
+- [x] Tags can be now place before the content and after the content
+- [x] Add author bio. Can be at the bottom, at the top or both. Provide compact version. And bio can be written in MD. And of course it's translatable.
+- [x] The permalinks are now configurable : symbol, spacing, visibility, and a click on it copy the url
+- [x] Add a language switcher
+- [x] Footer is configurable in the settings page
+- [x] The tob menu bar is configurable too in the settings page
+
+
 ### Beta 2 (ETA 2025-09-15)
 
 - [x] SEO fields (meta title, description, keywords) ✅ **Completed**
@@ -137,16 +210,7 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - [x] Add default content to help user to start with Blogr ✅ **Completed**
 
 
-### Beta 3 (ETA 2025-09-30)
 
-- [x] Multilingual
-- [x] Series of posts
-- [x] Add a writer role, which can write a post but not publish it
-- [ ] Add a RSS feed for the blog posts
-- [ ] Collapsible TOC
-- [ ] Title of blog post in the widget 'recent blog posts' should be clickable
-- [ ] Define TOC style like in the eventuallycoding.com blog
-- [ ] More to come...
 
 ## Requirements
 
