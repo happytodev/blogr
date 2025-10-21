@@ -85,17 +85,11 @@ class BlogPostForm
                                     ->helperText('Leave empty to use the main post image or another translation\'s image')
                                     ->columnSpanFull(),
                                 
-                                Textarea::make('excerpt')
-                                    ->label('Excerpt')
+                                Textarea::make('tldr')
+                                    ->label('TL;DR (Too Long; Didn\'t Read)')
                                     ->rows(3)
                                     ->maxLength(500)
-                                    ->helperText('Short description (max 500 characters)')
-                                    ->columnSpanFull(),
-                                
-                                TextInput::make('tldr')
-                                    ->label('TL;DR')
-                                    ->maxLength(255)
-                                    ->helperText('Too Long; Didn\'t Read - A very short summary')
+                                    ->helperText('Short summary of the article (max 500 characters)')
                                     ->columnSpanFull(),
                                 
                                 MarkdownEditor::make('content')
@@ -128,7 +122,7 @@ class BlogPostForm
                                     ->label('SEO Description')
                                     ->rows(2)
                                     ->maxLength(160)
-                                    ->helperText('Leave empty to use excerpt (recommended max: 160 characters)')
+                                    ->helperText('Leave empty to use TL;DR (recommended max: 160 characters)')
                                     ->columnSpan(2),
                                 
                                 TextInput::make('seo_keywords')
@@ -213,7 +207,41 @@ class BlogPostForm
                             ->required()
                             ->searchable()
                             ->preload()
-                            ->helperText('The post will display the category name in the visitor\'s language if translations are available.'),
+                            ->helperText('The post will display the category name in the visitor\'s language if translations are available.')
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->label('Category Name')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(function (Set $set, ?string $state) {
+                                        if ($state) {
+                                            $set('slug', Str::slug($state));
+                                        }
+                                    })
+                                    ->helperText('Main category name (usually in English)'),
+                                
+                                TextInput::make('slug')
+                                    ->label('Slug')
+                                    ->required()
+                                    ->unique('categories', 'slug')
+                                    ->maxLength(255)
+                                    ->helperText('URL-friendly version of the name'),
+                                
+                                Toggle::make('is_default')
+                                    ->label('Set as Default Category')
+                                    ->default(false)
+                                    ->helperText('Set this as the default category for new posts'),
+                            ])
+                            ->createOptionUsing(function (array $data): int {
+                                $category = Category::create([
+                                    'name' => $data['name'],
+                                    'slug' => $data['slug'],
+                                    'is_default' => $data['is_default'] ?? false,
+                                ]);
+                                
+                                return $category->id;
+                            }),
                         
                         Select::make('tags')
                             ->multiple()
