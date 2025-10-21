@@ -53,7 +53,7 @@ it('admin can create and publish posts', function () {
         'title' => 'Admin Post',
         'slug' => 'admin-post',
         'content' => 'This is a post created by admin',
-        'excerpt' => 'Admin post excerpt',
+        'tldr' => 'Admin post tldr',
         'published_at' => now(),
         'is_published' => true,
         'user_id' => $admin->id,
