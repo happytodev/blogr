@@ -163,7 +163,7 @@ test('homepage index shows translation specific photo in EN cards', function () 
         'title' => 'English Title',
         'slug' => 'english-title',
         'content' => 'Content',
-        'excerpt' => 'Excerpt',
+        'tldr' => 'Excerpt',
         'photo' => 'photos/en-photo.jpg', // Translation-specific photo
     ]);
 
@@ -174,7 +174,7 @@ test('homepage index shows translation specific photo in EN cards', function () 
         'title' => 'Titre Français',
         'slug' => 'titre-francais',
         'content' => 'Contenu',
-        'excerpt' => 'Extrait',
+        'tldr' => 'Extrait',
     ]);
 
     // Test EN homepage - should show EN translation photo
