@@ -38,7 +38,7 @@ it('uses translation-specific cover image when available', function () {
         'locale' => 'fr',
         'title' => 'Article en Français',
         'slug' => 'article-francais',
-        'excerpt' => 'Résumé en français',
+        'tldr' => 'Résumé en français',
         'content' => 'Contenu en français',
         'photo' => $frCoverPath, // Translation-specific cover
     ]);
@@ -49,7 +49,7 @@ it('uses translation-specific cover image when available', function () {
         'locale' => 'en',
         'title' => 'Article in English',
         'slug' => 'article-english',
-        'excerpt' => 'English excerpt',
+        'tldr' => 'English tldr',
         'content' => 'English content',
         'photo' => null, // No cover - should fallback to main
     ]);
@@ -89,7 +89,7 @@ it('falls back to main post cover when translation has no cover image', function
         'locale' => 'fr',
         'title' => 'Article sans Cover',
         'slug' => 'article-sans-cover',
-        'excerpt' => 'Résumé',
+        'tldr' => 'Résumé',
         'content' => 'Contenu',
         'photo' => null, // No translation cover
     ]);
@@ -122,7 +122,7 @@ it('uses default cover when neither translation nor main post have cover', funct
         'locale' => 'fr',
         'title' => 'Article sans Images',
         'slug' => 'article-sans-images',
-        'excerpt' => 'Résumé',
+        'tldr' => 'Résumé',
         'content' => 'Contenu',
         'photo' => null, // No translation cover
     ]);
@@ -163,7 +163,7 @@ it('displays correct cover image on post cards in index page', function () {
         'locale' => 'fr',
         'title' => 'Article Français',
         'slug' => 'article-francais',
-        'excerpt' => 'Résumé français',
+        'tldr' => 'Résumé français',
         'content' => 'Contenu français',
         'photo' => $frCoverPath,
     ]);
