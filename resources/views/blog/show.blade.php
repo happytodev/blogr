@@ -502,7 +502,7 @@
                         </svg>
                         {{ $post->published_at?->locale($currentLocale ?? app()->getLocale())->isoFormat('LL') ?? __('blogr::blogr.date.draft') }}
                     </span>
-                @endif>
+                @endif
 
                 @if (config('blogr.reading_time.enabled', true))
                     <span class="flex items-center">
@@ -863,6 +863,37 @@
             initCollapsibleToc();
             @endif
             
+            // Copy to clipboard function with fallback
+            function copyToClipboard(text) {
+                // Try modern clipboard API first (requires HTTPS or localhost)
+                if (navigator.clipboard && window.isSecureContext) {
+                    return navigator.clipboard.writeText(text);
+                } else {
+                    // Fallback for non-HTTPS contexts
+                    return new Promise(function(resolve, reject) {
+                        const textArea = document.createElement('textarea');
+                        textArea.value = text;
+                        textArea.style.cssText = 'position: fixed; left: -999999px; top: -999999px;';
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        
+                        try {
+                            const successful = document.execCommand('copy');
+                            textArea.remove();
+                            if (successful) {
+                                resolve();
+                            } else {
+                                reject(new Error('Copy command failed'));
+                            }
+                        } catch (err) {
+                            textArea.remove();
+                            reject(err);
+                        }
+                    });
+                }
+            }
+            
             // Handle permalink clicks
             document.querySelectorAll('.heading-permalink').forEach(function(link) {
                 link.addEventListener('click', function(e) {
@@ -872,7 +903,7 @@
                     const url = window.location.origin + window.location.pathname + this.getAttribute('href');
                     
                     // Copy to clipboard
-                    navigator.clipboard.writeText(url).then(function() {
+                    copyToClipboard(url).then(function() {
                         // Show temporary notification
                         const notification = document.createElement('div');
                         notification.textContent = 'Link copied to clipboard!';
