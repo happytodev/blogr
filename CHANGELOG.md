@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.12.1](https://github.com/happytodev/blogr/compare/v0.12.1...v0.12.0) - 2025-10-21
+
 ### 🔧 Improvements
 
 - **Permalink Copy Functionality**: Enhanced heading permalink copy-to-clipboard feature
