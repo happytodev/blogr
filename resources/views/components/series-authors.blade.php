@@ -44,19 +44,16 @@
                     ->take(2)
                     ->join('');
                 
-                // Build author profile URL
+                // Build author profile URL using route helper
                 $authorUrl = null;
                 if (config('blogr.author_profile.enabled') && $authorSlug) {
-                    $locale = config('blogr.locales.enabled') ? app()->getLocale() : null;
-                    $prefix = config('blogr.route.prefix', 'blog');
-                    $homepage = config('blogr.route.homepage', false);
+                    $localesEnabled = config('blogr.locales.enabled', false);
                     
-                    if ($locale && !$homepage) {
-                        $authorUrl = "/{$locale}/{$prefix}/author/{$authorSlug}";
-                    } elseif ($homepage) {
-                        $authorUrl = "/author/{$authorSlug}";
+                    if ($localesEnabled) {
+                        $currentLocale = app()->getLocale();
+                        $authorUrl = route('blog.author', ['locale' => $currentLocale, 'userSlug' => $authorSlug]);
                     } else {
-                        $authorUrl = "/{$prefix}/author/{$authorSlug}";
+                        $authorUrl = route('blog.author', ['userSlug' => $authorSlug]);
                     }
                 }
             @endphp
