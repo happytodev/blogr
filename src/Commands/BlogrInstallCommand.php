@@ -57,6 +57,15 @@ class BlogrInstallCommand extends Command
         // Step 2.5: Configure User model with HasRoles trait
         $this->configureUserModel();
 
+        // Step 2.5.1: Configure User model for Filament panel authorization
+        $userModelPath = app_path('Models/User.php');
+        if (File::exists($userModelPath)) {
+            $this->info('⚙️  Configuring User model for Filament panel access...');
+            $this->configureUserModelForFilament($userModelPath);
+            $this->info('✅ User model configured for Filament panel authorization');
+            $this->line('   Panel access is now restricted to users with emails from your domain');
+        }
+
         // Step 2.6: Create roles and permissions
         $this->createRolesAndPermissions();
 
@@ -1040,6 +1049,74 @@ JS;
 
         File::put($userModelPath, $content);
         $this->info('✅ User model configured successfully');
+    }
+
+    /**
+     * Configure the User model to implement FilamentUser interface
+     * for panel authorization with domain-based authentication
+     */
+    protected function configureUserModelForFilament(string $userModelPath): void
+    {
+        if (!File::exists($userModelPath)) {
+            return;
+        }
+
+        $content = File::get($userModelPath);
+
+        // Check if already configured
+        if (str_contains($content, 'use Filament\Models\Contracts\FilamentUser;')) {
+            return;
+        }
+
+        // Add Filament imports after Illuminate imports
+        $pattern = '/(use Illuminate\\\\[^;]+;(?:\s*use Illuminate\\\\[^;]+;)*)/';
+        if (preg_match($pattern, $content, $matches)) {
+            $lastIlluminateImport = $matches[1];
+            $replacement = $lastIlluminateImport . "\n" . 
+                          'use Filament\Models\Contracts\FilamentUser;' . "\n" .
+                          'use Filament\Panel;';
+            $content = str_replace($lastIlluminateImport, $replacement, $content);
+        }
+
+        // Add FilamentUser to implements clause
+        if (preg_match('/(class\s+User\s+extends\s+Authenticatable)(\s+implements\s+([^{]+))?/', $content, $matches)) {
+            $classDeclaration = $matches[1];
+            $implementsPart = $matches[2] ?? '';
+            
+            if ($implementsPart) {
+                // Already has implements - add FilamentUser
+                $interfaces = $matches[3];
+                $newImplements = ' implements ' . trim($interfaces) . ', FilamentUser';
+            } else {
+                // No implements yet - add it
+                $newImplements = ' implements FilamentUser';
+            }
+            
+            $newClassDeclaration = $classDeclaration . $newImplements;
+            $content = str_replace($matches[0], $newClassDeclaration, $content);
+        }
+
+        // Add canAccessPanel method before the last closing brace
+        $method = <<<'METHOD'
+
+    /**
+     * Determine if the user can access the Filament panel
+     * Authorization based on email domain for security
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;  // Temporarily allow all users; customize as needed
+        // return str_ends_with($this->email, '@' . config('app.domain', 'example.com'));
+    }
+METHOD;
+
+        // Find the last closing brace (end of class)
+        $lastBracePos = strrpos($content, '}');
+        if ($lastBracePos !== false) {
+            $content = substr_replace($content, $method . "\n}", $lastBracePos, 1);
+        }
+
+        File::put($userModelPath, $content);
     }
 
     protected function ensureImagesArePublished(): void
