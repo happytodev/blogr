@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.12.0](https://github.com/happytodev/blogr/compare/v0.12.0...v0.11.2) - 2025-10-21
+
 ### 🔒 Security
 
 - **Settings Access Control**: Restricted BlogrSettings page to admin role only
