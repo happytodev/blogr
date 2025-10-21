@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.12.3](https://github.com/happytodev/blogr/compare/v0.12.3...v0.12.2) - 2025-10-22
+
 ### ✨ Features
 
 - **Automated Filament Panel Authorization**: The `blogr:install` command now automatically configures the User model for Filament panel access
