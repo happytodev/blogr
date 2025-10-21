@@ -143,6 +143,8 @@ return [
     'toc' => [
         'enabled' => true, // TOC Globally Enabled (TGE): Enable/disable TOC globally by default
         'strict_mode' => false, // TOC Strict Mode (TSM): If true, individual posts cannot override global setting
+        'position' => 'center', // TOC Position: 'center' (inline), 'left' (sticky sidebar), or 'right' (sticky sidebar)
+        'collapsible' => true, // TOC Collapsible: Allow users to collapse/expand the entire TOC by clicking the title
     ],
 
     /*
@@ -353,5 +355,24 @@ return [
     */
     'author_profile' => [
         'enabled' => true, // Enable/disable author profile pages
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | RSS Feed Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure RSS feed settings including items limit and description.
+    | RSS feeds are available at:
+    | - Main feed: /feed or /{locale}/feed
+    | - Category feed: /{locale}/feed/category/{slug}
+    | - Tag feed: /{locale}/feed/tag/{slug}
+    |
+    */
+    'rss' => [
+        'enabled' => true, // Enable/disable RSS feeds
+        'items_limit' => 20, // Maximum number of items in the feed
+        'description' => 'Latest blog posts', // Default feed description
+        'cache_duration' => 3600, // Cache duration in seconds (1 hour)
     ],
 ];
