@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.12.2](https://github.com/happytodev/blogr/compare/v0.12.2...v0.12.1) - 2025-10-21
+
 ### 🐛 Bug Fixes
 
 - **Series Author Links**: Fixed missing locale prefix in author profile links on series pages
