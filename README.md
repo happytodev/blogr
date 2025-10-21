@@ -173,7 +173,7 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - [ ] Tests and reviews for the v1
 - [ ] More to come...
 
-### Beta 3 (ETA 2025-09-30)
+### Beta 3 (ETA 2025-09-30) ✅ **Completed**
 
 - [x] Multilingual
 - [x] Series of posts
@@ -194,20 +194,20 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 - [x] The tob menu bar is configurable too in the settings page
 
 
-### Beta 2 (ETA 2025-09-15)
+### Beta 2 (ETA 2025-09-15) ✅ **Completed**
 
-- [x] SEO fields (meta title, description, keywords) ✅ **Completed**
-- [x] Scheduled publishing ✅ **Completed**
-- [x] In the admin in the list of posts, display the toggle for is_published to quickly publish or unpublish ✅ **Completed**
-- [x] Add a table of content for blog post ✅ **Completed**
-- [x] When no post is published, display a message to user ✅ **Completed**
-- [x] Add a reading time information for blog post ✅ **Completed**
-- [x] Integrate meta fields ✅ **Completed**
-- [x] Create widgets to display on dashboard ✅ **Completed**
-- [x] Add a settings page to easily manage settings set in config/blogr.php ✅ **Completed**
-- [x] TOC could be deactivate for a post ✅ **Completed**
-- [x] User could define if TOC is activated by default or not for every post ✅ **Completed**
-- [x] Add default content to help user to start with Blogr ✅ **Completed**
+- [x] SEO fields (meta title, description, keywords) 
+- [x] Scheduled publishing 
+- [x] In the admin in the list of posts, display the toggle for is_published to quickly publish or unpublish 
+- [x] Add a table of content for blog post 
+- [x] When no post is published, display a message to user 
+- [x] Add a reading time information for blog post 
+- [x] Integrate meta fields 
+- [x] Create widgets to display on dashboard 
+- [x] Add a settings page to easily manage settings set in config/blogr.php 
+- [x] TOC could be deactivate for a post 
+- [x] User could define if TOC is activated by default or not for every post 
+- [x] Add default content to help user to start with Blogr 
 
 
 
@@ -495,84 +495,6 @@ If you encounter issues:
   - Verify in console: `window.matchMedia('(prefers-color-scheme: dark)').matches` should return `true` if your system is in dark mode
 - **Theme doesn't persist**: Check browser console for JavaScript errors, ensure Alpine.js is properly loaded
 
-### Manual installation
-
-If you prefer to install Blogr manually or need more control over the installation process, follow these steps:
-
-1. **Install the package via Composer**
-
-```bash
-composer require happytodev/blogr
-```
-
-2. **Publish configuration and migration files**
-
-```bash
-php artisan vendor:publish --provider="Happytodev\Blogr\BlogrServiceProvider"
-```
-
-3. **Run the migrations**
-
-```bash
-php artisan migrate
-```
-
-4. **Add the plugin in AdminPanelProvider class**
-
-Add this line in your file `app\Providers\Filament\AdminPanelProvider.php`
-
-```php
-            ->plugin(BlogrPlugin::make())
-```
-
-Don't forget to import the class : 
-
-```php
-use Happytodev\Blogr\BlogrPlugin;
-``` 
-
-5. **Install typography plugin**
-
-Run `npm install -D @tailwindcss/typography`
-
-6. **Add typography plugin in `resources\css\app.css`**
-
-In `resources\css\app.css`, change : 
-
-```css
-@import 'tailwindcss';
-@import '../../vendor/livewire/flux/dist/flux.css';
-...
-```
-
-by 
-
-```css
-@import 'tailwindcss';
-@import '../../vendor/livewire/flux/dist/flux.css';
-@plugin "@tailwindcss/typography";
-...
-```
-
-7. **Access the blog in Filament**
-
-The plugin adds a Filament resource for managing blog posts.  
-Log in to your Filament admin panel and go to the “Blog Posts” section.
-
-## Configuration
-
-You can customize the table prefix in the published config file:  
-`config/blogr.php`
-
-### Tailwind CSS v4 Dark Mode Configuration
-
-**⚠️ CRITICAL**: If you're using Tailwind CSS v4, you **MUST** configure the dark mode variant for the theme switcher to work.
-
-Add this line to your `resources/css/app.css`:
-
-```css
-@variant dark (.dark &);
-```
 
 **Complete example** of a Tailwind CSS v4 configuration compatible with Blogr:
 

@@ -4,6 +4,26 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### 🔧 Improvements
+
+- **Permalink Copy Functionality**: Enhanced heading permalink copy-to-clipboard feature
+  - Added fallback support for non-HTTPS environments
+  - Uses modern `navigator.clipboard` API when available (HTTPS/localhost)
+  - Falls back to `document.execCommand('copy')` for HTTP contexts
+  - Prevents "Cannot read properties of undefined" errors in non-secure contexts
+  - Maintains visual feedback notification on successful copy
+
+### 🐛 Bug Fixes
+
+- **Publication Date Display**: Fixed malformed HTML output by removing stray '>' character at the end of @endif directive, now secured by `PublicationDateHtmlOutputTest.php` to prevent regression
+
+### 📚 Documentation
+
+- **README Updates**: Updated feature completion status
+  - Marked Beta 2 features as completed (SEO fields, scheduled publishing, TOC, etc.)
+  - Marked Beta 3 features as completed (multilingual, series, RSS feed, etc.)
+  - Updated roadmap section with current completion status
+
 ## [v0.12.0](https://github.com/happytodev/blogr/compare/v0.12.0...v0.11.2) - 2025-10-21
 
 ### 🔒 Security
