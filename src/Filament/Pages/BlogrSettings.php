@@ -4,6 +4,7 @@ namespace Happytodev\Blogr\Filament\Pages;
 
 use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\File;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
@@ -98,6 +99,7 @@ class BlogrSettings extends Page
     public ?string $seo_structured_data_organization_logo = null;
     public ?bool $toc_enabled = null;
     public ?bool $toc_strict_mode = null;
+    public ?string $toc_position = null;
     public ?string $heading_permalink_symbol = null;
     public ?string $heading_permalink_spacing = null;
     public ?string $heading_permalink_visibility = null;
@@ -154,6 +156,15 @@ class BlogrSettings extends Page
     // UI Settings - Posts
     public ?string $posts_default_image = null;
     public ?bool $posts_show_language_switcher = null;
+
+    /**
+     * Check if the current user can access this page
+     * Only admins should be able to access settings
+     */
+    public static function canAccess(): bool
+    {
+        return Filament::auth()->user()->hasRole('admin');
+    }
 
     public function mount(): void
     {
@@ -291,6 +302,7 @@ class BlogrSettings extends Page
         $this->seo_structured_data_organization_logo = $config['seo']['structured_data']['organization']['logo'] ?? '';
         $this->toc_enabled = $config['toc']['enabled'] ?? true;
         $this->toc_strict_mode = $config['toc']['strict_mode'] ?? false;
+        $this->toc_position = $config['toc']['position'] ?? 'center';
         $this->heading_permalink_symbol = $config['heading_permalink']['symbol'] ?? '#';
         $this->heading_permalink_spacing = $config['heading_permalink']['spacing'] ?? 'after';
         $this->heading_permalink_visibility = $config['heading_permalink']['visibility'] ?? 'hover';
@@ -732,6 +744,15 @@ class BlogrSettings extends Page
                                         ->label('Strict Mode')
                                         ->default(false)
                                         ->helperText('When enabled, individual posts cannot override the global TOC setting.'),
+                                    Select::make('toc_position')
+                                        ->label('TOC Position')
+                                        ->options([
+                                            'center' => 'Center (inline with content)',
+                                            'left' => 'Left sidebar (sticky)',
+                                            'right' => 'Right sidebar (sticky)',
+                                        ])
+                                        ->default('center')
+                                        ->helperText('Position of the table of contents: center (default inline behavior), or sticky sidebar on left/right'),
                                 ]),
 
                             Section::make('Heading Permalinks')
@@ -1061,6 +1082,7 @@ class BlogrSettings extends Page
             'toc' => [
                 'enabled' => $this->toc_enabled,
                 'strict_mode' => $this->toc_strict_mode,
+                'position' => $this->toc_position ?? 'center',
             ],
             'heading_permalink' => [
                 'symbol' => $this->heading_permalink_symbol,
