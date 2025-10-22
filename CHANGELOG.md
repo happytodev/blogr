@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.12.5](https://github.com/happytodev/blogr/compare/v0.12.5...v0.12.4) - 2025-10-22
+
 ### 🐛 Bug Fixes
 
 - Fixes [#141](https://github.com/happytodev/blogr/issues/141) [Bug]: Error when creating a serie
