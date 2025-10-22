@@ -4,32 +4,41 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.12.4](https://github.com/happytodev/blogr/compare/v0.12.4...v0.12.3) - 2025-10-22
+
 ### 🐛 Bug Fixes
 
 - Fixes [#138](https://github.com/happytodev/blogr/issues/138) **Reading Time Inconsistency**: Fixed reading time showing different values on cards vs article pages
   - **Problem**: Homepage cards showed "3 min" while article page showed "<1 min" for the same post
   - **Root Cause**: `BlogPost::getFormattedReadingTime()` calculated from empty main table content instead of translation content
-  - **Solution**: Controllers now set `$post->reading_time` from `$translation->reading_time` (stored value)
-  - **Translation-First Architecture**: Reading time is stored per translation, not in main table
+  - **Solution**: 
+    - Modified `BlogPost::getEstimatedReadingTimeMinutes()` to calculate from **translation content** when available
+    - Updated `BlogController::show()` to calculate reading time from translation content if not stored in database
+    - Method now checks for loaded translations first, then falls back to main table content
+  - **Translation-First Architecture**: Reading time calculated from translation content, not main table
   - **Changes**:
-    - Modified `BlogPost::getFormattedReadingTime()` to use `$this->reading_time` attribute if set
-    - Updated all controllers (`BlogController`, `AuthorController`) to set `reading_time` from translation
+    - Modified `BlogPost::getEstimatedReadingTimeMinutes()` to use translation content when available
+    - Updated `BlogController::show()` to calculate reading time from translation if `$translation->reading_time` is NULL
     - Added `app()->setLocale($locale)` to controllers for proper i18n helper support
     - Removed manual reading time calculation from `AuthorController` (now uses stored value)
   - **Tests**: Added 6 comprehensive tests in `ReadingTimeConsistencyTest`:
     - ✅ Same reading time on homepage card and article page
     - ✅ Same reading time on author page and article page  
-    - ✅ Uses translation reading_time from database
+    - ✅ Uses translation reading_time from database when available
     - ✅ Calculates from translation content (not main table)
     - ✅ Consistent across all listing pages (index, category, tag, series, author)
     - ⏭️ Different locales show independent reading times (skipped: translation files not loaded in test)
-- Fixes [#134](https://github.com/happytodev/blogr/issues/134) Missing translations in UI
-- **Author Page Translation Photos**: Fixed regression where translation-specific photos were not displayed on author pages
-  - Author page now uses same photo fallback logic as homepage (`setAttribute('photo', $photoToUse)`)
+- Fixes [#137](https://github.com/happytodev/blogr/issues/137) **Author Page Translation Photos**: Fixed regression where translation-specific photos were not displayed on author pages
+  - **Problem**: Translation-specific photos were not showing on author pages, even when properly configured
   - **Root Cause**: Controller was setting `photo_url` attribute but view component checks `photo` attribute
+  - **Solution**: Author page now uses same photo fallback logic as homepage (`setAttribute('photo', $photoToUse)`)
   - **Fallback Order**: Translation photo → Main post photo → Any translation photo
-  - Removed unused `getStorageUrl()` method from AuthorController
-  - Added 4 comprehensive tests in `AuthorPageTranslationPhotoTest` to prevent future regressions
+  - **Changes**:
+    - Updated `AuthorController` to use `setAttribute('photo', $photoToUse)` instead of `photo_url`
+    - Removed unused `getStorageUrl()` method from AuthorController
+    - Aligned photo handling with homepage logic for consistency
+  - **Tests**: Added 4 comprehensive tests in `AuthorPageTranslationPhotoTest` to prevent future regressions
+- Fixes [#134](https://github.com/happytodev/blogr/issues/134) Missing translations in UI
 
 ## [v0.12.3](https://github.com/happytodev/blogr/compare/v0.12.3...v0.12.2) - 2025-10-22
 
