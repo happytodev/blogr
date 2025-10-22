@@ -6,6 +6,23 @@ All notable changes to `blogr` will be documented in this file.
 
 ### 🐛 Bug Fixes
 
+- Fixes [#138](https://github.com/happytodev/blogr/issues/138) **Reading Time Inconsistency**: Fixed reading time showing different values on cards vs article pages
+  - **Problem**: Homepage cards showed "3 min" while article page showed "<1 min" for the same post
+  - **Root Cause**: `BlogPost::getFormattedReadingTime()` calculated from empty main table content instead of translation content
+  - **Solution**: Controllers now set `$post->reading_time` from `$translation->reading_time` (stored value)
+  - **Translation-First Architecture**: Reading time is stored per translation, not in main table
+  - **Changes**:
+    - Modified `BlogPost::getFormattedReadingTime()` to use `$this->reading_time` attribute if set
+    - Updated all controllers (`BlogController`, `AuthorController`) to set `reading_time` from translation
+    - Added `app()->setLocale($locale)` to controllers for proper i18n helper support
+    - Removed manual reading time calculation from `AuthorController` (now uses stored value)
+  - **Tests**: Added 6 comprehensive tests in `ReadingTimeConsistencyTest`:
+    - ✅ Same reading time on homepage card and article page
+    - ✅ Same reading time on author page and article page  
+    - ✅ Uses translation reading_time from database
+    - ✅ Calculates from translation content (not main table)
+    - ✅ Consistent across all listing pages (index, category, tag, series, author)
+    - ⏭️ Different locales show independent reading times (skipped: translation files not loaded in test)
 - Fixes [#134](https://github.com/happytodev/blogr/issues/134) Missing translations in UI
 - **Author Page Translation Photos**: Fixed regression where translation-specific photos were not displayed on author pages
   - Author page now uses same photo fallback logic as homepage (`setAttribute('photo', $photoToUse)`)

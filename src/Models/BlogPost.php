@@ -428,8 +428,23 @@ class BlogPost extends Model
     {
         $readingSpeed = config('blogr.reading_speed.words_per_minute', 200);
 
-        // Combine title and content for word count
-        $text = $this->title . ' ' . $this->getOriginal('content');
+        // Try to use current translation's content if available
+        $text = '';
+        
+        // Check if we have a loaded translation with content
+        if ($this->relationLoaded('translations')) {
+            $currentLocale = app()->getLocale();
+            $translation = $this->translations->firstWhere('locale', $currentLocale);
+            
+            if ($translation && $translation->content) {
+                $text = ($translation->title ?? '') . ' ' . $translation->content;
+            }
+        }
+        
+        // Fallback to main table content if no translation content found
+        if (empty($text)) {
+            $text = $this->title . ' ' . $this->getOriginal('content');
+        }
 
         // Remove HTML tags and count words
         $plainText = strip_tags($text);
@@ -476,6 +491,8 @@ class BlogPost extends Model
 
     /**
      * Get formatted reading time text using configuration
+     * Uses the translation's stored reading_time value if available,
+     * otherwise falls back to calculation from main content
      *
      * @return string
      */
@@ -485,7 +502,9 @@ class BlogPost extends Model
             return '';
         }
 
-        $minutes = $this->getEstimatedReadingTimeMinutes();
+        // Use the reading_time attribute (set by accessors or controllers)
+        // This allows translations to provide their own reading time
+        $minutes = $this->reading_time ?? $this->getEstimatedReadingTimeMinutes();
         
         return ConfigHelper::getReadingTimeText($minutes);
     }

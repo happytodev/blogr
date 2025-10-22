@@ -44,6 +44,9 @@ class BlogController
         // Handle locale
         $locale = $this->resolveLocale($locale);
         
+        // Set app locale for helpers to use
+        app()->setLocale($locale);
+        
         // Get posts that have translations in this locale with pagination
         $posts = BlogPost::whereHas('translations', function($query) use ($locale) {
                 $query->where('locale', $locale);
@@ -73,6 +76,11 @@ class BlogController
                 $post->translated_title = $translation?->title ?? $post->title;
                 $post->translated_slug = $translation?->slug ?? $post->slug;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
+                
+                // Set reading time from translation
+                if ($translation && isset($translation->reading_time)) {
+                    $post->reading_time = $translation->reading_time;
+                }
                 
                 // Photo fallback logic: translation photo > post photo > any other translation photo
                 $photoToUse = null;
@@ -166,6 +174,9 @@ class BlogController
         
         // Validate locale
         $locale = $this->resolveLocale($locale);
+        
+        // Set app locale for helpers to use
+        app()->setLocale($locale);
         
         // Try to fetch translation in requested locale first
         $translation = BlogPostTranslation::where('slug', $actualSlug)
@@ -313,6 +324,22 @@ class BlogController
         // Check if current locale translation is available
         $translationAvailable = $post->translations->contains('locale', $locale);
 
+        // Set reading time on post model from translation
+        if ($translation) {
+            if (isset($translation->reading_time) && $translation->reading_time > 0) {
+                // Use stored value if available
+                $post->reading_time = $translation->reading_time;
+            } else {
+                // Calculate from translation content if not stored
+                $readingSpeed = config('blogr.reading_speed.words_per_minute', 200);
+                $text = ($translation->title ?? '') . ' ' . ($translation->content ?? '');
+                $plainText = strip_tags($text);
+                $wordCount = str_word_count($plainText);
+                $minutes = floor($wordCount / $readingSpeed);
+                $post->reading_time = $wordCount > 0 ? max(1, (int)$minutes) : 0;
+            }
+        }
+        
         // Prepare display data from translation
         $displayData = [
             'title' => $translation->title,
@@ -510,6 +537,11 @@ class BlogController
                     $translation = $post->getDefaultTranslation();
                 }
                 
+                // Set reading time from translation
+                if ($translation && isset($translation->reading_time)) {
+                    $post->reading_time = $translation->reading_time;
+                }
+                
                 // Photo fallback logic: translation photo > post photo > any other translation photo
                 $photoToUse = null;
                 if ($translation?->photo) {
@@ -602,6 +634,11 @@ class BlogController
                 
                 if (!$translation) {
                     $translation = $post->getDefaultTranslation();
+                }
+                
+                // Set reading time from translation
+                if ($translation && isset($translation->reading_time)) {
+                    $post->reading_time = $translation->reading_time;
                 }
                 
                 // Photo fallback logic: translation photo > post photo > any other translation photo
@@ -744,6 +781,11 @@ class BlogController
                 $post->translated_slug = $translation?->slug ?? $post->slug;
                 $post->translated_title = $translation?->title ?? $post->title;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
+                
+                // Set reading time from translation
+                if ($translation && isset($translation->reading_time)) {
+                    $post->reading_time = $translation->reading_time;
+                }
                 
                 // Photo fallback logic: translation photo > post photo > any other translation photo
                 $photoToUse = null;

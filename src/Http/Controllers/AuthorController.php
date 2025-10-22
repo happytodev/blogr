@@ -20,6 +20,9 @@ class AuthorController extends Controller
         $actualSlug = $userSlug ?? $localeOrSlug;
         $locale = $userSlug ? $localeOrSlug : app()->getLocale();
         
+        // Set app locale for helpers to use
+        app()->setLocale($locale);
+        
         // Check if author profile feature is enabled
         if (!config('blogr.author_profile.enabled', true)) {
             abort(404, 'Author profiles are disabled');
@@ -63,16 +66,9 @@ class AuthorController extends Controller
                 $post->translated_slug = $translation?->slug ?? $post->slug;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
                 
-                // Calculate reading time from translation content
-                if ($translation && $translation->content) {
-                    $readingSpeed = config('blogr.reading_speed.words_per_minute', 200);
-                    $text = ($translation->title ?? '') . ' ' . $translation->content;
-                    $plainText = strip_tags($text);
-                    $wordCount = str_word_count($plainText);
-                    $minutes = floor($wordCount / $readingSpeed);
-                    $post->reading_time = $wordCount > 0 ? max(1, (int)$minutes) : 0;
-                } else {
-                    $post->reading_time = 0;
+                // Set reading time from translation (use stored value, don't recalculate)
+                if ($translation && isset($translation->reading_time)) {
+                    $post->reading_time = $translation->reading_time;
                 }
                 
                 // Photo fallback logic: translation photo > post photo > any other translation photo
