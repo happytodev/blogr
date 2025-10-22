@@ -36,6 +36,22 @@ class BlogSeries extends Model
     ];
 
     /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        // Auto-generate slug if not provided
+        static::creating(function ($series) {
+            if (empty($series->slug)) {
+                // Generate a temporary slug using timestamp and random string
+                $series->slug = 'series-' . now()->timestamp . '-' . \Illuminate\Support\Str::random(8);
+            }
+        });
+    }
+
+    /**
      * Get all translations for this series.
      */
     public function translations(): HasMany
