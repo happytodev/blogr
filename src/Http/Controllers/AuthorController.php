@@ -5,28 +5,10 @@ namespace Happytodev\Blogr\Http\Controllers;
 use Happytodev\Blogr\Helpers\MarkdownHelper;
 use Happytodev\Blogr\Models\BlogPost;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AuthorController extends Controller
 {
-    /**
-     * Generate a storage URL (temporary for cloud, regular for local).
-     */
-    private function getStorageUrl(string $path): string
-    {
-        // Use the 'public' disk for series and post images
-        $disk = Storage::disk('public');
-        
-        try {
-            // Try to generate temporary URL (works for S3, etc.)
-            return $disk->temporaryUrl($path, now()->addHours(1));
-        } catch (\RuntimeException $e) {
-            // Fallback to regular URL for local driver
-            return $disk->url($path);
-        }
-    }
-    
     /**
      * Display the author's profile page with their published posts
      */
@@ -107,8 +89,10 @@ class AuthorController extends Controller
                     }
                 }
                 
+                // Set the photo to use (this will override the accessor's default behavior)
+                // This is the same approach as in BlogController::index()
                 if ($photoToUse) {
-                    $post->photo_url = $this->getStorageUrl($photoToUse);
+                    $post->setAttribute('photo', $photoToUse);
                 }
                 
                 return $post;

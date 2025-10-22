@@ -7,6 +7,12 @@ All notable changes to `blogr` will be documented in this file.
 ### 🐛 Bug Fixes
 
 - Fixes [#134](https://github.com/happytodev/blogr/issues/134) Missing translations in UI
+- **Author Page Translation Photos**: Fixed regression where translation-specific photos were not displayed on author pages
+  - Author page now uses same photo fallback logic as homepage (`setAttribute('photo', $photoToUse)`)
+  - **Root Cause**: Controller was setting `photo_url` attribute but view component checks `photo` attribute
+  - **Fallback Order**: Translation photo → Main post photo → Any translation photo
+  - Removed unused `getStorageUrl()` method from AuthorController
+  - Added 4 comprehensive tests in `AuthorPageTranslationPhotoTest` to prevent future regressions
 
 ## [v0.12.3](https://github.com/happytodev/blogr/compare/v0.12.3...v0.12.2) - 2025-10-22
 
