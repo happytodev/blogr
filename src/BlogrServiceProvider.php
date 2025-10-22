@@ -23,6 +23,8 @@ use Happytodev\Blogr\Commands\MigratePostsToTranslations;
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Happytodev\Blogr\Http\Controllers\AuthorController;
 use Happytodev\Blogr\Http\Controllers\RssFeedController;
+use Happytodev\Blogr\Models\BlogSeriesTranslation;
+use Happytodev\Blogr\Observers\BlogSeriesTranslationObserver;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 
@@ -450,6 +452,9 @@ class BlogrServiceProvider extends PackageServiceProvider
 
     public function boot()
     {
+        // Register model observers
+        BlogSeriesTranslation::observe(BlogSeriesTranslationObserver::class);
+        
         // Publishes the configuration and views
         $this->publishes([
             __DIR__ . '/../config/blogr.php' => config_path('blogr.php'),
