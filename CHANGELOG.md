@@ -4,6 +4,10 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### 🐛 Bug Fixes
+
+- Fixes [#134](https://github.com/happytodev/blogr/issues/134) Missing translations in UI
+
 ## [v0.12.3](https://github.com/happytodev/blogr/compare/v0.12.3...v0.12.2) - 2025-10-22
 
 ### ✨ Features

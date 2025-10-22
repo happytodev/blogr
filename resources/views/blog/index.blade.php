@@ -42,7 +42,7 @@
         @endif
 
         <!-- Posts Grid -->
-        <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Latest Articles</h2>
+        <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">{{ __('blogr::blogr.ui.latest_posts') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
             @forelse ($posts as $post)
                 <x-blogr::blog-post-card :post="$post" :currentLocale="$currentLocale" />
