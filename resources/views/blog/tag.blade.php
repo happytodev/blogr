@@ -10,7 +10,7 @@
     <div class="container mx-auto px-4 py-12">
         <!-- Page Header -->
         <div class="mb-12 text-center">
-            <h1 class="text-5xl font-bold mb-4 text-gray-900 dark:text-white">Posts with tag {{ $displayName ?? $tag->name }}</h1>
+            <h1 class="text-5xl font-bold mb-4 text-gray-900 dark:text-white">{{ __('blogr::blogr.ui.posts_with_tag') }} {{ $displayName ?? $tag->name }}</h1>
             <a href="{{ route('blog.index', $currentLocale) }}" 
                class="inline-flex items-center text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] font-semibold">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

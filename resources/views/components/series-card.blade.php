@@ -59,7 +59,7 @@
                 <a href="{{ route('blog.series', ['locale' => $currentLocale, 'seriesSlug' => $series->translated_slug ?? $series->slug]) }}"
                     class="inline-flex items-center text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] font-semibold text-sm group/link ml-auto"
                     onclick="event.stopPropagation();">
-                    {{ __('blogr::blogr.series.view_series') }}
+                    {{ __('blogr::blogr.series.view_serie') }}
                     <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
