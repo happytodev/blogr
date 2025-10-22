@@ -290,10 +290,14 @@ it('series is optional for blog posts', function () {
         ->and($post->series)->toBeNull();
 });
 
-it('requires slug for blog series', function () {
-    expect(fn () => BlogSeries::create([
+it('auto-generates slug when not provided for blog series', function () {
+    $series = BlogSeries::create([
         'position' => 1,
-    ]))->toThrow(\Illuminate\Database\QueryException::class);
+    ]);
+    
+    expect($series->slug)
+        ->not()->toBeNull()
+        ->and($series->slug)->toStartWith('series-');
 });
 
 it('requires unique slug for blog series', function () {
