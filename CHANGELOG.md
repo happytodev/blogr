@@ -4,6 +4,71 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### ✨ Features
+
+- **Import/Export System**: Complete backup and migration system for blog data
+  - **Export Command**: `php artisan blogr:export` - Export all blog data (posts, series, categories, tags, translations) to JSON or ZIP
+    - Optional `--output` parameter for custom export path
+    - Optional `--include-media` flag to include media files in ZIP archive
+    - Automatic version tracking and timestamp in export files
+    - Media files collected from both main tables and translation tables
+  - **Import Command**: `php artisan blogr:import` - Import blog data from JSON or ZIP files
+    - Comprehensive validation of import data structure
+    - Transaction-wrapped imports for data integrity
+    - Option to skip existing records to avoid duplicates
+    - Detailed logging of import operations
+    - Foreign key validation (sets null if referenced entities don't exist)
+    - ID preservation during overwrite mode using `DB::table()->insert()`
+  - **Filament UI Integration**: Backup tab in BlogrSettings page
+    - Export section with "Run Export Now" button
+    - Import section with file upload and options
+    - Direct service calls (not Artisan commands) for web context compatibility
+    - Real-time notifications with file paths and sizes
+  - **Service Layer**:
+    - `BlogrExportService`: Handles data collection, media file gathering, ZIP creation
+    - `BlogrImportService`: Validates structure, handles relationships, preserves IDs
+  - **Spatie Backup Integration**: Optional integration with Spatie Laravel Backup
+    - `BackupInstaller`: Installs and configures Spatie Backup package
+    - `BackupInstallationChecker`: Verifies installation status and configuration
+    - Automatic setup during `blogr:install` with user confirmation
+    - Configuration publishing and backup disk setup
+
+- **GitHub Copilot Instructions**: AI-first development documentation
+  - Comprehensive `.github/copilot-instructions.md` file for AI coding agents
+  - Translation-first architecture patterns and best practices
+  - Service layer documentation with code examples
+  - Testing workflow with Pest PHP commands
+  - Common patterns and gotchas from production debugging
+  - Key files reference for quick navigation
+  - Debugging commands and workflows
+
+### 🧪 Testing
+
+- **Comprehensive Test Coverage**: Added 20+ new tests for backup/import/export functionality
+  - `BlogrExportCommandTest`: 7 tests validating export structure, relationships, media files
+  - `BlogrImportCommandTest`: 4 tests for import validation and error handling
+  - `BlogrFilamentBackupTabTest`: 3 tests for Filament UI integration
+  - `BlogrSettingsImportTest`: 18 tests for import service, access control, overwrite modes
+  - `BlogrInstallBackupIntegrationTest`: 5 tests for backup system integration
+  - Unit tests for `BackupInstaller` and `BackupInstallationChecker`
+  - **Total: 555 tests passing** (1641 assertions) ✅
+
+### 🐛 Bug Fixes
+
+- **Export Command Web Context**: Fixed "blogr:export command does not exist" error when clicking "Run Export Now" button
+  - **Root Cause**: Command registered only in console context (`if ($this->app->runningInConsole())`)
+  - **Solution**: Call `BlogrExportService` directly instead of using `Artisan::call()`
+  - Added `formatBytes()` helper method for human-readable file sizes
+  - Enhanced notification with file path and size information
+
+### 📚 Documentation
+
+- **Import/Export Guide**: Comprehensive documentation in copilot-instructions.md
+  - Service layer architecture patterns
+  - Import/export workflow examples
+  - Logging conventions and debugging commands
+  - Common gotchas and best practices
+
 ## [v0.12.5](https://github.com/happytodev/blogr/compare/v0.12.5...v0.12.4) - 2025-10-22
 
 ### 🐛 Bug Fixes
