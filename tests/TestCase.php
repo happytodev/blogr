@@ -115,28 +115,12 @@ class TestCase extends Orchestra
                 'store' => 'default',
             ],
         ]);
-        
-        // Disable automatic loading of Spatie Permission migrations
-        $app['config']->set('permission.testing', true);
     }
 
     protected function defineDatabaseMigrations()
     {
-        // Load test-specific migrations (including users table)
+        // Load test-specific migrations (includes users and Spatie Permission tables)
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-
-        // Resolve Spatie Permission package migrations path reliably (works in CI and local)
-        $ref = new \ReflectionClass(\Spatie\Permission\PermissionServiceProvider::class);
-        $packageDir = dirname($ref->getFileName(), 2); // points to vendor/spatie/laravel-permission
-        $migrationsPath = $packageDir . '/database/migrations';
-
-        if (is_dir($migrationsPath) && !\Illuminate\Support\Facades\Schema::hasTable('permissions')) {
-            // Run migrations from the package using absolute path so it works regardless of working-dir
-            $this->artisan('migrate', [
-                '--database' => 'testing',
-                '--path' => $migrationsPath,
-            ])->run();
-        }
     }
 
     // Routes are now defined by BlogrServiceProvider in boot()
