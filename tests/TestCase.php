@@ -107,24 +107,29 @@ class TestCase extends Orchestra
             'display_permission_in_exception' => false,
             'display_role_in_exception' => false,
             'enable_wildcard_permission' => false,
+            'register_permission_check_method' => true,
+            'register_octane_reset_listener' => false,
             'cache' => [
                 'expiration_time' => \DateInterval::createFromDateString('24 hours'),
                 'key' => 'spatie.permission.cache',
                 'store' => 'default',
             ],
         ]);
+        
+        // Disable automatic loading of Spatie Permission migrations
+        $app['config']->set('permission.testing', true);
     }
 
     protected function defineDatabaseMigrations()
     {
-        // Run Spatie Permission migrations
+        // Load test-specific migrations (including users table)
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+        
+        // Manually run Spatie Permission migrations from vendor 
         $this->artisan('migrate', [
             '--database' => 'testing',
             '--path' => 'vendor/spatie/laravel-permission/database/migrations',
         ])->run();
-        
-        // Load test-specific migrations (including users table for testing)
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
 
     // Routes are now defined by BlogrServiceProvider in boot()
