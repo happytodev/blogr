@@ -91,6 +91,9 @@ class BlogrInstallCommand extends Command
         // Step 4: Install dashboard widgets
         $this->installWidgets();
 
+        // Step 4.5: Setup backup system (Spatie Laravel Backup)
+        $this->setupBackupSystem();
+
         // Step 5: Configure frontend (Alpine.js and Tailwind CSS)
         if (!$this->option('skip-frontend')) {
             $this->configureFrontend();
@@ -555,6 +558,51 @@ JS;
             $this->warn("⚠️ Failed to install widget {$widgetClass}: " . $e->getMessage());
             return false;
         }
+    }
+
+    protected function setupBackupSystem(): void
+    {
+        $this->info('💾 Setting up Blogr backup system...');
+
+        $checker = new \Happytodev\Blogr\Services\BackupInstallationChecker();
+        $installer = new \Happytodev\Blogr\Services\BackupInstaller();
+
+        if ($checker->isInstalled()) {
+            $this->info('✅ Spatie Laravel Backup is already installed.');
+
+            if (!$checker->isConfigPublished()) {
+                $this->line('📋 Publishing backup configuration...');
+                if ($installer->publishConfig()) {
+                    $this->info('✅ Backup configuration published successfully.');
+                } else {
+                    $this->warn('⚠️ Failed to publish backup configuration.');
+                }
+            } else {
+                $this->info('✅ Backup configuration is already published.');
+            }
+        } else {
+            $this->line('🔍 Spatie Laravel Backup not found.');
+
+            if ($this->forceableConfirm('Would you like to install Spatie Laravel Backup for automatic backups?', true)) {
+                $this->line('📦 Adding spatie/laravel-backup to composer.json...');
+
+                if ($installer->install()) {
+                    $this->info('✅ Added spatie/laravel-backup to composer.json');
+                    $this->line('ℹ️ Run "composer update" to install the package');
+                    $this->line('ℹ️ Then run "php artisan vendor:publish --provider="Spatie\Backup\BackupServiceProvider""');
+                    $this->line('ℹ️ See Blogr documentation for backup configuration');
+                } else {
+                    $this->warn('⚠️ Failed to add spatie/laravel-backup to composer.json');
+                }
+            } else {
+                $this->line('ℹ️ You can install it later: composer require spatie/laravel-backup');
+                $this->line('ℹ️ See Blogr documentation for backup setup');
+            }
+        }
+
+        $this->line('📚 Blogr provides export/import commands:');
+        $this->line('   • php artisan blogr:export [--output=path]');
+        $this->line('   • php artisan blogr:import file.json [--skip-existing]');
     }
 
     protected function handleNpmDependencies(): void
