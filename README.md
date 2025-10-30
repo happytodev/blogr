@@ -11,7 +11,13 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 
 ## Features
 
-### 🎯 Blog Series (NEW)
+### 💾 Backup your data with import/Export functionnality (NEW with v0.13.0)
+
+- Complete backup and migration system for blog data
+- Export all blog data (posts, series, categories, tags, translations) to JSON or ZIP
+- Backup tab in BlogrSettings page
+
+### 🎯 Blog Series 
 
 - **Organize posts into series**: Group related posts together for better content structure
 - **Automatic navigation**: Previous/Next navigation between posts in a series
@@ -24,7 +30,7 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
   - Series badge for posts
   - Breadcrumb with series context
 
-### 🌍 Multilingual Support (NEW)
+### 🌍 Multilingual Support 
 
 - **Multiple languages**: Built-in support for en, fr, es, de (extensible)
 - **Per-entity translations**: Translate posts, series, categories, and tags
@@ -165,6 +171,7 @@ Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel a
 
 ### RC1 (ETA 2025-10-31)
 
+- [x] Add Import / Export functionnality to eeasily backup and restore blog posts
 - [ ] Title of blog post in the widget 'recent blog posts' should be clickable
 - [ ] Add a link to the public blog url
 - [ ] Add the theme capability to Blogr
