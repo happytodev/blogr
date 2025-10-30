@@ -3,6 +3,10 @@
 ## Project Overview
 Blogr is a **FilamentPHP v4 plugin** adding a multilingual blog system to Laravel applications. Core stack: PHP 8.3+, Laravel 12, Pest PHP 4.0 (555+ tests). Package version: 0.12.5 (approaching RC1 - Oct 2025).
 
+## Mandatory instructions
+- Always use `cat` to create files
+- Always use french to talk to me
+
 ## Architecture: Translation-First Design
 
 **Critical Pattern**: All content entities use separate translation tables.
