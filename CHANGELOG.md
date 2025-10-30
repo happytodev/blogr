@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.13.0](https://github.com/happytodev/blogr/compare/v0.13.0...v0.12.5) - 2025-10-30
+
 ### ✨ Features
 
 - **Import/Export System**: Complete backup and migration system for blog data
