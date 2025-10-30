@@ -20,6 +20,8 @@ use Livewire\Features\SupportTesting\Testable;
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Commands\InstallUserManagementCommand;
 use Happytodev\Blogr\Commands\MigratePostsToTranslations;
+use Happytodev\Blogr\Commands\BlogrExportCommand;
+use Happytodev\Blogr\Commands\BlogrImportCommand;
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Happytodev\Blogr\Http\Controllers\AuthorController;
 use Happytodev\Blogr\Http\Controllers\RssFeedController;
@@ -478,6 +480,8 @@ class BlogrServiceProvider extends PackageServiceProvider
                 BlogrInstallCommand::class,
                 InstallUserManagementCommand::class,
                 MigratePostsToTranslations::class,
+                BlogrExportCommand::class,
+                BlogrImportCommand::class,
             ]);
         }
 

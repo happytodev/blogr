@@ -107,6 +107,8 @@ class TestCase extends Orchestra
             'display_permission_in_exception' => false,
             'display_role_in_exception' => false,
             'enable_wildcard_permission' => false,
+            'register_permission_check_method' => true,
+            'register_octane_reset_listener' => false,
             'cache' => [
                 'expiration_time' => \DateInterval::createFromDateString('24 hours'),
                 'key' => 'spatie.permission.cache',
@@ -117,7 +119,7 @@ class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations()
     {
-        // Load test-specific migrations (including users table for testing)
+        // Load test-specific migrations (includes users and Spatie Permission tables)
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
 

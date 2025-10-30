@@ -57,7 +57,8 @@
         "post-autoload-dump": [
             "@clear",
             "@prepare",
-            "@php ./vendor/bin/testbench package:discover --ansi"
+            "@php ./vendor/bin/testbench package:discover --ansi",
+            "@remove-orchestra-permission-migration"
         ],
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
@@ -68,6 +69,9 @@
             "Composer\\Config::disableProcessTimeout",
             "@build",
             "@php vendor/bin/testbench serve --ansi"
+        ],
+        "remove-orchestra-permission-migration": [
+            "rm -f vendor/orchestra/testbench-core/laravel/database/migrations/*_create_permission_tables.php"
         ]
     },
     "config": {
