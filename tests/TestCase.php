@@ -117,6 +117,9 @@ class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations()
     {
+        // Load Spatie Permission migrations first
+        $this->loadMigrationsFrom(__DIR__ . '/../vendor/spatie/laravel-permission/database/migrations');
+        
         // Load test-specific migrations (including users table for testing)
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
