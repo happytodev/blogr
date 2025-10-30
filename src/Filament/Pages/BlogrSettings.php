@@ -16,14 +16,19 @@ use Filament\Forms\Components\FileUpload;
 use Illuminate\Support\Facades\Artisan;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Forms\Components\ColorPicker;
+use Filament\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Livewire\WithFileUploads;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\Placeholder;
 use Happytodev\Blogr\Helpers\ColorHelper;
+use Illuminate\Support\Facades\Log;
 
 
 class BlogrSettings extends Page
 {
     use InteractsWithForms;
+    use WithFileUploads;
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static string | null $navigationLabel = 'Settings';
@@ -41,13 +46,13 @@ class BlogrSettings extends Page
     public ?bool $route_homepage = null;
     public ?string $colors_primary = null;
     public ?int $reading_speed_words_per_minute = null;
-    
+
     // Appearance Colors (Card Backgrounds)
     public ?string $appearance_blog_card_bg = null;
     public ?string $appearance_blog_card_bg_dark = null;
     public ?string $appearance_series_card_bg = null;
     public ?string $appearance_series_card_bg_dark = null;
-    
+
     // Theme Colors
     public ?string $theme_primary_color_dark = null;
     public ?string $theme_primary_color_hover = null;
@@ -64,7 +69,7 @@ class BlogrSettings extends Page
     public ?string $reading_time_text_es = null;
     public ?string $reading_time_text_de = null;
     public ?bool $reading_time_enabled = null;
-    
+
     // SEO Settings - Translatable fields
     // @todo dynamically generate these based on available locales
     public ?string $seo_site_name_en = null;
@@ -83,7 +88,7 @@ class BlogrSettings extends Page
     public ?string $seo_default_keywords_fr = null;
     public ?string $seo_default_keywords_es = null;
     public ?string $seo_default_keywords_de = null;
-    
+
     // SEO Settings - Legacy/non-translatable
     public ?string $seo_site_name = null;
     public ?string $seo_default_title = null;
@@ -116,25 +121,25 @@ class BlogrSettings extends Page
     public ?string $locales_available = null;
     public ?bool $series_enabled = null;
     public ?array $series_default_image = null; // FileUpload expects array
-    
+
     // UI Settings - Navigation
     public ?bool $navigation_enabled = null;
     public ?bool $navigation_sticky = null;
     public ?bool $navigation_show_logo = null;
     public ?bool $navigation_show_language_switcher = null;
     public ?bool $navigation_show_theme_switcher = null;
-    
+
     // UI Settings - Dates
     public ?bool $dates_show_publication_date = null;
     public ?bool $dates_show_publication_date_on_cards = null;
     public ?bool $dates_show_publication_date_on_articles = null;
-    
+
     // UI Settings - Posts
     public ?string $posts_tags_position = null;
-    
+
     // UI Settings - Blog Post Card (DEPRECATED)
     public ?bool $blog_post_card_show_publication_date = null;
-    
+
     // UI Settings - Footer
     public ?bool $footer_enabled = null;
     public ?string $footer_text = null;
@@ -148,14 +153,19 @@ class BlogrSettings extends Page
     public ?string $footer_instagram = null;
     public ?string $footer_tiktok = null;
     public ?string $footer_mastodon = null;
-    
+
     // UI Settings - Theme
     public ?string $theme_default = null;
     public ?string $theme_primary_color = null;
-    
+
     // UI Settings - Posts
     public ?string $posts_default_image = null;
     public ?bool $posts_show_language_switcher = null;
+
+    // Import/Export
+    public array $import_file = [];
+    public bool $overwrite_existing_data = false;
+    public ?int $default_author_id = null;
 
     /**
      * Check if the current user can access this page
@@ -178,13 +188,13 @@ class BlogrSettings extends Page
         $this->route_homepage = $config['route']['homepage'] ?? false;
         $this->colors_primary = $config['colors']['primary'] ?? '#3b82f6';
         $this->reading_speed_words_per_minute = $config['reading_speed']['words_per_minute'] ?? 200;
-        
+
         // Load appearance colors (card backgrounds)
         $this->appearance_blog_card_bg = $config['ui']['appearance']['blog_card_bg'] ?? '#ffffff';
         $this->appearance_blog_card_bg_dark = $config['ui']['appearance']['blog_card_bg_dark'] ?? '#1f2937';
         $this->appearance_series_card_bg = $config['ui']['appearance']['series_card_bg'] ?? '#f9fafb';
         $this->appearance_series_card_bg_dark = $config['ui']['appearance']['series_card_bg_dark'] ?? '#374151';
-        
+
         // Load theme colors
         $this->theme_primary_color_dark = $config['ui']['theme']['primary_color_dark'] ?? '#9b0ab8';
         $this->theme_primary_color_hover = $config['ui']['theme']['primary_color_hover'] ?? '#d946ef';
@@ -195,15 +205,15 @@ class BlogrSettings extends Page
         $this->theme_tag_bg_dark = $config['ui']['theme']['tag_bg_dark'] ?? '#065f46';
         $this->theme_author_bg = $config['ui']['theme']['author_bg'] ?? '#fef3c7';
         $this->theme_author_bg_dark = $config['ui']['theme']['author_bg_dark'] ?? '#78350f';
-        
+
         // Load reading time text format (supports both string and array formats)
         $textFormat = $config['reading_time']['text_format'] ?? 'Reading time: {time}';
         $availableLocales = $config['locales']['available'] ?? ['en'];
-        
+
         if (is_array($textFormat)) {
             foreach ($availableLocales as $locale) {
                 $property = "reading_time_text_{$locale}";
-                $this->$property = $textFormat[$locale] ?? match($locale) {
+                $this->$property = $textFormat[$locale] ?? match ($locale) {
                     'en' => 'Reading time: {time}',
                     'fr' => 'Temps de lecture : {time}',
                     'es' => 'Tiempo de lectura: {time}',
@@ -215,7 +225,7 @@ class BlogrSettings extends Page
             // Legacy string format - set for all locales
             foreach ($availableLocales as $locale) {
                 $property = "reading_time_text_{$locale}";
-                $this->$property = match($locale) {
+                $this->$property = match ($locale) {
                     'en' => $textFormat,
                     'fr' => 'Temps de lecture : {time}',
                     'es' => 'Tiempo de lectura: {time}',
@@ -224,12 +234,12 @@ class BlogrSettings extends Page
                 };
             }
         }
-        
+
         $this->reading_time_enabled = $config['reading_time']['enabled'] ?? true;
-        
+
         // Load SEO settings - translatable fields
         $availableLocales = $config['locales']['available'] ?? ['en'];
-        
+
         // Site Name
         $seoSiteName = $config['seo']['site_name'] ?? env('APP_NAME', 'My Blog');
         if (is_array($seoSiteName)) {
@@ -244,7 +254,7 @@ class BlogrSettings extends Page
                 $this->$property = $seoSiteName;
             }
         }
-        
+
         // Default Title
         $seoDefaultTitle = $config['seo']['default_title'] ?? 'Blog';
         if (is_array($seoDefaultTitle)) {
@@ -258,7 +268,7 @@ class BlogrSettings extends Page
                 $this->$property = $seoDefaultTitle;
             }
         }
-        
+
         // Default Description
         $seoDefaultDescription = $config['seo']['default_description'] ?? 'Discover our latest articles and insights';
         if (is_array($seoDefaultDescription)) {
@@ -272,7 +282,7 @@ class BlogrSettings extends Page
                 $this->$property = $seoDefaultDescription;
             }
         }
-        
+
         // Default Keywords
         $seoDefaultKeywords = $config['seo']['default_keywords'] ?? 'blog, articles, news, insights';
         if (is_array($seoDefaultKeywords)) {
@@ -286,7 +296,7 @@ class BlogrSettings extends Page
                 $this->$property = $seoDefaultKeywords;
             }
         }
-        
+
         // Legacy non-translatable fields (for backward compatibility)
         $this->seo_site_name = is_array($seoSiteName) ? ($seoSiteName['en'] ?? env('APP_NAME', 'My Blog')) : $seoSiteName;
         $this->seo_default_title = is_array($seoDefaultTitle) ? ($seoDefaultTitle['en'] ?? 'Blog') : $seoDefaultTitle;
@@ -320,28 +330,28 @@ class BlogrSettings extends Page
             ? implode(', ', $config['locales']['available'])
             : 'en, fr, es, de';
         $this->series_enabled = $config['series']['enabled'] ?? true;
-        
+
         // FileUpload expects array, but config stores string - convert
         $defaultImage = $config['series']['default_image'] ?? '/vendor/blogr/images/default-series.svg';
-        $this->series_default_image = is_string($defaultImage) && !empty($defaultImage) 
-            ? [$defaultImage] 
+        $this->series_default_image = is_string($defaultImage) && !empty($defaultImage)
+            ? [$defaultImage]
             : (is_array($defaultImage) ? $defaultImage : null);
-        
+
         // UI Settings
         $this->navigation_enabled = $config['ui']['navigation']['enabled'] ?? true;
         $this->navigation_sticky = $config['ui']['navigation']['sticky'] ?? true;
         $this->navigation_show_logo = $config['ui']['navigation']['show_logo'] ?? true;
         $this->navigation_show_language_switcher = $config['ui']['navigation']['show_language_switcher'] ?? true;
         $this->navigation_show_theme_switcher = $config['ui']['navigation']['show_theme_switcher'] ?? true;
-        
+
         $this->dates_show_publication_date = $config['ui']['dates']['show_publication_date'] ?? true;
         $this->dates_show_publication_date_on_cards = $config['ui']['dates']['show_publication_date_on_cards'] ?? true;
         $this->dates_show_publication_date_on_articles = $config['ui']['dates']['show_publication_date_on_articles'] ?? true;
-        
+
         $this->posts_tags_position = $config['ui']['posts']['tags_position'] ?? 'bottom';
-        
+
         $this->blog_post_card_show_publication_date = $config['ui']['blog_post_card']['show_publication_date'] ?? true;
-        
+
         $this->footer_enabled = $config['ui']['footer']['enabled'] ?? true;
         $this->footer_text = $config['ui']['footer']['text'] ?? '© ' . date('Y') . ' My Blog. All rights reserved.';
         $this->footer_show_social_links = $config['ui']['footer']['show_social_links'] ?? false;
@@ -354,15 +364,15 @@ class BlogrSettings extends Page
         $this->footer_instagram = $config['ui']['footer']['social_links']['instagram'] ?? '';
         $this->footer_tiktok = $config['ui']['footer']['social_links']['tiktok'] ?? '';
         $this->footer_mastodon = $config['ui']['footer']['social_links']['mastodon'] ?? '';
-        
+
         $this->theme_default = $config['ui']['theme']['default'] ?? 'light';
         $this->theme_primary_color = $config['ui']['theme']['primary_color'] ?? '#3b82f6';
-        
+
         $this->posts_default_image = $config['ui']['posts']['default_image'] ?? null;
         $this->posts_show_language_switcher = $config['ui']['posts']['show_language_switcher'] ?? true;
     }
 
-    protected function getFormSchema(): array
+    public function getFormSchema(): array
     {
         return [
             Tabs::make('Settings')
@@ -415,7 +425,7 @@ class BlogrSettings extends Page
                                         'es' => 'Español',
                                         'de' => 'Deutsch',
                                     ];
-                                    
+
                                     $fields = [
                                         Toggle::make('reading_time_enabled')
                                             ->label('Enable Reading Time Display')
@@ -432,13 +442,13 @@ class BlogrSettings extends Page
                                             ->required()
                                             ->columnSpan(2),
                                     ];
-                                    
+
                                     // Add text inputs for each available locale
                                     foreach ($availableLocales as $locale) {
                                         $localeName = $localeNames[$locale] ?? strtoupper($locale);
                                         $fields[] = TextInput::make("reading_time_text_{$locale}")
                                             ->label("Reading Time Text ({$localeName})")
-                                            ->placeholder(match($locale) {
+                                            ->placeholder(match ($locale) {
                                                 'en' => 'Reading time: {time}',
                                                 'fr' => 'Temps de lecture : {time}',
                                                 'es' => 'Tiempo de lectura: {time}',
@@ -448,7 +458,7 @@ class BlogrSettings extends Page
                                             ->helperText('Use {time} as placeholder for the reading time')
                                             ->required();
                                     }
-                                    
+
                                     return $fields;
                                 })
                                 ->columns(2),
@@ -511,32 +521,32 @@ class BlogrSettings extends Page
                                         'es' => 'Español',
                                         'de' => 'Deutsch',
                                     ];
-                                    
+
                                     $fields = [];
-                                    
+
                                     // Add translatable fields for each locale
                                     foreach ($availableLocales as $locale) {
                                         $localeName = $localeNames[$locale] ?? strtoupper($locale);
-                                        
+
                                         $fields[] = TextInput::make("seo_site_name_{$locale}")
                                             ->label("Site Name ({$localeName})")
                                             ->placeholder('My Blog')
                                             ->helperText('The name of your website/brand (e.g., "My Blog"). Used in meta tags and browser title suffix.')
                                             ->required();
-                                        
+
                                         $fields[] = TextInput::make("seo_default_title_{$locale}")
                                             ->label("Default Title ({$localeName})")
                                             ->placeholder('Blog')
                                             ->helperText('The default title for blog pages without a specific title (e.g., "Blog", "Articles"). This appears as the main page title.')
                                             ->required();
-                                        
+
                                         $fields[] = Textarea::make("seo_default_description_{$locale}")
                                             ->label("Default Description ({$localeName})")
                                             ->placeholder('Discover our latest articles and insights')
                                             ->rows(2)
                                             ->required()
                                             ->columnSpan(2);
-                                        
+
                                         $fields[] = Textarea::make("seo_default_keywords_{$locale}")
                                             ->label("Default Keywords ({$localeName})")
                                             ->placeholder('blog, articles, news, insights')
@@ -545,14 +555,14 @@ class BlogrSettings extends Page
                                             ->required()
                                             ->columnSpan(2);
                                     }
-                                    
+
                                     $fields[] = TextInput::make('seo_twitter_handle')
                                         ->label('Twitter Handle')
                                         ->placeholder('@yourhandle');
-                                    
+
                                     $fields[] = TextInput::make('seo_facebook_app_id')
                                         ->label('Facebook App ID');
-                                    
+
                                     return $fields;
                                 })
                                 ->columns(2),
@@ -597,7 +607,7 @@ class BlogrSettings extends Page
                                         ->default('light')
                                         ->helperText('Users can override this in their browser')
                                         ->columnSpan(2),
-                                    
+
                                     // Primary Colors
                                     ColorPicker::make('theme_primary_color')
                                         ->label('Primary Color (Light Mode)')
@@ -616,7 +626,7 @@ class BlogrSettings extends Page
                                         ->label('Primary Hover (Dark Mode)')
                                         ->default('#a855f7')
                                         ->columnSpan(1),
-                                    
+
                                     // Blog Card Colors
                                     ColorPicker::make('appearance_blog_card_bg')
                                         ->label('Blog Post Card Background (Light Mode)')
@@ -626,7 +636,7 @@ class BlogrSettings extends Page
                                         ->label('Blog Post Card Background (Dark Mode)')
                                         ->default('#1f2937')
                                         ->columnSpan(1),
-                                    
+
                                     // Series Card Colors
                                     ColorPicker::make('appearance_series_card_bg')
                                         ->label('Series Card Background (Light Mode)')
@@ -636,7 +646,7 @@ class BlogrSettings extends Page
                                         ->label('Series Card Background (Dark Mode)')
                                         ->default('#374151')
                                         ->columnSpan(1),
-                                    
+
                                     // Category Colors
                                     ColorPicker::make('theme_category_bg')
                                         ->label('Category Badge (Light Mode)')
@@ -646,7 +656,7 @@ class BlogrSettings extends Page
                                         ->label('Category Badge (Dark Mode)')
                                         ->default('#0c4a6e')
                                         ->columnSpan(1),
-                                    
+
                                     // Tag Colors
                                     ColorPicker::make('theme_tag_bg')
                                         ->label('Tag Badge (Light Mode)')
@@ -656,7 +666,7 @@ class BlogrSettings extends Page
                                         ->label('Tag Badge (Dark Mode)')
                                         ->default('#065f46')
                                         ->columnSpan(1),
-                                    
+
                                     // Author Colors
                                     ColorPicker::make('theme_author_bg')
                                         ->label('Author Bio (Light Mode)')
@@ -682,26 +692,26 @@ class BlogrSettings extends Page
                                         ->acceptedFileTypes(['image/*'])
                                         ->maxSize(2048)
                                         ->columnSpanFull(),
-                                    
+
                                     Toggle::make('dates_show_publication_date')
                                         ->label('Enable Publication Dates')
                                         ->default(true)
                                         ->helperText('Master toggle for all publication dates. When disabled, no dates will be shown.')
                                         ->live()
                                         ->columnSpanFull(),
-                                    
+
                                     Toggle::make('dates_show_publication_date_on_cards')
                                         ->label('Show Dates on Blog Cards')
                                         ->default(true)
                                         ->helperText('Display publication date on blog post cards (index, category, tag pages)')
-                                        ->disabled(fn (Get $get): bool => !$get('dates_show_publication_date')),
-                                    
+                                        ->disabled(fn(Get $get): bool => !$get('dates_show_publication_date')),
+
                                     Toggle::make('dates_show_publication_date_on_articles')
                                         ->label('Show Dates on Article Pages')
                                         ->default(true)
                                         ->helperText('Display publication date on article detail pages')
-                                        ->disabled(fn (Get $get): bool => !$get('dates_show_publication_date')),
-                                    
+                                        ->disabled(fn(Get $get): bool => !$get('dates_show_publication_date')),
+
                                     Select::make('posts_tags_position')
                                         ->label('Tags Position')
                                         ->options([
@@ -711,12 +721,12 @@ class BlogrSettings extends Page
                                         ->default('bottom')
                                         ->helperText('Position of tags on article detail pages')
                                         ->native(false),
-                                    
+
                                     Toggle::make('posts_show_language_switcher')
                                         ->label('Show Language Availability')
                                         ->default(true)
                                         ->helperText('Display available translations on post pages'),
-                                    
+
                                     Toggle::make('blog_post_card_show_publication_date')
                                         ->label('Show Publication Date on Cards (DEPRECATED)')
                                         ->default(true)
@@ -854,29 +864,29 @@ class BlogrSettings extends Page
                                         ->default(true)
                                         ->live()
                                         ->helperText('Show the navigation bar at the top of every page'),
-                                    
+
                                     Toggle::make('navigation_sticky')
                                         ->label('Sticky Navigation')
                                         ->default(true)
-                                        ->visible(fn (Get $get) => $get('navigation_enabled'))
+                                        ->visible(fn(Get $get) => $get('navigation_enabled'))
                                         ->helperText('Keep navigation bar visible when scrolling'),
-                                    
+
                                     Toggle::make('navigation_show_logo')
                                         ->label('Show Site Logo/Name')
                                         ->default(true)
-                                        ->visible(fn (Get $get) => $get('navigation_enabled'))
+                                        ->visible(fn(Get $get) => $get('navigation_enabled'))
                                         ->helperText('Display your site name in the navigation bar'),
-                                    
+
                                     Toggle::make('navigation_show_language_switcher')
                                         ->label('Show Language Switcher')
                                         ->default(true)
-                                        ->visible(fn (Get $get) => $get('navigation_enabled'))
+                                        ->visible(fn(Get $get) => $get('navigation_enabled'))
                                         ->helperText('Allow users to switch between available languages'),
-                                    
+
                                     Toggle::make('navigation_show_theme_switcher')
                                         ->label('Show Theme Switcher')
                                         ->default(true)
-                                        ->visible(fn (Get $get) => $get('navigation_enabled'))
+                                        ->visible(fn(Get $get) => $get('navigation_enabled'))
                                         ->helperText('Allow users to switch between light/dark/auto themes'),
                                 ])
                                 ->columns(2),
@@ -889,81 +899,421 @@ class BlogrSettings extends Page
                                         ->default(true)
                                         ->live()
                                         ->helperText('Show footer at the bottom of every page'),
-                                    
+
                                     Textarea::make('footer_text')
                                         ->label('Footer Text')
                                         ->default('© ' . date('Y') . ' My Blog. All rights reserved.')
                                         ->helperText('Supports HTML. Use <br> for line breaks.')
                                         ->rows(3)
-                                        ->visible(fn (Get $get) => $get('footer_enabled'))
+                                        ->visible(fn(Get $get) => $get('footer_enabled'))
                                         ->columnSpanFull(),
-                                    
+
                                     Toggle::make('footer_show_social_links')
                                         ->label('Show Social Media Links')
                                         ->default(false)
                                         ->live()
                                         ->helperText('Display social media icons in footer')
-                                        ->visible(fn (Get $get) => $get('footer_enabled'))
+                                        ->visible(fn(Get $get) => $get('footer_enabled'))
                                         ->columnSpanFull(),
-                                    
+
                                     TextInput::make('footer_twitter')
                                         ->label('Twitter/X URL')
                                         ->url()
                                         ->placeholder('https://twitter.com/yourusername')
-                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                                    
+                                        ->visible(fn(Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+
                                     TextInput::make('footer_github')
                                         ->label('GitHub URL')
                                         ->url()
                                         ->placeholder('https://github.com/yourusername')
-                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                                    
+                                        ->visible(fn(Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+
                                     TextInput::make('footer_linkedin')
                                         ->label('LinkedIn URL')
                                         ->url()
                                         ->placeholder('https://linkedin.com/in/yourusername')
-                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                                    
+                                        ->visible(fn(Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+
                                     TextInput::make('footer_facebook')
                                         ->label('Facebook URL')
                                         ->url()
                                         ->placeholder('https://facebook.com/yourusername')
-                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                                    
+                                        ->visible(fn(Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+
                                     TextInput::make('footer_bluesky')
                                         ->label('Bluesky URL')
                                         ->url()
                                         ->placeholder('https://bsky.app/profile/yourusername.bsky.social')
-                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                                    
+                                        ->visible(fn(Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+
                                     TextInput::make('footer_youtube')
                                         ->label('YouTube URL')
                                         ->url()
                                         ->placeholder('https://youtube.com/@yourusername')
-                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                                    
+                                        ->visible(fn(Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+
                                     TextInput::make('footer_instagram')
                                         ->label('Instagram URL')
                                         ->url()
                                         ->placeholder('https://instagram.com/yourusername')
-                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                                    
+                                        ->visible(fn(Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+
                                     TextInput::make('footer_tiktok')
                                         ->label('TikTok URL')
                                         ->url()
                                         ->placeholder('https://tiktok.com/@yourusername')
-                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
-                                    
+                                        ->visible(fn(Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+
                                     TextInput::make('footer_mastodon')
                                         ->label('Mastodon URL')
                                         ->url()
                                         ->placeholder('https://mastodon.social/@yourusername')
-                                        ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
+                                        ->visible(fn(Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
                                 ])
                                 ->columns(2),
                         ]),
+
+                    // ========================================
+                    // BACKUP TAB
+                    // ========================================
+                    Tabs\Tab::make('Backup')
+                        ->icon('heroicon-o-cloud-arrow-up')
+                        ->schema([
+                            Section::make('Export Blogr Data')
+                                ->description('Export all your blog posts, series, categories, and tags to a JSON or ZIP file')
+                                ->schema([
+                                    Placeholder::make('export_info')
+                                        ->content('Choose your export format below. JSON exports contain only data, while ZIP exports include both data and media files.')
+                                        ->columnSpanFull(),
+                                ])
+                                ->headerActions([
+                                    Action::make('export')
+                                        ->label('Export Data (JSON)')
+                                        ->icon('heroicon-o-arrow-down-tray')
+                                        ->color('success')
+                                        ->action(function () {
+                                            try {
+                                                $exportService = app(\Happytodev\Blogr\Services\BlogrExportService::class);
+                                                $filePath = $exportService->exportToFile(null, ['include_media' => false]);
+
+                                                \Filament\Notifications\Notification::make()
+                                                    ->title('Export Successful')
+                                                    ->body("Data exported to: {$filePath}")
+                                                    ->success()
+                                                    ->send();
+
+                                                return response()->download($filePath);
+                                            } catch (\Exception $e) {
+                                                \Filament\Notifications\Notification::make()
+                                                    ->title('Export Failed')
+                                                    ->body('An error occurred during export: ' . $e->getMessage())
+                                                    ->danger()
+                                                    ->send();
+                                            }
+                                        }),
+                                    Action::make('export_with_media')
+                                        ->label('Export Data + Media (ZIP)')
+                                        ->icon('heroicon-o-photo')
+                                        ->color('info')
+                                        ->action(function () {
+                                            try {
+                                                $exportService = app(\Happytodev\Blogr\Services\BlogrExportService::class);
+                                                $filePath = $exportService->exportToFile(null, ['include_media' => true]);
+
+                                                \Filament\Notifications\Notification::make()
+                                                    ->title('Export Successful')
+                                                    ->body("Data and media exported to: {$filePath}")
+                                                    ->success()
+                                                    ->send();
+
+                                                return response()->download($filePath)->deleteFileAfterSend(true);
+                                            } catch (\Exception $e) {
+                                                \Filament\Notifications\Notification::make()
+                                                    ->title('Export Failed')
+                                                    ->body('An error occurred during export: ' . $e->getMessage())
+                                                    ->danger()
+                                                    ->send();
+                                            }
+                                        }),
+                                ])
+                                ->columnSpanFull(),
+
+                            Section::make('Import Blogr Data')
+                                ->description('Import blog posts, series, categories, and tags from a JSON or ZIP file')
+                                ->schema([
+                                    FileUpload::make('import_file')
+                                        ->label('Import File')
+                                        ->acceptedFileTypes(['application/json', 'application/zip'])
+                                        ->maxSize(51200) // 50MB for ZIP files
+                                        ->directory('blogr/temp')
+                                        ->visibility('private')
+                                        ->helperText('Upload a JSON or ZIP file exported from Blogr'),
+
+                                    \Filament\Forms\Components\Toggle::make('overwrite_existing_data')
+                                        ->label('Écraser les données existantes / Overwrite existing data')
+                                        ->helperText('⚠️ ATTENTION : Cette option supprimera TOUS les posts, catégories, tags et séries existants avant l\'importation. Les utilisateurs ne seront PAS supprimés. / WARNING: This will DELETE ALL existing blog posts, categories, tags and series before import. Users will NOT be deleted.')
+                                        ->default(false)
+                                        ->inline(false),
+
+                                    \Filament\Forms\Components\Select::make('default_author_id')
+                                        ->label('Auteur par défaut pour les posts orphelins / Default author for orphaned posts')
+                                        ->helperText('Si des posts dans l\'import ont un auteur qui n\'existe pas dans la base cible, ils seront assignés à cet utilisateur. Si non spécifié, ces posts seront ignorés. / If posts in the import have an author that doesn\'t exist in the target database, they will be assigned to this user. If not specified, those posts will be skipped.')
+                                        ->options(fn () => \Happytodev\Blogr\Models\User::all()->pluck('name', 'id')->toArray())
+                                        ->searchable()
+                                        ->nullable(),
+
+                                ])
+                                ->headerActions([
+                                    Action::make('import')
+                                        ->label('Import Data')
+                                        ->icon('heroicon-o-arrow-up-tray')
+                                        ->color('warning')
+                                        ->requiresConfirmation()
+                                        ->modalHeading(fn () => $this->overwrite_existing_data 
+                                            ? '⚠️ ATTENTION: Supprimer toutes les données existantes ? / Delete all existing data?' 
+                                            : 'Importer les données / Import data')
+                                        ->modalDescription(fn () => $this->overwrite_existing_data
+                                            ? 'Vous êtes sur le point de SUPPRIMER TOUS les posts, catégories, tags et séries existants. Cette action est IRRÉVERSIBLE. Les utilisateurs ne seront pas supprimés. / You are about to DELETE ALL existing blog posts, categories, tags and series. This action is IRREVERSIBLE. Users will not be deleted.'
+                                            : 'Les données existantes seront conservées. Seules les nouvelles données seront importées. / Existing data will be preserved. Only new data will be imported.')
+                                        ->modalSubmitActionLabel(fn () => $this->overwrite_existing_data 
+                                            ? 'Oui, tout supprimer et importer / Yes, delete all and import' 
+                                            : 'Importer / Import')
+                                        ->action(function () {
+                                            Log::info('Blogr Import: Starting import process', [
+                                                'import_file' => $this->import_file,
+                                                'import_file_type' => gettype($this->import_file),
+                                                'import_file_count' => is_array($this->import_file) ? count($this->import_file) : 'N/A',
+                                            ]);
+                                            
+                                            // Validate that import_file is not empty
+                                            if (empty($this->import_file) || !is_array($this->import_file) || count($this->import_file) === 0) {
+                                                Log::warning('Blogr Import: No file selected', [
+                                                    'import_file' => $this->import_file,
+                                                ]);
+                                                
+                                                Notification::make()
+                                                    ->title('Import Failed')
+                                                    ->body('Please select a file to import.')
+                                                    ->danger()
+                                                    ->send();
+                                                return;
+                                            }
+
+                                            try {
+                                                $importService = app(\Happytodev\Blogr\Services\BlogrImportService::class);
+                                                
+                                                // Get the first file from the array safely
+                                                // Livewire stores uploaded files in an associative array with UUID keys
+                                                // The value is a TemporaryUploadedFile object
+                                                $fileName = null;
+                                                $filePath = null;
+                                                
+                                                // Get the first value regardless of the key
+                                                $firstFile = reset($this->import_file);
+                                                
+                                                Log::info('Blogr Import: Analyzing uploaded file', [
+                                                    'firstFile' => $firstFile,
+                                                    'firstFile_type' => gettype($firstFile),
+                                                    'is_object' => is_object($firstFile),
+                                                ]);
+                                                
+                                                // Handle TemporaryUploadedFile object from Livewire
+                                                if (is_object($firstFile) && method_exists($firstFile, 'getRealPath')) {
+                                                    $filePath = $firstFile->getRealPath();
+                                                    $fileName = $firstFile->getClientOriginalName();
+                                                    
+                                                    Log::info('Blogr Import: TemporaryUploadedFile detected', [
+                                                        'realPath' => $filePath,
+                                                        'originalName' => $fileName,
+                                                    ]);
+                                                } elseif (is_string($firstFile)) {
+                                                    // Fallback for string paths
+                                                    $fileName = $firstFile;
+                                                    
+                                                    Log::info('Blogr Import: String path detected', [
+                                                        'fileName' => $fileName,
+                                                    ]);
+                                                } else {
+                                                    Log::error('Blogr Import: Unexpected file format', [
+                                                        'firstFile' => $firstFile,
+                                                        'type' => gettype($firstFile),
+                                                    ]);
+                                                }
+                                                
+                                                // Validate we have a file path
+                                                if (!$filePath && $fileName) {
+                                                    // Try different path combinations
+                                                    $possiblePaths = [
+                                                        storage_path('app/' . $fileName),
+                                                        storage_path('app/public/' . $fileName),
+                                                        storage_path('app/private/' . $fileName),
+                                                        $fileName, // In case it's already a full path
+                                                    ];
+                                                    
+                                                    foreach ($possiblePaths as $path) {
+                                                        if (File::exists($path)) {
+                                                            $filePath = $path;
+                                                            break;
+                                                        }
+                                                    }
+                                                    
+                                                    Log::info('Blogr Import: Checking file paths', [
+                                                        'fileName' => $fileName,
+                                                        'checked_paths' => $possiblePaths,
+                                                        'found_path' => $filePath,
+                                                    ]);
+                                                }
+                                                
+                                                if (!$filePath || !File::exists($filePath)) {
+                                                    Log::error('Blogr Import: Invalid file or path', [
+                                                        'fileName' => $fileName,
+                                                        'filePath' => $filePath,
+                                                        'import_file_raw' => $this->import_file,
+                                                    ]);
+                                                    
+                                                    Notification::make()
+                                                        ->title('Import Failed')
+                                                        ->body('No valid file found in upload. Please try uploading the file again.')
+                                                        ->danger()
+                                                        ->send();
+                                                    return;
+                                                }
+                                                
+                                                // Check if file exists
+                                                if (!$filePath || !File::exists($filePath)) {
+                                                    Log::error('Blogr Import: File not found', [
+                                                        'filePath' => $filePath,
+                                                        'storage_path' => storage_path('app'),
+                                                    ]);
+                                                    
+                                                    Notification::make()
+                                                        ->title('Import Failed')
+                                                        ->body('The uploaded file could not be found. Please try uploading again.')
+                                                        ->danger()
+                                                        ->send();
+                                                    return;
+                                                }
+
+                                                Log::info('Blogr Import: Starting import from file', [
+                                                    'filePath' => $filePath,
+                                                    'fileSize' => File::size($filePath),
+                                                    'overwrite_existing_data' => $this->overwrite_existing_data,
+                                                    'default_author_id' => $this->default_author_id,
+                                                ]);
+
+                                                $result = $importService->importFromFile($filePath, [
+                                                    'overwrite' => $this->overwrite_existing_data,
+                                                    'default_author_id' => $this->default_author_id,
+                                                ]);
+
+                                                Log::info('Blogr Import: Import completed', [
+                                                    'success' => $result['success'] ?? false,
+                                                    'result' => $result,
+                                                ]);
+
+                                                if ($result['success']) {
+                                                    // Build detailed success message
+                                                    $stats = $result['results'] ?? [];
+                                                    $messages = [];
+                                                    
+                                                    foreach ($stats as $type => $counts) {
+                                                        if (is_array($counts)) {
+                                                            $imported = $counts['imported'] ?? 0;
+                                                            $updated = $counts['updated'] ?? 0;
+                                                            $skipped = $counts['skipped'] ?? 0;
+                                                            
+                                                            if ($imported > 0 || $updated > 0) {
+                                                                $parts = [];
+                                                                if ($imported > 0) $parts[] = "{$imported} new";
+                                                                if ($updated > 0) $parts[] = "{$updated} updated";
+                                                                if ($skipped > 0) $parts[] = "{$skipped} skipped";
+                                                                $messages[] = ucfirst(str_replace('_', ' ', $type)) . ": " . implode(', ', $parts);
+                                                            }
+                                                        }
+                                                    }
+                                                    
+                                                    $body = !empty($messages) 
+                                                        ? implode(' | ', $messages)
+                                                        : 'Data imported successfully.';
+                                                    
+                                                    Notification::make()
+                                                        ->title('Import Successful')
+                                                        ->body($body)
+                                                        ->success()
+                                                        ->duration(10000) // 10 seconds to read the stats
+                                                        ->send();
+                                                    
+                                                    // Clear the file upload after successful import
+                                                    $this->import_file = [];
+                                                } else {
+                                                    Log::error('Blogr Import: Import failed', [
+                                                        'errors' => $result['errors'] ?? [],
+                                                    ]);
+                                                    
+                                                    Notification::make()
+                                                        ->title('Import Failed')
+                                                        ->body('Import failed: ' . implode(', ', $result['errors'] ?? ['Unknown error']))
+                                                        ->danger()
+                                                        ->send();
+                                                }
+                                            } catch (\Exception $e) {
+                                                Log::error('Blogr Import: Exception occurred', [
+                                                    'exception' => $e->getMessage(),
+                                                    'trace' => $e->getTraceAsString(),
+                                                ]);
+                                                
+                                                Notification::make()
+                                                    ->title('Import Failed')
+                                                    ->body('An error occurred during import: ' . $e->getMessage())
+                                                    ->danger()
+                                                    ->send();
+                                            }
+                                        }),
+                                ])
+                                ->columnSpanFull(),
+
+                            Section::make('Backup Commands')
+                                ->description('Available Artisan commands for backup operations')
+                                ->schema([
+                                    \Filament\Forms\Components\Placeholder::make('export_command')
+                                        ->label('Export Command')
+                                        ->content('php artisan blogr:export [--output=path/to/file.json] [--include-media]'),
+
+                                    \Filament\Forms\Components\Placeholder::make('import_command')
+                                        ->label('Import Command')
+                                        ->content('php artisan blogr:import path/to/file.json [--skip-existing]'),
+
+                                ])
+                                ->headerActions([
+                                    Action::make('run_export')
+                                        ->label('Run Export Now')
+                                        ->icon('heroicon-o-play')
+                                        ->action(function () {
+                                            try {
+                                                $exportService = new \Happytodev\Blogr\Services\BlogrExportService();
+                                                $filePath = $exportService->exportToFile();
+                                                
+                                                $size = \Illuminate\Support\Facades\File::size($filePath);
+                                                $sizeFormatted = $this->formatBytes($size);
+                                                
+                                                Notification::make()
+                                                    ->title('Export Successful')
+                                                    ->body("Export file created: {$filePath} ({$sizeFormatted})")
+                                                    ->success()
+                                                    ->send();
+                                            } catch (\Exception $e) {
+                                                Notification::make()
+                                                    ->title('Export Failed')
+                                                    ->body('Error: ' . $e->getMessage())
+                                                    ->danger()
+                                                    ->send();
+                                            }
+                                        }),
+                                ])
+                                ->columnSpanFull(),
+                        ]),
                 ]),
-            ];
+        ];
     }
 
     /**
@@ -975,14 +1325,14 @@ class BlogrSettings extends Page
     {
         $availableLocales = array_map('trim', explode(',', $this->locales_available ?? 'en'));
         $formats = [];
-        
+
         foreach ($availableLocales as $locale) {
             $property = "reading_time_text_{$locale}";
             if (property_exists($this, $property) && $this->$property) {
                 $formats[$locale] = $this->$property;
             }
         }
-        
+
         return $formats;
     }
 
@@ -990,14 +1340,14 @@ class BlogrSettings extends Page
     {
         $availableLocales = array_map('trim', explode(',', $this->locales_available ?? 'en'));
         $names = [];
-        
+
         foreach ($availableLocales as $locale) {
             $property = "seo_site_name_{$locale}";
             if (property_exists($this, $property) && $this->$property) {
                 $names[$locale] = $this->$property;
             }
         }
-        
+
         return $names;
     }
 
@@ -1005,14 +1355,14 @@ class BlogrSettings extends Page
     {
         $availableLocales = array_map('trim', explode(',', $this->locales_available ?? 'en'));
         $titles = [];
-        
+
         foreach ($availableLocales as $locale) {
             $property = "seo_default_title_{$locale}";
             if (property_exists($this, $property) && $this->$property) {
                 $titles[$locale] = $this->$property;
             }
         }
-        
+
         return $titles;
     }
 
@@ -1020,14 +1370,14 @@ class BlogrSettings extends Page
     {
         $availableLocales = array_map('trim', explode(',', $this->locales_available ?? 'en'));
         $descriptions = [];
-        
+
         foreach ($availableLocales as $locale) {
             $property = "seo_default_description_{$locale}";
             if (property_exists($this, $property) && $this->$property) {
                 $descriptions[$locale] = $this->$property;
             }
         }
-        
+
         return $descriptions;
     }
 
@@ -1035,14 +1385,14 @@ class BlogrSettings extends Page
     {
         $availableLocales = array_map('trim', explode(',', $this->locales_available ?? 'en'));
         $keywords = [];
-        
+
         foreach ($availableLocales as $locale) {
             $property = "seo_default_keywords_{$locale}";
             if (property_exists($this, $property) && $this->$property) {
                 $keywords[$locale] = $this->$property;
             }
         }
-        
+
         return $keywords;
     }
 
@@ -1265,5 +1615,21 @@ class BlogrSettings extends Page
         } else {
             return (string) $value;
         }
+    }
+
+    /**
+     * Format bytes to human-readable string
+     */
+    private function formatBytes(int $bytes): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB'];
+        $i = 0;
+        
+        while ($bytes >= 1024 && $i < count($units) - 1) {
+            $bytes /= 1024;
+            $i++;
+        }
+        
+        return round($bytes, 2) . ' ' . $units[$i];
     }
 }
