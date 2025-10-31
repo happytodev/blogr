@@ -162,6 +162,11 @@ class BlogrSettings extends Page
     public ?string $posts_default_image = null;
     public ?bool $posts_show_language_switcher = null;
 
+    // UI Settings - Back to Top
+    public ?bool $back_to_top_enabled = null;
+    public ?string $back_to_top_shape = null;
+    public ?string $back_to_top_color = null;
+
     // Import/Export
     public array $import_file = [];
     public bool $overwrite_existing_data = false;
@@ -370,6 +375,11 @@ class BlogrSettings extends Page
 
         $this->posts_default_image = $config['ui']['posts']['default_image'] ?? null;
         $this->posts_show_language_switcher = $config['ui']['posts']['show_language_switcher'] ?? true;
+
+        // Load back-to-top settings
+        $this->back_to_top_enabled = $config['ui']['back_to_top']['enabled'] ?? true;
+        $this->back_to_top_shape = $config['ui']['back_to_top']['shape'] ?? 'circle';
+        $this->back_to_top_color = $config['ui']['back_to_top']['color'] ?? null; // null = use primary color
     }
 
     public function getFormSchema(): array
@@ -735,6 +745,31 @@ class BlogrSettings extends Page
                                         ->hidden(),
                                 ])
                                 ->columns(2),
+
+                            Section::make('Back to Top Button')
+                                ->description('Configure the floating back-to-top button')
+                                ->schema([
+                                    Toggle::make('back_to_top_enabled')
+                                        ->label('Enable Back to Top Button')
+                                        ->default(true)
+                                        ->helperText('Display a floating button to scroll back to top of the page'),
+
+                                    Select::make('back_to_top_shape')
+                                        ->label('Button Shape')
+                                        ->options([
+                                            'circle' => 'Circle',
+                                            'square' => 'Square (rounded corners)',
+                                        ])
+                                        ->default('circle')
+                                        ->helperText('Choose the visual style of the button')
+                                        ->native(false),
+
+                                    ColorPicker::make('back_to_top_color')
+                                        ->label('Button Color')
+                                        ->helperText('Leave empty to use the primary theme color')
+                                        ->nullable(),
+                                ])
+                                ->columns(3),
                         ]),
 
                     // ========================================
@@ -1529,6 +1564,11 @@ class BlogrSettings extends Page
                     'blog_card_bg_dark' => $this->appearance_blog_card_bg_dark,
                     'series_card_bg' => $this->appearance_series_card_bg,
                     'series_card_bg_dark' => $this->appearance_series_card_bg_dark,
+                ],
+                'back_to_top' => [
+                    'enabled' => $this->back_to_top_enabled,
+                    'shape' => $this->back_to_top_shape,
+                    'color' => $this->back_to_top_color,
                 ],
             ],
         ];
