@@ -71,6 +71,9 @@ class TestCase extends Orchestra
 
         $app['config']->set('app.key', 'base64:/QGZSf6gflmQp4zukiY3ab0DnTFMOqLK1//pgpQhFzw=');
 
+        // Configure the auth user model to use the Blogr User model
+        $app['config']->set('auth.providers.users.model', \Happytodev\Blogr\Models\User::class);
+
         // Configure blogr settings for testing - MUST be set before ServiceProvider loads
         $app['config']->set('blogr.locales.enabled', false);
         $app['config']->set('blogr.route.prefix', 'blog');
