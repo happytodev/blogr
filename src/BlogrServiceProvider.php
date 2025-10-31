@@ -1,4 +1,4 @@
-<?php
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    <?php
 
 namespace Happytodev\Blogr;
 
@@ -69,14 +69,38 @@ class BlogrServiceProvider extends PackageServiceProvider
         if (file_exists($package->basePath('/../resources/views'))) {
             $package->hasViews(static::$viewNamespace);
         }
+        
+        // Register commands
+        $package->hasCommands([
+            BlogrCommand::class,
+            BlogrInstallCommand::class,
+            InstallUserManagementCommand::class,
+            MigratePostsToTranslations::class,
+            BlogrExportCommand::class,
+            BlogrImportCommand::class,
+        ]);
     }
 
-    public function packageRegistered(): void {}
+    public function packageRegistered(): void
+    {
+        // Register config helper
+        $this->app->singleton('blogr.config', function ($app) {
+            return new ConfigHelper();
+        });
+        
+        // Hook into translator after it's created to add our published translations path
+        $this->app->resolving('translator', function ($translator, $app) {
+            $translator->addNamespace('blogr', $app->langPath('vendor/blogr'));
+        });
+    }
 
     public function packageBooted(): void
     {
         // Register Policies
         Gate::policy(BlogPost::class, BlogPostPolicy::class);
+        
+        // Register model observers
+        BlogSeriesTranslation::observe(BlogSeriesTranslationObserver::class);
 
         // Asset Registration
         FilamentAsset::register(
@@ -103,19 +127,39 @@ class BlogrServiceProvider extends PackageServiceProvider
                 ], 'blogr-stubs');
             }
             
-            // Publish translations
+            // Publish translations with separate tag
             $this->publishes([
                 __DIR__ . '/../resources/lang' => $this->app->langPath('vendor/blogr'),
-            ], 'blogr-translations');
+            ], ['blogr-translations', 'blogr-lang', 'blogr']);
             
-            // Publish default series image
+            // Publish default series image and assets
             $this->publishes([
                 __DIR__ . '/../resources/images' => public_path('vendor/blogr/images'),
-            ], 'blogr-assets');
+            ], ['blogr-assets', 'blogr']);
+            
+            // Publish config (already handled by Spatie Package Tools, but we add 'blogr' tag)
+            $this->publishes([
+                __DIR__ . '/../config/blogr.php' => config_path('blogr.php'),
+            ], ['blogr-config', 'blogr']);
+            
+            // Publish views (already handled by Spatie Package Tools, but we add 'blogr' tag)
+            $this->publishes([
+                __DIR__ . '/../resources/views' => resource_path('views/vendor/blogr'),
+            ], ['blogr-views', 'blogr']);
+            
+            // Publish migrations (already handled by Spatie Package Tools, but we add 'blogr' tag)
+            $this->publishes([
+                __DIR__ . '/../database/migrations' => database_path('migrations'),
+            ], ['blogr-migrations', 'blogr']);
         }
 
         // Testing
         Testable::mixin(new TestsBlogr);
+        
+        // Register frontend routes if enabled
+        if (config()->get('blogr.route.frontend.enabled', true)) {
+            $this->registerFrontendRoutes();
+        }
     }
 
     protected function registerFrontendRoutes(): void
@@ -437,58 +481,5 @@ class BlogrServiceProvider extends PackageServiceProvider
         return [
             'create_blogr_table',
         ];
-    }
-
-
-
-    // to check
-    public function register()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../config/blogr.php', 'blogr');
-        
-        // Register config helper
-        $this->app->singleton('blogr.config', function ($app) {
-            return new ConfigHelper();
-        });
-    }
-
-    public function boot()
-    {
-        // Register model observers
-        BlogSeriesTranslation::observe(BlogSeriesTranslationObserver::class);
-        
-        // Publishes the configuration and views
-        $this->publishes([
-            __DIR__ . '/../config/blogr.php' => config_path('blogr.php'),
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/blogr'),
-            __DIR__ . '/../database/migrations' => database_path('migrations'),
-        ], 'blogr');
-
-        // Load migrations
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-
-        // Load views
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'blogr');
-        
-        // Load translations
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'blogr');
-
-        // Register commands
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                BlogrCommand::class,
-                BlogrInstallCommand::class,
-                InstallUserManagementCommand::class,
-                MigratePostsToTranslations::class,
-                BlogrExportCommand::class,
-                BlogrImportCommand::class,
-            ]);
-        }
-
-        $prefix = trim(config('blogr.route.prefix', 'blog'), '/');
-
-        if (config()->get('blogr.route.frontend.enabled', true)) {
-            $this->registerFrontendRoutes();
-        }
     }
 }
