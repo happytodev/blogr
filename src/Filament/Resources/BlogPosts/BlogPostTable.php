@@ -36,6 +36,10 @@ class BlogPostTable
                     ->getStateUsing(function ($record) {
                         return $record->photo ? Storage::temporaryUrl($record->photo, now()->addMinutes(5)) : null;
                     }),
+                TextColumn::make('user.name')
+                    ->label('Author')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('category.name')
                     ->label('Category'),
                 TextColumn::make('tags.name')
