@@ -262,6 +262,11 @@ return [
             'series_card_bg' => '#f9fafb', // Series card background (light mode)
             'series_card_bg_dark' => '#1f2937', // Series card background (dark mode)
         ],
+        'back_to_top' => [
+            'enabled' => true, // Show floating back-to-top button
+            'shape' => 'circle', // Button shape: 'circle' or 'square'
+            'color' => null, // Custom color (null = use primary theme color)
+        ],
         'theme' => [
             'default' => 'dark', // Default theme: 'light', 'dark', or 'auto'
             // Primary colors
