@@ -3,6 +3,7 @@
 namespace Happytodev\Blogr;
 
 use Filament\Contracts\Plugin;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
@@ -41,6 +42,15 @@ class BlogrPlugin implements Plugin
             ScheduledPosts::class,
             BlogPostsChart::class,
             BlogReadingStats::class,
+        ]);
+
+        // Add a navigation item to quickly view the website (translation key used)
+        $panel->navigationItems([
+            NavigationItem::make('view-website')
+                ->label(__('blogr::navigation.view_website'))
+                ->url(fn (): string => config('app.url', '/'), shouldOpenInNewTab: true)
+                ->icon('heroicon-o-arrow-top-right-on-square')
+                ->sort(1),
         ]);
 
         $panel->colors([
