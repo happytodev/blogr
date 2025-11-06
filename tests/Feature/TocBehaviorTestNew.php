@@ -1,4 +1,7 @@
 <?php<?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 
 
@@ -6,7 +9,7 @@ use Happytodev\Blogr\Models\BlogPost;namespace Happytodev\Blogr\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-use Workbench\App\Models\User;class TocBehaviorTestNew
+use Happytodev\Blogr\Models\User;class TocBehaviorTestNew
 
 {
 

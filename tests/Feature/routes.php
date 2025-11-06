@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
@@ -51,7 +54,7 @@ Route::middleware('web')->group(function () {
         // For testing purposes, always authenticate test users
         $testEmails = ['admin@example.com', 'validation@example.com', 'workflow@example.com'];
         if (in_array($credentials['email'], $testEmails)) {
-            $user = \Workbench\App\Models\User::where('email', $credentials['email'])->first();
+            $user = \Happytodev\Blogr\Models\User::where('email', $credentials['email'])->first();
             if ($user) {
                 \Illuminate\Support\Facades\Auth::login($user);
                 request()->session()->regenerate();
@@ -60,7 +63,7 @@ Route::middleware('web')->group(function () {
         }
 
         // Fallback to normal authentication
-        $user = \Workbench\App\Models\User::where('email', $credentials['email'])->first();
+        $user = \Happytodev\Blogr\Models\User::where('email', $credentials['email'])->first();
         if ($user && \Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
             \Illuminate\Support\Facades\Auth::login($user);
             request()->session()->regenerate();
