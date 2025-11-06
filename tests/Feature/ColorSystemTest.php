@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 // ============================================
 // PHASE RED: Tests pour le nouveau système de couleurs

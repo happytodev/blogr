@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

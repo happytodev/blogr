@@ -1,5 +1,6 @@
 <?php
 
+uses(Happytodev\Blogr\Tests\TestCase::class);
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 beforeEach(function () {

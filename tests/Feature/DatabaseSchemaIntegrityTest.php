@@ -1,7 +1,11 @@
 <?php
 
+
+
 namespace Happytodev\Blogr\Tests\Feature;
 
+
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;

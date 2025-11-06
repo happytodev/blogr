@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 test('primary color can be configured via admin settings', function () {
     $settings = new \Happytodev\Blogr\Filament\Pages\BlogrSettings();

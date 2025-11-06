@@ -1,8 +1,11 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Hash;
-use Workbench\App\Models\User;
+use Happytodev\Blogr\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 

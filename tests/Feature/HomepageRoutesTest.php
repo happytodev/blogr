@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 test("homepage configuration logic works correctly", function () {
     // Test that homepage overrides prefix

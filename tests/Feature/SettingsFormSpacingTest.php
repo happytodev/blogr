@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 test('settings form has proper spacing between form and submit button', function () {
     $viewPath = resource_path('../vendor/happytodev/blogr/resources/views/filament/pages/blogr-settings.blade.php');

@@ -1,9 +1,12 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Illuminate\Support\Facades\Hash;
-use Workbench\App\Models\User;
+use Happytodev\Blogr\Models\User;
 
 beforeEach(function () {
     $this->author = User::create([

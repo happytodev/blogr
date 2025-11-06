@@ -1,9 +1,12 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\Category;
-use Workbench\App\Models\User;
+use Happytodev\Blogr\Models\User;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {

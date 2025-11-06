@@ -1,9 +1,12 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Workbench\App\Models\User;
+use Happytodev\Blogr\Models\User;
 
 uses(RefreshDatabase::class);
 

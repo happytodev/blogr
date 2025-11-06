@@ -1,8 +1,11 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
-use Workbench\App\Models\User;
+use Happytodev\Blogr\Models\User;
 
 test('blog post card content section has proper z-index to keep links clickable', function () {
     $user = User::factory()->create();
