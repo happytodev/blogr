@@ -1,302 +1,221 @@
-# Blogr – FilamentPHP Plugin
+<div align="center">
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/happytodev/blogr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/happytodev/blogr/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/happytodev/blogr/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/happytodev/blogr/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/happytodev/blogr/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/happytodev/blogr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr)
+# 🚀 Blogr – The Ultimate FilamentPHP Blog Plugin
 
-![alt text](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/blogr.webp)
+[![Latest Version](https://img.shields.io/packagist/v/happytodev/blogr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr)
+[![Tests](https://img.shields.io/github/actions/workflow/status/happytodev/blogr/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/happytodev/blogr/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![Code Style](https://img.shields.io/github/actions/workflow/status/happytodev/blogr/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/happytodev/blogr/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
+[![Downloads](https://img.shields.io/packagist/dt/happytodev/blogr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr)
 
-Blogr is a FilamentPHP plugin that adds a powerful blog system to your Laravel application.
+![Blogr Banner](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/blogr.webp)
 
-## Features
+**A production-ready, feature-rich blog system for Laravel & FilamentPHP**
 
-### 💾 Backup your data with import/Export functionnality (NEW with v0.13.0)
+[Features](#-key-features) • [Installation](#-quick-start) • [Documentation](#-documentation) • [Screenshots](#-screenshots) • [Support](#-support)
 
-- Complete backup and migration system for blog data
-- Export all blog data (posts, series, categories, tags, translations) to JSON or ZIP
-- Backup tab in BlogrSettings page
+</div>
 
-### 🎯 Blog Series 
+---
 
-- **Organize posts into series**: Group related posts together for better content structure
-- **Automatic navigation**: Previous/Next navigation between posts in a series
-- **Featured series**: Highlight important series with a featured flag
-- **Position ordering**: Define custom order for posts within a series
-- **Multilingual support**: Translate series titles and descriptions
-- **Rich UI components**: 
-  - Series navigation widget (prev/next)
-  - Complete series list view
-  - Series badge for posts
-  - Breadcrumb with series context
+## ✨ Overview
 
-### 🌍 Multilingual Support 
+Transform your Laravel application into a powerful blogging platform with **Blogr** – a comprehensive FilamentPHP plugin designed for developers who demand excellence. Built with modern best practices, fully tested (680+ tests), and packed with features you'll actually use.
 
-- **Multiple languages**: Built-in support for en, fr, es, de (extensible)
-- **Per-entity translations**: Translate posts, series, categories, and tags
-- **Localized routes**: Optional URL structure like `/{locale}/blog/{slug}`
-- **Language switcher**: Beautiful dropdown component for language selection
-- **SEO optimization**: Automatic hreflang tags for international SEO
-- **Default locale**: Fallback to default language when translation is missing
-- **Translation management**: Full Filament admin interface for translations
+**Why Blogr?**
+- 🌍 **True Multilingual** – Translate everything (posts, series, categories, tags)
+- 📚 **Blog Series** – Organize content into cohesive learning paths
+- � **CMS Page Builder** – Create static pages (About, Contact, etc.) with block system
+- �💾 **Backup & Restore** – Export/import all data with media files
+- 🎨 **Fully Customizable** – Theme system, dark mode, configurable UI
+- 🔍 **SEO Optimized** – Meta tags, Open Graph, Schema.org, RSS feeds
+- ⚡ **Production Ready** – Comprehensive test coverage, battle-tested code
 
-### Content management
+---
 
-- Create, edit, and delete blog posts
-- Edit post in markdown
-- A post can have a TL;DR
-- The post's slug can be custom
-- Status : Draft, Scheduled, Published
-- Category (one per post)
-- Tags (multiple per post)
-- Posts by category page
-- Posts by tag page
-- Post reading time
-- Support code (currently very simple)
+## 🎯 Key Features
 
-#### Medias
+<table>
+<tr>
+<td width="50%">
 
-- Main post image upload and editing
-- Drag & Drop image in the post content (see video demo below)
+### 💾 Backup & Migration System
+- **Complete data export** to JSON or ZIP
+- **Media files included** (images, avatars)
+- **One-click restore** from admin panel
+- **Migration-ready** for site transfers
 
-### Table of contents
+### 🌍 Multilingual Support
+- **4+ languages** out of the box (en, fr, es, de)
+- **Localized routes** (`/{locale}/blog/...`)
+- **Translation UI** in admin panel
+- **SEO-friendly** hreflang tags
+- **Language switcher** component
 
-- Table of contents is automatically generated
-- TOC could be deactivate for a post 
-- User could define if TOC is activated by default or not for every post
-- **TOC positioning**: Three-position system (center, left sidebar, or right sidebar)
-  - Center mode: inline with content (traditional layout)
-  - Sidebar modes: sticky TOC that stays visible during scroll
-  - Configurable via admin settings
+### 📚 Blog Series
+- **Organize related posts** into series
+- **Auto-navigation** (prev/next)
+- **Position ordering** within series
+- **Featured series** highlighting
+- **Progress tracking** for readers
 
-### RSS Feed System
+### 📄 CMS Page Builder
+- **Static pages** (About, Contact, etc.)
+- **Block-based editor** (Hero, Features, Testimonials, CTA)
+- **Multiple templates** (Default, Full Width, Sidebar)
+- **Homepage option** – Set any page as homepage
+- **Reserved slugs** protection
+- **Multilingual pages** support
 
-- **Complete RSS 2.0 feed** with multilingual support
-- Multiple feed routes:
-  - Main feed: `/{locale}/blog/feed`
-  - Category feeds: `/{locale}/blog/feed/category/{slug}`
-  - Tag feeds: `/{locale}/blog/feed/tag/{slug}`
-- Automatic language detection per locale
-- 1-hour public cache for performance
-- Configurable items limit (default: 20)
-- Uses TL;DR field for description with automatic fallback
+</td>
+<td width="50%">
 
-### Theming & Customization
+### ✍️ Content Management
+- **Markdown editor** with live preview
+- **Drag & drop images** in content
+- **Post scheduling** (draft/scheduled/published)
+- **Categories & tags** system
+- **Reading time** calculation
+- **Table of contents** (auto-generated)
+- **TL;DR** summaries
 
-- **CSS Variables theming system**: Complete color customization
-  - Primary, category, tag, and author colors
-  - Dark mode support with automatic color adjustments
-  - Applied across all components (navigation, footer, cards, breadcrumbs)
-- **Publication dates**: Granular control over date display
-  - Global toggle for all publication dates
-  - Separate controls for cards and article pages
-- **Tags positioning**: Choose to display tags at top or bottom of articles
-- **Heading permalinks**: Customizable anchor links
-  - Multiple symbols: `#`, `§`, `¶`, `🔗`, etc.
-  - Configurable spacing (none, before, after, both)
-  - Visibility options (always or on hover)
-  - Copy-to-clipboard functionality
+### 🎨 Theming & UI
+- **CSS variables** theming system
+- **Dark mode** support (auto/manual)
+- **Customizable colors** per component
+- **Flexible layouts** (sidebar TOC, centered)
+- **Author profiles** with avatars & bios
+- **Responsive design** mobile-first
 
-### Author Features
+### 🔍 SEO & Performance
+- **Meta tags** (title, description, keywords)
+- **Open Graph** & Twitter Cards
+- **Schema.org** structured data
+- **RSS feeds** (global, per category/tag)
+- **Optimized URLs** & slugs
+- **Sitemap ready**
 
-- **Enhanced author profiles**:
-  - Bio rendered as Markdown
-  - Avatar with gradient background using theme colors
-  - Hover effects with tooltips
-  - Configurable display (pseudo vs full name)
-  - Proper bio positioning (top, bottom, or both)
-  - Compact mode option
+</td>
+</tr>
+</table>
 
-### SEO
+### 📊 Dashboard Widgets
 
-- Integrate meta fields 
-- Content optimization for SEO
+Five powerful widgets to monitor your blog:
+- **BlogStatsOverview** – Posts, categories, tags metrics
+- **RecentBlogPosts** – Latest posts with quick actions
+- **ScheduledPosts** – Upcoming publications
+- **BlogPostsChart** – Publication trends (12 months)
+- **BlogReadingStats** – Reading time analytics
 
+### 👥 Author Features
 
-### Settings
+- **Enhanced profiles** with bio (Markdown support)
+- **Avatar management** with auto-fallback
+- **Author pages** (`/blog/author/{userId}`)
+- **Role-based permissions** (Admin, Writer)
+- **Self-service profile editing**
 
-- Many settings are available on an admin page or directly in `config/blogr.php`
+### ⚙️ Admin Experience
 
-### Tutorial
-
-- Add default content to help user to start with Blogr
-
-### Widgets
-
-- Widgets available for the dashboard
+- **Filament v4** native integration
+- **Intuitive settings page** with tabs
+- **Tutorial content** for onboarding
+- **Demo seeders** for quick start
+- **Extensive documentation**
 
 
 
-## Screenshots
+---
 
-### Home page
+## 📸 Screenshots
 
+<details>
+<summary><b>🖼️ Click to view screenshots</b></summary>
+
+### Frontend Views
+
+**Blog Home Page**
 ![Blogr home](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/blogr-home.png)
 
-
-### Blog post view
-
+**Blog Post View**
 ![Blog post view](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-1.png)
 
-### Series
-
+**Blog Series**
 ![Series](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/blogr-series.png)
 
+### Admin Panel
 
-### Backend - List of posts
-
+**Posts List**
 ![Backend - List of posts](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-2.png)
 
-### Backend - Edit post
-
+**Post Editor**
 ![Backend - Edit post](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-3.png)
 
-### Settings
-
+**Settings Page**
 ![Backend - Settings](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-4.png)
 
 ![Backend - New Settings](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/blogr-new-settings.png)
 
-### Widgets
-
+**Dashboard Widgets**
 ![Backend - Widgets](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/image-5.png)
 
-## Video demo
+### Interactive Demo
 
-### Drag & Drop image in the post content
+**Drag & Drop Images**
+![Drag & Drop Demo](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/demo-1.gif)
 
-![alt text](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/demo-1.gif)
+</details>
 
-## Roadmap
+---
 
-### RC1 (ETA 2025-10-31)
+## 🚀 Quick Start
 
-- [x] Add Import / Export functionnality to eeasily backup and restore blog posts
-- [ ] Title of blog post in the widget 'recent blog posts' should be clickable
-- [ ] Add a link to the public blog url
-- [ ] Add the theme capability to Blogr
-- [ ] Improve tables in app
-- [ ] Admins must receive a notification when a post is saved by a writer
-- [ ] Tests and reviews for the v1
-- [ ] More to come...
-
-### Beta 3 (ETA 2025-09-30) ✅ **Completed**
-
-- [x] Multilingual
-- [x] Series of posts
-- [x] Add a writer role, which can write a post but not publish it
-- [X] Add a RSS feed for the blog posts
-- [x] Collapsible TOC
-- [x] TOC can be centered above content or sticky on left or right side of content
-- [x] Customizable colours
-- [x] Series are translatables
-- [x] Add publications date and manage them in settings
-- [x] Writer role can't read or modify settings
-- [x] Improve settings page with tabs
-- [x] Tags can be now place before the content and after the content
-- [x] Add author bio. Can be at the bottom, at the top or both. Provide compact version. And bio can be written in MD. And of course it's translatable.
-- [x] The permalinks are now configurable : symbol, spacing, visibility, and a click on it copy the url
-- [x] Add a language switcher
-- [x] Footer is configurable in the settings page
-- [x] The tob menu bar is configurable too in the settings page
-
-
-### Beta 2 (ETA 2025-09-15) ✅ **Completed**
-
-- [x] SEO fields (meta title, description, keywords) 
-- [x] Scheduled publishing 
-- [x] In the admin in the list of posts, display the toggle for is_published to quickly publish or unpublish 
-- [x] Add a table of content for blog post 
-- [x] When no post is published, display a message to user 
-- [x] Add a reading time information for blog post 
-- [x] Integrate meta fields 
-- [x] Create widgets to display on dashboard 
-- [x] Add a settings page to easily manage settings set in config/blogr.php 
-- [x] TOC could be deactivate for a post 
-- [x] User could define if TOC is activated by default or not for every post 
-- [x] Add default content to help user to start with Blogr 
-
-
-
-
-## Requirements
+### Prerequisites
 
 - **Laravel 12.x**
 - **FilamentPHP v4.x**
+- PHP 8.3+
+
+### Installation (2 minutes!)
 
 ```bash
-laravel new mycompanyblog
-
-cd mycompanyblog
-
-composer require filament/filament:"^4.0"
-
-php artisan filament:install --panels
-
-php artisan make:filament-user
-```
-
-You have to start with a fresh install of Laravel and Filament v4 or add this package on existing app with these requirements.
-
-## Installation
-
-### Automated Installation (Recommended)
-
-The easiest way to install Blogr is using our automated installation command. After installing the package via Composer, just run one command and let Blogr handle everything!
-
-1. **Install the package via Composer**
-
-```bash
+# 1. Install via Composer
 composer require happytodev/blogr
-```
 
-2. **Run the automated installation**
-
-```bash
-php artisan blogr:install
-```
-
-**That's it!** 🎉 The installation command will:
-- ✅ Publish configuration and migration files
-- ✅ Run database migrations
-- ✅ Install tutorial content (optional)
-- ✅ Install series examples (optional)
-- ✅ Configure Alpine.js in your `resources/js/app.js`
-- ✅ Configure Tailwind CSS v4 dark mode in your `resources/css/app.css`
-- ✅ Install npm packages (alpinejs, @tailwindcss/typography)
-- ✅ Build frontend assets (`npm run build`)
-- ✅ Configure the Blogr plugin in your AdminPanelProvider
-- ✅ Configure the EditProfile page for user bio and avatar management
-- ✅ Create storage symbolic link (for user avatars)
-
-> **⚠️ Important**: If you skip the automated installation or encounter issues with avatar uploads showing permanent "Loading" state, make sure to run:
-> ```bash
-> php artisan storage:link
-> ```
-> This command is **required** for the avatar upload feature to work properly. See [STORAGE_CONFIGURATION.md](STORAGE_CONFIGURATION.md) for more details.
-
-All steps are interactive with confirmations, so you have full control over what gets installed.
-
-#### Available Options
-
-The `blogr:install` command supports several options to customize your installation:
-
-- `--skip-npm` - Skip npm dependencies installation
-- `--skip-tutorials` - Skip tutorial content installation
-- `--skip-series` - Skip series examples installation
-- `--skip-frontend` - Skip Alpine.js and Tailwind CSS configuration
-- `--skip-build` - Skip asset building step
-
-**Examples:**
-```bash
-# Install everything (recommended for new installations)
+# 2. Run automated installer
 php artisan blogr:install
 
-# Skip building assets (build later manually)
+# 3. That's it! 🎉
+```
+
+The installer handles everything:
+- ✅ Publishes config & migrations
+- ✅ Runs database migrations
+- ✅ Configures Alpine.js & Tailwind CSS
+- ✅ Installs npm dependencies
+- ✅ Creates storage symlink
+- ✅ (Optional) Installs tutorial content
+
+### Installation Options
+
+```bash
+# Full installation (recommended)
+php artisan blogr:install
+
+# Skip tutorial content
+php artisan blogr:install --skip-tutorials
+
+# Skip asset building (build later)
 php artisan blogr:install --skip-build
 
-# Skip all frontend configuration (configure manually)
+# Skip all frontend setup
 php artisan blogr:install --skip-frontend
+```
+
+### Manual Installation
+
+<details>
+<summary><b>Click for manual installation steps</b></summary>
 
 # Skip tutorial and series content
 php artisan blogr:install --skip-tutorials --skip-series
@@ -388,901 +307,506 @@ php artisan migrate
 
 #### 5. Add BlogrPlugin to your AdminPanelProvider
 
-Edit `app/Providers/Filament/AdminPanelProvider.php`:
+#### 1. Publish configuration and migrations
 
+```bash
+php artisan vendor:publish --provider="Happytodev\Blogr\BlogrServiceProvider"
+php artisan migrate
+```
+
+#### 2. Install Alpine.js
+
+```bash
+npm install alpinejs
+```
+
+Add to `resources/js/app.js`:
+```javascript
+import Alpine from 'alpinejs'
+window.Alpine = Alpine
+
+// Theme Switcher Component
+Alpine.data('themeSwitch', () => ({
+    theme: localStorage.getItem('theme') || 'auto',
+    init() { this.applyTheme(); },
+    setTheme(newTheme) {
+        this.theme = newTheme;
+        localStorage.setItem('theme', newTheme);
+        this.applyTheme();
+    },
+    applyTheme() {
+        const isDark = this.theme === 'dark' || 
+                      (this.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
+    }
+}));
+
+Alpine.start()
+```
+
+#### 3. Configure Tailwind CSS v4
+
+Add to `resources/css/app.css`:
+```css
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+
+@source '../../vendor/happytodev/blogr/resources/views/**/*.blade.php';
+@source '../views/vendor/blogr/**/*.blade.php';
+
+@variant dark (.dark &);
+```
+
+#### 4. Register BlogrPlugin
+
+Edit `app/Providers/Filament/AdminPanelProvider.php`:
 ```php
 use Happytodev\Blogr\BlogrPlugin;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
-        // ... other configurations
-        ->plugins([
-            BlogrPlugin::make(),
-        ]);
+        ->plugins([BlogrPlugin::make()])
+        ->profile(\Happytodev\Blogr\Filament\Pages\Auth\EditProfile::class);
 }
 ```
 
-#### 6. Build assets
+#### 5. Build assets
 
 ```bash
 npm run build
 ```
 
-#### Available Options
+</details>
 
-The `blogr:install` command supports several options to customize your installation:
+### First Steps
 
-- `--skip-npm` - Skip npm dependencies installation
-- `--skip-tutorials` - Skip tutorial content installation
+After installation:
 
-**Examples:**
-```bash
-# Install everything (recommended for new installations)
-php artisan blogr:install
+1. **Access admin panel**: `/admin`
+2. **Create your first post**: Admin → Blog Posts → New
+3. **Configure settings**: Admin → Blogr Settings
+4. **View your blog**: `/blog` (or your configured prefix)
 
-# Skip npm installation (if you don't need typography plugin)
-php artisan blogr:install --skip-npm
+---
 
-# Skip tutorial content
-php artisan blogr:install --skip-tutorials
-
-# Skip both npm and tutorials
-php artisan blogr:install --skip-npm --skip-tutorials
-```
-
-#### What the command does
-
-The automated installation performs the following steps:
-
-1. **📦 Publishes configuration and migration files**
-   - Publishes `config/blogr.php`
-   - Publishes Blogr migration files
-   - Publishes Blogr assets (default images to `public/vendor/blogr/images/`)
-   - Publishes Spatie Permission migrations (for roles & permissions)
-   - Publishes views and assets
-   - Optionally publishes Spatie Permission config
-
-2. **🗄️ Runs database migrations**
-   - Creates necessary database tables
-   - Creates roles and permissions tables
-   - Handles migration conflicts gracefully
-
-3. **📚 Installs tutorial content** (unless `--skip-tutorials` is used)
-   - Creates 7 comprehensive tutorial posts
-   - Includes welcome guide, installation help, and advanced features
-   - Creates a dedicated "Blogr Tutorial" category
-
-4. **📊 Installs dashboard widgets**
-   - BlogStatsOverview - Blog statistics and metrics
-   - RecentBlogPosts - Latest posts with quick actions
-   - ScheduledPosts - Upcoming scheduled publications
-   - BlogPostsChart - Publication trends over time
-   - BlogReadingStats - Reading time analytics
-
-5. **📦 Handles npm dependencies** (unless `--skip-npm` is used)
-   - Installs `@tailwindcss/typography` if not present
-   - Updates `resources/css/app.css` with typography plugin
-
-6. **🔧 Checks AdminPanelProvider configuration**
-   - Verifies BlogrPlugin is properly registered
-   - Provides guidance if configuration is missing
-
-7. **⭐ Prompts for GitHub star**
-   - Asks if you'd like to support the project
-   - Completely optional and non-intrusive
-
-#### After installation
-
-Once the command completes successfully, you can:
-
-- **Access your admin panel** at `/admin`
-- **View tutorial posts** (if installed) in the "Blogr Tutorial" category
-- **Create your first blog post** using the "Blog Posts" section
-- **Configure settings** in the "Blogr Settings" page
-- **Explore dashboard widgets** for blog analytics
-
-#### Troubleshooting
-
-If you encounter issues:
-
-- **Clear caches**: `php artisan optimize:clear`
-- **Re-run migrations**: `php artisan migrate:fresh` (⚠️ This will reset your database)
-- **Check file permissions**: Ensure web server can write to storage directories
-- **Verify npm installation**: Run `npm install && npm run build` if needed
-
-**Theme Switcher Issues:**
-
-- **Dark mode doesn't work**: Ensure you have added `@variant dark (.dark &);` to your `resources/css/app.css` file (required for Tailwind CSS v4)
-- **Auto mode doesn't detect system preference**: 
-  - **Windows users**: Check Settings → Personalization → Colors → Choose your mode (set to Dark or Light)
-  - ⚠️ **Note**: Windows 11 doesn't have built-in automatic light/dark switching by time of day. You need to manually set Dark/Light mode, or use a third-party app like [Auto Dark Mode](https://github.com/AutoDarkMode/Windows-Auto-Night-Mode)
-  - **macOS users**: Check System Settings → Appearance (Dark or Auto mode available)
-  - Clear browser cache and localStorage: Open DevTools (F12) → Console → run `localStorage.clear()` then refresh
-  - Verify in console: `window.matchMedia('(prefers-color-scheme: dark)').matches` should return `true` if your system is in dark mode
-- **Theme doesn't persist**: Check browser console for JavaScript errors, ensure Alpine.js is properly loaded
-
-
-**Complete example** of a Tailwind CSS v4 configuration compatible with Blogr:
-
-```css
-@import 'tailwindcss';
-
-@plugin "@tailwindcss/typography";
-
-/* Include Blogr package views */
-@source '../../vendor/happytodev/blogr/resources/views/**/*.blade.php';
-@source '../views/vendor/blogr/**/*.blade.php';
-
-/* Your theme customizations */
-@theme {
-    /* Your theme variables here */
-}
-
-/* REQUIRED: Dark mode variant for Blogr theme switcher */
-@variant dark (.dark &);
-```
-
-**Why is this required?**  
-Tailwind CSS v4 doesn't enable class-based dark mode by default. The `@variant dark (.dark &);` directive tells Tailwind to generate dark mode classes (like `dark:bg-gray-900`) that are activated when a parent element has the `dark` class. This is how Blogr's theme switcher controls dark mode.
-
-### Default Open Graph (OG) Image Configuration
-
-To set a default Open Graph image that will be used when your blog posts don't have a specific image:
-
-1. **Place your image** in the `public/images/` folder of your Laravel application
-2. **Edit the file** `config/blogr.php`:
-
-```php
-'seo' => [
-    // ... other SEO configurations ...
-    
-    'og' => [
-        'type' => 'website',
-        'image' => '/images/your-og-image.jpg', // Path to your OG image
-        'image_width' => 1200, // Recommended width: 1200px
-        'image_height' => 630, // Recommended height: 630px
-    ],
-    
-    // ... other configurations ...
-],
-```
-
-**Recommendations for OG image:**
-- **Format**: JPG, PNG or WebP
-- **Dimensions**: 1200x630 pixels (1.91:1 ratio)
-- **Size**: Less than 1 MB
-- **Content**: Your site logo or representative image
-
-### Logo Configuration for Structured Data
-
-To set your organization's logo in the JSON-LD structured data:
-
-1. **Place your logo** in the `public/images/` folder of your Laravel application
-2. **Edit the file** `config/blogr.php`:
-
-```php
-'seo' => [
-    // ... other SEO configurations ...
-    
-    'structured_data' => [
-        'enabled' => true,
-        'organization' => [
-            'name' => env('APP_NAME', 'My Blog'),
-            'url' => env('APP_URL', 'https://yourwebsite.com'),
-            'logo' => env('APP_URL', 'https://yourwebsite.com') . '/images/your-logo.png',
-        ],
-    ],
-    
-    // ... other configurations ...
-],
-```
-
-**Recommendations for logo:**
-- **Format**: PNG or SVG (transparent preferred)
-- **Dimensions**: Minimum 112x112 pixels
-- **URL Format**: Complete absolute URL (with https://)
-
-### Complete Configuration Example
-
-```php
-'seo' => [
-    'site_name' => 'My Awesome Blog',
-    'default_title' => 'Blog',
-    'default_description' => 'Discover our latest articles',
-    'twitter_handle' => '@myblog',
-    
-    'og' => [
-        'type' => 'website',
-        'image' => '/images/og-default.jpg',
-        'image_width' => 1200,
-        'image_height' => 630,
-    ],
-    
-    'structured_data' => [
-        'enabled' => true,
-        'organization' => [
-            'name' => 'My Awesome Blog',
-            'url' => 'https://myawesomeblog.com',
-            'logo' => 'https://myawesomeblog.com/images/logo.png',
-        ],
-    ],
-],
-```
-### Reading Time Configuration
-
-Configure the reading time display for your blog posts:
-
-```php
-'reading_speed' => [
-    'words_per_minute' => 200, // Average reading speed (150-300 recommended)
-],
-
-'reading_time' => [
-    'enabled' => true, // Enable/disable reading time display
-    'text_format' => 'Reading time: {time}', // Customize display text
-],
-```
-
-**Reading speed recommendations:**
-- Slow readers: 150-200 words per minute
-- Average readers: 200-250 words per minute
-- Fast readers: 250-300 words per minute
-
-### Complete SEO Configuration
-
-Configure all SEO settings for optimal search engine optimization:
-
-```php
-'seo' => [
-    'site_name' => env('APP_NAME', 'My Blog'), // Your site name
-    'default_title' => 'Blog', // Default title for listing pages
-    'default_description' => 'Discover our latest articles and insights', // Default meta description
-    'default_keywords' => 'blog, articles, news, insights', // Default meta keywords
-    'twitter_handle' => '@yourhandle', // Twitter handle for Twitter Cards
-    'facebook_app_id' => '', // Facebook App ID for enhanced Open Graph
-    
-    'og' => [
-        'type' => 'website',
-        'image' => '/images/og-default.jpg',
-        'image_width' => 1200,
-        'image_height' => 630,
-    ],
-    
-    'structured_data' => [
-        'enabled' => true,
-        'organization' => [
-            'name' => env('APP_NAME', 'My Blog'),
-            'url' => env('APP_URL', 'https://yourwebsite.com'),
-            'logo' => env('APP_URL', 'https://yourwebsite.com') . '/images/logo.png',
-        ],
-    ],
-],
-```
-
-### Blog Appearance Configuration
-
-Customize the visual appearance of your blog:
-
-```php
-'blog_index' => [
-    'cards' => [
-        'colors' => [
-            'background' => 'bg-green-50', // Background color of blog cards
-            'top_border' => 'border-green-600', // Border color of blog cards
-        ]
-    ]
-],
-
-'colors' => [
-    'primary' => '#FA2C36' // Primary color for the blog
-],
-```
-
-### Route Configuration
-
-Configure the blog routes and middleware:
-
-```php
-'route' => [
-    'prefix' => 'blog', // URL prefix (leave empty for homepage)
-    'middleware' => ['web'], // Middleware for blog routes
-],
-```
-
-### Posts Per Page
-
-Control pagination settings:
-
-```php
-'posts_per_page' => 10, // Number of posts displayed per page
-```
-
-## Dashboard Widgets
-
-Blogr provides powerful dashboard widgets to help you monitor and manage your blog content effectively. These widgets are automatically available in your Filament dashboard once the plugin is installed.
-
-### Available Widgets
-
-#### 📊 BlogStatsOverview
-Displays comprehensive statistics about your blog:
-- Total number of posts
-- Published posts count
-- Draft posts count
-- Scheduled posts count
-- Total categories
-- Total tags
-
-Each statistic is displayed with color-coded indicators and descriptive icons.
-
-#### 📝 RecentBlogPosts
-Shows a table of the 10 most recent blog posts with:
-- Post title (with tooltip for long titles)
-- Category (with colored badges)
-- Author name
-- Publication status (with color coding: published=green, scheduled=yellow, draft=gray)
-
-#### ⏰ ScheduledPosts
-Provides an overview of upcoming scheduled publications:
-- Posts scheduled for future publication
-- Publication dates
-- Quick status overview
-
-#### 📈 BlogPostsChart
-Interactive chart showing blog post publication trends:
-- Monthly publication data for the last 12 months
-- Visual representation of content creation patterns
-- Helps identify peak publishing periods
-
-#### 📖 BlogReadingStats
-Analytics focused on content engagement:
-- Reading time statistics
-- Average reading times across posts
-- Content performance insights
-
-### How to Add Widgets to Your Dashboard
-
-#### Manual Registration
-If you need to customize widget placement or behavior, you can manually register them in your `AdminPanelProvider`:
-
-```php
-use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
-use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;
-use Happytodev\Blogr\Filament\Widgets\ScheduledPosts;
-use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
-use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ... other configurations ...
-        ->widgets([
-            BlogStatsOverview::class,
-            RecentBlogPosts::class,
-            ScheduledPosts::class,
-            BlogPostsChart::class,
-            BlogReadingStats::class,
-        ])
-        // ... other configurations ...
-}
-```
-
-
-### Widget Customization
-
-#### Changing Widget Size
-Widgets support different column spans:
-
-```php
-class CustomBlogStatsOverview extends BlogStatsOverview
-{
-    protected int | string | array $columnSpan = 'full'; // or 1, 2, 3, etc.
-}
-```
-
-#### Customizing Chart Data
-The BlogPostsChart widget can be extended to show different time periods:
-
-```php
-class CustomBlogPostsChart extends BlogPostsChart
-{
-    protected function getData(): array
-    {
-        // Custom data logic here
-        return [
-            'datasets' => [
-                [
-                    'label' => 'Posts per Month',
-                    'data' => [10, 15, 8, 12, 20, 18], // Your custom data
-                ],
-            ],
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        ];
-    }
-}
-```
-
-### Widget Permissions
-If you're using Filament's permission system, you can control widget visibility:
-
-```php
-class BlogStatsOverview extends BaseWidget
-{
-    public static function canView(): bool
-    {
-        return auth()->user()->can('view blog stats');
-    }
-}
-```
-
-## � Author Profile & Bio
-
-Blogr provides comprehensive author profile and bio features to showcase your content creators and build trust with your readers.
-
-### Author Profile Page
-
-Each author has a dedicated profile page accessible at `/blog/author/{userId}` (or `/en/blog/author/{userId}` with localized routes).
-
-### Database Migration
-
-**Important:** Blogr automatically adds `avatar` and `bio` fields to your `users` table during installation.
-
-The migration `2025_10_11_000002_add_author_fields_to_users_table.php` adds:
-- `avatar` (string, nullable) - URL or path to author's profile picture
-- `bio` (text, nullable) - Author's biography text
-
-This migration is automatically run when you execute `php artisan blogr:install` or `php artisan migrate`.
-
-**Features:**
-- Author avatar (with automatic letter fallback if no image)
-- Author name and email
-- Author biography (if provided)
-- Statistics (number of published posts)
-- Paginated list of all published posts by the author
-- Full post cards with images, categories, tags, and reading time
-
-**Access an author profile:**
-```blade
-<a href="{{ route('blog.author', $post->user_id) }}">
-    View author profile
-</a>
-```
-
-**Note:** Author profile pages can be disabled in the settings if you don't want dedicated author pages.
-
-### Author Bio Component
-
-Display author information within blog posts using the customizable `author-bio` component.
-
-#### Usage
-
-**Full version** (bio box):
-```blade
-<x-blogr::author-bio :author="$post->user" />
-```
-
-**Compact version** (inline):
-```blade
-<x-blogr::author-bio :author="$post->user" :compact="true" />
-```
-
-#### Configuration
-
-Configure author features in **Admin Panel > Settings > Author Bio** or `config/blogr.php`:
-
-```php
-// Author profile pages
-'author_profile' => [
-    'enabled' => true, // Enable/disable author profile pages (/blog/author/{userId})
-],
-
-// Author bio component on posts
-'author_bio' => [
-    'enabled' => true,          // Enable/disable author bio display on posts
-    'position' => 'bottom',     // Options: 'top', 'bottom', 'both'
-    'compact' => false,         // Use compact version instead of full bio box
-],
-```
-
-**Settings Page Options:**
-- **Enable Author Profile Pages** - Allow/disallow access to `/blog/author/{userId}` pages
-- **Display Author Bio** - Show/hide author information on blog posts
-- **Author Bio Position** - Choose where to display (top, bottom, or both)
-- **Use Compact Version** - Toggle between full bio box and inline compact version
-
-#### Customization
-
-**Custom CSS classes:**
-```blade
-<x-blogr::author-bio 
-    :author="$post->user" 
-    class="my-8 shadow-lg" 
-/>
-```
-
-**Position control:**
-- `'top'` - Display at the beginning of the post
-- `'bottom'` - Display at the end of the post (default)
-- `'both'` - Display at both locations
-
-#### Author Model Fields
-
-The author bio component uses these User model fields:
-- `name` - Author name (required)
-- `email` - Contact email (optional, displayed with icon)
-- `avatar` - Profile picture URL (optional, shows letter fallback if missing)
-- `bio` - Author biography text (optional, not displayed if empty)
-
-**These fields are automatically added by the Blogr migration.** You can manage author information through the Filament User Resource:
-- Upload profile pictures (avatar field)
-- Write biography text (bio field)
-- Add contact information (email field)
-
-### Managing Author Profiles
-
-> **Note:** The Edit Profile page is automatically configured during installation via `php artisan blogr:install`. If you installed manually or the configuration is missing, add this to your `AdminPanelProvider.php`:
-> ```php
-> use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;
-> 
-> public function panel(Panel $panel): Panel
-> {
->     return $panel
->         // ... other configuration
->         ->login()
->         ->profile(EditProfile::class) // Add this line
->         // ... rest of configuration
-> }
-> ```
-
-**Self-Service Profile Management:**
-
-All authenticated users can manage their own profile through a dedicated profile page:
-
-1. Click on your **user avatar** in the top-right corner
-2. Select **"Edit Profile"** from the dropdown menu
-3. You'll see two sections:
-
-#### Profile Information
-- **Name**: Your display name
-- **Email**: Your email address
-- **Profile Picture**: Upload an avatar (max 2MB, automatically cropped to circle)
-- **Biography**: Write a short bio (max 500 characters)
-
-#### Update Password
-- **Current Password**: Required to confirm changes
-- **New Password**: Set a new password (min 8 characters)
-- **Confirm Password**: Confirm your new password
-
-**For Administrators:**
-
-Administrators can manage user accounts (name, email, role) through:
-1. Go to **Admin Panel > Users**
-2. Click on a user to edit
-3. Modify administrative fields: name, email, email verification, role
-
-**Important Security Note:**
-- ✅ **Users can only edit their own profile** (avatar, bio, password)
-- ✅ **Admins cannot edit other users' personal information** (avatar, bio) - This respects user privacy
-- ✅ **Admins can manage roles and administrative fields** (name, email, role assignment)
-
-This separation ensures user privacy while giving administrators control over user accounts and permissions.
-
-**Behavior when author profile is disabled:**
-
-When you disable author profile pages in settings, the author-bio component will still display author information but without links to the profile page. The `/blog/author/{userId}` routes will return a 404 error.
-
-**Manual migration** (if needed):
-
-If for some reason the migration didn't run automatically, you can add these fields manually:
-
-```php
-Schema::table('users', function (Blueprint $table) {
-    $table->string('slug')->unique()->nullable()->after('email');
-    $table->string('avatar')->nullable()->after('slug');
-    $table->json('bio')->nullable()->after('avatar');
-});
-```
-
-**Important:** The `bio` field uses a JSON column type and must be cast as an array in your User model. The installation command automatically adds this cast, but if needed, you can add it manually:
-
-```php
-// In your User model
-protected function casts(): array
-{
-    return [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'bio' => 'array',  // Required for multilingual bio support
-    ];
-}
-
-// OR for Laravel 10 and earlier
-protected $casts = [
-    'email_verified_at' => 'datetime',
-    'password' => 'hashed',
-    'bio' => 'array',  // Required for multilingual bio support
-];
-```
-
-This cast is essential for proper bio display in multilingual contexts, as it automatically decodes the JSON data into an array.
-
-## �📚 Blog Series
-
-Blog series allow you to organize related posts together, making it easier for readers to follow a tutorial or thematic content.
-
-### Creating a Series
-
-1. Go to **Admin Panel > Blogr > Blog Series**
-2. Click **New Blog Series**
-3. Fill in the series information:
-   - **Slug**: Unique identifier (e.g., `laravel-beginners`)
-   - **Position**: Display order
-   - **Is Featured**: Highlight important series
-   - **Published At**: Series publication date
-
-### Adding Translations
-
-In the **Translations** section, add content for each language:
-- **Locale**: Select language (en, fr, es, de)
-- **Title**: Series title in that language
-- **Description**: Brief description
-- **SEO Title & Description**: For search engines
-
-### Assigning Posts to Series
-
-When creating/editing a blog post:
-1. Select **Blog Series** from dropdown
-2. Set **Position** to define order within series (1, 2, 3...)
-3. Save the post
-
-### Frontend Components
-
-#### Series Navigation (Previous/Next)
-Automatically displays at the top/bottom of posts in a series:
-
-```blade
-<x-blogr::series-navigation :post="$post" />
-```
-
-#### Complete Series List
-Shows all posts in a series with progress indicator:
-
-```blade
-<x-blogr::series-list :series="$series" :currentPost="$post" />
-```
-
-#### Series Badge
-Compact indicator showing "Part X/Y":
-
-```blade
-<x-blogr::series-badge :post="$post" :showTitle="true" />
-```
-
-#### Breadcrumb with Series Context
-Includes series in navigation path with Schema.org markup:
-
-```blade
-<x-blogr::breadcrumb :post="$post" />
-```
-
-### Viewing a Series
-
-Access series at: `/blog/series/{series-slug}`
-
-Example: `/blog/series/laravel-for-beginners`
-
-## 🌍 Multilingual Support
-
-Blogr supports multiple languages for your blog content, with automatic translation management.
+## 📚 Documentation
 
 ### Configuration
 
-Edit `config/blogr.php`:
+All settings are manageable via the admin panel **Settings** page or `config/blogr.php`:
+
+<details>
+<summary><b>Key Configuration Options</b></summary>
 
 ```php
+// config/blogr.php
+
+// Route configuration
+'route' => [
+    'prefix' => 'blog', // Change to '' for homepage
+    'middleware' => ['web'],
+],
+
+// Multilingual
 'locales' => [
-    'enabled' => false, // Set to true to enable localized routes
-    'default' => 'en', // Default language
-    'available' => ['en', 'fr', 'es', 'de'], // Supported languages
+    'enabled' => true,
+    'default' => 'en',
+    'available' => ['en', 'fr', 'es', 'de'],
+],
+
+// SEO
+'seo' => [
+    'site_name' => 'My Blog',
+    'default_title' => 'Blog',
+    'og' => [
+        'image' => '/images/og-default.jpg',
+        'image_width' => 1200,
+        'image_height' => 630,
+    ],
+],
+
+// Theming
+'colors' => [
+    'primary' => '#FA2C36',
+],
+
+// Posts per page
+'posts_per_page' => 10,
+```
+
+</details>
+
+### Core Concepts
+
+<details>
+<summary><b>📝 Blog Posts & Translations</b></summary>
+
+**Creating Posts:**
+- Markdown editor with live preview
+- TL;DR summaries
+- Custom slugs
+- Featured images (drag & drop)
+- Categories & tags
+- Publication scheduling
+
+**Translations:**
+- Add translations via Repeater in admin
+- Each translation has independent:
+  - Title, slug, content
+  - SEO meta tags
+  - Categories & tags
+- Automatic language detection
+
+</details>
+
+<details>
+<summary><b>📚 Blog Series</b></summary>
+
+**Setup:**
+1. Create series: Admin → Blog Series → New
+2. Add translations (title, description, SEO)
+3. Assign posts to series with position ordering
+
+**Frontend Components:**
+```blade
+{{-- Series navigation (prev/next) --}}
+<x-blogr::series-navigation :post="$post" />
+
+{{-- Complete series list --}}
+<x-blogr::series-list :series="$series" :currentPost="$post" />
+
+{{-- Series badge --}}
+<x-blogr::series-badge :post="$post" />
+```
+
+**URL:** `/blog/series/{slug}`
+
+</details>
+
+<details>
+<summary><b>📄 CMS Page Builder</b></summary>
+
+**Enable CMS:**
+```php
+// config/blogr.php
+'cms' => [
+    'enabled' => true,
+    'prefix' => '', // Leave empty for /about, or set to 'page' for /page/about
 ],
 ```
 
-### Settings Page
+**Create Static Pages:**
+1. Admin → CMS → Pages CMS → New
+2. Set slug (e.g., `about`, `contact`)
+3. Choose template:
+   - **Default**: Standard page with sidebar
+   - **Full Width**: Wide content area
+   - **Sidebar Left/Right**: Custom layouts
+4. Add translations (title, content, SEO)
+5. Publish the page
 
-Configure via **Admin Panel > Settings > Multilingual Settings**:
-- **Enable Localized Routes**: Activate URL pattern `/{locale}/blog/...`
-- **Default Locale**: Fallback language
-- **Available Locales**: Comma-separated list
+**Block System:**
 
-### Translating Content
+Build pages using pre-designed blocks:
 
-#### Blog Posts
-1. Create/edit a post
-2. In **Translations** tab, click **Add Translation**
-3. Select locale and enter translated content
-4. Each translation has its own:
-   - Title, slug, content
-   - SEO fields
-   - Reading time (auto-calculated)
-   - Categories and tags (per translation)
-
-#### Blog Series
-Same process in the Series edit form with translations repeater.
-
-#### Categories & Tags
-Categories and tags now support translations:
 ```php
-$category = Category::find(1);
-$translation = $category->translate('fr'); // Get French translation
-echo $translation->name; // Category name in French
+// Available blocks
+- Hero Section (title, subtitle, CTA, background)
+- Features Grid (icon, title, description)
+- Testimonials (author, quote, avatar)
+- Call-to-Action (button, background)
+- Content Block (rich text, Markdown)
+- Image Gallery
+- Contact Form
 ```
 
-### Localized Routes
+**Set as Homepage:**
+1. Create a CMS page
+2. Toggle "Page d'accueil" (Homepage)
+3. Configure in `config/blogr.php`:
+```php
+'homepage' => [
+    'type' => 'cms', // 'blog' or 'cms'
+],
+```
 
-When enabled (`'enabled' => true`), URLs include locale:
+**Reserved Slugs:**
+These slugs are protected and cannot be used:
+- `blog`, `feed`, `author`, `category`, `tag`, `series`
+- `admin`, `login`, `logout`, `register`, `dashboard`
+- `api`, `assets`, `storage`, `vendor`
 
-- English: `/en/blog/my-post`
-- French: `/fr/blog/mon-article`  
-- Spanish: `/es/blog/mi-articulo`
+**URL Examples:**
+- About page: `/about` or `/en/about` (with locales)
+- Contact: `/contact` or `/fr/contact`
+- Custom prefix: `/page/about` (if prefix = 'page')
 
-Without localized routes, URLs use default patterns and language is managed by translation relationships.
+</details>
 
-### Frontend Components
+<details>
+<summary><b>🌍 Multilingual Setup</b></summary>
 
-#### Language Switcher
-Add to your layout:
+**Enable in Settings:**
+- Admin → Blogr Settings → Multilingual
+- Toggle "Enable Localized Routes"
+- Set default locale and available locales
 
+**URLs:**
+- Enabled: `/{locale}/blog/{slug}` (e.g., `/fr/blog/mon-article`)
+- Disabled: `/blog/{slug}` (translation via relationships)
+
+**Components:**
 ```blade
+{{-- Language switcher --}}
 <x-blogr::language-switcher 
     current-route="blog.show" 
     :route-parameters="['slug' => $post->slug]" 
 />
-```
 
-#### Hreflang Tags (SEO)
-Add in `<head>` section:
-
-```blade
+{{-- Hreflang SEO tags --}}
 <x-blogr::hreflang-tags 
     current-route="blog.show" 
     :route-parameters="['slug' => $post->slug]" 
 />
 ```
 
-This generates:
-```html
-<link rel="alternate" hreflang="en" href="https://example.com/en/blog/post" />
-<link rel="alternate" hreflang="fr" href="https://example.com/fr/blog/post" />
-<link rel="alternate" hreflang="x-default" href="https://example.com/en/blog/post" />
-```
+</details>
 
-### Translation Helpers
+<details>
+<summary><b>💾 Backup & Import</b></summary>
 
-```php
-use Happytodev\Blogr\Helpers\LocaleHelper;
+**Export Data:**
+1. Admin → Blogr Settings → Backup tab
+2. Choose format (JSON or ZIP with media)
+3. Download backup file
 
-// Get current locale
-$locale = LocaleHelper::currentLocale(); // 'fr'
-
-// Generate localized URL
-$url = LocaleHelper::route('blog.show', ['slug' => 'my-post'], 'fr');
-
-// Get all available locales
-$locales = LocaleHelper::availableLocales(); // ['en', 'fr', 'es', 'de']
-
-// Get alternate URLs for hreflang
-$urls = LocaleHelper::alternateUrls('blog.show', ['slug' => 'my-post']);
-// ['en' => '...', 'fr' => '...', ...]
-```
-
-## 🎨 Demo Data Seeder
-
-To quickly visualize blog series and multilingual features, run the demo seeder:
-
+**Import Data:**
 ```bash
-php artisan db:seed --class="Happytodev\Blogr\Database\Seeders\BlogSeriesSeeder"
+php artisan blogr:import backup.zip
 ```
 
-This creates:
-- ✅ 2 blog series with en/fr translations
-- ✅ 7 blog posts across both series
-- ✅ "Laravel for Beginners" series (4 posts, featured)
-- ✅ "Vue.js Best Practices" series (3 posts)
-- ✅ Categories and tags
-- ✅ Proper ordering and relationships
+**What's included:**
+- Posts, series, categories, tags
+- All translations
+- Media files (images, avatars)
+- Relationships preserved
 
-**View the results:**
-- Admin: `/admin/blog-series` and `/admin/blog-posts`
-- Frontend: `/blog/series/laravel-for-beginners`
+</details>
 
-See `database/seeders/README_SEEDERS.md` for full documentation.
+<details>
+<summary><b>👤 Author Profiles</b></summary>
 
-## 🧪 Testing
+**Self-Service Profile:**
+- Click user avatar → Edit Profile
+- Upload avatar (auto-cropped)
+- Write bio (Markdown supported)
+- Update password
 
-Blogr includes comprehensive test coverage to ensure reliability and prevent regressions.
+**Author Bio Component:**
+```blade
+{{-- Full bio box --}}
+<x-blogr::author-bio :author="$post->user" />
 
-### Running Tests
-
-```bash
-# Run all tests
-cd /path/to/packages/happytodev/blogr
-php vendor/bin/pest
-
-# Run specific test suites
-php vendor/bin/pest tests/Feature/BlogSeriesModelTest.php
-php vendor/bin/pest tests/Feature/DatabaseSchemaIntegrityTest.php
-
-# Run with coverage
-php vendor/bin/pest --coverage
+{{-- Compact inline --}}
+<x-blogr::author-bio :author="$post->user" :compact="true" />
 ```
 
-### Test Coverage
-
-#### Model Tests (`BlogSeriesModelTest`)
-- ✅ Database schema integrity
-- ✅ Model creation with all fields
-- ✅ Updating fields without SQL errors
-- ✅ Toggle `is_featured` safely
-- ✅ Fillable array correctness
-- ✅ Photo field handling
-
-#### Schema Integrity Tests (`DatabaseSchemaIntegrityTest`)
-- ✅ All required tables exist
-- ✅ All columns match model fillable
-- ✅ Nullable columns are properly configured
-- ✅ Unique constraints are in place
-- ✅ Default values are correct
-- ✅ Migrations are idempotent
-
-### Adding Your Own Tests
-
-When adding new models or features, follow this pattern:
-
+**Configuration:**
 ```php
-public function test_can_create_model_without_errors(): void
-{
-    $model = YourModel::create([
-        'field1' => 'value1',
-        'field2' => 'value2',
-    ]);
-    
-    $this->assertDatabaseHas('your_table', [
-        'field1' => 'value1',
-        'field2' => 'value2',
-    ]);
+'author_profile' => ['enabled' => true],
+'author_bio' => [
+    'enabled' => true,
+    'position' => 'bottom', // top, bottom, both
+    'compact' => false,
+],
+```
+
+</details>
+
+### Advanced Features
+
+<details>
+<summary><b>🔍 SEO Configuration</b></summary>
+
+**Per-Post SEO:**
+- Meta title & description
+- Keywords
+- Custom OG image
+- Auto-generated Schema.org markup
+
+**Global SEO:**
+```php
+'seo' => [
+    'site_name' => env('APP_NAME'),
+    'default_title' => 'Blog',
+    'twitter_handle' => '@yourhandle',
+    'og' => [
+        'type' => 'website',
+        'image' => '/images/og-default.jpg',
+    ],
+    'structured_data' => [
+        'enabled' => true,
+        'organization' => [
+            'name' => 'My Blog',
+            'logo' => 'https://yoursite.com/logo.png',
+        ],
+    ],
+],
+```
+
+</details>
+
+<details>
+<summary><b>📊 RSS Feeds</b></summary>
+
+**Available Feeds:**
+- Main: `/{locale}/blog/feed`
+- Category: `/{locale}/blog/feed/category/{slug}`
+- Tag: `/{locale}/blog/feed/tag/{slug}`
+
+**Configuration:**
+```php
+'rss' => [
+    'enabled' => true,
+    'limit' => 20,
+    'cache_ttl' => 3600, // 1 hour
+],
+```
+
+</details>
+
+<details>
+<summary><b>🎨 Theming</b></summary>
+
+**CSS Variables:**
+```css
+:root {
+    --blogr-primary: #FA2C36;
+    --blogr-category: #3B82F6;
+    --blogr-tag: #10B981;
 }
 ```
 
+**Dark Mode:**
+- Auto-detection via system preference
+- Manual toggle (light/dark/auto)
+- Configured via Alpine.js component
 
-## Support
+**Customization Points:**
+- Card colors & borders
+- TOC positioning (center, left, right sidebar)
+- Publication date display
+- Tag positioning (top/bottom)
+- Heading permalinks (symbol, spacing, visibility)
 
-For questions or bug reports, open an issue on GitHub or contact [happytodev](mailto:happytodev@ik.me).
+</details>
 
-## Sponsor
+---
 
-If you like this project, you can support me via [GitHub Sponsors](https://github.com/sponsors/happytodev).
+## 🧪 Testing
 
+Blogr is battle-tested with **680+ tests** and **1900+ assertions**:
 
-## License
-MIT
+```bash
+cd vendor/happytodev/blogr
+./vendor/bin/pest --parallel
 
-## Changelog
+# Test coverage
+Tests:  57 skipped, 645 passed (1866 assertions)
+```
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+**Test Coverage:**
+- ✅ Import/Export with media files
+- ✅ Multilingual translations
+- ✅ Blog series relationships
+- ✅ SEO meta tags & Schema.org
+- ✅ Author profiles & permissions
+- ✅ RSS feed generation
+- ✅ Database schema integrity
 
-## Contributing
+---
 
-Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
+## 🗺️ Roadmap
 
-## Security Vulnerabilities
+### 🎯 RC1 (November 2025)
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+- [x] **Import/Export system** with media backup
+- [x] **CMS Page Builder** – Create static pages (About, Contact, etc.) with block system ✨ NEW
+- [ ] **Clickable titles** in RecentBlogPosts widget
+- [ ] **Public blog link** in admin panel
+- [ ] **Theme presets** (predefined color schemes)
+- [ ] **Enhanced tables** (sortable, filterable)
+- [ ] **Writer notifications** for admins
+- [ ] **Comprehensive testing** for v1 release
 
-## Credits
+### ✅ Beta 3 (Completed - September 2025)
 
-- [Frédéric Blanc](https://github.com/happytodev)
+- [x] Full multilingual support
+- [x] Blog series feature
+- [x] Writer role with permissions
+- [x] RSS feeds (global, category, tag)
+- [x] Configurable TOC positioning
+- [x] Theme system with dark mode
+- [x] Author profiles & bios
+- [x] Customizable permalinks
+- [x] Language switcher component
+- [x] Footer & navigation settings
+
+### ✅ Beta 2 (Completed - September 2025)
+
+- [x] SEO fields (meta, OG, Schema.org)
+- [x] Scheduled publishing
+- [x] Quick publish toggle
+- [x] Auto-generated TOC
+- [x] Reading time calculation
+- [x] Dashboard widgets
+- [x] Settings page with tabs
+- [x] Tutorial content seeder
+
+---
+
+## 🤝 Support
+
+<div align="center">
+
+### Need Help?
+
+[📖 Full Documentation](https://github.com/happytodev/blogr/wiki) • [🐛 Report Bug](https://github.com/happytodev/blogr/issues) • [💡 Request Feature](https://github.com/happytodev/blogr/issues/new)
+
+### Love Blogr?
+
+If this package saves you time, consider:
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-❤-pink?style=for-the-badge&logo=github)](https://github.com/sponsors/happytodev)
+[![Star on GitHub](https://img.shields.io/github/stars/happytodev/blogr?style=for-the-badge&logo=github)](https://github.com/happytodev/blogr/stargazers)
+
+</div>
+
+---
+
+## 📄 License
+
+**MIT License** – See [LICENSE.md](LICENSE.md) for details.
+
+## 👏 Credits
+
+Created with ❤️ by [Frédéric Blanc](https://github.com/happytodev)
+
+**Contributors:**
 - [All Contributors](../../contributors)
 
-## License
+**Special Thanks:**
+- FilamentPHP team for the amazing framework
+- Laravel community for continuous inspiration
+- All users providing feedback and bug reports
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+---
+
+<div align="center">
+
+**[⬆ Back to Top](#-blogr--the-ultimate-filamentphp-blog-plugin)**
+
+Made with ❤️ using Laravel & FilamentPHP
+
+</div>
