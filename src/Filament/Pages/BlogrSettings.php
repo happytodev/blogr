@@ -47,6 +47,11 @@ class BlogrSettings extends Page
     public ?string $colors_primary = null;
     public ?int $reading_speed_words_per_minute = null;
 
+    // CMS Settings
+    public ?bool $cms_enabled = null;
+    public ?string $cms_prefix = null;
+    public ?string $homepage_type = null; // 'blog' or 'cms'
+
     // Appearance Colors (Card Backgrounds)
     public ?string $appearance_blog_card_bg = null;
     public ?string $appearance_blog_card_bg_dark = null;
@@ -126,8 +131,12 @@ class BlogrSettings extends Page
     public ?bool $navigation_enabled = null;
     public ?bool $navigation_sticky = null;
     public ?bool $navigation_show_logo = null;
+    public array $navigation_logo = []; // FileUpload expects array
+    public ?string $navigation_logo_display = null;
     public ?bool $navigation_show_language_switcher = null;
     public ?bool $navigation_show_theme_switcher = null;
+    public ?bool $navigation_auto_add_blog = null;  // Auto-add blog link when CMS is homepage
+    public ?array $navigation_menu_items = [];
 
     // UI Settings - Dates
     public ?bool $dates_show_publication_date = null;
@@ -162,6 +171,11 @@ class BlogrSettings extends Page
     public ?string $posts_default_image = null;
     public ?bool $posts_show_language_switcher = null;
 
+    // UI Settings - Back to Top
+    public ?bool $back_to_top_enabled = null;
+    public ?string $back_to_top_shape = null;
+    public ?string $back_to_top_color = null;
+
     // Import/Export
     public array $import_file = [];
     public bool $overwrite_existing_data = false;
@@ -188,6 +202,11 @@ class BlogrSettings extends Page
         $this->route_homepage = $config['route']['homepage'] ?? false;
         $this->colors_primary = $config['colors']['primary'] ?? '#3b82f6';
         $this->reading_speed_words_per_minute = $config['reading_speed']['words_per_minute'] ?? 200;
+
+        // Load CMS settings
+        $this->cms_enabled = $config['cms']['enabled'] ?? false;
+        $this->cms_prefix = $config['cms']['prefix'] ?? '';
+        $this->homepage_type = $config['homepage']['type'] ?? 'blog';
 
         // Load appearance colors (card backgrounds)
         $this->appearance_blog_card_bg = $config['ui']['appearance']['blog_card_bg'] ?? '#ffffff';
@@ -341,8 +360,14 @@ class BlogrSettings extends Page
         $this->navigation_enabled = $config['ui']['navigation']['enabled'] ?? true;
         $this->navigation_sticky = $config['ui']['navigation']['sticky'] ?? true;
         $this->navigation_show_logo = $config['ui']['navigation']['show_logo'] ?? true;
+        $this->navigation_logo = isset($config['ui']['navigation']['logo']) && $config['ui']['navigation']['logo']
+            ? (is_array($config['ui']['navigation']['logo']) ? $config['ui']['navigation']['logo'] : [$config['ui']['navigation']['logo']])
+            : [];
+        $this->navigation_logo_display = $config['ui']['navigation']['logo_display'] ?? 'text';
         $this->navigation_show_language_switcher = $config['ui']['navigation']['show_language_switcher'] ?? true;
         $this->navigation_show_theme_switcher = $config['ui']['navigation']['show_theme_switcher'] ?? true;
+        $this->navigation_auto_add_blog = $config['ui']['navigation']['auto_add_blog'] ?? false;
+        $this->navigation_menu_items = $config['ui']['navigation']['menu_items'] ?? [];
 
         $this->dates_show_publication_date = $config['ui']['dates']['show_publication_date'] ?? true;
         $this->dates_show_publication_date_on_cards = $config['ui']['dates']['show_publication_date_on_cards'] ?? true;
@@ -370,6 +395,11 @@ class BlogrSettings extends Page
 
         $this->posts_default_image = $config['ui']['posts']['default_image'] ?? null;
         $this->posts_show_language_switcher = $config['ui']['posts']['show_language_switcher'] ?? true;
+
+        // Load back-to-top settings
+        $this->back_to_top_enabled = $config['ui']['back_to_top']['enabled'] ?? true;
+        $this->back_to_top_shape = $config['ui']['back_to_top']['shape'] ?? 'circle';
+        $this->back_to_top_color = $config['ui']['back_to_top']['color'] ?? null; // null = use primary color
     }
 
     public function getFormSchema(): array
@@ -395,18 +425,13 @@ class BlogrSettings extends Page
                                     TextInput::make('route_prefix')
                                         ->label('Route Prefix')
                                         ->placeholder('blog')
-                                        ->helperText('URL prefix for blog routes')
+                                        ->helperText('URL prefix for blog routes (e.g., /blog/my-post)')
                                         ->required(),
                                     Toggle::make('route_frontend_enabled')
                                         ->label('Enable Frontend Routes')
                                         ->helperText('Enable frontend routes for the blog')
                                         ->default(true)
                                         ->required(),
-                                    Toggle::make('route_homepage')
-                                        ->label('Enable Homepage')
-                                        ->helperText('When enabled, the blog index becomes the homepage. You must comment out the default root route in routes/web.php to avoid conflicts.')
-                                        ->default(false)
-                                        ->columnSpan(2),
                                     ColorPicker::make('colors_primary')
                                         ->label('Primary Color (Admin Panel)')
                                         ->helperText('This is the primary color used in the Filament admin panel')
@@ -414,6 +439,50 @@ class BlogrSettings extends Page
                                         ->required(),
                                 ])
                                 ->columns(2),
+
+                            Section::make('Homepage & CMS Configuration')
+                                ->description('Configure your website homepage and CMS (static pages) settings')
+                                ->schema([
+                                    Select::make('homepage_type')
+                                        ->label('Homepage Type')
+                                        ->options([
+                                            'blog' => 'Blog Index (list of posts)',
+                                            'cms' => 'CMS Page (static homepage)',
+                                        ])
+                                        ->default('blog')
+                                        ->live()
+                                        ->required()
+                                        ->helperText('Choose what appears at the root URL (/)'),
+
+                                    Placeholder::make('homepage_warning')
+                                        ->content('⚠️ You must comment out the default root route in routes/web.php to avoid conflicts when using Blog or CMS as homepage.')
+                                        ->columnSpanFull(),
+
+                                    Toggle::make('cms_enabled')
+                                        ->label('Enable CMS (Static Pages)')
+                                        ->helperText('Enable the CMS module for creating static pages like About, Contact, etc.')
+                                        ->default(false)
+                                        ->live()
+                                        ->columnSpan(1),
+
+                                    TextInput::make('cms_prefix')
+                                        ->label('CMS Route Prefix')
+                                        ->placeholder('page or leave empty')
+                                        ->helperText('URL prefix for CMS pages (e.g., /page/about or /about if empty). Not used if CMS is homepage.')
+                                        ->visible(fn(Get $get) => $get('cms_enabled'))
+                                        ->columnSpan(1),
+
+                                    Placeholder::make('cms_info')
+                                        ->content(fn(Get $get) => match($get('homepage_type')) {
+                                            'blog' => '📝 Homepage will show blog posts. CMS pages will be accessible via /' . ($get('cms_prefix') ?: '') . '{slug}',
+                                            'cms' => '🏠 Homepage will show a CMS page (you need to create one and mark it as homepage). Blog will be accessible via /' . $get('route_prefix') . '',
+                                            default => '',
+                                        })
+                                        ->visible(fn(Get $get) => $get('cms_enabled') || $get('homepage_type') === 'cms')
+                                        ->columnSpanFull(),
+                                ])
+                                ->columns(2)
+                                ->collapsible(),
 
                             Section::make('Reading Time')
                                 ->description('Reading time calculation and display settings')
@@ -735,6 +804,31 @@ class BlogrSettings extends Page
                                         ->hidden(),
                                 ])
                                 ->columns(2),
+
+                            Section::make('Back to Top Button')
+                                ->description('Configure the floating back-to-top button')
+                                ->schema([
+                                    Toggle::make('back_to_top_enabled')
+                                        ->label('Enable Back to Top Button')
+                                        ->default(true)
+                                        ->helperText('Display a floating button to scroll back to top of the page'),
+
+                                    Select::make('back_to_top_shape')
+                                        ->label('Button Shape')
+                                        ->options([
+                                            'circle' => 'Circle',
+                                            'square' => 'Square (rounded corners)',
+                                        ])
+                                        ->default('circle')
+                                        ->helperText('Choose the visual style of the button')
+                                        ->native(false),
+
+                                    ColorPicker::make('back_to_top_color')
+                                        ->label('Button Color')
+                                        ->helperText('Leave empty to use the primary theme color')
+                                        ->nullable(),
+                                ])
+                                ->columns(3),
                         ]),
 
                     // ========================================
@@ -877,6 +971,30 @@ class BlogrSettings extends Page
                                         ->visible(fn(Get $get) => $get('navigation_enabled'))
                                         ->helperText('Display your site name in the navigation bar'),
 
+                    FileUpload::make('navigation_logo')
+                        ->label('Logo Image')
+                        ->image()
+                        ->disk('public')
+                        ->directory('blogr/logos')
+                        ->imageResizeMode('contain')
+                        ->imageResizeTargetHeight(200)
+                        ->maxSize(2048)
+                        ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml', 'image/webp'])
+                        ->visibility('public')
+                        ->storeFiles()
+                        ->moveFiles()
+                        ->visible(fn(Get $get) => $get('navigation_enabled') && $get('navigation_show_logo'))
+                        ->helperText('Upload your logo (max 2MB, will be resized to 200px height)'),                                    \Filament\Forms\Components\Select::make('navigation_logo_display')
+                                        ->label('Logo Display Mode')
+                                        ->options([
+                                            'text' => 'Text Only (Site Name)',
+                                            'image' => 'Image Only',
+                                            'both' => 'Both Image and Text',
+                                        ])
+                                        ->default('text')
+                                        ->visible(fn(Get $get) => $get('navigation_enabled') && $get('navigation_show_logo'))
+                                        ->helperText('Choose how to display your site branding'),
+
                                     Toggle::make('navigation_show_language_switcher')
                                         ->label('Show Language Switcher')
                                         ->default(true)
@@ -888,8 +1006,190 @@ class BlogrSettings extends Page
                                         ->default(true)
                                         ->visible(fn(Get $get) => $get('navigation_enabled'))
                                         ->helperText('Allow users to switch between light/dark/auto themes'),
+
+                                    Toggle::make('navigation_auto_add_blog')
+                                        ->label('Auto-add Blog Link (when CMS is homepage)')
+                                        ->default(false)
+                                        ->visible(fn(Get $get) => $get('navigation_enabled') && $get('homepage_type') === 'cms')
+                                        ->helperText('Automatically add a "Blog" link to the menu when CMS is set as homepage. Labels will be translated for all enabled languages.'),
                                 ])
                                 ->columns(2),
+
+                            Section::make('Navigation Menu Items')
+                                ->description('Add custom links to your navigation bar. Configure labels for each language and optionally add sub-menu items for mega menus.')
+                                ->schema([
+                                    \Filament\Forms\Components\Repeater::make('navigation_menu_items')
+                                        ->label('Menu Items')
+                                        ->schema([
+                                            // Multilingual labels
+                                            \Filament\Forms\Components\Repeater::make('labels')
+                                                ->label('Labels (by language)')
+                                                ->schema([
+                                                    \Filament\Forms\Components\Select::make('locale')
+                                                        ->label('Language')
+                                                        ->options(function () {
+                                                            $locales = config('blogr.locales.available', ['en']);
+                                                            return collect($locales)->mapWithKeys(fn($locale) => [$locale => strtoupper($locale)]);
+                                                        })
+                                                        ->required()
+                                                        ->distinct()
+                                                        ->columnSpan(1),
+
+                                                    \Filament\Forms\Components\TextInput::make('label')
+                                                        ->label('Label')
+                                                        ->required()
+                                                        ->placeholder('About Us')
+                                                        ->columnSpan(1),
+                                                ])
+                                                ->columns(2)
+                                                ->collapsed()
+                                                ->itemLabel(fn(array $state) => strtoupper($state['locale'] ?? 'NEW') . ': ' . ($state['label'] ?? 'New Label'))
+                                                ->addActionLabel('Add Translation')
+                                                ->defaultItems(1)
+                                                ->columnSpanFull(),
+
+                                            \Filament\Forms\Components\Select::make('type')
+                                                ->label('Link Type')
+                                                ->options([
+                                                    'external' => 'External URL',
+                                                    'blog' => 'Blog Home',
+                                                    'category' => 'Category',
+                                                    'megamenu' => 'Mega Menu (with sub-items)',
+                                                ])
+                                                ->default('external')
+                                                ->live()
+                                                ->required()
+                                                ->columnSpan(1),
+
+                                            \Filament\Forms\Components\TextInput::make('url')
+                                                ->label('URL')
+                                                ->url()
+                                                ->placeholder('https://example.com/about')
+                                                ->visible(fn(Get $get) => $get('type') === 'external')
+                                                ->required(fn(Get $get) => $get('type') === 'external')
+                                                ->columnSpan(1),
+
+                                            \Filament\Forms\Components\Select::make('category_id')
+                                                ->label('Select Category')
+                                                ->options(function () {
+                                                    return \Happytodev\Blogr\Models\Category::with('translations')
+                                                        ->get()
+                                                        ->mapWithKeys(function ($category) {
+                                                            $translation = $category->translations->first();
+                                                            return [$category->id => $translation->name ?? 'Category #' . $category->id];
+                                                        });
+                                                })
+                                                ->searchable()
+                                                ->visible(fn(Get $get) => $get('type') === 'category')
+                                                ->required(fn(Get $get) => $get('type') === 'category')
+                                                ->columnSpan(1),
+
+                                            \Filament\Forms\Components\Select::make('target')
+                                                ->label('Open in')
+                                                ->options([
+                                                    '_self' => 'Same window',
+                                                    '_blank' => 'New window',
+                                                ])
+                                                ->default('_self')
+                                                ->visible(fn(Get $get) => $get('type') !== 'megamenu')
+                                                ->columnSpan(1),
+
+                                            \Filament\Forms\Components\TextInput::make('icon')
+                                                ->label('Icon (Heroicon name)')
+                                                ->placeholder('heroicon-o-home')
+                                                ->helperText('Optional. Use heroicon names like: heroicon-o-home, heroicon-o-user')
+                                                ->columnSpan(1),
+
+                                            // Sub-menu items for mega menu
+                                            \Filament\Forms\Components\Repeater::make('children')
+                                                ->label('Sub-menu Items')
+                                                ->schema([
+                                                    \Filament\Forms\Components\Repeater::make('labels')
+                                                        ->label('Labels (by language)')
+                                                        ->schema([
+                                                            \Filament\Forms\Components\Select::make('locale')
+                                                                ->label('Language')
+                                                                ->options(function () {
+                                                                    $locales = config('blogr.locales.available', ['en']);
+                                                                    return collect($locales)->mapWithKeys(fn($locale) => [$locale => strtoupper($locale)]);
+                                                                })
+                                                                ->required()
+                                                                ->distinct()
+                                                                ->columnSpan(1),
+
+                                                            \Filament\Forms\Components\TextInput::make('label')
+                                                                ->label('Label')
+                                                                ->required()
+                                                                ->placeholder('Sub Item')
+                                                                ->columnSpan(1),
+                                                        ])
+                                                        ->columns(2)
+                                                        ->collapsed()
+                                                        ->itemLabel(fn(array $state) => strtoupper($state['locale'] ?? 'NEW') . ': ' . ($state['label'] ?? 'New Label'))
+                                                        ->defaultItems(1)
+                                                        ->columnSpanFull(),
+
+                                                    \Filament\Forms\Components\Select::make('type')
+                                                        ->label('Link Type')
+                                                        ->options([
+                                                            'external' => 'External URL',
+                                                            'blog' => 'Blog Home',
+                                                            'category' => 'Category',
+                                                        ])
+                                                        ->default('external')
+                                                        ->live()
+                                                        ->required()
+                                                        ->columnSpan(1),
+
+                                                    \Filament\Forms\Components\TextInput::make('url')
+                                                        ->label('URL')
+                                                        ->url()
+                                                        ->placeholder('https://example.com/page')
+                                                        ->visible(fn(Get $get) => $get('type') === 'external')
+                                                        ->required(fn(Get $get) => $get('type') === 'external')
+                                                        ->columnSpan(1),
+
+                                                    \Filament\Forms\Components\Select::make('category_id')
+                                                        ->label('Select Category')
+                                                        ->options(function () {
+                                                            return \Happytodev\Blogr\Models\Category::with('translations')
+                                                                ->get()
+                                                                ->mapWithKeys(function ($category) {
+                                                                    $translation = $category->translations->first();
+                                                                    return [$category->id => $translation->name ?? 'Category #' . $category->id];
+                                                                });
+                                                        })
+                                                        ->searchable()
+                                                        ->visible(fn(Get $get) => $get('type') === 'category')
+                                                        ->required(fn(Get $get) => $get('type') === 'category')
+                                                        ->columnSpan(1),
+
+                                                    \Filament\Forms\Components\Select::make('target')
+                                                        ->label('Open in')
+                                                        ->options([
+                                                            '_self' => 'Same window',
+                                                            '_blank' => 'New window',
+                                                        ])
+                                                        ->default('_self')
+                                                        ->columnSpan(1),
+                                                ])
+                                                ->columns(2)
+                                                ->collapsed()
+                                                ->itemLabel(fn(array $state) => $state['labels'][0]['label'] ?? 'Sub Item')
+                                                ->addActionLabel('Add Sub-Item')
+                                                ->visible(fn(Get $get) => $get('type') === 'megamenu')
+                                                ->columnSpanFull(),
+                                        ])
+                                        ->columns(2)
+                                        ->reorderable()
+                                        ->collapsible()
+                                        ->itemLabel(fn(array $state) => $state['labels'][0]['label'] ?? 'New Item')
+                                        ->addActionLabel('Add Menu Item')
+                                        ->visible(fn(Get $get) => $get('navigation_enabled'))
+                                        ->columnSpanFull(),
+                                ])
+                                ->visible(fn(Get $get) => $get('navigation_enabled'))
+                                ->columnSpanFull(),
 
                             Section::make('Footer Configuration')
                                 ->description('Customize your blog footer appearance and content')
@@ -1398,6 +1698,40 @@ class BlogrSettings extends Page
 
     public function save(): void
     {
+        // Handle logo file upload FIRST - persist the file if it's a temporary upload
+        $logoPath = null;
+        if (!empty($this->navigation_logo)) {
+            // Filament FileUpload returns an associative array with UUID keys
+            // Get the first value (could be at key 0 or a UUID)
+            $logoFile = is_array($this->navigation_logo) ? reset($this->navigation_logo) : $this->navigation_logo;
+            
+            if ($logoFile) {
+                // Check type of file data
+                if (is_object($logoFile)) {
+                    // It's a TemporaryUploadedFile object, store it permanently
+                    if (method_exists($logoFile, 'store')) {
+                        $logoPath = $logoFile->store('blogr/logos', 'public');
+                    } elseif (method_exists($logoFile, 'storeAs')) {
+                        // Alternative method
+                        $filename = $logoFile->getClientOriginalName();
+                        $logoPath = $logoFile->storeAs('blogr/logos', $filename, 'public');
+                    }
+                } elseif (is_string($logoFile)) {
+                    // It's a string - could be existing path or livewire reference
+                    if (str_starts_with($logoFile, 'livewire-file:')) {
+                        // Livewire temporary file reference - this shouldn't happen with proper FileUpload config
+                        // Let's log this and skip
+                        \Log::warning("BlogrSettings: Logo upload returned livewire-file reference instead of object", [
+                            'value' => $logoFile
+                        ]);
+                    } else {
+                        // It's already a stored path (existing file)
+                        $logoPath = $logoFile;
+                    }
+                }
+            }
+        }
+        
         $data = [
             'posts_per_page' => $this->posts_per_page,
             'route' => [
@@ -1405,7 +1739,14 @@ class BlogrSettings extends Page
                 'frontend' => [
                     'enabled' => $this->route_frontend_enabled,
                 ],
-                'homepage' => $this->route_homepage,
+                'homepage' => $this->route_homepage, // Keep for backward compatibility
+            ],
+            'homepage' => [
+                'type' => $this->homepage_type ?? 'blog',
+            ],
+            'cms' => [
+                'enabled' => $this->cms_enabled ?? false,
+                'prefix' => $this->cms_prefix ?? '',
             ],
             'colors' => [
                 'primary' => $this->colors_primary,
@@ -1479,8 +1820,12 @@ class BlogrSettings extends Page
                     'enabled' => $this->navigation_enabled,
                     'sticky' => $this->navigation_sticky,
                     'show_logo' => $this->navigation_show_logo,
+                    'logo' => $logoPath,
+                    'logo_display' => $this->navigation_logo_display ?? 'text',
                     'show_language_switcher' => $this->navigation_show_language_switcher,
                     'show_theme_switcher' => $this->navigation_show_theme_switcher,
+                    'auto_add_blog' => $this->navigation_auto_add_blog ?? false,
+                    'menu_items' => $this->navigation_menu_items ?? [],
                 ],
                 'dates' => [
                     'show_publication_date' => $this->dates_show_publication_date,
@@ -1530,8 +1875,19 @@ class BlogrSettings extends Page
                     'series_card_bg' => $this->appearance_series_card_bg,
                     'series_card_bg_dark' => $this->appearance_series_card_bg_dark,
                 ],
+                'back_to_top' => [
+                    'enabled' => $this->back_to_top_enabled,
+                    'shape' => $this->back_to_top_shape,
+                    'color' => $this->back_to_top_color,
+                ],
             ],
         ];
+
+        // Log logo path for debugging
+        \Log::info('BlogrSettings: Saving logo path to config', [
+            'logoPath' => $logoPath,
+            'navigation_logo_raw' => $this->navigation_logo,
+        ]);
 
         // Update the config file
         $this->updateConfigFile($data);

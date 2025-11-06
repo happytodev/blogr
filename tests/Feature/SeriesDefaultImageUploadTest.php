@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 test('series default image converts string config to array', function () {
     // Simulate config with string value (current situation)

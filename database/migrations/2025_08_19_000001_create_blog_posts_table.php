@@ -11,10 +11,10 @@ return new class extends Migration
     {
         Schema::create(config('blogr.tables.prefix', '') . 'blog_posts', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('title')->nullable(); // Nullable for translation system
             $table->string('photo')->nullable();
-            $table->text('content');
-            $table->string('slug')->unique();
+            $table->text('content')->nullable(); // Nullable for translation system
+            $table->string('slug')->unique()->nullable(); // Nullable for translation system
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->boolean('is_published')->default(false);
             $table->timestamp('published_at')->nullable();

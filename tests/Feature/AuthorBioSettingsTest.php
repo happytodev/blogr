@@ -2,11 +2,13 @@
 
 namespace Happytodev\Blogr\Tests\Feature;
 
+uses(\Happytodev\Blogr\Tests\TestCase::class);
+
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Workbench\App\Models\User;
+use Happytodev\Blogr\Models\User;
 
 class AuthorBioSettingsTest extends TestCase
 {
@@ -20,7 +22,7 @@ class AuthorBioSettingsTest extends TestCase
      * This is called BEFORE setUp() and is the right place to set config values
      * that affect the ServiceProvider boot process (like route registration).
      */
-    public function getEnvironmentSetUp($app)
+    public function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
 

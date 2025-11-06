@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Happytodev\Blogr\Helpers\SEOHelper;
 use Happytodev\Blogr\Models\BlogPost;

@@ -1,7 +1,10 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Illuminate\Support\Facades\Hash;
-use Workbench\App\Models\User;
+use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Carbon\Carbon;

@@ -3,11 +3,13 @@
 namespace Happytodev\Blogr;
 
 use Filament\Contracts\Plugin;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
 use Happytodev\Blogr\Filament\Resources\BlogSeriesResource;
 use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
+use Happytodev\Blogr\Filament\Resources\CmsPageResource;
 use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
 use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
@@ -24,12 +26,19 @@ class BlogrPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->resources([
+        $resources = [
             BlogPostResource::class,
             BlogSeriesResource::class,
             CategoryResource::class,
             TagResource::class,
-        ]);
+        ];
+
+        // Ajouter la ressource CMS si activée
+        if (config('blogr.cms.enabled', false)) {
+            $resources[] = CmsPageResource::class;
+        }
+
+        $panel->resources($resources);
 
         $panel->pages([
             BlogrSettings::class,
@@ -41,6 +50,15 @@ class BlogrPlugin implements Plugin
             ScheduledPosts::class,
             BlogPostsChart::class,
             BlogReadingStats::class,
+        ]);
+
+        // Add a navigation item to quickly view the website (translation key used)
+        $panel->navigationItems([
+            NavigationItem::make('view-website')
+                ->label(__('blogr::navigation.view_website'))
+                ->url(fn (): string => config('app.url', '/'), shouldOpenInNewTab: true)
+                ->icon('heroicon-o-arrow-top-right-on-square')
+                ->sort(1),
         ]);
 
         $panel->colors([

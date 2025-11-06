@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Illuminate\Support\Facades\Artisan;

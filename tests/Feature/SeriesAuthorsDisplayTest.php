@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -35,9 +38,9 @@ it('series authors returns unique users from posts', function () {
     $category = \Happytodev\Blogr\Models\Category::factory()->create();
     
     // Create 3 users
-    $user1 = \Workbench\App\Models\User::factory()->create(['slug' => 'author-one']);
-    $user2 = \Workbench\App\Models\User::factory()->create(['slug' => 'author-two']);
-    $user3 = \Workbench\App\Models\User::factory()->create(['slug' => 'author-three']);
+    $user1 = \Happytodev\Blogr\Models\User::factory()->create(['slug' => 'author-one']);
+    $user2 = \Happytodev\Blogr\Models\User::factory()->create(['slug' => 'author-two']);
+    $user3 = \Happytodev\Blogr\Models\User::factory()->create(['slug' => 'author-three']);
     
     // Create posts: 2 by user1, 2 by user2, 1 by user3
     \Happytodev\Blogr\Models\BlogPost::factory()->count(2)->create([
@@ -72,9 +75,9 @@ it('series authors are ordered by post count descending', function () {
     $series = \Happytodev\Blogr\Models\BlogSeries::factory()->create();
     $category = \Happytodev\Blogr\Models\Category::factory()->create();
     
-    $user1 = \Workbench\App\Models\User::factory()->create(['slug' => 'author-one']);
-    $user2 = \Workbench\App\Models\User::factory()->create(['slug' => 'author-two']);
-    $user3 = \Workbench\App\Models\User::factory()->create(['slug' => 'author-three']);
+    $user1 = \Happytodev\Blogr\Models\User::factory()->create(['slug' => 'author-one']);
+    $user2 = \Happytodev\Blogr\Models\User::factory()->create(['slug' => 'author-two']);
+    $user3 = \Happytodev\Blogr\Models\User::factory()->create(['slug' => 'author-three']);
     
     // user1: 3 posts, user2: 5 posts, user3: 2 posts
     \Happytodev\Blogr\Models\BlogPost::factory()->count(3)->create([
@@ -125,13 +128,13 @@ it('series authors component renders with avatars', function () {
     $series = \Happytodev\Blogr\Models\BlogSeries::factory()->create();
     $category = \Happytodev\Blogr\Models\Category::factory()->create();
     
-    $user1 = \Workbench\App\Models\User::factory()->create([
+    $user1 = \Happytodev\Blogr\Models\User::factory()->create([
         'name' => 'John Doe',
         'slug' => 'john-doe',
         'avatar' => 'avatars/john.jpg',
     ]);
     
-    $user2 = \Workbench\App\Models\User::factory()->create([
+    $user2 = \Happytodev\Blogr\Models\User::factory()->create([
         'name' => 'Jane Smith',
         'slug' => 'jane-smith',
         'avatar' => 'avatars/jane.jpg',
@@ -170,7 +173,7 @@ it('series authors component shows plus indicator when exceeding limit', functio
     
     // Create 5 authors (exceeds limit of 3)
     for ($i = 1; $i <= 5; $i++) {
-        $user = \Workbench\App\Models\User::factory()->create(['slug' => "author-{$i}"]);
+        $user = \Happytodev\Blogr\Models\User::factory()->create(['slug' => "author-{$i}"]);
         \Happytodev\Blogr\Models\BlogPost::factory()->create([
             'blog_series_id' => $series->id,
             'category_id' => $category->id,
@@ -193,7 +196,7 @@ it('series authors component hides when setting is disabled', function () {
     $series = \Happytodev\Blogr\Models\BlogSeries::factory()->create();
     $category = \Happytodev\Blogr\Models\Category::factory()->create();
     
-    $user = \Workbench\App\Models\User::factory()->create();
+    $user = \Happytodev\Blogr\Models\User::factory()->create();
     \Happytodev\Blogr\Models\BlogPost::factory()->create([
         'blog_series_id' => $series->id,
         'category_id' => $category->id,

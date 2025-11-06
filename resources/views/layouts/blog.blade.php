@@ -140,6 +140,10 @@
     </div>
 
     @stack('body-end')
+    {{-- Back to top button (simple component) --}}
+    <!-- DEBUG: BEFORE INCLUDE -->
+    @include('blogr::components.back-to-top')
+    <!-- DEBUG: AFTER INCLUDE -->
     @stack('scripts')
 </body>
 

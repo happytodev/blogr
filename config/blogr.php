@@ -3,15 +3,45 @@
 // config for Happytodev/Blogr
 return [
     'posts_per_page' => 10,  // Number of posts per page
+    
     'route' => [
         'frontend' => [
             'enabled' => true,
         ],
         // Prefix for frontend routes, if empty, the blog will be the homepage
         'prefix' => 'blog',
-        // Set to true to make blog the homepage (overrides prefix)
+        // Set to true to make blog the homepage (overrides prefix) - DEPRECATED: use homepage.type instead
         'homepage' => false,
         'middleware' => ['web'], // Middleware for frontend routes
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Homepage Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Choose what appears at the root URL (/).
+    | - 'blog': Shows the blog index (list of posts)
+    | - 'cms': Shows a CMS page (you need to create one and mark it as homepage)
+    |
+    */
+    'homepage' => [
+        'type' => 'blog', // 'blog' or 'cms'
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | CMS (Static Pages) Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Enable the CMS module for creating static pages like About, Contact, etc.
+    | Pages can be accessed via /{prefix}/{slug} or /{slug} if prefix is empty.
+    | If CMS is set as homepage, one page should be marked as the homepage page.
+    |
+    */
+    'cms' => [
+        'enabled' => false,
+        'prefix' => '', // Leave empty for URLs like /about, or set to 'page' for /page/about
     ],
     'blog_index' => [
         'cards' => [
@@ -224,8 +254,11 @@ return [
             'enabled' => true, // Show navigation bar
             'sticky' => true, // Make navigation sticky on scroll
             'show_logo' => true, // Show site logo/name
+            'logo' => null, // Path to uploaded logo (null = show site name only)
+            'logo_display' => 'text', // 'image', 'text', or 'both'
             'show_language_switcher' => true, // Show language switcher in navigation
             'show_theme_switcher' => true, // Show day/night/auto theme switcher
+            'auto_add_blog' => false, // Auto-add "Blog" link to menu when CMS is homepage
         ],
         'dates' => [
             'show_publication_date' => true, // Master toggle: Enable publication dates
@@ -261,6 +294,11 @@ return [
             // Series card colors
             'series_card_bg' => '#f9fafb', // Series card background (light mode)
             'series_card_bg_dark' => '#1f2937', // Series card background (dark mode)
+        ],
+        'back_to_top' => [
+            'enabled' => true, // Show floating back-to-top button
+            'shape' => 'circle', // Button shape: 'circle' or 'square'
+            'color' => null, // Custom color (null = use primary theme color)
         ],
         'theme' => [
             'default' => 'dark', // Default theme: 'light', 'dark', or 'auto'
@@ -374,5 +412,71 @@ return [
         'items_limit' => 20, // Maximum number of items in the feed
         'description' => 'Latest blog posts', // Default feed description
         'cache_duration' => 3600, // Cache duration in seconds (1 hour)
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | CMS Pages Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure CMS pages system for static content like About, Contact, etc.
+    | Similar to blog routing, you can configure a prefix for CMS pages.
+    |
+    | Routes examples:
+    | - prefix = '' (empty): /about, /contact, /{locale}/about
+    | - prefix = 'page': /page/about, /page/contact, /{locale}/page/about
+    | - prefix = 'pages': /pages/about, /{locale}/pages/about
+    |
+    | Note: Homepage (is_homepage = true) is always accessible at / or /{locale}
+    | regardless of the prefix setting.
+    |
+    */
+    'cms' => [
+        'enabled' => true, // Enable/disable CMS pages feature
+
+        'route' => [
+            'prefix' => '', // URL prefix for CMS pages (empty = no prefix like WordPress)
+                           // Examples: '', 'page', 'pages', 'p'
+        ],
+
+        'templates' => [
+            'default' => 'blogr::cms.pages.default',
+            'landing' => 'blogr::cms.pages.landing',
+            'contact' => 'blogr::cms.pages.contact',
+            'about' => 'blogr::cms.pages.about',
+            'pricing' => 'blogr::cms.pages.pricing',
+            'faq' => 'blogr::cms.pages.faq',
+            'custom' => 'blogr::cms.pages.custom',
+        ],
+
+        'blocks' => [
+            'enabled' => true, // Enable/disable block system (hero, features, testimonials, etc.)
+        ],
+
+        'reserved_slugs' => [
+            // Blog routes
+            'blog',
+            'feed',
+            'author',
+            'category',
+            'tag',
+            'series',
+            'rss',
+            
+            // Authentication routes
+            'admin',
+            'login',
+            'logout',
+            'register',
+            'password',
+            'dashboard',
+            
+            // Common system routes
+            'api',
+            'assets',
+            'storage',
+            'vendor',
+            'livewire',
+        ],
     ],
 ];

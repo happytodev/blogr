@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Filament\Resources\Tags\TagResource;

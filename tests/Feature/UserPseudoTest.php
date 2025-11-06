@@ -1,6 +1,9 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
 
-use Workbench\App\Models\User;
+
+
+use Happytodev\Blogr\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 

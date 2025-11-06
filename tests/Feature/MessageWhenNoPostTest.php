@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Mockery\MockInterface;
 use Illuminate\Foundation\Vite;

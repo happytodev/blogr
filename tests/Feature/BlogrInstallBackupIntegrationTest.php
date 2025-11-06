@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Happytodev\Blogr\Services\BackupInstallationChecker;
 use Happytodev\Blogr\Services\BackupInstaller;

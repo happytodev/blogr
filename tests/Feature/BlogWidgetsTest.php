@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
 use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;

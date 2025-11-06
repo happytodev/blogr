@@ -11,6 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     use HasFactory, HasRoles;
+    
     protected $fillable = [
         'name',
         'email',
@@ -26,6 +27,14 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'password' => 'hashed',
         'bio' => 'array',
     ];
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return \Happytodev\Blogr\Tests\Database\Factories\UserFactory::new();
+    }
 
     public function blogPosts()
     {

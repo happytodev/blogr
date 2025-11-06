@@ -70,6 +70,13 @@ class TestCase extends Orchestra
         config()->set('database.default', 'testing');
 
         $app['config']->set('app.key', 'base64:/QGZSf6gflmQp4zukiY3ab0DnTFMOqLK1//pgpQhFzw=');
+        
+        // Configure session to use array driver (default for tests)
+        // This ensures session data persists across middleware calls within a single request
+        $app['config']->set('session.driver', 'array');
+
+        // Configure the auth user model to use the Blogr User model
+        $app['config']->set('auth.providers.users.model', \Happytodev\Blogr\Models\User::class);
 
         // Configure blogr settings for testing - MUST be set before ServiceProvider loads
         $app['config']->set('blogr.locales.enabled', false);
@@ -121,6 +128,9 @@ class TestCase extends Orchestra
     {
         // Load test-specific migrations (includes users and Spatie Permission tables)
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+
+        // Also load package migrations (blog, cms, etc.) so tests have the package tables
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
     // Routes are now defined by BlogrServiceProvider in boot()

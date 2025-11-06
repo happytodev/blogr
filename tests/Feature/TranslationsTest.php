@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 test('read more translation key exists in english', function () {
     app()->setLocale('en');

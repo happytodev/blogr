@@ -1,7 +1,11 @@
 <?php
 
+
+
 namespace Happytodev\Blogr\Tests\Feature;
 
+
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Illuminate\Foundation\Testing\RefreshDatabase;

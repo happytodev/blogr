@@ -1,11 +1,14 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
-use Workbench\App\Models\User;
+use Happytodev\Blogr\Models\User;
 
 beforeEach(function () {
     // Skip these tests as they require a fully configured Filament panel

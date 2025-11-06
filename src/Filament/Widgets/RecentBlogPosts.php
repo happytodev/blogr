@@ -24,6 +24,30 @@ class RecentBlogPosts extends BaseWidget
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->limit(50)
+                    ->url(function (?\Happytodev\Blogr\Models\BlogPost $record): ?string {
+                        if (!$record) {
+                            return null;
+                        }
+                        
+                        $locale = app()->getLocale();
+                        $defaultLocale = config('blogr.locales.default', 'en');
+                        $localesEnabled = config('blogr.locales.enabled', false);
+                        
+                        // Get the first available translation slug
+                        $translation = $record->translations->first();
+                        $slug = $translation ? $translation->slug : $record->id;
+                        
+                        // If locales are enabled and route has locale parameter
+                        if ($localesEnabled && \Illuminate\Support\Facades\Route::has('blog.show')) {
+                            $route = \Illuminate\Support\Facades\Route::getRoutes()->getByName('blog.show');
+                            if ($route && str_contains($route->uri(), '{locale}')) {
+                                return route('blog.show', ['locale' => $locale ?: $defaultLocale, 'slug' => $slug]);
+                            }
+                        }
+                        
+                        return route('blog.show', ['slug' => $slug]);
+                    })
+                    ->openUrlInNewTab()
                     ->tooltip(function (Tables\Columns\TextColumn $column): ?string {
                         $state = $column->getState();
                         if (strlen($state) <= 50) {

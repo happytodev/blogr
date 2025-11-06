@@ -1,4 +1,7 @@
 <?php
+uses(Happytodev\Blogr\Tests\TestCase::class);
+
+
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;

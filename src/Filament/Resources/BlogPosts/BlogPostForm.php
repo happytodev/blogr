@@ -300,8 +300,21 @@ class BlogPostForm
                             })
                             ->helperText('Show table of contents for this post'),
                         
+                        Select::make('user_id')
+                            ->label('Author')
+                            ->options(function () {
+                                $userModel = config('auth.providers.users.model');
+                                return $userModel::pluck('name', 'id');
+                            })
+                            ->default(fn() => Filament::auth()->user()->id)
+                            ->searchable()
+                            ->preload()
+                            ->visible(fn () => Filament::auth()->user() && method_exists(Filament::auth()->user(), 'hasRole') ? Filament::auth()->user()->hasRole('admin') : false)
+                            ->helperText('Select the author for this post (admins only)'),
+
                         Hidden::make('user_id')
-                            ->default(fn() => Filament::auth()->user()->id),
+                            ->default(fn() => Filament::auth()->user()->id)
+                            ->visible(fn () => !(Filament::auth()->user() && method_exists(Filament::auth()->user(), 'hasRole') ? Filament::auth()->user()->hasRole('admin') : false)),
                     ])
                     ->columns(2)
                     ->columnSpanFull(),

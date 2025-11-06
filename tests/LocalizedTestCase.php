@@ -127,7 +127,13 @@ class LocalizedTestCase extends Orchestra
 
     protected function defineDatabaseMigrations()
     {
+        // Load Laravel migrations (sans users car custom)
+        $this->loadLaravelMigrations();
+        
         // Load test-specific migrations (including users table for testing)
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+        
+        // Load package migrations (blog + CMS)
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 }

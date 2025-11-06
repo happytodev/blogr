@@ -28,6 +28,14 @@ class BlogPostTranslation extends Model
     ];
 
     /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return \Happytodev\Blogr\Tests\Database\Factories\BlogPostTranslationFactory::new();
+    }
+
+    /**
      * Get the post that owns this translation.
      */
     public function post(): BelongsTo
