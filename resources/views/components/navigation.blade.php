@@ -1,19 +1,236 @@
 @props(['currentLocale' => config('blogr.locales.default', 'en'), 'availableLocales' => config('blogr.locales.available', ['en'])])
 
-<nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 {{ config('blogr.ui.navigation.sticky', true) ? 'sticky top-0 z-50' : '' }} transition-colors duration-200">
+@php
+    // Helper function to get label for current locale
+    if (!function_exists('getMenuLabel')) {
+        function getMenuLabel($item, $locale) {
+            if (isset($item['labels']) && is_array($item['labels'])) {
+                foreach ($item['labels'] as $labelData) {
+                    if (isset($labelData['locale']) && $labelData['locale'] === $locale) {
+                        return $labelData['label'] ?? 'Menu Item';
+                    }
+                }
+                // Fallback to first label if locale not found
+                return $item['labels'][0]['label'] ?? 'Menu Item';
+            }
+            // Legacy support: single label field
+            return $item['label'] ?? 'Menu Item';
+        }
+    }
+
+    // Helper function to generate URL
+    if (!function_exists('getMenuUrl')) {
+        function getMenuUrl($item, $locale) {
+            $url = '#';
+            $isActive = false;
+            
+            switch($item['type'] ?? 'external') {
+                case 'external':
+                    $url = $item['url'] ?? '#';
+                    break;
+                case 'blog':
+                    $url = route('blog.index', ['locale' => $locale]);
+                    $isActive = request()->route()->getName() === 'blog.index';
+                    break;
+                case 'category':
+                    if (!empty($item['category_id'])) {
+                        $category = \Happytodev\Blogr\Models\Category::find($item['category_id']);
+                        if ($category) {
+                            $translation = $category->translations()->where('locale', $locale)->first();
+                            if ($translation) {
+                                $url = route('blog.category', ['locale' => $locale, 'categorySlug' => $translation->slug]);
+                                $isActive = request()->route()->getName() === 'blog.category' && request()->route('categorySlug') === $translation->slug;
+                            }
+                        }
+                    }
+                    break;
+                case 'megamenu':
+                    $url = '#'; // Mega menu is a dropdown, no direct URL
+                    break;
+            }
+            
+            return ['url' => $url, 'isActive' => $isActive];
+        }
+    }
+@endphp
+
+<nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 {{ config('blogr.ui.navigation.sticky', true) ? 'sticky top-0 z-50' : '' }} transition-colors duration-200" 
+     x-data="{ mobileMenuOpen: false, openMegaMenu: null }">
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">
             <!-- Logo / Site Name -->
             @if(config('blogr.ui.navigation.show_logo', true))
             <div class="flex-shrink-0">
-                <a href="{{ route('blog.index', ['locale' => $currentLocale]) }}" class="text-2xl font-bold text-gray-900 dark:text-white hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] transition-colors">
-                    {{ \Happytodev\Blogr\Helpers\ConfigHelper::getSeoSiteName($currentLocale) }}
+                @php
+                    // Determine homepage URL based on configuration and locales
+                    $localesEnabled = config('blogr.locales.enabled', false);
+                    $homepageType = config('blogr.homepage.type', 'blog');
+                    
+                    if ($localesEnabled) {
+                        // With locales: always include locale in URL
+                        if ($homepageType === 'cms') {
+                            $homepageUrl = url('/' . $currentLocale);
+                        } else {
+                            $homepageUrl = route('blog.index', ['locale' => $currentLocale]);
+                        }
+                    } else {
+                        // Without locales: simple URL without locale parameter
+                        if ($homepageType === 'cms') {
+                            $homepageUrl = url('/');
+                        } else {
+                            // Check if blog is at root or has a prefix
+                            $blogPrefix = config('blogr.route.prefix', '');
+                            $blogIsHomepage = config('blogr.route.homepage', false);
+                            if ($blogIsHomepage || empty($blogPrefix) || $blogPrefix === '/') {
+                                $homepageUrl = url('/');
+                            } else {
+                                $homepageUrl = url('/' . trim($blogPrefix, '/'));
+                            }
+                        }
+                    }
+                    
+                    $logo = config('blogr.ui.navigation.logo');
+                    $logoDisplay = config('blogr.ui.navigation.logo_display', 'text');
+                    $siteName = \Happytodev\Blogr\Helpers\ConfigHelper::getSeoSiteName($currentLocale);
+                @endphp
+                <a href="{{ $homepageUrl }}" class="flex items-center space-x-3 text-2xl font-bold text-gray-900 dark:text-white hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] transition-colors">
+                    @if($logoDisplay === 'image' || $logoDisplay === 'both')
+                        @if($logo)
+                            <img src="{{ asset('storage/' . $logo) }}" alt="{{ $siteName }}" class="h-10 w-auto">
+                        @endif
+                    @endif
+                    @if($logoDisplay === 'text' || $logoDisplay === 'both' || !$logo)
+                        <span>{{ $siteName }}</span>
+                    @endif
                 </a>
             </div>
             @endif
 
-            <!-- Right Side: Language Switcher & Theme Switcher -->
+            <!-- Navigation Menu Items (Desktop) -->
+            @php
+                $menuItems = config('blogr.ui.navigation.menu_items', []);
+                
+                // Auto-add blog link if CMS is homepage and option is enabled
+                if (config('blogr.homepage.type') === 'cms' && config('blogr.ui.navigation.auto_add_blog', false)) {
+                    // Check if blog link doesn't already exist
+                    $hasBlogLink = false;
+                    foreach ($menuItems as $item) {
+                        if (($item['type'] ?? '') === 'blog') {
+                            $hasBlogLink = true;
+                            break;
+                        }
+                    }
+                    
+                    // Add blog link with multilingual labels if not exists
+                    if (!$hasBlogLink) {
+                        $blogLabels = [];
+                        foreach ($availableLocales as $locale) {
+                            $blogLabels[] = [
+                                'locale' => $locale,
+                                'label' => __('blogr::navigation.blog', [], $locale),
+                            ];
+                        }
+                        
+                        array_unshift($menuItems, [
+                            'labels' => $blogLabels,
+                            'type' => 'blog',
+                            'target' => '_self',
+                        ]);
+                    }
+                }
+            @endphp
+            @if(!empty($menuItems))
+            <div class="hidden md:flex items-center space-x-1 flex-1 justify-center">
+                @foreach($menuItems as $itemKey => $item)
+                    @php
+                        $label = getMenuLabel($item, $currentLocale);
+                        $urlData = getMenuUrl($item, $currentLocale);
+                        $url = $urlData['url'];
+                        $isActive = $urlData['isActive'];
+                        $target = $item['target'] ?? '_self';
+                        $icon = $item['icon'] ?? null;
+                        $isMegaMenu = ($item['type'] ?? 'external') === 'megamenu';
+                    @endphp
+                    
+                    @if($isMegaMenu)
+                        <!-- Mega Menu Dropdown -->
+                        <div class="relative" 
+                             x-data="{ open: false }"
+                             @mouseenter="open = true" 
+                             @mouseleave="open = false">
+                            <button class="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                <span>{{ $label }}</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            
+                            <div x-show="open" 
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="transform opacity-0 scale-95"
+                                 x-transition:enter-end="transform opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-150"
+                                 x-transition:leave-start="transform opacity-100 scale-100"
+                                 x-transition:leave-end="transform opacity-0 scale-95"
+                                 class="absolute left-0 mt-2 w-64 rounded-lg shadow-xl bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 py-2 z-50"
+                                 style="display: none;">
+                                @if(isset($item['children']) && is_array($item['children']))
+                                    @foreach($item['children'] as $child)
+                                        @php
+                                            $childLabel = getMenuLabel($child, $currentLocale);
+                                            $childUrlData = getMenuUrl($child, $currentLocale);
+                                            $childUrl = $childUrlData['url'];
+                                            $childIsActive = $childUrlData['isActive'];
+                                            $childTarget = $child['target'] ?? '_self';
+                                        @endphp
+                                        <a href="{{ $childUrl }}" 
+                                           target="{{ $childTarget }}"
+                                           class="block px-4 py-2 text-sm {{ $childIsActive ? 'text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] bg-gray-100 dark:bg-gray-700' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} transition-colors">
+                                            {{ $childLabel }}
+                                            @if($childTarget === '_blank')
+                                                <svg class="inline-block w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                </svg>
+                                            @endif
+                                        </a>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+                    @else
+                        <!-- Regular Menu Item -->
+                        <a href="{{ $url }}" 
+                           target="{{ $target }}"
+                           class="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium transition-colors
+                                  {{ $isActive 
+                                      ? 'text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] bg-gray-100 dark:bg-gray-800' 
+                                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)]' 
+                                  }}">
+                            <span>{{ $label }}</span>
+                            @if($target === '_blank')
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            @endif
+                        </a>
+                    @endif
+                @endforeach
+            </div>
+            @endif
+
+            <!-- Right Side: Mobile Menu Toggle, Language Switcher & Theme Switcher -->
             <div class="flex items-center space-x-4">
+                <!-- Mobile Menu Toggle Button -->
+                @if(!empty($menuItems))
+                <button @click="mobileMenuOpen = !mobileMenuOpen" 
+                        class="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        <path x-show="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                @endif
+                
                 <!-- Language Switcher -->
                 @if(config('blogr.ui.navigation.show_language_switcher', true) && config('blogr.locales.enabled', false) && count($availableLocales) > 1)
                 <div class="relative" x-data="{ open: false }">
@@ -35,54 +252,19 @@
                          x-transition:leave="transition ease-in duration-75"
                          x-transition:leave-start="transform opacity-100 scale-100"
                          x-transition:leave-end="transform opacity-0 scale-95"
-                         class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
+                         class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5"
+                         style="display: none;">
                         <div class="py-1" role="menu">
-                                                        @foreach($availableLocales as $locale)
+                            @foreach($availableLocales as $locale)
                             @php
-                                // Get current route and replace locale parameter
                                 $currentRouteName = request()->route()->getName();
                                 $currentParams = request()->route()->parameters();
                                 $currentParams['locale'] = $locale;
-                                
-                                // Handle special case for series routes - use translated slug
-                                if (str_contains($currentRouteName, 'blog.series') && isset($currentParams['seriesSlug'])) {
-                                    // Check if we have the series model available in the view
-                                    if (isset($currentSeries) && $currentSeries instanceof \Happytodev\Blogr\Models\BlogSeries) {
-                                        $currentParams['seriesSlug'] = $currentSeries->getTranslatedSlug($locale);
-                                    } else {
-                                        // Fallback: try to get series from route parameters
-                                        $routeSeries = request()->route('seriesSlug');
-                                        if ($routeSeries instanceof \Happytodev\Blogr\Models\BlogSeries) {
-                                            $currentParams['seriesSlug'] = $routeSeries->getTranslatedSlug($locale);
-                                        } elseif (is_string($routeSeries) || is_string($currentParams['seriesSlug'])) {
-                                            // If we only have the slug string, try to find the series
-                                            $slugToFind = is_string($routeSeries) ? $routeSeries : $currentParams['seriesSlug'];
-                                            $series = \Happytodev\Blogr\Models\BlogSeries::where('slug', $slugToFind)
-                                                ->orWhereHas('translations', function($q) use ($slugToFind) {
-                                                    $q->where('slug', $slugToFind);
-                                                })
-                                                ->with('translations')
-                                                ->first();
-                                            if ($series) {
-                                                $currentParams['seriesSlug'] = $series->getTranslatedSlug($locale);
-                                            }
-                                        }
-                                    }
-                                }
                             @endphp
                             <a href="{{ route($currentRouteName, $currentParams) }}" 
                                class="block px-4 py-2 text-sm {{ $locale === $currentLocale ? 'bg-gray-100 dark:bg-gray-700 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} transition-colors"
                                role="menuitem">
                                 <span class="uppercase font-semibold">{{ $locale }}</span>
-                                <span class="ml-2 text-xs">
-                                    @switch($locale)
-                                        @case('en') English @break
-                                        @case('fr') Français @break
-                                        @case('es') Español @break
-                                        @case('de') Deutsch @break
-                                        @default {{ strtoupper($locale) }}
-                                    @endswitch
-                                </span>
                             </a>
                             @endforeach
                         </div>
@@ -121,6 +303,83 @@
                 @endif
             </div>
         </div>
+
+        <!-- Mobile Navigation Menu -->
+        @if(!empty($menuItems))
+        <div x-show="mobileMenuOpen" 
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="transform opacity-0 scale-95"
+             x-transition:enter-end="transform opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="transform opacity-100 scale-100"
+             x-transition:leave-end="transform opacity-0 scale-95"
+             class="md:hidden border-t border-gray-200 dark:border-gray-700"
+             style="display: none;">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                @foreach($menuItems as $itemKey => $item)
+                    @php
+                        $label = getMenuLabel($item, $currentLocale);
+                        $urlData = getMenuUrl($item, $currentLocale);
+                        $url = $urlData['url'];
+                        $isActive = $urlData['isActive'];
+                        $target = $item['target'] ?? '_self';
+                        $isMegaMenu = ($item['type'] ?? 'external') === 'megamenu';
+                    @endphp
+                    
+                    @if($isMegaMenu)
+                        <!-- Mobile Mega Menu Accordion -->
+                        <div x-data="{ open: false }" class="space-y-1">
+                            <button @click="open = !open" 
+                                    class="w-full flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                <span>{{ $label }}</span>
+                                <svg class="w-5 h-5 transform transition-transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            
+                            <div x-show="open" 
+                                 x-transition
+                                 class="pl-4 space-y-1"
+                                 style="display: none;">
+                                @if(isset($item['children']) && is_array($item['children']))
+                                    @foreach($item['children'] as $child)
+                                        @php
+                                            $childLabel = getMenuLabel($child, $currentLocale);
+                                            $childUrlData = getMenuUrl($child, $currentLocale);
+                                            $childUrl = $childUrlData['url'];
+                                            $childIsActive = $childUrlData['isActive'];
+                                            $childTarget = $child['target'] ?? '_self';
+                                        @endphp
+                                        <a href="{{ $childUrl }}" 
+                                           target="{{ $childTarget }}"
+                                           class="block px-3 py-2 rounded-md text-sm {{ $childIsActive ? 'text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] bg-gray-100 dark:bg-gray-700' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800' }} transition-colors">
+                                            {{ $childLabel }}
+                                        </a>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+                    @else
+                        <!-- Mobile Regular Menu Item -->
+                        <a href="{{ $url }}" 
+                           target="{{ $target }}"
+                           class="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors
+                                  {{ $isActive 
+                                      ? 'text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] bg-gray-100 dark:bg-gray-800' 
+                                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)]' 
+                                  }}">
+                            <span>{{ $label }}</span>
+                            @if($target === '_blank')
+                                <svg class="w-4 h-4 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            @endif
+                        </a>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+        @endif
     </div>
 </nav>
 
@@ -133,7 +392,6 @@
             init() {
                 this.applyTheme();
                 
-                // Watch for system theme changes
                 if (this.theme === 'auto') {
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
                         if (this.theme === 'auto') {
