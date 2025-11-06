@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.14.0](https://github.com/happytodev/blogr/compare/v0.14.0...v0.13.0) - 2025-11-06
+
 ### ✨ Features
 
 - **CMS System (Content Management System)**:
