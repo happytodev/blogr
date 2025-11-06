@@ -15,7 +15,7 @@ beforeEach(function () {
     // SKIP ALL TESTS: Livewire ViewErrorBag infrastructure issue in test environment
     // ViewErrorBag::put() receives null MessageBag causing all Filament tests to fail
     // This is a test infrastructure bug, not a code bug
-    test()->skip('Livewire ViewErrorBag test infrastructure issue');
+    test()->markTestSkipped('Livewire ViewErrorBag test infrastructure issue');
     
     // Create roles if they don't exist
     $adminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin']);
