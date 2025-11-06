@@ -1,4 +1,4 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    <?php
+<?php
 
 namespace Happytodev\Blogr;
 
@@ -25,6 +25,7 @@ use Happytodev\Blogr\Commands\BlogrImportCommand;
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Happytodev\Blogr\Http\Controllers\AuthorController;
 use Happytodev\Blogr\Http\Controllers\RssFeedController;
+use Happytodev\Blogr\Http\Controllers\CmsPageController;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Observers\BlogSeriesTranslationObserver;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -159,6 +160,11 @@ class BlogrServiceProvider extends PackageServiceProvider
         // Register frontend routes if enabled
         if (config()->get('blogr.route.frontend.enabled', true)) {
             $this->registerFrontendRoutes();
+        }
+        
+        // Register CMS routes if enabled
+        if (config('blogr.cms.enabled', false)) {
+            $this->registerCmsRoutes();
         }
     }
 
@@ -401,6 +407,110 @@ class BlogrServiceProvider extends PackageServiceProvider
     }
 
     /**
+     * Register CMS routes with flexible prefix system
+     * 
+     * Routes structure:
+     * - Homepage (is_homepage=true): always at / or /{locale}
+     * - With prefix: /{prefix}/{slug} or /{locale}/{prefix}/{slug}
+     * - Without prefix: /{slug} or /{locale}/{slug} (with anti-collision)
+     */
+    protected function registerCmsRoutes(): void
+    {
+        $localesEnabled = config('blogr.locales.enabled', false);
+        $defaultLocale = config('blogr.locales.default', 'en');
+        $availableLocales = config('blogr.locales.available', ['en']);
+        $localePattern = implode('|', $availableLocales);
+        $cmsPrefix = trim(config('blogr.cms.route.prefix', ''), '/');
+        $middleware = config('blogr.cms.route.middleware', ['web']);
+        
+        // Get reserved slugs (blog, feed, author, etc.)
+        $reservedSlugs = config('blogr.cms.reserved_slugs', [
+            'blog', 'feed', 'author', 'category', 'tag', 'series', 'rss',
+            'admin', 'login', 'logout', 'register', 'dashboard',
+        ]);
+        
+        // Add CMS prefix to reserved list only if not empty
+        if (!empty($cmsPrefix)) {
+            $reservedSlugs[] = $cmsPrefix;
+        }
+        
+        // Create negative lookahead pattern: ^(?!reserved1|reserved2|...)
+        $reservedPattern = '^(?!' . implode('|', $reservedSlugs) . ')';
+        
+        $router = $this->app['router'];
+        
+        // ==============================================
+        // 1. HOMEPAGE ROUTES (always at / or /{locale})
+        // ==============================================
+        // Check if CMS is configured as homepage
+        $homepageType = config('blogr.homepage.type', 'blog');
+        $cmsIsHomepage = $homepageType === 'cms';
+        
+        // Only register CMS homepage redirect if CMS is actually the homepage
+        // (Blog handles its own redirect in registerBlogRoutes)
+        if ($localesEnabled && $cmsIsHomepage) {
+            $router->middleware($middleware)
+                ->get('/', function () use ($defaultLocale) {
+                    return redirect("/{$defaultLocale}", 302);
+                })->name('cms.homepage.redirect');
+        }
+        
+        if ($cmsIsHomepage) {
+            if ($localesEnabled) {
+                // Homepage with locale: /{locale}
+                $router->get('{locale}', [CmsPageController::class, 'showHomepage'])
+                    ->where('locale', $localePattern)
+                    ->middleware(array_merge($middleware, [\Happytodev\Blogr\Http\Middleware\SetLocale::class]))
+                    ->name('cms.homepage');
+            } else {
+                // Homepage without locale: /
+                $router->get('/', [CmsPageController::class, 'showHomepage'])
+                    ->middleware($middleware)
+                    ->name('cms.homepage');
+            }
+        }
+        
+        // ==============================================
+        // 2. CMS PAGE ROUTES (with or without prefix)
+        // ==============================================
+        if ($localesEnabled) {
+            if (!empty($cmsPrefix)) {
+                // WITH PREFIX: /{locale}/{prefix}/{slug}
+                $router->get('{locale}/' . $cmsPrefix . '/{slug}', [CmsPageController::class, 'show'])
+                    ->where([
+                        'locale' => $localePattern,
+                        'slug' => '.*', // No collision with prefix
+                    ])
+                    ->middleware(array_merge($middleware, [\Happytodev\Blogr\Http\Middleware\SetLocale::class]))
+                    ->name('cms.page.show');
+            } else {
+                // WITHOUT PREFIX: /{locale}/{slug} (anti-collision)
+                $router->get('{locale}/{slug}', [CmsPageController::class, 'show'])
+                    ->where([
+                        'locale' => $localePattern,
+                        'slug' => $reservedPattern . '.*', // Anti-collision regex
+                    ])
+                    ->middleware(array_merge($middleware, [\Happytodev\Blogr\Http\Middleware\SetLocale::class]))
+                    ->name('cms.page.show');
+            }
+        } else {
+            if (!empty($cmsPrefix)) {
+                // WITH PREFIX: /{prefix}/{slug}
+                $router->get($cmsPrefix . '/{slug}', [CmsPageController::class, 'show'])
+                    ->where('slug', '.*') // No collision with prefix
+                    ->middleware($middleware)
+                    ->name('cms.page.show');
+            } else {
+                // WITHOUT PREFIX: /{slug} (anti-collision)
+                $router->get('{slug}', [CmsPageController::class, 'show'])
+                    ->where('slug', $reservedPattern . '.*') // Anti-collision regex
+                    ->middleware($middleware)
+                    ->name('cms.page.show');
+            }
+        }
+    }
+
+    /**
      * Register the blog widgets
      */
     protected function registerWidgets(): void
@@ -478,8 +588,16 @@ class BlogrServiceProvider extends PackageServiceProvider
      */
     protected function getMigrations(): array
     {
-        return [
+        $migrations = [
             'create_blogr_table',
         ];
+
+        // Add CMS migrations if CMS is enabled
+        if (config('blogr.cms.enabled', false)) {
+            $migrations[] = '2025_10_31_000001_create_cms_pages_table';
+            $migrations[] = '2025_10_31_000002_create_cms_page_translations_table';
+        }
+
+        return $migrations;
     }
 }
