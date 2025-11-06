@@ -9,7 +9,16 @@ use Illuminate\Support\Str;
 class Tag extends Model
 {
     use HasFactory;
+    
     protected $fillable = ['name', 'slug'];
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return \Happytodev\Blogr\Tests\Database\Factories\TagFactory::new();
+    }
 
     public function getTable()
     {

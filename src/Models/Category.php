@@ -10,7 +10,16 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
+    
     protected $fillable = ['name', 'slug', 'is_default'];
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return \Happytodev\Blogr\Tests\Database\Factories\CategoryFactory::new();
+    }
 
     public function getTable()
     {
