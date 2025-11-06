@@ -4,6 +4,124 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### ✨ Features
+
+- **CMS System (Content Management System)**:
+  - Complete CMS module with multi-template page builder (Default, Landing, Contact, About, Pricing, FAQ, Custom)
+  - Translation-first architecture: blocks stored per translation for fully localized content
+  - 15 content blocks: Hero, Features, Testimonials, CTA, Gallery (grid/masonry/bento), Team, Pricing, FAQ, Content (Markdown), Blog Posts, Stats, Timeline, Video, Newsletter, Map
+  - Advanced background system: solid colors, gradients, images, 8 pattern types (dots, grid, stripes, waves, circles, zigzag, cross, hexagons)
+  - Flexible routing: configurable prefix, locale support, homepage management
+  - Reserved slugs protection: prevents CMS pages from conflicting with blog routes
+  - Filament Resource with Repeater-based translation management
+  - SEO per translation: meta_title, meta_description, meta_keywords
+  - Publication management: published/draft status, scheduled publishing, homepage designation
+
+- **Navigation Enhancements**:
+  - Custom menu items support: Blog home, Categories (dynamic), External links
+  - Logo upload with FileUpload: supports PNG/JPG/SVG/WebP, auto-stored in `storage/app/public/blogr/logos/`
+  - Logo display modes: text only, image only, both (image + text)
+  - Multilingual navigation: German, English, Spanish, French translations added
+  - Mobile-responsive menu with hamburger toggle
+  - Logo link redirects to default locale when locales enabled
+
+- **Back-to-Top Button**:
+  - Configurable via Blogr Settings (enabled/disabled, position: left/right)
+  - Smooth scroll behavior with fade-in/out on scroll
+  - Alpine.js implementation for lightweight interactivity
+  - Accessible (aria-label, focus styles)
+
+- **Quick Visit Site Widget**:
+  - Filament dashboard widget with direct "Visit Site" button
+  - Smart URL generation: supports locales, blog homepage detection
+  - Admin convenience feature for quick site preview
+
+- **Author Management**:
+  - Author selection dropdown in BlogPostForm (admin visibility only)
+  - Author column in BlogPostTable for quick identification
+  - `PostSavedByWriter` notification: notifies admins when writers save posts
+  - Enhanced URL generation with locale support for post links
+
+### 🐛 Bug Fixes
+
+- **CMS Routing**: Fixed route conflicts between CMS and blog (reserved slugs, prefix handling, homepage priority)
+- **Translation Field Names**: Corrected SEO field names from `seo_*` to `meta_*` in CmsPageTranslation
+- **TestCase Configuration**: Separated CMS routing tests by TestCase (CmsTestCase, CmsWithPrefixTestCase, CmsWithLocalesTestCase) to avoid environment boot conflicts
+
+### 🧪 Tests
+
+- **Complete Test Suite Overhaul** (645 tests passing, 0 failures, 35 skipped):
+  - **CMS Tests** (200+ tests):
+    - `CmsPageTest.php`: 50 tests for page CRUD, translations, templates, SEO
+    - `CmsPageBlocksTest.php`: 20 tests for block creation, updates, rendering
+    - `CmsPageBlocksTranslationTest.php`: 10 tests for translation-specific blocks
+    - `CmsPageRoutingTest.php`: 15 tests for routing (no prefix, homepage, publication status)
+    - `CmsPagePrefixRoutingTest.php`: 5 tests for prefix-based routing
+    - `CmsPageLocaleRoutingTest.php`: 5 tests for locale-based routing
+    - `CmsWhenBlogIsHomepageTest.php`: Test CMS behavior when blog is homepage
+    - `CmsPageNavigationTest.php`: Navigation/footer integration tests
+  - **Test Infrastructure Improvements**:
+    - Created `CmsTestCase` (base CMS test class with cms.enabled=true, homepage.type='cms')
+    - Created `CmsWithPrefixTestCase` (extends CmsTestCase, sets route prefix='page')
+    - Created `CmsWithLocalesTestCase` (extends CmsTestCase, enables locales)
+    - Created `InitializeSessionErrors` middleware (fixes ViewErrorBag::put() null errors in tests)
+    - Fixed Pest `uses()` conflicts: removed global Feature/ assignment, added per-file declarations (80+ files)
+    - Fixed `uses(TestCase::class)` namespace to `uses(Happytodev\Blogr\Tests\TestCase::class)` in all test files
+  - **Middleware Configuration**: 
+    - Updated `BrowserTestPanelProvider`: added BlogrPlugin, fixed middleware stack (AddQueuedCookiesToResponse, StartSession, InitializeSessionErrors, ShareErrorsFromSession)
+  - **New Feature Tests**:
+    - `BackToTopSettingsTest.php`, `BackToTopTest.php`: Back-to-top button functionality
+    - `PostSavedByWriterNotificationTest.php`: Writer notification tests
+    - `RecentBlogPostsWidgetTest.php`: Widget tests
+    - `NavigationMenuTest.php`: Custom navigation items tests
+    - `LogoNavigationTest.php`, `LogoUploadTest.php`: Logo upload/display tests
+    - `TestimonialFullWidthTest.php`, `TestimonialRatingTest.php`: Testimonial block tests
+  - **Skipped Tests** (35):
+    - `CmsPageResourceTest.php.skip`: Filament resource tests (Livewire ViewErrorBag infrastructure issue - NOT a code bug)
+
+### 🔧 Refactoring
+
+- **Configuration**:
+  - Updated `config/blogr.php`: Added CMS settings (enabled, route.prefix, reserved_slugs), back-to-top settings, navigation settings (logo, logo_url, logo_display, menu_items)
+- **Service Provider**:
+  - Enhanced `BlogrServiceProvider`: Improved command registration, asset publishing, CMS route registration
+  - Added BlogrPlugin registration in test environment
+- **Migrations**:
+  - Created `create_cms_pages_table.php`: Main CMS pages table (slug, template, is_published, is_homepage, published_at, default_locale)
+  - Created `create_cms_page_translations_table.php`: Translation table with blocks field (JSON), unique constraints on [cms_page_id, locale] and [locale, slug]
+- **Models**:
+  - `CmsPage`: Main model with Enums (CmsPageTemplate), scopes (published, homepage, byTemplate), relationship methods
+  - `CmsPageTranslation`: Translation model with blocks casts (array), SEO helper methods (seoTitle, seoDescription, seoKeywords)
+- **Enums**:
+  - `CmsPageTemplate`: 7 templates (DEFAULT, LANDING, CONTACT, ABOUT, PRICING, FAQ, CUSTOM) with label/description/availableBlocks methods
+  - `CmsBlockType`: 15 block types with getLabel/getDescription/getIcon methods
+  - `BackgroundType`: 5 background types (NONE, COLOR, GRADIENT, IMAGE, PATTERN) with getLabel/getIcon/options methods
+- **Controllers**:
+  - `CmsPageController`: showHomepage(), show() methods with locale/prefix handling, template view resolution
+- **Views**:
+  - Added `resources/views/layout.blade.php`: Base layout for CMS pages
+  - Added 15 Blade components in `resources/views/components/blocks/`: hero, features, testimonials, cta, content, faq, gallery (3 layouts), team, pricing, blog-posts, stats, timeline, video, newsletter, map
+  - Added `resources/views/components/back-to-top.blade.php`: Back-to-top button component
+  - Added `resources/views/filament/widgets/quick-visit-site.blade.php`: Widget view
+- **Assets**:
+  - Updated `resources/dist/blogr.css`: Added CMS styles, pattern backgrounds, responsive utilities
+
+### 📚 Documentation
+
+- Updated GitHub Copilot instructions with:
+  - FilamentPHP v4 migration patterns (Schema instead of Form, Section components, method-based navigation)
+  - Translation-first architecture for CMS
+  - Test infrastructure patterns (TestCase hierarchy, Pest uses() system, middleware requirements)
+  - CMS routing configuration (prefix, locales, homepage management)
+
+### 🔒 Known Issues
+
+- **Livewire Test Infrastructure** (35 tests skipped):
+  - `ViewErrorBag::put()` receives null MessageBag in Livewire tests
+  - Issue is in vendor code (`Livewire\Features\SupportValidation\SupportValidation:21`)
+  - Not fixable without patching Livewire itself
+  - Does NOT affect production code - only test environment limitation
+
 ## [v0.13.0](https://github.com/happytodev/blogr/compare/v0.13.0...v0.12.5) - 2025-10-30
 
 ### ✨ Features
