@@ -3,9 +3,80 @@
 ## Project Overview
 Blogr is a **FilamentPHP v4 plugin** adding a multilingual blog system to Laravel applications. Core stack: PHP 8.3+, Laravel 12, Pest PHP 4.0 (555+ tests). Package version: 0.12.5 (approaching RC1 - Oct 2025).
 
-## Mandatory instructions
+## Mandatory instructions (IMMUABLES ET UNBREAKABLE)
 - Always use `cat` to create files
 - Always use french to talk to me
+- **🚨 RÈGLE ABSOLUE : NEVER EVER present work as complete if ANY tests are failing 🚨**
+- **🚨 RÈGLE ABSOLUE : NEVER make a "bilan" or status report with failing tests 🚨**
+- **🚨 RÈGLE ABSOLUE : Continue working until 100% of tests pass (all green) 🚨**
+- **🚨 RÈGLE ABSOLUE : If blocked, explicitly state what prevents tests from passing and ask for guidance 🚨**
+- **The work is NOT done until: `./vendor/bin/pest` shows 0 failed tests**
+- If a task creates new tests, those tests MUST pass before claiming completion
+- If a task breaks existing tests, those tests MUST be fixed before claiming completion
+
+## Technology Stack Requirements
+
+### FilamentPHP v4 (CRITICAL)
+- **Forms**: `Filament\Schemas\Schema` (NOT `Filament\Forms\Form`)
+- **Components**: 
+  - `Section`: `Filament\Schemas\Components\Section` (NOT `Filament\Forms\Components\Section`)
+  - `Repeater`: Use with `->relationship()` for translations (NOT `Tabs\Tab` pattern)
+  - Form inputs (TextInput, Select, etc.): Still in `Filament\Forms\Components\*`
+- **Actions**: `Filament\Actions\EditAction`, `Filament\Actions\DeleteAction`, `Filament\Actions\DeleteBulkAction`
+- **Tables**: `Filament\Tables\Table` (unchanged from v3)
+- **Navigation**: Use methods instead of properties
+  ```php
+  // ❌ Wrong (v3)
+  protected static ?string $navigationIcon = 'heroicon-o-document';
+  protected static ?string $navigationGroup = 'Content';
+  
+  // ✅ Correct (v4)
+  public static function getNavigationIcon(): ?string {
+      return 'heroicon-o-document';
+  }
+  public static function getNavigationGroup(): ?string {
+      return __('Content');
+  }
+  ```
+- **Method signatures**:
+  ```php
+  public static function form(Schema $schema): Schema { ... }
+  public static function table(Table $table): Table { ... }
+  ```
+- **Translation Pattern** (v4 best practice):
+  ```php
+  // Use Repeater with relationship() for translations
+  Section::make('Translations')
+      ->schema([
+          Repeater::make('translations')
+              ->relationship()
+              ->schema([
+                  Select::make('locale')->options(['fr' => 'Français', 'en' => 'English']),
+                  TextInput::make('title')->required(),
+                  MarkdownEditor::make('content')->required(),
+              ])
+              ->collapsible()
+              ->itemLabel(fn (array $state) => strtoupper($state['locale'] ?? 'NEW'))
+              ->addActionLabel('Add Translation'),
+      ]);
+  // ❌ Don't use Tabs\Tab::make() pattern (v3 only)
+  ```
+
+### Laravel 12
+- Use latest syntax and features
+- Leverage new routing capabilities
+- Use PHP 8.3+ features (readonly properties, typed properties, etc.)
+
+### Tailwind CSS 4
+- Use Tailwind 4 class names and utilities
+- Leverage new container queries if needed
+- Use modern color palette (not deprecated colors)
+
+### Pest PHP 4.0
+- Use `it()` syntax for tests
+- Use `expect()` for assertions
+- Use `beforeEach()` and `afterEach()` for setup/teardown
+- Architecture tests with `arch()` if needed
 
 ## Architecture: Translation-First Design
 
@@ -67,9 +138,12 @@ Log::info('BlogrImportService: Imported X categories');
 
 MANUALLY run tests with: `./vendor/bin/pest --parallel` everytime it's possible.
 
+**🚨 RÈGLE ABSOLUE : ALWAYS use --parallel option when running full test suite 🚨**
+**🚨 Running tests without --parallel is FORBIDDEN for full suite (too slow) 🚨**
+
 ```bash
-./vendor/bin/pest --parallel                                   # All tests
-./vendor/bin/pest tests/Feature/                    # Feature tests only
+./vendor/bin/pest --parallel                                   # All tests (ALWAYS use --parallel)
+./vendor/bin/pest tests/Feature/ --parallel                    # Feature tests only
 ./vendor/bin/pest tests/Feature/BlogrImportCommandTest.php  # Single file
 ./vendor/bin/pest --filter "export includes translation photos"  # Specific test
 ```
