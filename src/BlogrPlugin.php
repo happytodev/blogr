@@ -9,6 +9,7 @@ use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
 use Happytodev\Blogr\Filament\Resources\BlogSeriesResource;
 use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
+use Happytodev\Blogr\Filament\Resources\CmsPageResource;
 use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
 use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
@@ -25,12 +26,19 @@ class BlogrPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->resources([
+        $resources = [
             BlogPostResource::class,
             BlogSeriesResource::class,
             CategoryResource::class,
             TagResource::class,
-        ]);
+        ];
+
+        // Ajouter la ressource CMS si activée
+        if (config('blogr.cms.enabled', false)) {
+            $resources[] = CmsPageResource::class;
+        }
+
+        $panel->resources($resources);
 
         $panel->pages([
             BlogrSettings::class,
