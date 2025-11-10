@@ -6,12 +6,20 @@
     $latitude = $data['latitude'] ?? null;
     $longitude = $data['longitude'] ?? null;
     $zoom = $data['zoom'] ?? 14;
+    $mapId = 'map-iframe-' . uniqid();
+    
+    // Calculate bbox offset based on zoom level
+    // Higher zoom = smaller area = smaller offset
+    // Zoom levels: 1 (world) to 19 (building)
+    // Formula: offset decreases exponentially with zoom increase
+    $baseOffset = 180; // Degrees for zoom level 1 (world view)
+    $offset = $baseOffset / pow(2, $zoom - 1);
     
     // Use OpenStreetMap if coordinates provided, otherwise search by address
     if ($latitude && $longitude) {
         $mapUrl = "https://www.openstreetmap.org/export/embed.html?bbox=" . 
-                  ($longitude - 0.01) . "," . ($latitude - 0.01) . "," . 
-                  ($longitude + 0.01) . "," . ($latitude + 0.01) . 
+                  ($longitude - $offset) . "," . ($latitude - $offset) . "," . 
+                  ($longitude + $offset) . "," . ($latitude + $offset) . 
                   "&layer=mapnik&marker={$latitude},{$longitude}";
     } else {
         // Fallback to address search
@@ -72,12 +80,38 @@
 
             <div class="w-full h-96 rounded-xl overflow-hidden shadow-lg">
                 <iframe 
-                    src="{{ $mapUrl }}"
+                    id="{{ $mapId }}"
                     class="w-full h-full"
                     frameborder="0"
                     style="border: 0;"
+                    loading="lazy"
+                    data-src="{{ $mapUrl }}"
                 ></iframe>
             </div>
+            
+            <script>
+                (function() {
+                    // Delay iframe loading to ensure proper rendering
+                    // This prevents the race condition where OpenStreetMap loads before zoom parameters are applied
+                    const loadMap = () => {
+                        const iframe = document.getElementById('{{ $mapId }}');
+                        if (iframe && iframe.dataset.src) {
+                            iframe.src = iframe.dataset.src;
+                            iframe.removeAttribute('data-src');
+                        }
+                    };
+                    
+                    // Use setTimeout with a small delay to ensure DOM is fully rendered
+                    // requestAnimationFrame alone is insufficient for iframe zoom parameters
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', () => {
+                            setTimeout(loadMap, 100);
+                        });
+                    } else {
+                        setTimeout(loadMap, 100);
+                    }
+                })();
+            </script>
         </div>
     </div>
 </x-blogr::background-wrapper>
