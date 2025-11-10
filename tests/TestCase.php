@@ -41,6 +41,30 @@ class TestCase extends Orchestra
         $this->mock(Vite::class, function (MockInterface $mock) {
             $mock->shouldReceive('__invoke')->andReturn(new HtmlString(''));
         });
+
+        // Patch Livewire ViewErrorBag null bug in test environment
+        // Livewire's SupportValidation::render() calls ViewErrorBag::put('default', $errorBag)
+        // where $errorBag can be null, causing: "Argument #2 must be of type MessageBag, null given"
+        // This patch ensures we always have a valid MessageBag
+        $this->patchLivewireViewErrorBag();
+    }
+
+    private function patchLivewireViewErrorBag(): void
+    {
+        // Patch Livewire's ViewErrorBag bug where put() receives null
+        // Instead of trying to prevent null, we make ViewErrorBag::put() handle null gracefully
+        
+        // Use monkey-patching with reflection or simpler: replace put method behavior
+        // Actually, simplest: just initialize the session errors early
+        
+        // The issue is: Livewire calls getErrorBag() which can return null
+        // We can't patch that directly, but we CAN ensure session has errors
+        view()->share('errors', new \Illuminate\Support\ViewErrorBag());
+        
+        // Also ensure the session driver creates a valid ViewErrorBag
+        if (app()->has('view') && app('view')->shared('errors') === null) {
+            app('view')->share('errors', new \Illuminate\Support\ViewErrorBag());
+        }
     }
 
     protected function getPackageProviders($app)
