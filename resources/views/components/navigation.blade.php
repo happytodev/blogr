@@ -1,4 +1,4 @@
-@props(['currentLocale' => config('blogr.locales.default', 'en'), 'availableLocales' => config('blogr.locales.available', ['en'])])
+@props(['currentLocale' => config('blogr.locales.default', 'en'), 'availableLocales' => config('blogr.locales.available', ['en']), 'cmsPageId' => null])
 
 @php
     // Helper function to get label for current locale
@@ -40,6 +40,18 @@
                             if ($translation) {
                                 $url = route('blog.category', ['locale' => $locale, 'categorySlug' => $translation->slug]);
                                 $isActive = request()->route()->getName() === 'blog.category' && request()->route('categorySlug') === $translation->slug;
+                            }
+                        }
+                    }
+                    break;
+                case 'cms_page':
+                    if (!empty($item['cms_page_id'])) {
+                        $cmsPage = \Happytodev\Blogr\Models\CmsPage::find($item['cms_page_id']);
+                        if ($cmsPage) {
+                            $translation = $cmsPage->translations()->where('locale', $locale)->first();
+                            if ($translation) {
+                                $url = route('cms.page.show', ['locale' => $locale, 'slug' => $translation->slug]);
+                                $isActive = request()->route()->getName() === 'cms.page.show' && request()->route('slug') === $translation->slug;
                             }
                         }
                     }
@@ -259,6 +271,19 @@
                             @php
                                 $currentRouteName = request()->route()->getName();
                                 $currentParams = request()->route()->parameters();
+                                
+                                // For CMS pages, get the translated slug if it exists
+                                if ($currentRouteName === 'cms.page.show' && $cmsPageId) {
+                                    // Get the translated slug for this page in the target locale
+                                    $cmsTranslation = \Happytodev\Blogr\Models\CmsPageTranslation::where('cms_page_id', $cmsPageId)
+                                        ->where('locale', $locale)
+                                        ->first();
+                                    
+                                    if ($cmsTranslation) {
+                                        $currentParams['slug'] = $cmsTranslation->slug;
+                                    }
+                                }
+                                
                                 $currentParams['locale'] = $locale;
                             @endphp
                             <a href="{{ route($currentRouteName, $currentParams) }}" 

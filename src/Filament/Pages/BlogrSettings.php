@@ -1054,6 +1054,7 @@ class BlogrSettings extends Page
                                                     'external' => 'External URL',
                                                     'blog' => 'Blog Home',
                                                     'category' => 'Category',
+                                                    'cms_page' => 'CMS Page',
                                                     'megamenu' => 'Mega Menu (with sub-items)',
                                                 ])
                                                 ->default('external')
@@ -1082,6 +1083,21 @@ class BlogrSettings extends Page
                                                 ->searchable()
                                                 ->visible(fn(Get $get) => $get('type') === 'category')
                                                 ->required(fn(Get $get) => $get('type') === 'category')
+                                                ->columnSpan(1),
+
+                                            \Filament\Forms\Components\Select::make('cms_page_id')
+                                                ->label('Select CMS Page')
+                                                ->options(function () {
+                                                    return \Happytodev\Blogr\Models\CmsPage::with('translations')
+                                                        ->get()
+                                                        ->mapWithKeys(function ($page) {
+                                                            $translation = $page->translations->first();
+                                                            return [$page->id => $translation->title ?? 'Page #' . $page->id];
+                                                        });
+                                                })
+                                                ->searchable()
+                                                ->visible(fn(Get $get) => $get('type') === 'cms_page')
+                                                ->required(fn(Get $get) => $get('type') === 'cms_page')
                                                 ->columnSpan(1),
 
                                             \Filament\Forms\Components\Select::make('target')

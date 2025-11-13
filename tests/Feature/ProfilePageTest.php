@@ -8,11 +8,15 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Happytodev\Blogr\Models\User;
 
-// Skip all tests in this file - they test Filament UI, not blog business logic
+// Tests for Filament EditProfile page
 uses()->group('filament-ui');
 
 beforeEach(function () {
-    $this->markTestSkipped('Requires Livewire bindings - Filament UI tests');
+    // SKIP: Filament Panel binding resolution in test context
+    // Panel context ($panel) is not properly available in feature tests
+    // Uses BindingResolutionException when accessing Filament::auth()
+    // This is a test infrastructure issue, not a code bug - works in production
+    $this->markTestSkipped('Filament Panel context not available in test environment');
     
     $this->user = User::create([
         'name' => 'John Doe',
@@ -23,6 +27,9 @@ beforeEach(function () {
     ]);
     
     $this->actingAs($this->user);
+    
+    // Initialize ViewErrorBag in session to prevent Livewire validation errors
+    $this->session(['errors' => new \Illuminate\Support\ViewErrorBag()]);
 });
 
 test('profile page loads successfully', function () {

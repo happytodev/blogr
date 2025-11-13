@@ -70,7 +70,7 @@ it('respects display_toc setting', function () {
         'is_published' => true,
         'published_at' => now(),
         'title' => 'Post Without TOC',
-        'slug' => 'post-without-toc-unique-' . time(),
+        'slug' => 'post-without-toc-' . uniqid(),
         'content' => "# Main Title\n\nIntroduction text here.\n\n## Section One\n\nContent for section one.\n\n## Section Two\n\nMore content in section two.",
         'display_toc' => false,
     ]);
