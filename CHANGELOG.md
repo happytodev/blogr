@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.14.1](https://github.com/happytodev/blogr/compare/v0.14.1...v0.14.0) - 2025-11-13
+
 ### ✨ Features
 
 - **CMS Pages in Navigation Menu**:
