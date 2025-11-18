@@ -4,6 +4,96 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+### ✨ Features
+
+- **Dark Mode Support for Wave Separators** ✅ NEW:
+  - Wave separators now fully support light and dark modes
+  - Separate color configuration per mode: `background_color_dark` applied in dark mode
+  - Smooth transitions between blocks in both light and dark themes
+  - Intelligent color detection: automatically uses block background colors
+  - Applied to all transition shapes: wavy, zigzag, diagonal, smooth
+
+- **CMS Page Links in Hero Blocks** ✅ NEW:
+  - Hero blocks can now link to CMS pages via dropdown selector
+  - Fixed LinkResolver to correctly resolve CMS page routes
+  - Supports locales-aware URL generation
+  - Admin UI: clean link type selector with CMS page dropdown
+
+- **Gradient-Aware Transition System** ⭐ MAJOR UPDATE:
+  - New `WaveSeparatorService::extractEdgeColor()` method for intelligent color extraction
+  - Transitions now intelligently adapt colors based on adjacent block gradient directions
+  - Automatically detects gradient direction (to-br, to-r, to-b, circle, etc.) and extracts the correct edge color
+  - Supports color blending for horizontal/diagonal gradients to ensure smooth visual transitions
+  - Applied to all 4 transition types: diagonal, clippath, margin, animation
+  - Result: Seamless visual blending between blocks regardless of gradient configuration
+  - 9 new comprehensive tests ensuring correctness across all gradient directions
+  - Documentation: `docs/TRANSITION_GRADIENT_AWARE.md` with implementation details and examples
+  
+  Example improvement:
+  ```
+  BEFORE: Transition used full block gradient endpoints (suboptimal colors)
+  AFTER:  Transition intelligently extracts bottom color from previous block & top color from next block
+          Result: Perfect visual continuation between sections
+  ```
+
+- **Quick Visit Site Widget Enhanced** (#66):
+  - Dashboard widget displays a prominent button to visit the public blog
+  - Smart URL generation: detects locales, homepage settings, and generates correct blog URL
+  - Multi-language support: label and descriptions translated in English, French, Spanish, German
+  - Responsive styling: gradient background, hover effects, direct navigation
+  - Accessibility: proper aria labels and keyboard navigation
+  - Admin convenience: one-click access to the public site from admin panel
+
+- **Improved Tables in Admin Dashboard** (#87):
+  - **Blog Posts Table**: Added sortable columns (title, slug, status, date published), category filter, status filter
+  - **Categories Table**: Added sortable columns (name, slug, post count) for better organization
+  - **Tags Table**: Added sortable columns (name, slug, post count) for quick sorting
+  - All tables now support multi-column sorting and filtering
+  - Improved UX with better column organization and filtering options
+
+- **Admin Notifications for Writer Posts** (#89):
+  - PostSavedByWriter notification system fully tested and functional
+  - Admins automatically receive notifications when writers save/create blog posts
+  - Notifications sent via database and email channels
+  - Notification includes: post ID, title, author name, and direct link to the post
+  - Robust role-based detection: distinguishes between admin and writer roles
+
+### 🧪 Tests
+
+- **New Gradient-Aware Transition Tests** (9 tests added):
+  - `WaveSeparatorEdgeColorTest.php`: Comprehensive test suite for intelligent color extraction
+  - Tests for all gradient directions: to-br, to-r, to-b, to-t, circle, radial
+  - Tests for edge cases: null blocks, non-gradient blocks, incomplete data
+  - Tests for realistic transition scenarios between different gradient types
+  - All new tests passing: 702 total tests (693 existing + 9 new)
+
+- **New Admin Notification Tests** (4 tests added):
+  - `PostSavedByWriterNotificationTest.php`: Comprehensive test suite for admin notifications
+  - Test 1: Verify notification sent when writer saves post
+  - Test 2: Verify no notification sent when admin saves post
+  - Test 3: Verify multiple admins receive notification
+  - Test 4: Verify notification contains correct post and author data
+  - All new tests passing: 658 total tests (654 existing + 4 new)
+
+- **Enhanced PostSavedByWriter Notification**:
+  - Added public getter methods (`getPost()`, `getAuthor()`) for better testability
+  - Improved accessibility of notification data for test assertions
+  - 100% test coverage for notification class
+
+### 📚 Localization
+
+- Updated UI translations for Quick Visit Site widget:
+  - English: "Visit the blog", "Quick Access", "Open in new tab"
+  - French: "Visiter le blog", "Accès rapide", "Ouvrir dans un nouvel onglet"
+  - Spanish: "Visitar el blog", "Acceso rápido", "Abrir en pestaña nueva"
+  - German: "Blog besuchen", "Schnellzugriff", "In neuer Registerkarte öffnen"
+
+### 🔧 Improvements
+
+- Better configuration handling in QuickVisitSite widget for multi-locale support
+- Improved Filament table column sorting and filtering for better data organization
+- Simplified notification testing with public getter methods
+
 ## [v0.14.1](https://github.com/happytodev/blogr/compare/v0.14.1...v0.14.0) - 2025-11-13
 
 ### ✨ Features
