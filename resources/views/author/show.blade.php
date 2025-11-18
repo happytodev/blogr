@@ -42,7 +42,7 @@
             @if(!empty($bioHtml))
                 <div class="bg-[var(--color-primary)]/10 dark:bg-[var(--color-primary-dark)]/20 border-l-4 border-[var(--color-primary)] dark:border-[var(--color-primary-dark)] p-6 rounded-r-xl">
                     <p class="text-sm font-semibold dark:text-white text-gray-900 uppercase tracking-wide mb-3">
-                        {{ __('blogr::blogr.ui.about_the_author') }}
+                        {{ __('blogr::ui.about_the_author') }}
                     </p>
                     <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
                         {!! $bioHtml !!}
