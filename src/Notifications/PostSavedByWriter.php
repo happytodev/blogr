@@ -30,10 +30,10 @@ class PostSavedByWriter extends Notification
         $url = route('blog.show', ['slug' => $this->post->slug]);
 
         return (new MailMessage)
-                    ->subject("[Blogr] Article enregistré par {$this->author->name}")
-                    ->line("L'utilisateur {$this->author->name} a enregistré un article intitulé \"{$this->post->title}\".")
-                    ->action('Voir l\'article', $url)
-                    ->line('Vous recevez cette notification car vous êtes administrateur.');
+                    ->subject(__('blogr::notifications.post_saved_subject', ['author' => $this->author->name]))
+                    ->line(__('blogr::notifications.post_saved_line1', ['author' => $this->author->name, 'title' => $this->post->title]))
+                    ->action(__('blogr::notifications.view_post'), $url)
+                    ->line(__('blogr::notifications.post_saved_line2'));
     }
 
     public function toDatabase($notifiable)
@@ -50,6 +50,16 @@ class PostSavedByWriter extends Notification
     public function toArray($notifiable)
     {
         return $this->toDatabase($notifiable);
+    }
+
+    public function getPost()
+    {
+        return $this->post;
+    }
+
+    public function getAuthor()
+    {
+        return $this->author;
     }
 }
 
