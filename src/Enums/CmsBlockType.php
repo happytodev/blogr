@@ -21,6 +21,12 @@ enum CmsBlockType: string implements HasLabel
     case VIDEO = 'video';
     case NEWSLETTER = 'newsletter';
     case MAP = 'map';
+    case WAVE_SEPARATOR = 'wave-separator';
+    case TRANSITION_DIAGONAL = 'transition-diagonal';
+    case TRANSITION_CLIPPATH = 'transition-clippath';
+    case TRANSITION_MARGIN = 'transition-margin';
+    case TRANSITION_ANIMATION = 'transition-animation';
+    case BLOG_TITLE = 'blog-title';
 
     public function getLabel(): string
     {
@@ -40,6 +46,12 @@ enum CmsBlockType: string implements HasLabel
             self::VIDEO => __('Video'),
             self::NEWSLETTER => __('Newsletter'),
             self::MAP => __('Map'),
+            self::WAVE_SEPARATOR => __('Wave Separator'),
+            self::TRANSITION_DIAGONAL => __('Section Separator'),
+            self::TRANSITION_CLIPPATH => __('Transition: Clip Path'),
+            self::TRANSITION_MARGIN => __('Transition: Simple'),
+            self::TRANSITION_ANIMATION => __('Transition: Animation'),
+            self::BLOG_TITLE => __('Blog Title'),
         };
     }
 
@@ -61,6 +73,12 @@ enum CmsBlockType: string implements HasLabel
             self::VIDEO => __('Embed YouTube or Vimeo videos'),
             self::NEWSLETTER => __('Newsletter subscription form'),
             self::MAP => __('Interactive map with location marker'),
+            self::WAVE_SEPARATOR => __('Decorative wave separator to transition between sections'),
+            self::TRANSITION_DIAGONAL => __('Smooth SVG transition with automatic color blending from next block. Works best when next block has solid color (not gradient).'),
+            self::TRANSITION_CLIPPATH => __('CSS clip-path transition with wavy, zigzag or smooth style'),
+            self::TRANSITION_MARGIN => __('Simple gradient overlap transition with negative margin'),
+            self::TRANSITION_ANIMATION => __('Animated transition with fade, scale or rotate effect'),
+            self::BLOG_TITLE => __('Customizable blog page title section with optional display toggle'),
         };
     }
 
@@ -82,6 +100,12 @@ enum CmsBlockType: string implements HasLabel
             self::VIDEO => 'heroicon-o-play-circle',
             self::NEWSLETTER => 'heroicon-o-envelope',
             self::MAP => 'heroicon-o-map-pin',
+            self::WAVE_SEPARATOR => 'heroicon-o-bars-3',
+            self::TRANSITION_DIAGONAL => 'heroicon-o-arrow-trending-down',
+            self::TRANSITION_CLIPPATH => 'heroicon-o-scissors',
+            self::TRANSITION_MARGIN => 'heroicon-o-minus-small',
+            self::TRANSITION_ANIMATION => 'heroicon-o-sparkles',
+            self::BLOG_TITLE => 'heroicon-o-document-text',
         };
     }
 }
