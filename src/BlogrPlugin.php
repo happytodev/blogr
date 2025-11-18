@@ -14,6 +14,7 @@ use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
 use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
 use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
+use Happytodev\Blogr\Filament\Widgets\QuickVisitSite;
 use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;
 use Happytodev\Blogr\Filament\Widgets\ScheduledPosts;
 
@@ -46,17 +47,18 @@ class BlogrPlugin implements Plugin
 
         $panel->widgets([
             BlogStatsOverview::class,
+            QuickVisitSite::class,
             RecentBlogPosts::class,
             ScheduledPosts::class,
             BlogPostsChart::class,
             BlogReadingStats::class,
         ]);
 
-        // Add a navigation item to quickly view the website (translation key used)
+        // Add a navigation item to quickly view the website
         $panel->navigationItems([
             NavigationItem::make('view-website')
-                ->label(__('blogr::navigation.view_website'))
-                ->url(fn (): string => config('app.url', '/'), shouldOpenInNewTab: true)
+                ->label(fn (): string => __('blogr::ui.view_website'))
+                ->url(fn (): string => $this->getWebsiteUrl(), shouldOpenInNewTab: true)
                 ->icon('heroicon-o-arrow-top-right-on-square')
                 ->sort(1),
         ]);
@@ -64,6 +66,32 @@ class BlogrPlugin implements Plugin
         $panel->colors([
             'primary' => config('blogr.colors.primary', '#0ea5e9'),
         ]);
+    }
+
+    private function getWebsiteUrl(): string
+    {
+        try {
+            $localesEnabled = config('blogr.locales.enabled', false);
+            $homepageType = config('blogr.homepage.type', 'blog');
+
+            if ($homepageType === 'blog') {
+                // Blog is the homepage
+                if ($localesEnabled) {
+                    $defaultLocale = config('blogr.locales.default', config('app.locale', 'en'));
+                    return route('home', ['locale' => $defaultLocale]);
+                }
+                return route('home');
+            }
+
+            // CMS is the homepage
+            if ($localesEnabled) {
+                $defaultLocale = config('blogr.locales.default', config('app.locale', 'en'));
+                return route('home', ['locale' => $defaultLocale]);
+            }
+            return route('home');
+        } catch (\Exception $e) {
+            return config('app.url', '/');
+        }
     }
 
     public function boot(Panel $panel): void
