@@ -11,6 +11,8 @@ use Happytodev\Blogr\Models\CategoryTranslation;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\TagTranslation;
 use Happytodev\Blogr\Models\UserTranslation;
+use Happytodev\Blogr\Models\CmsPage;
+use Happytodev\Blogr\Models\CmsPageTranslation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -34,6 +36,9 @@ class BlogrExportService
             'user_translations' => UserTranslation::all()->toArray(),
             'post_translation_categories' => DB::table('blog_post_translation_category')->get()->toArray(),
             'post_translation_tags' => DB::table('blog_post_translation_tag')->get()->toArray(),
+            'users' => $this->exportUsers(),
+            'cms_pages' => CmsPage::all()->toArray(),
+            'cms_page_translations' => CmsPageTranslation::all()->toArray(),
         ];
 
         // Include media files if requested
@@ -42,6 +47,25 @@ class BlogrExportService
         }
 
         return $data;
+    }
+    
+    private function exportUsers(): array
+    {
+        // Try to get users from the appropriate model
+        $userClass = class_exists('App\\Models\\User') ? 'App\\Models\\User' : 'Happytodev\\Blogr\\Models\\User';
+        $users = call_user_func([$userClass, 'all']);
+        
+        return $users->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'password' => $user->password, // Keep encrypted password
+                'roles' => $user->roles ? $user->roles->pluck('name')->toArray() : [], // Get role names
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+            ];
+        })->toArray();
     }
     
     public function exportToFile(?string $path = null, array $options = []): string
