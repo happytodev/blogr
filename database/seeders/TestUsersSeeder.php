@@ -11,6 +11,21 @@ class TestUsersSeeder extends Seeder
     {
         $userModel = config('auth.providers.users.model', \App\Models\User::class);
 
+        // Create roles first if they don't exist (using Spatie Permission)
+        try {
+            $adminRole = \Spatie\Permission\Models\Role::firstOrCreate(
+                ['name' => 'admin'],
+                ['guard_name' => 'web']
+            );
+            $writerRole = \Spatie\Permission\Models\Role::firstOrCreate(
+                ['name' => 'writer'],
+                ['guard_name' => 'web']
+            );
+        } catch (\Exception $e) {
+            // Roles table might not exist yet, continue anyway
+            $this->command->warn('⚠️  Could not create roles: ' . $e->getMessage());
+        }
+
         // Create admin user
         $admin = $userModel::updateOrCreate(
             ['email' => 'admin@demo.com'],
@@ -27,9 +42,18 @@ class TestUsersSeeder extends Seeder
             ]
         );
 
-        // Assign admin role
-        if (method_exists($admin, 'assignRole')) {
-            $admin->assignRole('admin');
+        // Assign admin role - ensure it's assigned and not already assigned
+        try {
+            if (method_exists($admin, 'assignRole')) {
+                // Remove all roles first to avoid duplicates
+                if (method_exists($admin, 'syncRoles')) {
+                    $admin->syncRoles(['admin']);
+                } else {
+                    $admin->assignRole('admin');
+                }
+            }
+        } catch (\Exception $e) {
+            $this->command->warn('⚠️  Could not assign admin role: ' . $e->getMessage());
         }
 
         // Create writer user
@@ -48,9 +72,18 @@ class TestUsersSeeder extends Seeder
             ]
         );
 
-        // Assign writer role
-        if (method_exists($writer, 'assignRole')) {
-            $writer->assignRole('writer');
+        // Assign writer role - ensure it's assigned and not already assigned
+        try {
+            if (method_exists($writer, 'assignRole')) {
+                // Remove all roles first to avoid duplicates
+                if (method_exists($writer, 'syncRoles')) {
+                    $writer->syncRoles(['writer']);
+                } else {
+                    $writer->assignRole('writer');
+                }
+            }
+        } catch (\Exception $e) {
+            $this->command->warn('⚠️  Could not assign writer role: ' . $e->getMessage());
         }
 
         $this->command->info('✅ Test users created successfully.');
