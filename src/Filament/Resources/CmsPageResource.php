@@ -54,36 +54,23 @@ class CmsPageResource extends Resource
         return $schema
             ->schema([
                 Section::make(__('Informations générales'))
+                    ->description(__('Configurez les paramètres généraux de votre page'))
                     ->schema([
                         Forms\Components\TextInput::make('slug')
                             ->label(__('Slug'))
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->helperText(__('URL de la page (ex: a-propos, contact)'))
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->columnSpan(2),
 
                         Forms\Components\Select::make('template')
                             ->label(__('Template'))
                             ->required()
                             ->options(CmsPageTemplate::class)
                             ->default(CmsPageTemplate::DEFAULT)
-                            ->helperText(__('Mise en page de la page')),
-
-                        Forms\Components\Toggle::make('is_published')
-                            ->label(__('Publié'))
-                            ->default(false)
-                            ->inline(false),
-
-                        Forms\Components\Toggle::make('is_homepage')
-                            ->label(__('Page d\'accueil'))
-                            ->default(false)
-                            ->inline(false)
-                            ->helperText(__('Définir cette page comme page d\'accueil du site')),
-
-                        Forms\Components\DateTimePicker::make('published_at')
-                            ->label(__('Date de publication'))
-                            ->default(now())
-                            ->required(),
+                            ->helperText(__('Mise en page de la page'))
+                            ->columnSpan(2),
 
                         Forms\Components\Select::make('default_locale')
                             ->label(__('Langue par défaut'))
@@ -92,9 +79,30 @@ class CmsPageResource extends Resource
                                 return array_combine($locales, array_map('strtoupper', $locales));
                             })
                             ->default(config('blogr.locales.default', 'fr'))
-                            ->required(),
+                            ->required()
+                            ->columnSpan(1),
+
+                        Forms\Components\Toggle::make('is_homepage')
+                            ->label(__('Page d\'accueil'))
+                            ->default(false)
+                            ->inline(false)
+                            ->helperText(__('Définir cette page comme page d\'accueil du site'))
+                            ->columnSpan(1),
+
+                        Forms\Components\DateTimePicker::make('published_at')
+                            ->label(__('Date de publication'))
+                            ->default(now())
+                            ->required()
+                            ->columnSpan(1),
+
+                        Forms\Components\Toggle::make('is_published')
+                            ->label(__('Publié'))
+                            ->default(false)
+                            ->inline(false)
+                            ->columnSpan(1),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->columnSpanFull(),
 
                 Section::make(__('Traductions'))
                     ->description(__('Ajoutez des traductions pour différentes langues'))
@@ -130,11 +138,6 @@ class CmsPageResource extends Resource
                                     ->label(__('Extrait'))
                                     ->maxLength(500)
                                     ->rows(3)
-                                    ->columnSpan(2),
-
-                                Forms\Components\MarkdownEditor::make('content')
-                                    ->label(__('Contenu'))
-                                    ->required()
                                     ->columnSpan(2),
 
                                 Forms\Components\TextInput::make('seo_title')
