@@ -1,6 +1,8 @@
 @props(['data'])
 
 @php
+    use Happytodev\Blogr\Helpers\LinkResolver;
+    
     $heading = $data['heading'] ?? null;
     $description = $data['description'] ?? null;
     $plans = $data['plans'] ?? [];
@@ -85,8 +87,11 @@
                         @endif
 
                         <!-- CTA Button -->
+                        @php
+                            $planCta = LinkResolver::resolve($plan, 'cta_link_type', 'cta_url', 'cta_category_id', 'cta_cms_page_id') ?? '#';
+                        @endphp
                         <a 
-                            href="{{ $plan['cta_url'] ?? '#' }}"
+                            href="{{ $planCta }}"
                             class="w-full py-3 px-6 text-center rounded-lg font-semibold transition-all duration-200 {{ !empty($plan['highlight']) ? 'bg-primary-600 text-white hover:bg-primary-700' : 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600' }}"
                         >
                             {{ $plan['cta_text'] ?? __('Get Started') }}
