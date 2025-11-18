@@ -8,6 +8,8 @@ use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CategoryTranslation;
+use Happytodev\Blogr\Models\CmsPage;
+use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\TagTranslation;
 use Happytodev\Blogr\Models\User;
@@ -43,7 +45,8 @@ class BlogrImportService
         // Optional sections (for newer exports with translations)
         $optionalSections = [
             'post_translations', 'series_translations', 'category_translations',
-            'tag_translations', 'user_translations', 'post_translation_categories', 'post_translation_tags'
+            'tag_translations', 'user_translations', 'post_translation_categories', 'post_translation_tags',
+            'users', 'cms_pages', 'cms_page_translations'
         ];
         foreach ($optionalSections as $section) {
             if (isset($data[$section]) && !is_array($data[$section])) {
@@ -81,11 +84,14 @@ class BlogrImportService
             $defaultAuthorId = $options['default_author_id'] ?? null;
             
             $results = [
+                'users' => isset($data['users']) ? $this->importUsers($data['users'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'categories' => $this->importCategories($data['categories'], $skipExisting),
                 'category_translations' => isset($data['category_translations']) ? $this->importCategoryTranslations($data['category_translations'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'tags' => $this->importTags($data['tags'], $skipExisting),
                 'tag_translations' => isset($data['tag_translations']) ? $this->importTagTranslations($data['tag_translations'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'user_translations' => isset($data['user_translations']) ? $this->importUserTranslations($data['user_translations'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
+                'cms_pages' => isset($data['cms_pages']) ? $this->importCmsPages($data['cms_pages'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
+                'cms_page_translations' => isset($data['cms_page_translations']) ? $this->importCmsPageTranslations($data['cms_page_translations'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'series' => $this->importSeries($data['series'], $skipExisting),
                 'series_translations' => isset($data['series_translations']) ? $this->importSeriesTranslations($data['series_translations'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'posts' => $this->importPosts($data['posts'], $skipExisting, $defaultAuthorId),
@@ -826,5 +832,138 @@ class BlogrImportService
         Tag::query()->delete();
         
         Log::info('BlogrImportService: All blog data deleted successfully');
+    }
+    
+    private function importUsers(array $users, bool $skipExisting = false): array
+    {
+        $imported = 0;
+        $skipped = 0;
+        
+        // Get the appropriate User model class
+        $userClass = class_exists('App\\Models\\User') ? 'App\\Models\\User' : User::class;
+        
+        foreach ($users as $userData) {
+            try {
+                // Check if user already exists
+                $existingUser = call_user_func([$userClass, 'find'], $userData['id']);
+                
+                if ($existingUser && $skipExisting) {
+                    $skipped++;
+                    continue;
+                }
+                
+                if ($existingUser) {
+                    // Update existing user
+                    $existingUser->update([
+                        'name' => $userData['name'] ?? $existingUser->name,
+                        'email' => $userData['email'] ?? $existingUser->email,
+                        // Don't update password unless explicitly provided
+                    ]);
+                    $user = $existingUser;
+                } else {
+                    // Create new user
+                    $user = call_user_func([$userClass, 'create'], [
+                        'id' => $userData['id'] ?? null,
+                        'name' => $userData['name'],
+                        'email' => $userData['email'],
+                        'password' => $userData['password'] ?? bcrypt('password'),
+                    ]);
+                }
+                
+                // Sync roles if provided
+                if (isset($userData['roles']) && is_array($userData['roles']) && !empty($userData['roles'])) {
+                    try {
+                        $user->syncRoles($userData['roles']);
+                        Log::info("BlogrImportService: User '{$user->email}' roles synced: " . implode(', ', $userData['roles']));
+                    } catch (\Exception $e) {
+                        Log::warning("BlogrImportService: Failed to sync roles for user '{$user->email}': " . $e->getMessage());
+                        // Continue without roles rather than failing
+                    }
+                }
+                
+                $imported++;
+                
+            } catch (\Exception $e) {
+                Log::error("BlogrImportService: Error importing user: " . $e->getMessage());
+                // Continue with next user
+            }
+        }
+        
+        Log::info("BlogrImportService: Imported {$imported} users, skipped {$skipped}");
+        
+        return ['imported' => $imported, 'skipped' => $skipped];
+    }
+    
+    private function importCmsPages(array $pages, bool $skipExisting = false): array
+    {
+        $imported = 0;
+        $skipped = 0;
+        
+        foreach ($pages as $pageData) {
+            try {
+                // Check if page already exists
+                $existingPage = CmsPage::find($pageData['id'] ?? null);
+                
+                if ($existingPage && $skipExisting) {
+                    $skipped++;
+                    continue;
+                }
+                
+                if ($existingPage) {
+                    // Update existing page
+                    $existingPage->update($pageData);
+                    $page = $existingPage;
+                } else {
+                    // Create new page
+                    $page = CmsPage::create($pageData);
+                }
+                
+                $imported++;
+                
+            } catch (\Exception $e) {
+                Log::error("BlogrImportService: Error importing CMS page: " . $e->getMessage());
+                // Continue with next page
+            }
+        }
+        
+        Log::info("BlogrImportService: Imported {$imported} CMS pages, skipped {$skipped}");
+        
+        return ['imported' => $imported, 'skipped' => $skipped];
+    }
+    
+    private function importCmsPageTranslations(array $translations, bool $skipExisting = false): array
+    {
+        $imported = 0;
+        $skipped = 0;
+        
+        foreach ($translations as $transData) {
+            try {
+                // Check if translation already exists
+                $existingTrans = CmsPageTranslation::find($transData['id'] ?? null);
+                
+                if ($existingTrans && $skipExisting) {
+                    $skipped++;
+                    continue;
+                }
+                
+                if ($existingTrans) {
+                    // Update existing translation
+                    $existingTrans->update($transData);
+                } else {
+                    // Create new translation
+                    CmsPageTranslation::create($transData);
+                }
+                
+                $imported++;
+                
+            } catch (\Exception $e) {
+                Log::error("BlogrImportService: Error importing CMS page translation: " . $e->getMessage());
+                // Continue with next translation
+            }
+        }
+        
+        Log::info("BlogrImportService: Imported {$imported} CMS page translations, skipped {$skipped}");
+        
+        return ['imported' => $imported, 'skipped' => $skipped];
     }
 }
