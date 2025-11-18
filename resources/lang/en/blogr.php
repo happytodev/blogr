@@ -33,6 +33,10 @@ return [
         'translation_unavailable_message' => 'This content is not available in :requested. Showing :showing version instead.',
         'translation_unavailable_title' => 'Translation not available',
         'untitled' => 'Untitled',
+        'visit_site' => 'Visit the blog',
+        'quick_access' => 'Quick Access',
+        'visit_blog' => 'Open in new tab',
+        'view_website' => 'View Website',
     ],
     
     // Series
@@ -58,6 +62,14 @@ return [
         'draft' => 'Draft',
         'published_on' => 'Published on :date',
         'updated_on' => 'Updated on :date',
+    ],
+
+    // Notifications
+    'notifications' => [
+        'post_saved_subject' => '[Blogr] Post saved by :author',
+        'post_saved_line1' => 'User :author has saved a post titled ":title".',
+        'post_saved_line2' => 'You receive this notification because you are an administrator.',
+        'view_post' => 'View Post',
     ],
 
     // Settings

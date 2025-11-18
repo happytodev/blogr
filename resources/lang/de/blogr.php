@@ -31,6 +31,10 @@ return [
         'translation_unavailable_title' => 'Übersetzung nicht verfügbar',
         'translation_unavailable_message' => 'Dieser Inhalt ist nicht in :requested verfügbar. Zeige :showing Version stattdessen.',
         'translation_available_in' => 'Verfügbar in',
+        'visit_site' => 'Blog besuchen',
+        'quick_access' => 'Schnellzugriff',
+        'visit_blog' => 'In neuer Registerkarte öffnen',
+        'view_website' => 'Website anzeigen',
     ],
     
     // Series
@@ -53,5 +57,13 @@ return [
         'published_on' => 'Veröffentlicht am :date',
         'updated_on' => 'Aktualisiert am :date',
         'draft' => 'Entwurf',
+    ],
+
+    // Notifications
+    'notifications' => [
+        'post_saved_subject' => '[Blogr] Artikel von :author gespeichert',
+        'post_saved_line1' => 'Der Benutzer :author hat einen Artikel mit dem Titel ":title" gespeichert.',
+        'post_saved_line2' => 'Sie erhalten diese Benachrichtigung, weil Sie ein Administrator sind.',
+        'view_post' => 'Artikel ansehen',
     ],
 ];
