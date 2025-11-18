@@ -1841,7 +1841,7 @@ class BlogrSettings extends Page
                     'show_language_switcher' => $this->navigation_show_language_switcher,
                     'show_theme_switcher' => $this->navigation_show_theme_switcher,
                     'auto_add_blog' => $this->navigation_auto_add_blog ?? false,
-                    'menu_items' => $this->navigation_menu_items ?? [],
+                    'menu_items' => $this->cleanMenuItems($this->navigation_menu_items ?? []),
                 ],
                 'dates' => [
                     'show_publication_date' => $this->dates_show_publication_date,
@@ -2003,5 +2003,46 @@ class BlogrSettings extends Page
         }
         
         return round($bytes, 2) . ' ' . $units[$i];
+    }
+
+    /**
+     * Clean menu items by removing empty children and invalid items
+     */
+    private function cleanMenuItems(array $menuItems): array
+    {
+        $cleaned = [];
+        
+        foreach ($menuItems as $key => $item) {
+            // Skip items with no type or invalid type
+            if (empty($item['type'])) {
+                continue;
+            }
+            
+            // Clean children if they exist
+            if (isset($item['children']) && is_array($item['children'])) {
+                $cleanedChildren = [];
+                
+                foreach ($item['children'] as $childKey => $child) {
+                    // Only keep children with valid labels and type
+                    if (!empty($child['type']) && isset($child['labels']) && !empty($child['labels'])) {
+                        // Filter out null/empty labels
+                        $validLabels = array_filter($child['labels'], function ($label) {
+                            return !empty($label['label']);
+                        });
+                        
+                        if (!empty($validLabels)) {
+                            $child['labels'] = $validLabels;
+                            $cleanedChildren[$childKey] = $child;
+                        }
+                    }
+                }
+                
+                $item['children'] = $cleanedChildren;
+            }
+            
+            $cleaned[$key] = $item;
+        }
+        
+        return $cleaned;
     }
 }
