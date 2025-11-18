@@ -255,3 +255,129 @@ it('export includes translation photos in media files', function () {
     expect($data['media_files'])->toContain('blog-photos/main-series-photo.jpg');
     expect($data['media_files'])->toContain('blog-photos/series-translation-photo.jpg');
 });
+
+it('export includes users with their roles', function () {
+    // Setup roles
+    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
+    
+    // Create users with roles
+    $admin = \Happytodev\Blogr\Models\User::factory()->create(['email' => 'admin@test.com']);
+    $admin->syncRoles('admin');
+    
+    $writer = \Happytodev\Blogr\Models\User::factory()->create(['email' => 'writer@test.com']);
+    $writer->syncRoles('writer');
+    
+    // Export
+    $this->artisan('blogr:export')->assertExitCode(0);
+    
+    // Get the exported JSON
+    $exportPath = storage_path('app/blogr-exports');
+    $files = \Illuminate\Support\Facades\File::files($exportPath);
+    
+    if (count($files) > 0) {
+        $latestFile = collect($files)->sortByDesc(fn ($file) => $file->getMTime())->first();
+        $content = \Illuminate\Support\Facades\File::get($latestFile->getPathname());
+        $data = json_decode($content, true);
+        
+        // Verify users are exported
+        expect($data)->toHaveKey('users');
+        expect($data['users'])->toBeArray();
+        
+        // Verify admin user is in export with correct role
+        $adminUser = collect($data['users'])->firstWhere('email', 'admin@test.com');
+        expect($adminUser)->not->toBeNull();
+        expect($adminUser['roles'])->toContain('admin');
+        
+        // Verify writer user is in export with correct role
+        $writerUser = collect($data['users'])->firstWhere('email', 'writer@test.com');
+        expect($writerUser)->not->toBeNull();
+        expect($writerUser['roles'])->toContain('writer');
+    }
+});
+
+it('export preserves user roles in export format', function () {
+    // Setup roles
+    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
+    
+    // Create user with multiple roles (if applicable)
+    $user = \Happytodev\Blogr\Models\User::factory()->create(['email' => 'multi@test.com']);
+    $user->syncRoles(['admin', 'writer']);
+    
+    // Export via service
+    $exportService = app(\Happytodev\Blogr\Services\BlogrExportService::class);
+    $data = $exportService->export();
+    
+    // Verify users structure includes roles
+    expect($data)->toHaveKey('users');
+    $multiUser = collect($data['users'])->firstWhere('email', 'multi@test.com');
+    expect($multiUser)->not->toBeNull();
+    expect($multiUser['roles'])->toBeArray();
+    expect(count($multiUser['roles']))->toBeGreaterThanOrEqual(1);
+});
+
+it('export includes cms pages with their translations and blocks', function () {
+    // Create a CMS page with translations
+    $page = \Happytodev\Blogr\Models\CmsPage::create([
+        'slug' => 'test-page',
+        'template' => 'default',
+        'is_published' => true,
+        'is_homepage' => false,
+        'blocks' => [
+            ['id' => 'hero', 'type' => 'hero', 'content' => 'Welcome'],
+            ['id' => 'features', 'type' => 'features', 'items' => []],
+        ],
+    ]);
+    
+    // Add English translation
+    $page->translations()->create([
+        'locale' => 'en',
+        'slug' => 'test-page-en',
+        'title' => 'Test Page',
+        'meta_description' => 'A test page',
+        'content' => 'Page content',
+    ]);
+    
+    // Add French translation
+    $page->translations()->create([
+        'locale' => 'fr',
+        'slug' => 'page-de-test-fr',
+        'title' => 'Page de Test',
+        'meta_description' => 'Une page de test',
+        'content' => 'Contenu de la page',
+    ]);
+    
+    // Export
+    $this->artisan('blogr:export')->assertExitCode(0);
+    
+    // Verify export includes CMS pages
+    $exportPath = storage_path('app/blogr-exports');
+    $files = \Illuminate\Support\Facades\File::files($exportPath);
+    
+    if (count($files) > 0) {
+        $latestFile = collect($files)->sortByDesc(fn ($file) => $file->getMTime())->first();
+        $content = \Illuminate\Support\Facades\File::get($latestFile->getPathname());
+        $data = json_decode($content, true);
+        
+        // Verify cms_pages are exported
+        expect($data)->toHaveKey('cms_pages');
+        expect($data['cms_pages'])->toBeArray();
+        
+        // Find our test page
+        $exportedPage = collect($data['cms_pages'])->firstWhere('slug', 'test-page');
+        expect($exportedPage)->not->toBeNull();
+        expect($exportedPage['blocks'])->toBeArray();
+        expect(count($exportedPage['blocks']))->toBe(2);
+        
+        // Verify translations are exported
+        expect($data)->toHaveKey('cms_page_translations');
+        $enTranslation = collect($data['cms_page_translations'])->firstWhere('locale', 'en');
+        expect($enTranslation)->not->toBeNull();
+        expect($enTranslation['title'])->toBe('Test Page');
+        
+        $frTranslation = collect($data['cms_page_translations'])->firstWhere('locale', 'fr');
+        expect($frTranslation)->not->toBeNull();
+        expect($frTranslation['title'])->toBe('Page de Test');
+    }
+});

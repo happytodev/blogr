@@ -17,10 +17,6 @@ beforeEach(function () {
 it('sends notification to admins when a writer saves a post', function () {
     Notification::fake();
 
-    // Verify the user model config
-    $configuredUserModel = config('auth.providers.users.model');
-    expect($configuredUserModel)->toBe(\Workbench\App\Models\User::class);
-
     // create admin and writer
     $admin = User::factory()->create();
     $writer = User::factory()->create();
@@ -51,31 +47,77 @@ it('sends notification to admins when a writer saves a post', function () {
     ]);
 
     // After creation, notification should have been sent to admins
-    // Sanity-check: ensure admin role has users assigned
-    $role = \Spatie\Permission\Models\Role::where('name', 'admin')->first();
-    expect($role)->not->toBeNull();
-    $modelHasRolesTable = config('permission.table_names.model_has_roles', 'model_has_roles');
-    $exists = \Illuminate\Support\Facades\DB::table($modelHasRolesTable)
-        ->where('role_id', $role->id)
-        ->where('model_id', $admin->id)
-        ->where('model_type', get_class($admin))
-        ->exists();
-
-    expect($exists)->toBeTrue();
-
-    // Replicate the model discovery used in BlogPost saved hook
-    $authorClass = get_class($writer);
-    $ids = \Illuminate\Support\Facades\DB::table($modelHasRolesTable)
-        ->where('role_id', $role->id)
-        ->where('model_type', $authorClass)
-        ->pluck('model_id')
-        ->toArray();
-
-    $foundAdmins = $authorClass::whereIn('id', $ids)->get();
-    expect($foundAdmins->isNotEmpty())->toBeTrue();
-    expect($foundAdmins->first()->id)->toBe($admin->id);
-
     Notification::assertSentTo([$admin], PostSavedByWriter::class);
-})->skip('Notification not triggered in test context - needs investigation');
+});
+
+it('does not send notification when an admin saves a post', function () {
+    Notification::fake();
+
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $category = \Happytodev\Blogr\Models\Category::factory()->create();
+
+    $post = BlogPost::create([
+        'user_id' => $admin->id,
+        'category_id' => $category->id,
+        'is_published' => false,
+    ]);
+
+    // Notification should NOT be sent since the admin saved their own post
+    Notification::assertNotSentTo([$admin], PostSavedByWriter::class);
+});
+
+it('sends notification to multiple admins when a writer saves a post', function () {
+    Notification::fake();
+
+    $admin1 = User::factory()->create();
+    $admin2 = User::factory()->create();
+    $writer = User::factory()->create();
+
+    $admin1->assignRole('admin');
+    $admin2->assignRole('admin');
+    $writer->assignRole('writer');
+
+    $writer->refresh();
+    $writer->load('roles');
+
+    $category = \Happytodev\Blogr\Models\Category::factory()->create();
+
+    $post = BlogPost::create([
+        'user_id' => $writer->id,
+        'category_id' => $category->id,
+        'is_published' => false,
+    ]);
+
+    // Notification should be sent to both admins
+    Notification::assertSentTo([$admin1, $admin2], PostSavedByWriter::class);
+});
+
+it('notification contains correct post and author data', function () {
+    Notification::fake();
+
+    $admin = User::factory()->create();
+    $writer = User::factory()->create();
+
+    $admin->assignRole('admin');
+    $writer->assignRole('writer');
+
+    $writer->refresh();
+    $writer->load('roles');
+
+    $category = \Happytodev\Blogr\Models\Category::factory()->create();
+
+    $post = BlogPost::create([
+        'user_id' => $writer->id,
+        'category_id' => $category->id,
+        'is_published' => false,
+    ]);
+
+    Notification::assertSentTo([$admin], PostSavedByWriter::class, function ($notification) use ($post, $writer) {
+        return $notification->getPost()->id === $post->id &&
+               $notification->getAuthor()->id === $writer->id;
+    });
+});
  
 
