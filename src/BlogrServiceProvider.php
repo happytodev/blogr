@@ -16,12 +16,14 @@ use Happytodev\Blogr\Commands\BlogrCommand;
 use Filament\Support\Assets\AlpineComponent;
 use Happytodev\Blogr\Helpers\ConfigHelper;
 use Happytodev\Blogr\Policies\BlogPostPolicy;
+use Happytodev\Blogr\Policies\UserPolicy;
 use Livewire\Features\SupportTesting\Testable;
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Commands\InstallUserManagementCommand;
 use Happytodev\Blogr\Commands\MigratePostsToTranslations;
 use Happytodev\Blogr\Commands\BlogrExportCommand;
 use Happytodev\Blogr\Commands\BlogrImportCommand;
+use Happytodev\Blogr\Commands\BlogrPublishDemoPagesCommand;
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Happytodev\Blogr\Http\Controllers\AuthorController;
 use Happytodev\Blogr\Http\Controllers\RssFeedController;
@@ -79,6 +81,7 @@ class BlogrServiceProvider extends PackageServiceProvider
             MigratePostsToTranslations::class,
             BlogrExportCommand::class,
             BlogrImportCommand::class,
+            BlogrPublishDemoPagesCommand::class,
         ]);
     }
 
@@ -88,17 +91,28 @@ class BlogrServiceProvider extends PackageServiceProvider
         $this->app->singleton('blogr.config', function ($app) {
             return new ConfigHelper();
         });
-        
-        // Hook into translator after it's created to add our published translations path
-        $this->app->resolving('translator', function ($translator, $app) {
-            $translator->addNamespace('blogr', $app->langPath('vendor/blogr'));
-        });
     }
 
     public function packageBooted(): void
     {
+        // Register additional translation namespaces
+        // The 'blogr' namespace is registered by hasTranslations() from Spatie
+        // We need to also register 'navigation' namespace since it's in a separate file
+        $langPath = __DIR__ . '/../resources/lang';
+        $this->app['translator']->addNamespace('blogr', $langPath);
+        
+        // Also add published translations path
+        if (file_exists($this->app->langPath('vendor/blogr'))) {
+            $this->app['translator']->addNamespace('blogr', $this->app->langPath('vendor/blogr'));
+        }
+        
         // Register Policies
         Gate::policy(BlogPost::class, BlogPostPolicy::class);
+        
+        // Register User Policy (check if User model exists before registering)
+        if (class_exists('App\\Models\\User')) {
+            Gate::policy(\App\Models\User::class, UserPolicy::class);
+        }
         
         // Register model observers
         BlogSeriesTranslation::observe(BlogSeriesTranslationObserver::class);
