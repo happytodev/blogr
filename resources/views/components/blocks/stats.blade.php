@@ -8,7 +8,7 @@
 <x-blogr::background-wrapper :data="$data">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         @if($heading)
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-12 text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center">
                 {{ $heading }}
             </h2>
         @endif
@@ -43,9 +43,9 @@
                         <div class="text-4xl sm:text-5xl font-bold text-primary-600 dark:text-primary-400 mb-2">
                             <span x-text="count"></span><span>{{ $stat['suffix'] ?? '' }}</span>
                         </div>
-                        <div class="text-gray-700 dark:text-gray-300 font-medium">
+                        <p class="font-medium">
                             {{ $stat['label'] ?? '' }}
-                        </div>
+                        </p>
                     </div>
                 @endforeach
             </div>
