@@ -75,5 +75,6 @@ return [
     // Settings
     'settings' => [
         'save' => 'Save Settings',
+        'navigation_label' => 'Settings',
     ],
 ];

@@ -76,5 +76,6 @@ return [
     // Settings
     'settings' => [
         'save' => 'Enregistrer les paramètres',
+        'navigation_label' => 'Paramètres',
     ],
 ];

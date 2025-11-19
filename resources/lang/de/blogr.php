@@ -59,6 +59,12 @@ return [
         'draft' => 'Entwurf',
     ],
 
+    // Settings
+    'settings' => [
+        'save' => 'Einstellungen speichern',
+        'navigation_label' => 'Einstellungen',
+    ],
+
     // Notifications
     'notifications' => [
         'post_saved_subject' => '[Blogr] Artikel von :author gespeichert',

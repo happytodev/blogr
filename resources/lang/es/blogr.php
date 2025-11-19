@@ -59,6 +59,12 @@ return [
         'draft' => 'Borrador',
     ],
 
+    // Settings
+    'settings' => [
+        'save' => 'Guardar configuración',
+        'navigation_label' => 'Configuración',
+    ],
+
     // Notifications
     'notifications' => [
         'post_saved_subject' => '[Blogr] Artículo guardado por :author',
