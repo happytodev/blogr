@@ -36,17 +36,17 @@ class CmsPageResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('Pages CMS');
+        return __('blogr::resources.cms_page.navigation_label') ?? 'Pages CMS';
     }
 
     public static function getPluralLabel(): string
     {
-        return __('Pages CMS');
+        return __('blogr::resources.cms_page.plural_label') ?? 'Pages CMS';
     }
 
     public static function getLabel(): string
     {
-        return __('Page CMS');
+        return __('blogr::resources.cms_page.label') ?? 'Page CMS';
     }
 
     public static function form(Schema $schema): Schema
