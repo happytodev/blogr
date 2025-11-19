@@ -29,6 +29,11 @@ class BlogPostResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    public static function getNavigationLabel(): string
+    {
+        return __('blogr::resources.blog_post.navigation_label') ?? 'Blog Posts';
+    }
+
     public static function canViewAny(): bool
     {
         return Filament::auth()->user()->hasRole(['admin', 'writer']);
