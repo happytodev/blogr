@@ -42,6 +42,10 @@ class TestCase extends Orchestra
             $mock->shouldReceive('__invoke')->andReturn(new HtmlString(''));
         });
 
+        // Load translations for tests (after parent::setUp so app is initialized)
+        // We need to ensure translations are preloaded and cached for __() to work
+        $this->loadTranslationsForTests();
+
         // Patch Livewire ViewErrorBag null bug in test environment
         // Livewire's SupportValidation::render() calls ViewErrorBag::put('default', $errorBag)
         // where $errorBag can be null, causing: "Argument #2 must be of type MessageBag, null given"
@@ -155,6 +159,13 @@ class TestCase extends Orchestra
 
         // Also load package migrations (blog, cms, etc.) so tests have the package tables
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+    }
+
+    private function loadTranslationsForTests()
+    {
+        // Load package translations so tests can access __('blogr::key')
+        $langPath = __DIR__ . '/../resources/lang';
+        $this->app['translator']->addNamespace('blogr', $langPath);
     }
 
     // Routes are now defined by BlogrServiceProvider in boot()
