@@ -30,6 +30,7 @@ use Happytodev\Blogr\Http\Controllers\RssFeedController;
 use Happytodev\Blogr\Http\Controllers\CmsPageController;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Observers\BlogSeriesTranslationObserver;
+use Happytodev\Blogr\Observers\BlogPostObserver;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 
@@ -95,15 +96,54 @@ class BlogrServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        // Register additional translation namespaces
-        // The 'blogr' namespace is registered by hasTranslations() from Spatie
-        // We need to also register 'navigation' namespace since it's in a separate file
-        $langPath = __DIR__ . '/../resources/lang';
-        $this->app['translator']->addNamespace('blogr', $langPath);
+        // FIX: Manually load and inject blogr translations
+        // The issue: Spatie's loadTranslationsFrom() registers hints, but Laravel's loader
+        // may cache them. We directly load and inject all translations into the translator.
         
-        // Also add published translations path
-        if (file_exists($this->app->langPath('vendor/blogr'))) {
-            $this->app['translator']->addNamespace('blogr', $this->app->langPath('vendor/blogr'));
+        $translator = $this->app['translator'];
+        $locale = $translator->getLocale();
+        
+        $vendorPath = $this->app->langPath('vendor/blogr');
+        
+        // Manually load blogr translations from vendor path
+        if (is_dir($vendorPath)) {
+            $file = "{$vendorPath}/{$locale}/blogr.php";
+            
+            if (file_exists($file)) {
+                // Include and get the translations array
+                $translations = include $file;
+                
+                // Inject them directly into the translator's loaded cache
+                // The structure is: loaded[namespace][group][locale] = translations
+                // When parsing 'blogr::notifications.post_saved_subject':
+                //   - namespace = 'blogr'
+                //   - group = 'notifications'
+                //   - item = 'post_saved_subject'
+                // So we need to inject each section as its own group!
+                if (is_array($translations)) {
+                    $trans_refl = new \ReflectionClass($translator);
+                    $loaded_prop = $trans_refl->getProperty('loaded');
+                    $loaded_prop->setAccessible(true);
+                    
+                    $loaded = $loaded_prop->getValue($translator);
+                    
+                    // Inject each section as a separate group
+                    foreach ($translations as $section => $items) {
+                        if (is_array($items)) {
+                            $loaded['blogr'][$section][$locale] = $items;
+                        }
+                    }
+                    
+                    $loaded_prop->setValue($translator, $loaded);
+                    
+                    \Log::debug('BlogrServiceProvider::packageBooted - blogr translations injected', [
+                        'locale' => $locale,
+                        'file' => $file,
+                        'sections_count' => count(array_keys($translations)),
+                        'sections' => array_keys($translations),
+                    ]);
+                }
+            }
         }
         
         // Register Policies
@@ -116,6 +156,7 @@ class BlogrServiceProvider extends PackageServiceProvider
         
         // Register model observers
         BlogSeriesTranslation::observe(BlogSeriesTranslationObserver::class);
+        BlogPost::observe(BlogPostObserver::class);
 
         // Asset Registration
         FilamentAsset::register(
