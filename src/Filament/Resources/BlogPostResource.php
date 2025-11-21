@@ -15,6 +15,7 @@ use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\ListBlogPosts;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\CreateBlogPost;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource\RelationManagers;
+use Illuminate\Database\Eloquent\Builder;
 
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -66,6 +67,23 @@ class BlogPostResource extends Resource
             return $record->user_id === $user->id;
         }
         return false;
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['translations.title', 'translations.content'];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()
+            ->with('translations');
+    }
+
+    public static function getGlobalSearchResultTitle($record): string
+    {
+        $translation = $record->translations->first();
+        return $translation ? $translation->title : "Post #{$record->id}";
     }
 
     public static function form(Schema $schema): Schema
