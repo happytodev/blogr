@@ -16,6 +16,7 @@ use Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\HtmlString;
+use Illuminate\Database\Eloquent\Builder;
 use Happytodev\Blogr\Filament\Resources\CmsPages\CmsBlockBuilder;
 
 class CmsPageResource extends Resource
@@ -269,6 +270,24 @@ class CmsPageResource extends Resource
                 DeleteBulkAction::make(),
             ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['slug', 'translations.title'];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()
+            ->with('translations');
+    }
+
+    public static function getGlobalSearchResultTitle($record): string
+    {
+        $translation = $record->translations->first();
+        $title = $translation ? $translation->title : $record->slug;
+        return "{$title} ({$record->slug})";
     }
 
     public static function getRelations(): array
