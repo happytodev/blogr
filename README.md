@@ -19,13 +19,13 @@
 
 ## ✨ Overview
 
-Transform your Laravel application into a powerful blogging platform with **Blogr** – a comprehensive FilamentPHP plugin designed for developers who demand excellence. Built with modern best practices, fully tested (680+ tests), and packed with features you'll actually use.
+Transform your Laravel application into a powerful blogging platform with **Blogr** – a comprehensive FilamentPHP plugin designed for developers who demand excellence. Built with modern best practices, fully tested (725+ tests), and packed with features you'll actually use.
 
 **Why Blogr?**
 - 🌍 **True Multilingual** – Translate everything (posts, series, categories, tags)
 - 📚 **Blog Series** – Organize content into cohesive learning paths
-- � **CMS Page Builder** – Create static pages (About, Contact, etc.) with block system
-- �💾 **Backup & Restore** – Export/import all data with media files
+- **CMS Page Builder** – Create static pages (About, Contact, etc.) with block system
+- 💾 **Backup & Restore** – Export/import all data with media files
 - 🎨 **Fully Customizable** – Theme system, dark mode, configurable UI
 - 🔍 **SEO Optimized** – Meta tags, Open Graph, Schema.org, RSS feeds
 - ⚡ **Production Ready** – Comprehensive test coverage, battle-tested code
@@ -85,6 +85,7 @@ Transform your Laravel application into a powerful blogging platform with **Blog
 - **Flexible layouts** (sidebar TOC, centered)
 - **Author profiles** with avatars & bios
 - **Responsive design** mobile-first
+- **Wave Separators** with gradient-aware dark mode ✨ NEW
 
 ### 🔍 SEO & Performance
 - **Meta tags** (title, description, keywords)
@@ -94,17 +95,24 @@ Transform your Laravel application into a powerful blogging platform with **Blog
 - **Optimized URLs** & slugs
 - **Sitemap ready**
 
+### 🔎 Advanced Admin Features
+- **Global Search** – Search posts, users, CMS pages from admin search bar ✨ NEW
+- **Improved Admin Tables** – Sortable columns, advanced filters ✨ NEW
+- **Admin Notifications** – Notify admins when writers save posts ✨ NEW
+- **User Management** – Built-in user CRUD with role support ✨ NEW
+
 </td>
 </tr>
 </table>
 
 ### 📊 Dashboard Widgets
 
-Five powerful widgets to monitor your blog:
+Six powerful widgets to monitor your blog:
 - **BlogStatsOverview** – Posts, categories, tags metrics
 - **RecentBlogPosts** – Latest posts with quick actions
 - **ScheduledPosts** – Upcoming publications
 - **BlogPostsChart** – Publication trends (12 months)
+- **QuickVisitSite** – One-click access to public blog ✨ NEW
 - **BlogReadingStats** – Reading time analytics
 
 ### 👥 Author Features
@@ -118,9 +126,12 @@ Five powerful widgets to monitor your blog:
 ### ⚙️ Admin Experience
 
 - **Filament v4** native integration
+- **Global Search** across all resources (posts, users, CMS pages)
+- **Improved Tables** with sorting, filtering, and better UX
 - **Intuitive settings page** with tabs
 - **Tutorial content** for onboarding
 - **Demo seeders** for quick start
+- **Admin notifications** for writer post creation
 - **Extensive documentation**
 
 
@@ -713,7 +724,7 @@ cd vendor/happytodev/blogr
 ./vendor/bin/pest --parallel
 
 # Test coverage
-Tests:  57 skipped, 645 passed (1866 assertions)
+Tests:  56 skipped, 725 passed (2122 assertions)
 ```
 
 **Test Coverage:**
@@ -729,15 +740,17 @@ Tests:  57 skipped, 645 passed (1866 assertions)
 
 ## 🗺️ Roadmap
 
-### 🎯 RC1 (November 2025)
+### 🎯 RC1 (November 2025) - Feature Complete
 
 - [x] **Import/Export system** with media backup
-- [x] **CMS Page Builder** – Create static pages (About, Contact, etc.) with block system ✨ NEW
-- [ ] **Clickable titles** in RecentBlogPosts widget
-- [ ] **Public blog link** in admin panel
+- [x] **CMS Page Builder** – Create static pages with block system
+- [x] **Global Search** – Search posts, users, CMS pages from admin ✨ NEW
+- [x] **Enhanced Tables** – Sortable columns, advanced filters ✨ NEW
+- [x] **Admin Notifications** – Notify admins when writers save posts ✨ NEW
+- [x] **Dark Mode Wave Separators** – Gradient-aware transitions ✨ NEW
+- [x] **User Management Resource** – Full CRUD for admin users ✨ NEW
+- [x] **Quick Visit Site Widget** – One-click blog access ✨ NEW
 - [ ] **Theme presets** (predefined color schemes)
-- [ ] **Enhanced tables** (sortable, filterable)
-- [ ] **Writer notifications** for admins
 - [ ] **Comprehensive testing** for v1 release
 
 ### ✅ Beta 3 (Completed - September 2025)
