@@ -131,66 +131,6 @@ class BlogPost extends Model
         static::deleting(function ($post) {
             $post->translations()->delete();
         });
-
-        // After saving (create or update) notify admins if the post was saved by a writer
-        static::saved(function ($post) {
-            try {
-                if (!$post->user_id) {
-                    return;
-                }
-
-                $userModel = config('auth.providers.users.model');
-                $author = $userModel::find($post->user_id);
-                if (!$author) {
-                    return;
-                }
-
-                // If the saving user is a writer (but not admin), notify admins
-                if (method_exists($author, 'hasRole') && $author->hasRole('writer') && !$author->hasRole('admin')) {
-                    // Prefer querying admins via Spatie Role (more robust across test app models)
-                    $adminUsers = [];
-                    try {
-                        $roleModel = \Spatie\Permission\Models\Role::where('name', 'admin')->first();
-                        if ($roleModel) {
-                            // Try to load admin users using the same model type as the author
-                            $authorClass = get_class($author);
-                            $modelHasRolesTable = config('permission.table_names.model_has_roles', 'model_has_roles');
-                            $ids = \Illuminate\Support\Facades\DB::table($modelHasRolesTable)
-                                ->where('role_id', $roleModel->id)
-                                ->where('model_type', $authorClass)
-                                ->pluck('model_id')
-                                ->toArray();
-
-                            if (!empty($ids)) {
-                                $adminUsers = $authorClass::whereIn('id', $ids)->get();
-                            } else {
-                                // Fallback to role->users if the relation is available
-                                if (method_exists($roleModel, 'users')) {
-                                    $adminUsers = $roleModel->users()->get();
-                                }
-                            }
-                        }
-                    } catch (\Throwable $e) {
-                        // final fallback: try to resolve via user model roles relation
-                        try {
-                            $adminUsers = $userModel::whereHas('roles', function ($q) {
-                                $q->where('name', 'admin');
-                            })->get();
-                        } catch (\Throwable $_) {
-                            $adminUsers = collect();
-                        }
-                    }
-
-                    if (is_iterable($adminUsers) && collect($adminUsers)->isNotEmpty()) {
-                        // Use the Notification facade to send a simple notification
-                        \Illuminate\Support\Facades\Notification::send($adminUsers, new \Happytodev\Blogr\Notifications\PostSavedByWriter($post, $author));
-                    }
-                }
-            } catch (\Throwable $e) {
-                // Don't break saving flow if notification fails; log for debugging
-                \Illuminate\Support\Facades\Log::warning('Blogr: Failed to send PostSavedByWriter notification - ' . $e->getMessage());
-            }
-        });
     }
 
     public function getTable()

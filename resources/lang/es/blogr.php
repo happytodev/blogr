@@ -31,6 +31,10 @@ return [
         'translation_unavailable_title' => 'Traducción no disponible',
         'translation_unavailable_message' => 'Este contenido no está disponible en :requested. Mostrando versión :showing en su lugar.',
         'translation_available_in' => 'Disponible en',
+        'visit_site' => 'Visitar el blog',
+        'quick_access' => 'Acceso rápido',
+        'visit_blog' => 'Abrir en pestaña nueva',
+        'view_website' => 'Ver sitio web',
     ],
     
     // Series
@@ -53,5 +57,19 @@ return [
         'published_on' => 'Publicado el :date',
         'updated_on' => 'Actualizado el :date',
         'draft' => 'Borrador',
+    ],
+
+    // Settings
+    'settings' => [
+        'save' => 'Guardar configuración',
+        'navigation_label' => 'Configuración',
+    ],
+
+    // Notifications
+    'notifications' => [
+        'post_saved_subject' => '[Blogr] Artículo guardado por :author',
+        'post_saved_line1' => 'El usuario :author ha guardado un artículo titulado ":title".',
+        'post_saved_line2' => 'Recibe esta notificación porque es un administrador.',
+        'view_post' => 'Ver artículo',
     ],
 ];

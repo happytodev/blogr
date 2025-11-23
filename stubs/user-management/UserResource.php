@@ -23,6 +23,11 @@ class UserResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'email'];
+    }
+
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);
@@ -39,22 +44,22 @@ class UserResource extends Resource
             return false;
         }
         
-        return auth()->user()->can('view_any_users');
+        return auth()->user()->hasRole('admin');
     }
 
     public static function canCreate(): bool
     {
-        return auth()->check() && auth()->user()->can('create_users');
+        return auth()->check() && auth()->user()->hasRole('admin');
     }
 
     public static function canEdit($record): bool
     {
-        return auth()->check() && auth()->user()->can('update_users');
+        return auth()->check() && auth()->user()->hasRole('admin');
     }
 
     public static function canDelete($record): bool
     {
-        return auth()->check() && auth()->user()->can('delete_users');
+        return auth()->check() && auth()->user()->hasRole('admin');
     }
 
     public static function getNavigationLabel(): string

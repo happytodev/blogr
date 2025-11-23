@@ -1,6 +1,8 @@
 @props(['data'])
 
 @php
+    use Happytodev\Blogr\Helpers\LinkResolver;
+    
     $heading = $data['heading'] ?? null;
     $description = $data['description'] ?? null;
     $plans = $data['plans'] ?? [];
@@ -11,13 +13,13 @@
         @if($heading || $description)
             <div class="text-center mb-12">
                 @if($heading)
-                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    <h2 class="text-3xl sm:text-4xl font-bold mb-4">
                         {{ $heading }}
                     </h2>
                 @endif
                 
                 @if($description)
-                    <p class="text-xl text-gray-600 dark:text-gray-300">
+                    <p class="text-xl">
                         {{ $description }}
                     </p>
                 @endif
@@ -38,12 +40,12 @@
 
                         <!-- Header -->
                         <div class="mb-6">
-                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                            <h3 class="text-2xl font-bold mb-2">
                                 {{ $plan['name'] ?? 'Plan' }}
                             </h3>
                             
                             @if(!empty($plan['description']))
-                                <p class="text-gray-600 dark:text-gray-400 text-sm">
+                                <p class="text-sm">
                                     {{ $plan['description'] }}
                                 </p>
                             @endif
@@ -52,18 +54,18 @@
                         <!-- Price -->
                         <div class="mb-6">
                             <div class="flex items-baseline">
-                                <span class="text-5xl font-bold text-gray-900 dark:text-white">
+                                <span class="text-5xl font-bold">
                                     ${{ $plan['price'] ?? '0' }}
                                 </span>
                                 @if(!empty($plan['period']))
-                                    <span class="ml-2 text-gray-600 dark:text-gray-400">
+                                    <p class="ml-2">
                                         {{ match($plan['period']) {
                                             'month' => '/ month',
                                             'year' => '/ year',
                                             'once' => 'one-time',
                                             default => $plan['period']
                                         } }}
-                                    </span>
+                                    </p>
                                 @endif
                             </div>
                         </div>
@@ -76,7 +78,7 @@
                                         <svg class="w-5 h-5 text-primary-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                         </svg>
-                                        <span class="text-gray-700 dark:text-gray-300">
+                                        <span>
                                             {{ is_array($feature) ? $feature['feature'] ?? '' : $feature }}
                                         </span>
                                     </li>
@@ -85,8 +87,11 @@
                         @endif
 
                         <!-- CTA Button -->
+                        @php
+                            $planCta = LinkResolver::resolve($plan, 'cta_link_type', 'cta_url', 'cta_category_id', 'cta_cms_page_id') ?? '#';
+                        @endphp
                         <a 
-                            href="{{ $plan['cta_url'] ?? '#' }}"
+                            href="{{ $planCta }}"
                             class="w-full py-3 px-6 text-center rounded-lg font-semibold transition-all duration-200 {{ !empty($plan['highlight']) ? 'bg-primary-600 text-white hover:bg-primary-700' : 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600' }}"
                         >
                             {{ $plan['cta_text'] ?? __('Get Started') }}

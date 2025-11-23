@@ -23,6 +23,11 @@ class BlogSeriesResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
+    public static function getNavigationLabel(): string
+    {
+        return __('blogr::resources.blog_series.navigation_label') ?? 'Blog Series';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return BlogSeriesForm::configure($schema);

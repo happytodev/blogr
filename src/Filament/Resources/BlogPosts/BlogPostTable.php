@@ -9,6 +9,7 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Storage;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Facades\Filament;
 
 class BlogPostTable
@@ -41,7 +42,8 @@ class BlogPostTable
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('category.name')
-                    ->label('Category'),
+                    ->label('Category')
+                    ->sortable(),
                 TextColumn::make('tags.name')
                     ->badge()
                     ->getStateUsing(function ($record) {
@@ -66,6 +68,7 @@ class BlogPostTable
                 TextColumn::make('publication_status')
                     ->label('Status')
                     ->badge()
+                    ->sortable()
                     ->color(fn ($record) => $record->getPublicationStatusColor())
                     ->getStateUsing(fn ($record) => ucfirst($record->getPublicationStatus())),
                 TextColumn::make('published_at')
@@ -83,6 +86,11 @@ class BlogPostTable
                 SelectFilter::make('tags')
                     ->relationship('tags', 'name')
                     ->multiple(),
+                TernaryFilter::make('is_published')
+                    ->attribute('is_published')
+                    ->label('Publication Status')
+                    ->trueLabel('Published')
+                    ->falseLabel(__('blogr::date.draft')),
             ])
             ->actions([
                 EditAction::make(),

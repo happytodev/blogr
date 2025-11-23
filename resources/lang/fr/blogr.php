@@ -33,6 +33,10 @@ return [
         'translation_unavailable_message' => 'Ce contenu n\'est pas disponible en :requested. Version :showing affichée à la place.',
         'translation_unavailable_title' => 'Traduction non disponible',
         'untitled' => 'Sans titre',
+        'visit_site' => 'Visiter le blog',
+        'quick_access' => 'Accès rapide',
+        'visit_blog' => 'Ouvrir dans un nouvel onglet',
+        'view_website' => 'Voir le site',
     ],
     
     // Series
@@ -61,8 +65,17 @@ return [
         'updated_on' => 'Mis à jour le :date',
     ],
 
+    // Notifications
+    'notifications' => [
+        'post_saved_subject' => '[Blogr] Article enregistré par :author',
+        'post_saved_line1' => 'L\'utilisateur :author a enregistré un article intitulé ":title".',
+        'post_saved_line2' => 'Vous recevez cette notification car vous êtes administrateur.',
+        'view_post' => 'Voir l\'article',
+    ],
+
     // Settings
     'settings' => [
         'save' => 'Enregistrer les paramètres',
+        'navigation_label' => 'Paramètres',
     ],
 ];

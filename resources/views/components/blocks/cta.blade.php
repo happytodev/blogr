@@ -1,10 +1,12 @@
 @props(['data'])
 
 @php
+use Happytodev\Blogr\Helpers\LinkResolver;
+
 $heading = $data['heading'] ?? '';
 $subheading = $data['subheading'] ?? '';
 $buttonText = $data['button_text'] ?? '';
-$buttonUrl = $data['button_url'] ?? '';
+$buttonUrl = LinkResolver::resolve($data, 'button_link_type', 'button_url', 'button_category_id', 'button_cms_page_id');
 $buttonStyle = $data['button_style'] ?? 'primary';
 @endphp
 

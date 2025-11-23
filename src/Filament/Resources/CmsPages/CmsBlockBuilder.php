@@ -12,12 +12,16 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Group;
 use Happytodev\Blogr\Enums\CmsBlockType;
 use Happytodev\Blogr\Enums\BackgroundType;
+use Happytodev\Blogr\Filament\Forms\LinkFieldsTrait;
 
 class CmsBlockBuilder
 {
+    use LinkFieldsTrait;
     public static function make(): Builder
     {
         return Builder::make('blocks')
@@ -38,6 +42,8 @@ class CmsBlockBuilder
                 self::videoBlock(),
                 self::newsletterBlock(),
                 self::mapBlock(),
+                self::transitionDiagonalBlock(),
+                self::blogTitleBlock(),
             ])
             ->collapsible()
             ->blockNumbers(false)
@@ -73,15 +79,45 @@ class CmsBlockBuilder
                             ->imageEditor()
                             ->columnSpan(2),
 
+                        Select::make('image_position')
+                            ->label(__('Image Position'))
+                            ->options([
+                                'top' => __('Top (Behind Text)'),
+                                'left' => __('Left of Text'),
+                                'right' => __('Right of Text'),
+                            ])
+                            ->default('top')
+                            ->columnSpan(1),
+
+                        Select::make('image_max_width')
+                            ->label(__('Image Max Width (when top)'))
+                            ->options([
+                                'max-w-sm' => __('Small (384px)'),
+                                'max-w-md' => __('Medium (448px)'),
+                                'max-w-lg' => __('Large (512px)'),
+                                'max-w-xl' => __('Extra Large (576px)'),
+                                'max-w-2xl' => __('2XL (672px)'),
+                                'max-w-3xl' => __('3XL (768px)'),
+                                'max-w-4xl' => __('4XL (896px)'),
+                                'max-w-5xl' => __('5XL (1024px)'),
+                                'max-w-full' => __('Full Width'),
+                            ])
+                            ->default('max-w-2xl')
+                            ->helperText(__('Only applies when image position is "Top"'))
+                            ->columnSpan(1),
+
                         TextInput::make('cta_text')
                             ->label(__('Button Text'))
                             ->maxLength(50)
                             ->columnSpan(1),
 
-                        TextInput::make('cta_url')
-                            ->label(__('Button URL'))
-                            ->url()
-                            ->columnSpan(1),
+                        ...self::getLinkFieldsSchema(
+                            linkTypeFieldName: 'cta_link_type',
+                            urlFieldName: 'cta_url',
+                            categoryIdFieldName: 'cta_category_id',
+                            cmsPageIdFieldName: 'cta_cms_page_id',
+                            includeBlogHome: true
+                        ),
 
                         Select::make('alignment')
                             ->label(__('Text Alignment'))
@@ -260,11 +296,13 @@ class CmsBlockBuilder
                             ->maxLength(50)
                             ->columnSpan(1),
 
-                        TextInput::make('button_url')
-                            ->label(__('Button URL'))
-                            ->required()
-                            ->url()
-                            ->columnSpan(1),
+                        ...self::getLinkFieldsSchema(
+                            linkTypeFieldName: 'button_link_type',
+                            urlFieldName: 'button_url',
+                            categoryIdFieldName: 'button_category_id',
+                            cmsPageIdFieldName: 'button_cms_page_id',
+                            includeBlogHome: true
+                        ),
 
                         Select::make('button_style')
                             ->label(__('Button Style'))
@@ -404,14 +442,15 @@ class CmsBlockBuilder
 
                         FileUpload::make('images')
                             ->label(__('Images'))
-                            ->image()
                             ->multiple()
                             ->reorderable()
+                            ->image()
                             ->disk('public')
                             ->directory('cms-blocks/gallery')
                             ->visibility('public')
                             ->imageEditor()
-                            ->required()
+                            ->maxSize(5120)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'])
                             ->helperText(__('For Bento Grid, first 6 images work best. Masonry works with any number.'))
                             ->columnSpan(2),
                     ])
@@ -575,11 +614,13 @@ class CmsBlockBuilder
                                     ->required()
                                     ->columnSpan(1),
 
-                                TextInput::make('cta_url')
-                                    ->label(__('Button URL'))
-                                    ->url()
-                                    ->required()
-                                    ->columnSpan(1),
+                                ...self::getLinkFieldsSchema(
+                                    linkTypeFieldName: 'cta_link_type',
+                                    urlFieldName: 'cta_url',
+                                    categoryIdFieldName: 'cta_category_id',
+                                    cmsPageIdFieldName: 'cta_cms_page_id',
+                                    includeBlogHome: true
+                                ),
 
                                 Select::make('highlight')
                                     ->label(__('Highlight Plan'))
@@ -849,154 +890,684 @@ class CmsBlockBuilder
     protected static function getBackgroundFields(): Section
     {
         return Section::make(__('Background'))
-            ->description(__('Configure the block background'))
+            ->description(__('Configure the block background for light and dark modes'))
             ->schema([
-                Select::make('background_type')
-                    ->label(__('Background Type'))
-                    ->options(BackgroundType::options())
-                    ->default(BackgroundType::NONE->value)
-                    ->live()
-                    ->columnSpan(2),
+                // Left Column: Background + Text Shadow
+                Group::make()
+                    ->schema([
+                        Tabs::make('background_mode')
+                            ->tabs([
+                                Tabs\Tab::make('Light Mode')
+                                    ->icon('heroicon-o-sun')
+                                    ->schema([
+                                        Select::make('background_type')
+                                            ->label(__('Background Type'))
+                                            ->options(BackgroundType::options())
+                                            ->default(BackgroundType::NONE->value)
+                                            ->live()
+                                            ->columnSpan(3),
 
-                // Solid Color
-                ColorPicker::make('background_color')
-                    ->label(__('Background Color'))
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::COLOR->value)
-                    ->columnSpan(1),
+                                        // Solid Color
+                                        ColorPicker::make('background_color')
+                                            ->label(__('Background Color'))
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::COLOR->value)
+                                            ->columnSpan(2),
 
-                TextInput::make('background_opacity')
-                    ->label(__('Opacity'))
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(100)
-                    ->default(100)
-                    ->suffix('%')
-                    ->visible(fn ($get) => in_array($get('background_type'), [BackgroundType::COLOR->value, BackgroundType::GRADIENT->value, BackgroundType::IMAGE->value]))
-                    ->columnSpan(1),
+                                        TextInput::make('background_opacity')
+                                            ->label(__('Opacity'))
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->maxValue(100)
+                                            ->default(100)
+                                            ->suffix('%')
+                                            ->visible(fn ($get) => in_array($get('background_type'), [BackgroundType::COLOR->value, BackgroundType::GRADIENT->value, BackgroundType::IMAGE->value]))
+                                            ->columnSpan(1),
 
-                // Gradient
-                ColorPicker::make('gradient_from')
-                    ->label(__('Gradient From'))
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::GRADIENT->value)
-                    ->columnSpan(1),
+                                        // Gradient
+                                        ColorPicker::make('gradient_from')
+                                            ->label(__('Gradient From'))
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::GRADIENT->value)
+                                            ->columnSpan(1),
 
-                ColorPicker::make('gradient_to')
-                    ->label(__('Gradient To'))
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::GRADIENT->value)
-                    ->columnSpan(1),
+                                        ColorPicker::make('gradient_to')
+                                            ->label(__('Gradient To'))
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::GRADIENT->value)
+                                            ->columnSpan(1),
 
-                Select::make('gradient_direction')
-                    ->label(__('Gradient Direction'))
+                                        Select::make('gradient_direction')
+                                            ->label(__('Gradient Direction'))
+                                            ->options([
+                                                'to-r' => __('Left to Right'),
+                                                'to-l' => __('Right to Left'),
+                                                'to-t' => __('Bottom to Top'),
+                                                'to-b' => __('Top to Bottom'),
+                                                'to-br' => __('Top-Left to Bottom-Right'),
+                                                'to-bl' => __('Top-Right to Bottom-Left'),
+                                            ])
+                                            ->default('to-r')
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::GRADIENT->value)
+                                            ->columnSpan(1),
+
+                                        // Image
+                                        FileUpload::make('background_image')
+                                            ->label(__('Background Image'))
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('cms-backgrounds')
+                                            ->visibility('public')
+                                            ->imageEditor()
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::IMAGE->value)
+                                            ->columnSpan(3),
+
+                                        Select::make('background_size')
+                                            ->label(__('Image Size'))
+                                            ->options([
+                                                'cover' => __('Cover'),
+                                                'contain' => __('Contain'),
+                                                'auto' => __('Auto'),
+                                            ])
+                                            ->default('cover')
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::IMAGE->value)
+                                            ->columnSpan(1),
+
+                                        Select::make('background_position')
+                                            ->label(__('Image Position'))
+                                            ->options([
+                                                'center' => __('Center'),
+                                                'top' => __('Top'),
+                                                'bottom' => __('Bottom'),
+                                                'left' => __('Left'),
+                                                'right' => __('Right'),
+                                            ])
+                                            ->default('center')
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::IMAGE->value)
+                                            ->columnSpan(2),
+
+                                        // Pattern
+                                        Select::make('pattern_type')
+                                            ->label(__('Pattern Type'))
+                                            ->options([
+                                                'dots' => __('Dots'),
+                                                'grid' => __('Grid'),
+                                                'stripes' => __('Stripes'),
+                                                'waves' => __('Waves'),
+                                                'circles' => __('Circles'),
+                                                'zigzag' => __('Zigzag'),
+                                                'cross' => __('Cross'),
+                                                'hexagons' => __('Hexagons'),
+                                            ])
+                                            ->default('dots')
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
+                                            ->columnSpan(3),
+
+                                        ColorPicker::make('pattern_background_color')
+                                            ->label(__('Background Color'))
+                                            ->default('#ffffff')
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
+                                            ->columnSpan(1),
+
+                                        ColorPicker::make('pattern_color')
+                                            ->label(__('Pattern Color'))
+                                            ->default('#e5e7eb')
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
+                                            ->columnSpan(1),
+
+                                        TextInput::make('pattern_opacity')
+                                            ->label(__('Pattern Opacity'))
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->maxValue(100)
+                                            ->default(100)
+                                            ->suffix('%')
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
+                                            ->columnSpan(1),
+
+                                        TextInput::make('pattern_size')
+                                            ->label(__('Pattern Size'))
+                                            ->numeric()
+                                            ->minValue(5)
+                                            ->maxValue(200)
+                                            ->default(20)
+                                            ->suffix('px')
+                                            ->helperText(__('Size of the pattern tile'))
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
+                                            ->columnSpan(1),
+
+                                        TextInput::make('pattern_spacing')
+                                            ->label(__('Pattern Spacing'))
+                                            ->numeric()
+                                            ->minValue(1)
+                                            ->maxValue(100)
+                                            ->default(15)
+                                            ->suffix('px')
+                                            ->helperText(__('Distance between pattern elements'))
+                                            ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
+                                            ->columnSpan(2),
+                                    ])
+                                    ->columns(3),
+
+                                Tabs\Tab::make('Dark Mode')
+                                    ->icon('heroicon-o-moon')
+                                    ->schema([
+                                Select::make('background_type_dark')
+                                    ->label(__('Background Type'))
+                                    ->options(BackgroundType::options())
+                                    ->default(BackgroundType::NONE->value)
+                                    ->live()
+                                    ->columnSpan(3),
+
+                                // Solid Color
+                                ColorPicker::make('background_color_dark')
+                                    ->label(__('Background Color'))
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::COLOR->value)
+                                    ->columnSpan(2),
+
+                                TextInput::make('background_opacity_dark')
+                                    ->label(__('Opacity'))
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->maxValue(100)
+                                    ->default(100)
+                                    ->suffix('%')
+                                    ->visible(fn ($get) => in_array($get('background_type_dark'), [BackgroundType::COLOR->value, BackgroundType::GRADIENT->value, BackgroundType::IMAGE->value]))
+                                    ->columnSpan(1),
+
+                                // Gradient
+                                ColorPicker::make('gradient_from_dark')
+                                    ->label(__('Gradient From'))
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::GRADIENT->value)
+                                    ->columnSpan(1),
+
+                                ColorPicker::make('gradient_to_dark')
+                                    ->label(__('Gradient To'))
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::GRADIENT->value)
+                                    ->columnSpan(1),
+
+                                Select::make('gradient_direction_dark')
+                                    ->label(__('Gradient Direction'))
+                                    ->options([
+                                        'to-r' => __('Left to Right'),
+                                        'to-l' => __('Right to Left'),
+                                        'to-t' => __('Bottom to Top'),
+                                        'to-b' => __('Top to Bottom'),
+                                        'to-br' => __('Top-Left to Bottom-Right'),
+                                        'to-bl' => __('Top-Right to Bottom-Left'),
+                                    ])
+                                    ->default('to-r')
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::GRADIENT->value)
+                                    ->columnSpan(1),
+
+                                // Image
+                                FileUpload::make('background_image_dark')
+                                    ->label(__('Background Image'))
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('cms-backgrounds')
+                                    ->visibility('public')
+                                    ->imageEditor()
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::IMAGE->value)
+                                    ->columnSpan(3),
+
+                                Select::make('background_size_dark')
+                                    ->label(__('Image Size'))
+                                    ->options([
+                                        'cover' => __('Cover'),
+                                        'contain' => __('Contain'),
+                                        'auto' => __('Auto'),
+                                    ])
+                                    ->default('cover')
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::IMAGE->value)
+                                    ->columnSpan(1),
+
+                                Select::make('background_position_dark')
+                                    ->label(__('Image Position'))
+                                    ->options([
+                                        'center' => __('Center'),
+                                        'top' => __('Top'),
+                                        'bottom' => __('Bottom'),
+                                        'left' => __('Left'),
+                                        'right' => __('Right'),
+                                    ])
+                                    ->default('center')
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::IMAGE->value)
+                                    ->columnSpan(2),
+
+                                // Pattern
+                                Select::make('pattern_type_dark')
+                                    ->label(__('Pattern Type'))
+                                    ->options([
+                                        'dots' => __('Dots'),
+                                        'grid' => __('Grid'),
+                                        'stripes' => __('Stripes'),
+                                        'waves' => __('Waves'),
+                                        'circles' => __('Circles'),
+                                        'zigzag' => __('Zigzag'),
+                                        'cross' => __('Cross'),
+                                        'hexagons' => __('Hexagons'),
+                                    ])
+                                    ->default('dots')
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::PATTERN->value)
+                                    ->columnSpan(3),
+
+                                ColorPicker::make('pattern_background_color_dark')
+                                    ->label(__('Background Color'))
+                                    ->default('#ffffff')
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::PATTERN->value)
+                                    ->columnSpan(1),
+
+                                ColorPicker::make('pattern_color_dark')
+                                    ->label(__('Pattern Color'))
+                                    ->default('#e5e7eb')
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::PATTERN->value)
+                                    ->columnSpan(1),
+
+                                TextInput::make('pattern_opacity_dark')
+                                    ->label(__('Pattern Opacity'))
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->maxValue(100)
+                                    ->default(100)
+                                    ->suffix('%')
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::PATTERN->value)
+                                    ->columnSpan(1),
+
+                                TextInput::make('pattern_size_dark')
+                                    ->label(__('Pattern Size'))
+                                    ->numeric()
+                                    ->minValue(5)
+                                    ->maxValue(200)
+                                    ->default(20)
+                                    ->suffix('px')
+                                    ->helperText(__('Size of the pattern tile'))
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::PATTERN->value)
+                                    ->columnSpan(1),
+
+                                TextInput::make('pattern_spacing_dark')
+                                    ->label(__('Pattern Spacing'))
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->maxValue(100)
+                                    ->default(15)
+                                    ->suffix('px')
+                                    ->helperText(__('Distance between pattern elements'))
+                                    ->visible(fn ($get) => $get('background_type_dark') === BackgroundType::PATTERN->value)
+                                    ->columnSpan(2),
+                            ])
+                            ->columns(3),
+                    ]),
+
+                // Text Shadow (shared between modes)
+                Toggle::make('text_shadow')
+                    ->label(__('Add Text Shadow'))
+                    ->helperText(__('Add drop shadow to text for better readability'))
+                    ->default(false)
+                    ->live(),
+
+                Select::make('shadow_intensity')
+                    ->label(__('Shadow Intensity'))
                     ->options([
-                        'to-r' => __('Left to Right'),
-                        'to-l' => __('Right to Left'),
-                        'to-t' => __('Bottom to Top'),
-                        'to-b' => __('Top to Bottom'),
-                        'to-br' => __('Top-Left to Bottom-Right'),
-                        'to-bl' => __('Top-Right to Bottom-Left'),
+                        'light' => __('Light'),
+                        'medium' => __('Medium'),
+                        'heavy' => __('Heavy'),
                     ])
-                    ->default('to-r')
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::GRADIENT->value)
-                    ->columnSpan(2),
+                    ->default('medium')
+                    ->visible(fn ($get) => $get('text_shadow') === true),
+            ])
+            ->columnSpan(1), // Left group takes 1 column
 
-                // Image
-                FileUpload::make('background_image')
-                    ->label(__('Background Image'))
-                    ->image()
-                    ->disk('public')
-                    ->directory('cms-backgrounds')
-                    ->visibility('public')
-                    ->imageEditor()
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::IMAGE->value)
-                    ->columnSpan(2),
+            // Right Column: Text Colors
+            Group::make()
+                ->schema([
+                    // Text Colors with Light/Dark tabs
+                    Tabs::make('text_colors_mode')
+                        ->tabs([
+                            Tabs\Tab::make('Light Mode')
+                            ->icon('heroicon-o-sun')
+                            ->schema([
+                                ColorPicker::make('heading_color')
+                                    ->label(__('Headings Color'))
+                                    ->helperText(__('Color for h1, h2, h3, etc.'))
+                                    ->columnSpan(1),
 
-                Select::make('background_size')
-                    ->label(__('Image Size'))
-                    ->options([
-                        'cover' => __('Cover'),
-                        'contain' => __('Contain'),
-                        'auto' => __('Auto'),
-                    ])
-                    ->default('cover')
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::IMAGE->value)
-                    ->columnSpan(1),
+                                ColorPicker::make('text_color')
+                                    ->label(__('Body Text Color'))
+                                    ->helperText(__('Color for paragraphs and list items'))
+                                    ->columnSpan(1),
 
-                Select::make('background_position')
-                    ->label(__('Image Position'))
-                    ->options([
-                        'center' => __('Center'),
-                        'top' => __('Top'),
-                        'bottom' => __('Bottom'),
-                        'left' => __('Left'),
-                        'right' => __('Right'),
-                    ])
-                    ->default('center')
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::IMAGE->value)
-                    ->columnSpan(1),
+                                ColorPicker::make('subtitle_color')
+                                    ->label(__('Subtitle Color'))
+                                    ->helperText(__('Color for subtitles and secondary text'))
+                                    ->columnSpan(1),
+                            ])
+                            ->columns(2),
 
-                // Pattern
-                Select::make('pattern_type')
-                    ->label(__('Pattern Type'))
-                    ->options([
-                        'dots' => __('Dots'),
-                        'grid' => __('Grid'),
-                        'stripes' => __('Stripes'),
-                        'waves' => __('Waves'),
-                        'circles' => __('Circles'),
-                        'zigzag' => __('Zigzag'),
-                        'cross' => __('Cross'),
-                        'hexagons' => __('Hexagons'),
-                    ])
-                    ->default('dots')
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
-                    ->columnSpan(2),
+                        Tabs\Tab::make('Dark Mode')
+                            ->icon('heroicon-o-moon')
+                            ->schema([
+                                ColorPicker::make('heading_color_dark')
+                                    ->label(__('Headings Color'))
+                                    ->helperText(__('Color for h1, h2, h3, etc.'))
+                                    ->columnSpan(1),
 
-                ColorPicker::make('pattern_background_color')
-                    ->label(__('Background Color'))
-                    ->default('#ffffff')
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
-                    ->columnSpan(1),
+                                ColorPicker::make('text_color_dark')
+                                    ->label(__('Body Text Color'))
+                                    ->helperText(__('Color for paragraphs and list items'))
+                                    ->columnSpan(1),
 
-                ColorPicker::make('pattern_color')
-                    ->label(__('Pattern Color'))
-                    ->default('#e5e7eb')
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
-                    ->columnSpan(1),
-
-                TextInput::make('pattern_opacity')
-                    ->label(__('Pattern Opacity'))
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(100)
-                    ->default(100)
-                    ->suffix('%')
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
-                    ->columnSpan(1),
-
-                TextInput::make('pattern_size')
-                    ->label(__('Pattern Size'))
-                    ->numeric()
-                    ->minValue(5)
-                    ->maxValue(200)
-                    ->default(20)
-                    ->suffix('px')
-                    ->helperText(__('Size of the pattern tile'))
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
-                    ->columnSpan(1),
-
-                TextInput::make('pattern_spacing')
-                    ->label(__('Pattern Spacing'))
-                    ->numeric()
-                    ->minValue(1)
-                    ->maxValue(100)
-                    ->default(15)
-                    ->suffix('px')
-                    ->helperText(__('Distance between pattern elements'))
-                    ->visible(fn ($get) => $get('background_type') === BackgroundType::PATTERN->value)
-                    ->columnSpan(1),
+                                ColorPicker::make('subtitle_color_dark')
+                                    ->label(__('Subtitle Color'))
+                                    ->helperText(__('Color for subtitles and secondary text'))
+                                    ->columnSpan(1),
+                            ])
+                            ->columns(2),
+                        ])
+                ])
+                ->columnSpan(1), // Right group takes 1 column
             ])
             ->columns(2)
             ->collapsible()
             ->collapsed();
+    }
+
+    protected static function waveSeparatorBlock(): Block
+    {
+        return Block::make(CmsBlockType::WAVE_SEPARATOR->value)
+            ->label(CmsBlockType::WAVE_SEPARATOR->getLabel())
+            ->icon(CmsBlockType::WAVE_SEPARATOR->getIcon())
+            ->schema([
+                Section::make(__('Wave Settings'))
+                    ->schema([
+                        Select::make('position')
+                            ->label(__('Position'))
+                            ->options([
+                                'top' => __('Top'),
+                                'bottom' => __('Bottom'),
+                                'both' => __('Both (Top & Bottom)'),
+                            ])
+                            ->default('bottom')
+                            ->required()
+                            ->columnSpan(1),
+
+                        Select::make('height')
+                            ->label(__('Height'))
+                            ->options([
+                                'short' => __('Short'),
+                                'normal' => __('Normal'),
+                                'tall' => __('Tall'),
+                            ])
+                            ->default('normal')
+                            ->columnSpan(1),
+
+                        Select::make('wave_mode')
+                            ->label(__('Wave Mode'))
+                            ->options([
+                                'auto' => __('Auto (Intelligent Colors)'),
+                                'manual' => __('Manual (Custom Colors)'),
+                            ])
+                            ->default('auto')
+                            ->required()
+                            ->helperText(__('Auto mode intelligently blends colors from adjacent blocks. Manual mode lets you customize colors.'))
+                            ->columnSpan(2),
+
+                        Select::make('wave_style')
+                            ->label(__('Wave Style'))
+                            ->options([
+                                'wave' => __('Wave 1'),
+                                'wave-2' => __('Wave 2'),
+                                'wave-3' => __('Wave 3'),
+                                'curve' => __('Curve'),
+                            ])
+                            ->default('wave-3')
+                            ->required()
+                            ->columnSpan(1),
+
+                        Select::make('wave_amplitude')
+                            ->label(__('Wave Amplitude'))
+                            ->options([
+                                'low' => __('Low'),
+                                'medium' => __('Medium'),
+                                'high' => __('High'),
+                            ])
+                            ->default('medium')
+                            ->required()
+                            ->columnSpan(1),
+
+                        ColorPicker::make('wave_color_light')
+                            ->label(__('Wave Color (Light Theme)'))
+                            ->default('#d946ef')
+                            ->columnSpan(1)
+                            ->visible(fn(callable $get) => $get('wave_mode') === 'manual'),
+
+                        ColorPicker::make('wave_color_dark')
+                            ->label(__('Wave Color (Dark Theme)'))
+                            ->default('#ec4899')
+                            ->columnSpan(1)
+                            ->visible(fn(callable $get) => $get('wave_mode') === 'manual'),
+
+                        Select::make('wave_fill_style')
+                            ->label(__('Fill Style'))
+                            ->options([
+                                'fill' => __('Fill'),
+                                'stroke' => __('Stroke'),
+                            ])
+                            ->default('fill')
+                            ->columnSpan(1)
+                            ->visible(fn(callable $get) => $get('wave_mode') === 'manual'),
+
+                        TextInput::make('wave_opacity')
+                            ->label(__('Opacity'))
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->default(100)
+                            ->suffix('%')
+                            ->helperText(__('Set the transparency: 0% (invisible) to 100% (opaque)'))
+                            ->columnSpan(1)
+                            ->visible(fn(callable $get) => $get('wave_mode') === 'manual'),
+                    ])
+                    ->columns(2),
+
+                self::getBackgroundFields(),
+            ])
+            ->columns(1);
+    }
+
+    protected static function transitionDiagonalBlock(): Block
+    {
+        return Block::make(CmsBlockType::TRANSITION_DIAGONAL->value)
+            ->label(CmsBlockType::TRANSITION_DIAGONAL->getLabel())
+            ->icon(CmsBlockType::TRANSITION_DIAGONAL->getIcon())
+            ->schema([
+                Section::make(__('⚠️ Important'))
+                    ->description(__('Transitions work best when the NEXT block has a solid background color (not a gradient). If the next block has a gradient, the transition may not render as expected.'))
+                    ->schema([]),
+
+                Section::make(__('Shape & Style'))
+                    ->schema([
+                        Select::make('shape')
+                            ->label(__('Shape'))
+                            ->options([
+                                'wavy' => __('Wavy (Smooth curves)'),
+                                'zigzag' => __('Zigzag (Sharp angles)'),
+                                'diagonal' => __('Diagonal (Simple angle)'),
+                                'smooth' => __('Smooth (Organic curves)'),
+                            ])
+                            ->default('wavy')
+                            ->required()
+                            ->live()
+                            ->columnSpan(2),
+
+                        Select::make('diagonal_direction')
+                            ->label(__('Diagonal Direction'))
+                            ->options([
+                                'left' => __('Left to Right ↗'),
+                                'right' => __('Right to Left ↖'),
+                            ])
+                            ->default('left')
+                            ->visible(fn ($get) => $get('shape') === 'diagonal')
+                            ->dehydrated()
+                            ->columnSpan(1),
+
+                        TextInput::make('amplitude')
+                            ->label(__('Wave Amplitude (px)'))
+                            ->numeric()
+                            ->minValue(10)
+                            ->maxValue(100)
+                            ->default(40)
+                            ->helperText(__('Height of the wave peak. Higher values create more dramatic transitions.'))
+                            ->columnSpan(1),
+                    ])
+                    ->columns(2),
+            ])
+            ->columns(1);
+    }
+
+    protected static function transitionClippathBlock(): Block
+    {
+        return Block::make(CmsBlockType::TRANSITION_CLIPPATH->value)
+            ->label(CmsBlockType::TRANSITION_CLIPPATH->getLabel())
+            ->icon(CmsBlockType::TRANSITION_CLIPPATH->getIcon())
+            ->schema([
+                Section::make(__('Clip Path Transition Settings'))
+                    ->description(__('Creates a decorative clip-path transition between blocks'))
+                    ->schema([
+                        Select::make('height')
+                            ->label(__('Height'))
+                            ->options([
+                                'short' => __('Short'),
+                                'normal' => __('Normal'),
+                                'tall' => __('Tall'),
+                            ])
+                            ->default('normal')
+                            ->required(),
+
+                        Select::make('clip_style')
+                            ->label(__('Clip Style'))
+                            ->options([
+                                'wavy' => __('Wavy'),
+                                'zigzag' => __('Zigzag'),
+                                'smooth' => __('Smooth Angle'),
+                            ])
+                            ->default('wavy')
+                            ->required(),
+                    ]),
+            ])
+            ->columns(1);
+    }
+
+    protected static function transitionMarginBlock(): Block
+    {
+        return Block::make(CmsBlockType::TRANSITION_MARGIN->value)
+            ->label(CmsBlockType::TRANSITION_MARGIN->getLabel())
+            ->icon(CmsBlockType::TRANSITION_MARGIN->getIcon())
+            ->schema([
+                Section::make(__('Simple Transition Settings'))
+                    ->description(__('Creates a simple gradient overlap transition'))
+                    ->schema([
+                        Select::make('height')
+                            ->label(__('Height'))
+                            ->options([
+                                'short' => __('Short'),
+                                'normal' => __('Normal'),
+                                'tall' => __('Tall'),
+                            ])
+                            ->default('normal')
+                            ->required(),
+                    ]),
+            ])
+            ->columns(1);
+    }
+
+    protected static function transitionAnimationBlock(): Block
+    {
+        return Block::make(CmsBlockType::TRANSITION_ANIMATION->value)
+            ->label(CmsBlockType::TRANSITION_ANIMATION->getLabel())
+            ->icon(CmsBlockType::TRANSITION_ANIMATION->getIcon())
+            ->schema([
+                Section::make(__('Animated Transition Settings'))
+                    ->description(__('Creates an animated transition with entrance effect'))
+                    ->schema([
+                        Select::make('height')
+                            ->label(__('Height'))
+                            ->options([
+                                'short' => __('Short'),
+                                'normal' => __('Normal'),
+                                'tall' => __('Tall'),
+                            ])
+                            ->default('normal')
+                            ->required(),
+
+                        Select::make('animation_type')
+                            ->label(__('Animation Type'))
+                            ->options([
+                                'fade-slide' => __('Fade & Slide'),
+                                'scale' => __('Scale'),
+                                'rotate' => __('Rotate'),
+                            ])
+                            ->default('fade-slide')
+                            ->required(),
+                    ]),
+            ])
+            ->columns(1);
+    }
+
+    protected static function blogTitleBlock(): Block
+    {
+        return Block::make(CmsBlockType::BLOG_TITLE->value)
+            ->label(CmsBlockType::BLOG_TITLE->getLabel())
+            ->icon(CmsBlockType::BLOG_TITLE->getIcon())
+            ->schema([
+                Section::make(__('Title Content'))
+                    ->schema([
+                        TextInput::make('title')
+                            ->label(__('Title'))
+                            ->default(__('Blog'))
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpan(2),
+
+                        Textarea::make('description')
+                            ->label(__('Description (Optional)'))
+                            ->maxLength(500)
+                            ->rows(3)
+                            ->columnSpan(2),
+
+                        Toggle::make('enabled')
+                            ->label(__('Display This Section'))
+                            ->default(true)
+                            ->columnSpan(1),
+
+                        TextInput::make('padding_top')
+                            ->label(__('Top Padding'))
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(200)
+                            ->default(40)
+                            ->suffix('px')
+                            ->columnSpan(1),
+
+                        TextInput::make('padding_bottom')
+                            ->label(__('Bottom Padding'))
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(200)
+                            ->default(40)
+                            ->suffix('px')
+                            ->columnSpan(1),
+
+                        Select::make('text_alignment')
+                            ->label(__('Text Alignment'))
+                            ->options([
+                                'left' => __('Left'),
+                                'center' => __('Center'),
+                                'right' => __('Right'),
+                            ])
+                            ->default('center')
+                            ->columnSpan(1),
+                    ]),
+
+                self::getBackgroundFields(),
+            ])
+            ->columns(1);
     }
 }

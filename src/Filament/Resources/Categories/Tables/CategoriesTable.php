@@ -21,15 +21,18 @@ class CategoriesTable
     {
         return $table
             ->columns([
-                //
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('slug')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 IconColumn::make('is_default')
                     ->boolean(),
                 TextColumn::make('posts_count')
-                    ->counts('posts'),
+                    ->counts('posts')
+                    ->sortable()
+                    ->label('Post Count'),
             ])
             ->filters([
                 // TrashedFilter::make(),

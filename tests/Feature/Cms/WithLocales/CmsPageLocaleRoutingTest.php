@@ -13,7 +13,6 @@ test('CMS homepage is accessible at locale root', function () {
         'locale' => 'en',
         'title' => 'Welcome',
         'slug' => 'home',
-        'content' => 'English homepage',
     ]);
     
     $response = get('/en');
@@ -28,7 +27,6 @@ test('CMS page is accessible with locale prefix', function () {
         'locale' => 'en',
         'title' => 'About Us',
         'slug' => 'about',
-        'content' => 'About content',
     ]);
     
     $response = get('/en/about');
@@ -45,7 +43,6 @@ test('CMS page falls back to default locale when translation missing', function 
         'locale' => 'en',
         'title' => 'About Us',
         'slug' => 'about',
-        'content' => 'English content',
     ]);
     
     // Request French (should fallback to English)
@@ -53,5 +50,4 @@ test('CMS page falls back to default locale when translation missing', function 
     
     $response->assertStatus(200);
     $response->assertSee('About Us'); // English title
-    $response->assertSee('English content');
 });
