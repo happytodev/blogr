@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.15.0](https://github.com/happytodev/blogr/compare/v0.15.0...v0.14.1) - 2025-11-23
+
 ### ✨ Features
 
 - **Dark Mode Support for Wave Separators** ✅ NEW:
