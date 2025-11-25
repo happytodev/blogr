@@ -187,6 +187,35 @@ Six powerful widgets to monitor your blog:
 - **FilamentPHP v4.x**
 - PHP 8.3+
 
+### Pre-Installation Steps (if starting from scratch)
+
+If you don't have a Laravel + FilamentPHP project yet, follow these steps first:
+
+#### 1️⃣ Create a new Laravel project
+
+```bash
+laravel new my-blog
+cd my-blog
+```
+
+#### 2️⃣ Install FilamentPHP with admin panel
+
+```bash
+composer require filament/filament
+
+php artisan filament:install --panels
+```
+
+#### 3️⃣ Create a User model with migration
+
+```bash
+php artisan make:filament-user
+```
+
+---
+
+### Now ready for Blogr! Continue with the installation below ⬇️
+
 ### Installation (2 minutes!)
 
 ```bash
