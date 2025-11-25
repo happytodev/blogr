@@ -5,6 +5,22 @@ All notable changes to `blogr` will be documented in this file.
 ## Unpublished
 
 
+## [v0.15.2](https://github.com/happytodev/blogr/compare/v0.15.2...v0.15.1) - 2025-11-25
+
+### 🐛 Critical Bug Fixes
+
+- **Permission Migration Conflict** (CRITICAL):
+  - **Removed** package's own `2024_01_01_000001_create_permission_tables.php` migration
+  - Now uses **Spatie's official migration** published via `vendor:publish`
+  - **Fixes**: "Migration failed: Table 'permissions' already exists" error during fresh installations
+  - Test environment still uses protected migration with `Schema::hasTable()` checks
+  - **Result**: No more duplicate permission migrations causing installation failures
+
+### 🧹 Code Cleanup
+
+- **Removed package's permission migration** `2024_01_01_000001_create_permission_tables.php` (now using Spatie's official version)
+
+
 ## [v0.15.1](https://github.com/happytodev/blogr/compare/v0.15.1...v0.15.0) - 2025-11-25
 
 ### 🔧 Installation Process Improvements
@@ -30,9 +46,6 @@ All notable changes to `blogr` will be documented in this file.
 
 ### 🐛 Critical Bug Fixes
 
-- **Permission Migration Idempotency**:
-  - Added `Schema::hasTable()` check to prevent errors if permission tables already exist
-  - Prevents "Table already exists" errors on repeated installations or test runs
 
 - **Admin Role Assignment** (CRITICAL):
   - Changed from `assignRole('admin')` to `syncRoles(['admin'])`
@@ -49,7 +62,6 @@ All notable changes to `blogr` will be documented in this file.
 - Removed unused `create_blogr_table.php.stub` (empty migration template)
 - Removed unused `2024_01_01_000001_create_permission_tables.php.stub` (redundant Spatie stub)
 - Removed `create_blogr_table` from `getMigrations()` in BlogrServiceProvider (no longer exists)
-- Integrated permission migration as proper `.php` file (previously `.backup`)
 
 ### 🧪 New Test Coverage
 

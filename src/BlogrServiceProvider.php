@@ -202,10 +202,25 @@ class BlogrServiceProvider extends PackageServiceProvider
                 __DIR__ . '/../resources/views' => resource_path('views/vendor/blogr'),
             ], ['blogr-views', 'blogr']);
             
-            // Publish migrations (already handled by Spatie Package Tools, but we add 'blogr' tag)
-            $this->publishes([
-                __DIR__ . '/../database/migrations' => database_path('migrations'),
-            ], ['blogr-migrations', 'blogr']);
+            // Publish migrations (excluding permission migration which is loaded internally)
+            // Note: We exclude 2024_01_01_000001_create_permission_tables.php because:
+            // 1. It's loaded by the package directly (hasMigrations() call)
+            // 2. It contains Schema::hasTable() checks for idempotency
+            // 3. Users should NOT publish it manually to avoid conflicts
+            $migrationFiles = glob(__DIR__ . '/../database/migrations/*.php');
+            $migrationsToPublish = [];
+            
+            foreach ($migrationFiles as $migrationFile) {
+                // Exclude permission migration from manual publishing
+                if (!str_contains($migrationFile, 'create_permission_tables.php')) {
+                    $filename = basename($migrationFile);
+                    $migrationsToPublish[$migrationFile] = database_path("migrations/{$filename}");
+                }
+            }
+            
+            if (!empty($migrationsToPublish)) {
+                $this->publishes($migrationsToPublish, ['blogr-migrations', 'blogr']);
+            }
         }
 
         // Testing
@@ -642,7 +657,11 @@ class BlogrServiceProvider extends PackageServiceProvider
      */
     protected function getMigrations(): array
     {
-        $migrations = [];
+        $migrations = [
+            // Permission tables migration (loaded automatically, NOT published)
+            // This prevents conflicts with Spatie's migration
+            '2024_01_01_000001_create_permission_tables',
+        ];
 
         // Add CMS migrations if CMS is enabled
         if (config('blogr.cms.enabled', false)) {
