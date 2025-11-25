@@ -234,6 +234,8 @@ The installer handles everything:
 - ✅ Configures Alpine.js & Tailwind CSS
 - ✅ Installs npm dependencies
 - ✅ Creates storage symlink
+- ✅ Configures CMS preferences (interactive)
+- ✅ Comments out default Laravel route (automatic)
 - ✅ (Optional) Installs tutorial content
 
 ### Installation Options
