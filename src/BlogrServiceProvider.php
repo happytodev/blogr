@@ -489,8 +489,8 @@ class BlogrServiceProvider extends PackageServiceProvider
         $defaultLocale = config('blogr.locales.default', 'en');
         $availableLocales = config('blogr.locales.available', ['en']);
         $localePattern = implode('|', $availableLocales);
-        $cmsPrefix = trim(config('blogr.cms.route.prefix', ''), '/');
-        $middleware = config('blogr.cms.route.middleware', ['web']);
+        $cmsPrefix = trim(config('blogr.cms.prefix', ''), '/');
+        $middleware = config('blogr.route.middleware', ['web']);
         
         // Get reserved slugs (blog, feed, author, etc.)
         $reservedSlugs = config('blogr.cms.reserved_slugs', [
