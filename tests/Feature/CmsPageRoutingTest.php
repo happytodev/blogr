@@ -15,7 +15,7 @@ beforeEach(function () {
 
 describe('CMS Routes - Without Prefix', function () {
     beforeEach(function () {
-        config(['blogr.cms.route.prefix' => '']);
+        config(['blogr.cms.prefix' => '']);
     });
 
     test('CMS homepage is accessible at root when blog is not homepage', function () {
@@ -139,7 +139,7 @@ describe('CMS Homepage Management', function () {
     });
 
     test('homepage does not use prefix even when configured', function () {
-        config(['blogr.cms.route.prefix' => 'page']);
+        config(['blogr.cms.prefix' => 'page']);
         config(['blogr.route.homepage' => false]);
         
         $page = CmsPage::factory()->homepage()->create();
