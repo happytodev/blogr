@@ -23,7 +23,7 @@ class TestUsersSeeder extends Seeder
             );
         } catch (\Exception $e) {
             // Roles table might not exist yet, continue anyway
-            $this->command->warn('⚠️  Could not create roles: ' . $e->getMessage());
+            $this->command?->warn('⚠️  Could not create roles: ' . $e->getMessage());
         }
 
         // Create admin user
@@ -53,7 +53,7 @@ class TestUsersSeeder extends Seeder
                 }
             }
         } catch (\Exception $e) {
-            $this->command->warn('⚠️  Could not assign admin role: ' . $e->getMessage());
+            $this->command?->warn('⚠️  Could not assign admin role: ' . $e->getMessage());
         }
 
         // Create writer user
@@ -83,11 +83,11 @@ class TestUsersSeeder extends Seeder
                 }
             }
         } catch (\Exception $e) {
-            $this->command->warn('⚠️  Could not assign writer role: ' . $e->getMessage());
+            $this->command?->warn('⚠️  Could not assign writer role: ' . $e->getMessage());
         }
 
-        $this->command->info('✅ Test users created successfully.');
-        $this->command->info('   • admin@demo.com (password: password) - Admin role');
-        $this->command->info('   • writer@demo.com (password: password) - Writer role');
+        $this->command?->info('✅ Test users created successfully.');
+        $this->command?->info('   • admin@demo.com (password: password) - Admin role');
+        $this->command?->info('   • writer@demo.com (password: password) - Writer role');
     }
 }

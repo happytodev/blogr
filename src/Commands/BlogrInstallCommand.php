@@ -13,13 +13,7 @@ use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
 
 class BlogrInstallCommand extends Command
 {
-    public $signature = 'blogr:install 
-                        {--skip-npm : Skip npm dependencies installation} 
-                        {--skip-tutorials : Skip tutorial content installation}
-                        {--skip-series : Skip series content installation}
-                        {--skip-frontend : Skip frontend configuration (Alpine.js and Tailwind CSS)}
-                        {--skip-build : Skip npm run build at the end}
-                        {--force : Non-interactive mode - answer yes to all prompts}';
+    public $signature = 'blogr:install {--skip-npm : Skip npm dependencies installation} {--skip-tutorials : Skip tutorial content installation} {--skip-series : Skip series content installation} {--skip-frontend : Skip frontend configuration (Alpine.js and Tailwind CSS)} {--skip-build : Skip npm run build at the end} {--force : Non-interactive mode - answer yes to all prompts}';
 
     public $description = 'Install and configure Blogr with all necessary steps';
 
@@ -43,6 +37,10 @@ class BlogrInstallCommand extends Command
     {
         $this->info('🚀 Welcome to Blogr Installation!');
         $this->line('This command will help you set up Blogr automatically.');
+        $this->newLine();
+
+        // Step 0: Configure application URL
+        $this->configureAppUrl();
         $this->newLine();
 
         // Step 1: Publish configuration and migrations
@@ -153,7 +151,7 @@ class BlogrInstallCommand extends Command
         ]);
 
         // Optionally publish Spatie Permission config
-        if ($this->forceableConfirm('Would you like to publish Spatie Permission configuration file?', false)) {
+        if ($this->forceableConfirm('Would you like to publish Spatie Permission configuration file?', true)) {
             $this->call('vendor:publish', [
                 '--provider' => 'Spatie\Permission\PermissionServiceProvider',
                 '--tag' => 'permission-config'
@@ -259,10 +257,10 @@ class BlogrInstallCommand extends Command
         $this->info('📚 Installing tutorial content...');
 
         if ($this->forceableConfirm('Would you like to install default tutorial content to help you get started?', true)) {
-            $this->call('blogr', ['action' => 'install-tutorials']);
+            $this->call('blogr:install-tutorials', ['--force' => true]);
             $this->info('✅ Tutorial content installed successfully.');
         } else {
-            $this->line('ℹ️ Tutorial installation skipped. You can install it later with: php artisan blogr install-tutorials');
+            $this->line('ℹ️ Tutorial installation skipped. You can install it later with: php artisan blogr:install-tutorials');
         }
     }
 
@@ -1264,37 +1262,43 @@ METHOD;
         try {
             $userModel = config('auth.providers.users.model', \App\Models\User::class);
             
-            // Check if any users exist (excluding test users we just created)
-            $existingUsers = $userModel::whereNotIn('email', [
+            // Get the very first user created (lowest ID), excluding demo users
+            $firstUser = $userModel::whereNotIn('email', [
                 'admin@demo.com',
                 'writer@demo.com',
-            ])->get();
+            ])->orderBy('id', 'asc')->first();
 
-            if ($existingUsers->isEmpty()) {
+            if (!$firstUser) {
                 $this->line('ℹ️  No existing users found to assign admin role.');
                 return;
             }
 
-            // Get the first user
-            $firstUser = $existingUsers->first();
-
-            // Check if user already has any role
-            if (method_exists($firstUser, 'hasAnyRole') && $firstUser->hasAnyRole(['admin', 'writer'])) {
-                $this->line("✅ User '{$firstUser->name}' already has a role assigned.");
+            // Check if HasRoles trait is available
+            if (!method_exists($firstUser, 'assignRole')) {
+                $this->warn('⚠️  User model does not have assignRole method. Make sure HasRoles trait is used.');
                 return;
             }
 
-            // Assign admin role
-            if (method_exists($firstUser, 'assignRole')) {
-                $firstUser->assignRole('admin');
-                $this->info("✅ Admin role assigned to user: {$firstUser->name} ({$firstUser->email})");
-                $this->line('🎉 This user now has full access to all Blogr features!');
-            } else {
-                $this->warn('⚠️  User model does not have assignRole method. Make sure HasRoles trait is used.');
+            // Check if user already has admin role
+            if ($firstUser->hasAnyRole(['admin'])) {
+                $this->line("✅ User '{$firstUser->name}' already has admin role.");
+                return;
             }
+
+            // Sync roles to ensure ONLY admin role is assigned (removes any other roles)
+            if (method_exists($firstUser, 'syncRoles')) {
+                $firstUser->syncRoles(['admin']);
+            } else {
+                // Fallback to assignRole if syncRoles not available
+                $firstUser->assignRole('admin');
+            }
+            
+            $this->info("✅ Admin role assigned to user: {$firstUser->name} ({$firstUser->email})");
+            $this->line('🎉 This user now has full access to all Blogr features!');
+            
         } catch (\Exception $e) {
             $this->warn('⚠️  Error assigning admin role: ' . $e->getMessage());
-            $this->line('ℹ️  You can manually assign roles via: php artisan blogr:assign-role');
+            $this->line('ℹ️  You can manually assign roles later if needed.');
         }
     }
 
@@ -1349,6 +1353,78 @@ METHOD;
             $this->line("   You can now manage users in the admin panel.");
         } else {
             $this->line("ℹ️  UserResource files already exist.");
+        }
+    }
+
+    /**
+     * Configure application URL based on environment
+     * Suggests a .test domain for local development
+     */
+    protected function configureAppUrl(): void
+    {
+        $this->info('🌐 Configuring application URL...');
+
+        $suggestedUrl = $this->generateSuggestedUrl();
+        $currentUrl = config('app.url');
+
+        if ($this->option('force')) {
+            // In force mode, use the suggested URL without confirmation
+            if ($suggestedUrl !== $currentUrl) {
+                $this->updateEnvUrl($suggestedUrl);
+                $this->line("   ✓ App URL set to: {$suggestedUrl}");
+            } else {
+                $this->line("   ✓ App URL is already configured: {$currentUrl}");
+            }
+        } else {
+            // In interactive mode, prompt the user
+            $this->line("Current APP_URL: {$currentUrl}");
+            $this->line("Suggested APP_URL: {$suggestedUrl}");
+
+            if ($this->forceableConfirm("Would you like to use the suggested URL?", true)) {
+                $this->updateEnvUrl($suggestedUrl);
+                $this->line("   ✓ App URL set to: {$suggestedUrl}");
+            }
+        }
+    }
+
+    /**
+     * Generate a suggested URL based on the environment
+     */
+    protected function generateSuggestedUrl(): string
+    {
+        $env = config('app.env');
+        $currentUrl = config('app.url');
+
+        // For local development, suggest a .test domain based on folder name
+        if ($env === 'local') {
+            $folderName = basename(base_path());
+            // Convert folder name to a valid domain (lowercase, replace spaces with hyphens)
+            $domainName = strtolower(str_replace([' ', '_'], '-', $folderName));
+            return "http://{$domainName}.test";
+        }
+
+        // For other environments, use the current URL or a default
+        return $currentUrl ?: 'http://example.com';
+    }
+
+    /**
+     * Update the APP_URL in the .env file
+     */
+    protected function updateEnvUrl(string $url): void
+    {
+        $envPath = base_path('.env');
+
+        if (file_exists($envPath)) {
+            $envContent = file_get_contents($envPath);
+
+            // Update or add the APP_URL line
+            if (preg_match('/APP_URL=.*/', $envContent)) {
+                $envContent = preg_replace('/APP_URL=.*/', "APP_URL={$url}", $envContent);
+            } else {
+                $envContent .= "\nAPP_URL={$url}";
+            }
+
+            file_put_contents($envPath, $envContent);
         }
     }
 }

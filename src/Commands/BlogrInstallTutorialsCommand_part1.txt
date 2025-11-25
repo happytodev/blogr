@@ -1,0 +1,146 @@
+<?php
+
+namespace Happytodev\Blogr\Commands;
+
+use Happytodev\Blogr\Models\BlogPost;
+use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Models\User;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+
+class BlogrInstallTutorialsCommand extends Command
+{
+    public $signature = 'blogr:install-tutorials
+                        {--force : Skip confirmation prompts}';
+
+    public $description = 'Install default Blogr tutorial content';
+
+    public function handle(): int
+    {
+        $this->info('Installing Blogr tutorial content...');
+
+        if (!$this->option('force') && !$this->confirm('This will create tutorial posts. Continue?')) {
+            $this->warn('Installation cancelled.');
+            return self::FAILURE;
+        }
+
+        DB::beginTransaction();
+        try {
+            // Create tutorial category
+            $category = Category::firstOrCreate(
+                ['slug' => 'blogr-tutorial'],
+                [
+                    'name' => 'Blogr Tutorial',
+                    'description' => 'Official Blogr tutorial and documentation',
+                    'is_active' => true,
+                ]
+            );
+
+            // Create tutorial user if needed
+            $user = User::firstOrCreate(
+                ['email' => 'tutorial@blogr.dev'],
+                [
+                    'name' => 'Blogr Tutorial',
+                    'password' => bcrypt('password'),
+                    'email_verified_at' => now(),
+                ]
+            );
+
+            $tutorialPosts = $this->getTutorialPosts();
+            $count = 0;
+
+            foreach ($tutorialPosts as $postData) {
+                $post = BlogPost::firstOrCreate(
+                    ['slug' => $postData['slug']],
+                    array_merge($postData, [
+                        'user_id' => $user->id,
+                        'category_id' => $category->id,
+                        'published_at' => now(),
+                    ])
+                );
+
+                if ($post->wasRecentlyCreated) {
+                    $count++;
+                }
+            }
+
+            DB::commit();
+            $this->info("✅ Successfully installed {$count} tutorial posts.");
+            
+            return self::SUCCESS;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->error('Failed to install tutorials: ' . $e->getMessage());
+            
+            return self::FAILURE;
+        }
+    }
+
+    protected function getTutorialPosts(): array
+    {
+        return [
+            [
+                'title' => 'Welcome to Blogr - Getting Started',
+                'slug' => 'welcome-to-blogr-getting-started',
+                'content' => $this->getWelcomeContent(),
+                'meta_title' => 'Welcome to Blogr - Your Laravel Blogging Platform',
+                'meta_description' => 'Get started with Blogr, a powerful Laravel blogging platform with Filament admin panel.',
+                'tldr' => 'Welcome to Blogr! This guide will help you get started with your new blogging platform.',
+                'is_published' => true,
+            ],
+            [
+                'title' => 'Installing and Configuring Blogr',
+                'slug' => 'installing-and-configuring-blogr',
+                'content' => $this->getInstallationContent(),
+                'meta_title' => 'How to Install and Configure Blogr',
+                'meta_description' => 'Step-by-step guide to install and configure Blogr for your Laravel application.',
+                'tldr' => 'Learn how to properly install and configure Blogr in your Laravel project.',
+                'is_published' => true,
+            ],
+            [
+                'title' => 'Creating Your First Blog Post',
+                'slug' => 'creating-your-first-blog-post',
+                'content' => $this->getFirstPostContent(),
+                'meta_title' => 'Creating Your First Blog Post with Blogr',
+                'meta_description' => 'Learn how to create and publish your first blog post using Blogr\'s admin interface.',
+                'tldr' => 'Step-by-step guide to create your first blog post with Blogr.',
+                'is_published' => true,
+            ],
+            [
+                'title' => 'Understanding Blogr Widgets',
+                'slug' => 'understanding-blogr-widgets',
+                'content' => $this->getWidgetsContent(),
+                'meta_title' => 'Blogr Widgets - Enhance Your Blog',
+                'meta_description' => 'Discover how to use Blogr widgets to enhance your blog with dynamic content.',
+                'tldr' => 'Learn about Blogr widgets and how they can improve your blog\'s functionality.',
+                'is_published' => true,
+            ],
+            [
+                'title' => 'Blogr Settings and Configuration',
+                'slug' => 'blogr-settings-and-configuration',
+                'content' => $this->getSettingsContent(),
+                'meta_title' => 'Configuring Blogr Settings',
+                'meta_description' => 'Complete guide to Blogr settings and how to customize your blog\'s behavior.',
+                'tldr' => 'Master Blogr settings to customize your blog according to your needs.',
+                'is_published' => true,
+            ],
+            [
+                'title' => 'SEO Optimization with Blogr',
+                'slug' => 'seo-optimization-with-blogr',
+                'content' => $this->getSEOContent(),
+                'meta_title' => 'SEO Optimization Guide for Blogr',
+                'meta_description' => 'Learn how to optimize your Blogr-powered blog for search engines.',
+                'tldr' => 'Improve your blog\'s SEO with Blogr\'s built-in optimization features.',
+                'is_published' => true,
+            ],
+            [
+                'title' => 'Advanced Features and Customization',
+                'slug' => 'advanced-features-and-customization',
+                'content' => $this->getAdvancedContent(),
+                'meta_title' => 'Advanced Blogr Features and Customization',
+                'meta_description' => 'Explore advanced features and learn how to customize Blogr for your specific needs.',
+                'tldr' => 'Discover advanced Blogr features and customization options.',
+                'is_published' => true,
+            ],
+        ];
+    }

@@ -26,6 +26,9 @@ class InstallUserManagementCommand extends Command
         $this->updateUserModel();
         $this->updateDatabaseSeeder();
 
+        // Assign admin role to the first existing user (e.g., created by filament:install)
+        $this->assignAdminRoleToFirstUser();
+
         $this->newLine();
         $this->info('✅ User Management installed successfully!');
         $this->newLine();
@@ -247,5 +250,36 @@ class InstallUserManagementCommand extends Command
         $this->newLine();
         $this->info('ℹ️ The UserResource will be automatically discovered by Filament.');
         $this->line('   Admin users will see the "Users" menu item.');
+    }
+
+    protected function assignAdminRoleToFirstUser(): void
+    {
+        try {
+            $userModel = config('auth.providers.users.model');
+            
+            // Get the first user in the database
+            $firstUser = $userModel::first();
+
+            if (!$firstUser) {
+                $this->line('   ℹ️  No users found in database yet.');
+                return;
+            }
+
+            // Check if user has HasRoles trait
+            if (!method_exists($firstUser, 'assignRole')) {
+                $this->line('   ⚠️  User model does not have HasRoles trait yet.');
+                return;
+            }
+
+            // Only assign if the user doesn't already have admin or writer role
+            if (!$firstUser->hasAnyRole(['admin', 'writer'])) {
+                $firstUser->assignRole('admin');
+                $this->line("   ✓ Assigned admin role to first user ({$firstUser->email})");
+            } else {
+                $this->line("   ✓ First user ({$firstUser->email}) already has a role");
+            }
+        } catch (\Exception $e) {
+            $this->line("   ⚠️  Could not assign admin role: {$e->getMessage()}");
+        }
     }
 }

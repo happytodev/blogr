@@ -24,6 +24,9 @@ use Happytodev\Blogr\Commands\MigratePostsToTranslations;
 use Happytodev\Blogr\Commands\BlogrExportCommand;
 use Happytodev\Blogr\Commands\BlogrImportCommand;
 use Happytodev\Blogr\Commands\BlogrPublishDemoPagesCommand;
+use Happytodev\Blogr\Commands\BlogrInstallTutorialsCommand;
+use Happytodev\Blogr\Commands\BlogrRemoveTutorialsCommand;
+use Happytodev\Blogr\Commands\BlogrListTutorialsCommand;
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Happytodev\Blogr\Http\Controllers\AuthorController;
 use Happytodev\Blogr\Http\Controllers\RssFeedController;
@@ -47,14 +50,7 @@ class BlogrServiceProvider extends PackageServiceProvider
          *
          * More info: https://github.com/spatie/laravel-package-tools
          */
-        $package->name(static::$name)
-            ->hasInstallCommand(function (InstallCommand $command) {
-                $command
-                    ->publishConfigFile()
-                    ->publishMigrations()
-                    ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub('happytodev/blogr');
-            });
+        $package->name(static::$name);
 
         $configFileName = $package->shortName();
 
@@ -83,6 +79,9 @@ class BlogrServiceProvider extends PackageServiceProvider
             BlogrExportCommand::class,
             BlogrImportCommand::class,
             BlogrPublishDemoPagesCommand::class,
+            BlogrInstallTutorialsCommand::class,
+            BlogrRemoveTutorialsCommand::class,
+            BlogrListTutorialsCommand::class,
         ]);
     }
 
@@ -643,9 +642,7 @@ class BlogrServiceProvider extends PackageServiceProvider
      */
     protected function getMigrations(): array
     {
-        $migrations = [
-            'create_blogr_table',
-        ];
+        $migrations = [];
 
         // Add CMS migrations if CMS is enabled
         if (config('blogr.cms.enabled', false)) {
