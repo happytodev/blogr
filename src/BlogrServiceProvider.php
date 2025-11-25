@@ -657,11 +657,7 @@ class BlogrServiceProvider extends PackageServiceProvider
      */
     protected function getMigrations(): array
     {
-        $migrations = [
-            // Permission tables migration (loaded automatically, NOT published)
-            // This prevents conflicts with Spatie's migration
-            '2024_01_01_000001_create_permission_tables',
-        ];
+        $migrations = [];
 
         // Add CMS migrations if CMS is enabled
         if (config('blogr.cms.enabled', false)) {

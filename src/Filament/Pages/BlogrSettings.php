@@ -454,10 +454,6 @@ class BlogrSettings extends Page
                                         ->required()
                                         ->helperText('Choose what appears at the root URL (/)'),
 
-                                    Placeholder::make('homepage_warning')
-                                        ->content('⚠️ You must comment out the default root route in routes/web.php to avoid conflicts when using Blog or CMS as homepage.')
-                                        ->columnSpanFull(),
-
                                     Toggle::make('cms_enabled')
                                         ->label('Enable CMS (Static Pages)')
                                         ->helperText('Enable the CMS module for creating static pages like About, Contact, etc.')
