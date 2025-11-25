@@ -36,7 +36,7 @@ class CmsPageTranslation extends Model
      */
     public function url(): string
     {
-        $cmsPrefix = config('blogr.cms.route.prefix', '');
+        $cmsPrefix = config('blogr.cms.prefix', '');
         $baseUrl = rtrim(config('app.url'), '/');
         
         // Build URL parts
