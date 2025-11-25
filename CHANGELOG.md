@@ -5,6 +5,53 @@ All notable changes to `blogr` will be documented in this file.
 ## Unpublished
 
 
+## [v0.15.3](https://github.com/happytodev/blogr/compare/v0.15.3...v0.15.2) - 2025-11-25
+
+### 🔧 Installation Process Enhancements
+
+Fixes [#161](https://github.com/happytodev/blogr/issues/161) - Enhanced installation process with automated configuration and user preferences
+
+- **Automatic Route Commenting**:
+  - `blogr:install` now automatically comments out Laravel's default welcome route in `routes/web.php`
+  - Adds comment header: "// Commented out by Blogr installation"
+  - Gracefully handles missing files and already-commented routes
+  - Prevents conflicts when Blog or CMS is used as homepage
+  - **Result**: Users no longer need to manually comment the default route
+
+- **Interactive CMS Configuration** (Step 0):
+  - New interactive prompt: "Would you like to enable CMS functionality?"
+  - If enabled, choice between 'blog' or 'cms' homepage type
+  - Automatically updates `config/blogr.php` with user preferences
+  - Sets `cms.enabled` and `homepage.type` configuration values
+  - Respects `--force` flag for non-interactive installations (defaults: CMS enabled, blog homepage)
+
+- **Removed Obsolete Warning**:
+  - Removed homepage warning from BlogrSettings page: "⚠️ You must comment out the default root route..."
+  - Warning no longer necessary since installation handles it automatically
+
+### 🧪 New Test Coverage
+
+- **`InstallCommandRoutesTest.php`** (4 tests, 9 assertions):
+  - ✓ Comments out default Laravel welcome route during installation
+  - ✓ Does not fail if routes/web.php does not exist
+  - ✓ Does not comment route if already commented
+  - ✓ Preserves other routes when commenting default route
+
+- **`InstallCommandConfigTest.php`** (6 tests, 12 assertions):
+  - ✓ Updates config file with CMS enabled and blog homepage
+  - ✓ Updates config file with CMS enabled and cms homepage
+  - ✓ Updates config file with CMS disabled
+  - ✓ Does not fail if config file does not exist yet
+  - ✓ Handles multiple config updates in single call
+  - ✓ Preserves other config values when updating
+
+### ✅ Test Results
+
+- **All 753 tests passing** (0 failures, +10 tests from v0.15.2)
+- **2183 assertions** (+21 assertions from v0.15.2)
+- Comprehensive test coverage for automated installation features
+
+
 ## [v0.15.2](https://github.com/happytodev/blogr/compare/v0.15.2...v0.15.1) - 2025-11-25
 
 ### 🐛 Critical Bug Fixes
