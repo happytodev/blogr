@@ -14,6 +14,7 @@ use Filament\Schemas\SchemasServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Happytodev\Blogr\BlogrServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
+use Illuminate\Support\Facades\Schema;
 use Filament\Actions\ActionsServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
@@ -154,10 +155,10 @@ class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations()
     {
-        // Load test-specific migrations (includes users and Spatie Permission tables)
+        // Load test-specific migrations (includes users + permission tables with hasTable() check)
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-
-        // Also load package migrations (blog, cms, etc.) so tests have the package tables
+        
+        // Load package migrations (blog, cms, etc - excludes permission migration)
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
