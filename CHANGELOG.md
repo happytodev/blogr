@@ -4,6 +4,67 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+
+## [v0.15.1](https://github.com/happytodev/blogr/compare/v0.15.1...v0.15.0) - 2025-11-25
+
+### 🔧 Installation Process Improvements
+
+- **Enhanced `blogr:install` Command**:
+  - All interactive prompts now default to "yes" with `--force` flag for fully non-interactive installation
+  - Spatie Permission config now published by default (changed from `false` to `true`)
+  - New **Step 0: APP_URL Configuration** for intelligent URL setup before publishing files
+  - All `forceableConfirm()` calls properly respect the `--force` flag across all prompts
+  - Fixed confirmation for URL configuration to use `forceableConfirm()` instead of raw `confirm()`
+
+### ✨ New Tutorial Management Commands
+
+- **`blogr:install-tutorials`**: Install tutorial content to help users get started
+  - Called automatically during `blogr:install` with `--force` flag
+  - Can be run independently for manual installation
+  
+- **`blogr:list-tutorials`**: List all available tutorial content
+  - Displays tutorial metadata and descriptions
+  
+- **`blogr:remove-tutorials`**: Remove previously installed tutorial content
+  - Clean removal of all tutorial-related data
+
+### 🐛 Critical Bug Fixes
+
+- **Permission Migration Idempotency**:
+  - Added `Schema::hasTable()` check to prevent errors if permission tables already exist
+  - Prevents "Table already exists" errors on repeated installations or test runs
+
+- **Admin Role Assignment** (CRITICAL):
+  - Changed from `assignRole('admin')` to `syncRoles(['admin'])`
+  - **Fixes bug**: First user no longer receives multiple roles (writer + admin)
+  - Now has **ONLY admin role** as intended
+  - Only assigns admin role to users without demo emails (admin@demo.com, writer@demo.com)
+
+- **Seeder Null-Safety**:
+  - All seeder command calls now use nullsafe operator: `$this->command?->info()` → `$this->command?->info()`
+  - Prevents crashes when seeders run in test context where `$this->command` is null
+
+### 🧹 Code Cleanup
+
+- Removed unused `create_blogr_table.php.stub` (empty migration template)
+- Removed unused `2024_01_01_000001_create_permission_tables.php.stub` (redundant Spatie stub)
+- Removed `create_blogr_table` from `getMigrations()` in BlogrServiceProvider (no longer exists)
+- Integrated permission migration as proper `.php` file (previously `.backup`)
+
+### 🧪 New Test Coverage
+
+- **`DemoAdminUserRoleTest.php`**: Validates demo users (admin@demo.com, writer@demo.com) have correct roles
+- **`AdminRoleAssignmentTest.php`**: Verifies first non-demo user gets admin role assigned correctly
+- **`InstallationProcessTest.php`**: End-to-end tests for complete installation workflow
+- **`FilamentUserAdminRoleIntegrationTest.php`**: Tests Filament panel access control for admin users
+
+### ✅ Test Results
+
+- **All 743 tests passing** (0 failures)
+- **2162 assertions** validating installation process, role assignment, and demo user creation
+
+
+
 ## [v0.15.0](https://github.com/happytodev/blogr/compare/v0.15.0...v0.14.1) - 2025-11-23
 
 ### ✨ Features
