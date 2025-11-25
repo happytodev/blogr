@@ -20,11 +20,13 @@ return new class extends Migration
         throw_if(empty($tableNames), new Exception('Error: config/permission.php not loaded. Run [php artisan config:clear] and try again.'));
         throw_if($teams && empty($columnNames['team_foreign_key'] ?? null), new Exception('Error: team_foreign_key on config/permission.php not loaded. Run [php artisan config:clear] and try again.'));
 
-        // Skip if tables already exist (Orchestra Testbench might have already created them)
+        // Skip if tables already exist (prevents conflicts in testing environments)
         if (Schema::hasTable($tableNames['permissions'])) {
+            \Log::info('BLOGR MIGRATION: permissions table already exists, skipping creation');
             return;
         }
 
+        \Log::info('BLOGR MIGRATION: Creating permissions table');
         Schema::create($tableNames['permissions'], static function (Blueprint $table) {
             // $table->engine('InnoDB');
             $table->bigIncrements('id'); // permission id
