@@ -25,8 +25,7 @@ abstract class CmsTestCase extends TestCase
         $app['config']->set('blogr.homepage.type', 'cms');
         
         // Configure CMS routes
-        $app['config']->set('blogr.cms.route.prefix', '');
-        $app['config']->set('blogr.cms.route.middleware', ['web']);
+        $app['config']->set('blogr.cms.prefix', '');
         
         // Load reserved slugs configuration for tests
         $app['config']->set('blogr.cms.reserved_slugs', [

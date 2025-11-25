@@ -18,7 +18,7 @@ class CmsWithLocalesTestCase extends CmsTestCase
         $app['config']->set('blogr.locales.enabled', true);
         $app['config']->set('blogr.locales.available', ['en', 'fr']);
         $app['config']->set('blogr.locales.default', 'en');
-        $app['config']->set('blogr.cms.route.prefix', '');
+        $app['config']->set('blogr.cms.prefix', '');
         
         // Set CMS as homepage (new unified config)
         $app['config']->set('blogr.homepage.type', 'cms');

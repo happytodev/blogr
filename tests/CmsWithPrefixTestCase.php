@@ -15,6 +15,6 @@ class CmsWithPrefixTestCase extends CmsTestCase
         parent::getEnvironmentSetUp($app);
         
         // Set CMS prefix BEFORE routes are registered
-        $app['config']->set('blogr.cms.route.prefix', 'page');
+        $app['config']->set('blogr.cms.prefix', 'page');
     }
 }
