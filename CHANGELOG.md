@@ -6,6 +6,26 @@ All notable changes to `blogr` will be documented in this file.
 
 
 
+## [v0.15.5](https://github.com/happytodev/blogr/compare/v0.15.5...v0.15.4) - 2025-11-25
+
+### 🐛 Bug Fixes
+
+- **CMS Prefix Fix ([Issue #165](https://github.com/happytodev/blogr/issues/165))**:
+  - Fixed CMS prefix not working - pages were returning 404 errors
+  - **Root Cause**: Code was accessing incorrect configuration path `blogr.cms.route.prefix` instead of `blogr.cms.prefix`
+  - **Files Fixed**:
+    - `src/BlogrServiceProvider.php`: Changed `config('blogr.cms.route.prefix')` → `config('blogr.cms.prefix')`
+    - `src/Models/CmsPageTranslation.php`: Fixed URL generation to use correct config path
+    - All test files: Updated configuration paths in CmsTestCase, CmsWithLocalesTestCase, CmsWithPrefixTestCase, and CmsPageRoutingTest
+  - **Impact**: CMS pages now correctly accessible with prefix (e.g., `/page/about` when prefix is set to `'page'`)
+
+### 🧪 Test Results
+
+- **All 753 tests passing** (0 failures)
+- **2183 assertions**
+- CMS routing fully validated with 94 CMS-specific tests
+
+
 ## [v0.15.4](https://github.com/happytodev/blogr/compare/v0.15.4...v0.15.3) - 2025-11-25
 
 ### 🐛 Critical Bug Fixes
