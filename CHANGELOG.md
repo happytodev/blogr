@@ -5,6 +5,43 @@ All notable changes to `blogr` will be documented in this file.
 ## Unpublished
 
 
+
+## [v0.15.4](https://github.com/happytodev/blogr/compare/v0.15.4...v0.15.3) - 2025-11-25
+
+### 🐛 Critical Bug Fixes
+
+- **Route Commenting Fix**:
+  - Fixed `blogr:install` command failing to properly comment out Laravel's default welcome route
+  - **Previous Issue**: Regex pattern only commented the opening line, leaving closing braces uncommented
+  - **Error**: Caused "ParseError: Unmatched '}'" on fresh installations
+  - **Solution**: Implemented line-by-line commenting approach that properly handles multi-line route definitions
+  - Now correctly comments all lines from `Route::get('/', function ()` to `});`
+
+### ✨ Installation Enhancements
+
+- **Demo CMS Pages Integration**:
+  - Added interactive prompt during installation: "Would you like to install demo CMS pages?"
+  - Automatically calls `blogr:publish-demo-pages` command when user confirms (Step 6)
+  - Creates ready-to-use About, Contact demo pages
+  - Streamlines first-time setup experience
+
+- **Improved Post-Installation Guidance**:
+  - **Accurate URLs**: Now displays actual configured URLs instead of hardcoded localhost
+  - Admin panel URL: Uses `config('app.url')` + `/admin` (e.g., `https://blogrv0154.test/admin`)
+  - Blog URL: Correctly calculates URL based on configured route prefix
+  - **Fixed Command Names**: Updated all command references to include colon separator
+    - ✅ `blogr:list-tutorials` (was: `blogr list-tutorials`)
+    - ✅ `blogr:remove-tutorials` (was: `blogr remove-tutorials`)
+    - ✅ `blogr:install-tutorials` (was: `blogr install-tutorials`)
+  - **New Command**: Added `blogr:publish-demo-pages` to useful commands list
+
+### 🧪 Test Results
+
+- **All 753 tests passing** (0 failures)
+- **2183 assertions**
+- Installation process fully validated in test environment
+
+
 ## [v0.15.3](https://github.com/happytodev/blogr/compare/v0.15.3...v0.15.2) - 2025-11-25
 
 ### 🔧 Installation Process Enhancements
