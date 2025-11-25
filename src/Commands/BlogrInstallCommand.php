@@ -39,7 +39,11 @@ class BlogrInstallCommand extends Command
         $this->line('This command will help you set up Blogr automatically.');
         $this->newLine();
 
-        // Step 0: Configure application URL
+        // Step 0: Configure CMS and homepage preferences
+        $this->configureCmsPreferences();
+        $this->newLine();
+
+        // Step 0.5: Configure application URL
         $this->configureAppUrl();
         $this->newLine();
 
@@ -110,7 +114,10 @@ class BlogrInstallCommand extends Command
         // Step 8: Check AdminPanelProvider configuration
         $this->checkAdminPanelProvider();
 
-        // Step 6: GitHub star prompt
+        // Step 9: Comment out default Laravel welcome route
+        $this->commentOutDefaultRoute();
+
+        // Step 10: GitHub star prompt
         $this->promptForGitHubStar();
 
         $this->newLine();
@@ -1357,6 +1364,93 @@ METHOD;
     }
 
     /**
+     * Configure CMS and homepage preferences
+     */
+    protected function configureCmsPreferences(): void
+    {
+        $this->info('⚙️  Configuring CMS and homepage preferences...');
+        $this->newLine();
+
+        // Ask if user wants CMS functionality
+        $enableCms = $this->forceableConfirm('Would you like to enable CMS functionality? (static pages like About, Contact, etc.)', true);
+
+        if ($enableCms) {
+            $this->line('✅ CMS functionality will be enabled.');
+            $this->newLine();
+
+            // Ask for homepage type
+            $this->line('Please choose your homepage type:');
+            $this->line('  1. Blog only (default blog index page)');
+            $this->line('  2. CMS page (create custom landing page with blocks)');
+            $this->newLine();
+
+            $homepageType = 'blog'; // default
+
+            if (!$this->option('force')) {
+                $choice = $this->choice(
+                    'Homepage type',
+                    ['blog', 'cms'],
+                    0 // default to blog
+                );
+                $homepageType = $choice;
+            }
+
+            $this->line("✅ Homepage type set to: {$homepageType}");
+            
+            // Update config file
+            $this->updateConfigFile([
+                'cms.enabled' => true,
+                'homepage.type' => $homepageType,
+            ]);
+        } else {
+            $this->line('✅ CMS functionality will be disabled (blog only).');
+            
+            // Update config file
+            $this->updateConfigFile([
+                'cms.enabled' => false,
+                'homepage.type' => 'blog',
+            ]);
+        }
+    }
+
+    /**
+     * Update the blogr config file with new values
+     */
+    protected function updateConfigFile(array $updates): void
+    {
+        $configPath = config_path('blogr.php');
+
+        if (!file_exists($configPath)) {
+            $this->warn('⚠️ Config file not found. Will be published during installation.');
+            return;
+        }
+
+        $content = file_get_contents($configPath);
+
+        foreach ($updates as $key => $value) {
+            $keys = explode('.', $key);
+            $pattern = '';
+            
+            if (count($keys) === 2) {
+                // Handle nested config like 'cms.enabled'
+                $section = $keys[0];
+                $option = $keys[1];
+                
+                $valueStr = is_bool($value) ? ($value ? 'true' : 'false') : "'{$value}'";
+                
+                // Match: 'enabled' => false,
+                $pattern = "/'{$option}'\s*=>\s*(?:true|false|'[^']*'),/";
+                $replacement = "'{$option}' => {$valueStr},";
+                
+                $content = preg_replace($pattern, $replacement, $content);
+            }
+        }
+
+        file_put_contents($configPath, $content);
+        $this->line("   ✓ Configuration updated");
+    }
+
+    /**
      * Configure application URL based on environment
      * Suggests a .test domain for local development
      */
@@ -1425,6 +1519,44 @@ METHOD;
             }
 
             file_put_contents($envPath, $envContent);
+        }
+    }
+
+    /**
+     * Comment out the default Laravel welcome route in routes/web.php
+     */
+    protected function commentOutDefaultRoute(): void
+    {
+        $this->info('🔧 Commenting out default Laravel welcome route...');
+
+        $webRoutesPath = base_path('routes/web.php');
+
+        if (!file_exists($webRoutesPath)) {
+            $this->warn('⚠️ routes/web.php not found. Skipping...');
+            return;
+        }
+
+        $content = file_get_contents($webRoutesPath);
+
+        // Check if the default route exists and is not already commented
+        if (str_contains($content, "Route::get('/', function ()") && 
+            !str_contains($content, "// Route::get('/', function ()")) {
+            
+            // Comment out the default route
+            $pattern = "/(Route::get\('\/'\s*,\s*function\s*\(\)\s*\{[^}]*return\s+view\('welcome'\);[^}]*\}\);)/s";
+            $replacement = "// Commented out by Blogr installation\n// $1";
+            
+            $newContent = preg_replace($pattern, $replacement, $content);
+            
+            if ($newContent !== $content) {
+                file_put_contents($webRoutesPath, $newContent);
+                $this->info('✅ Default welcome route commented out successfully.');
+                $this->line('   Blogr will now handle the homepage routing.');
+            } else {
+                $this->warn('⚠️ Could not automatically comment out the route. Please comment it manually.');
+            }
+        } else {
+            $this->line('✅ Default route already commented or not found. Nothing to do.');
         }
     }
 }
