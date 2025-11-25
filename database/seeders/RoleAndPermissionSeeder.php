@@ -54,8 +54,8 @@ class RoleAndPermissionSeeder extends Seeder
             'edit blog series',
         ]);
 
-        $this->command->info('✅ Roles and permissions created successfully.');
-        $this->command->info('   • Admin role: Full access to all features');
-        $this->command->info('   • Writer role: Can create and edit blog posts and series');
+        $this->command?->info('✅ Roles and permissions created successfully.');
+        $this->command?->info('   • Admin role: Full access to all features');
+        $this->command?->info('   • Writer role: Can create and edit blog posts and series');
     }
 }
