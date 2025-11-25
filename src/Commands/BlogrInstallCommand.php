@@ -16,6 +16,8 @@ class BlogrInstallCommand extends Command
     public $signature = 'blogr:install {--skip-npm : Skip npm dependencies installation} {--skip-tutorials : Skip tutorial content installation} {--skip-series : Skip series content installation} {--skip-frontend : Skip frontend configuration (Alpine.js and Tailwind CSS)} {--skip-build : Skip npm run build at the end} {--force : Non-interactive mode - answer yes to all prompts}';
 
     public $description = 'Install and configure Blogr with all necessary steps';
+    
+    protected bool $demoPagesRequested = false;
 
     /**
      * Helper method to handle confirm() with --force option
@@ -101,23 +103,30 @@ class BlogrInstallCommand extends Command
             $this->configureFrontend();
         }
 
-        // Step 6: Handle npm dependencies (unless skipped)
+        // Step 6: Install demo CMS pages if requested
+        if ($this->demoPagesRequested) {
+            $this->newLine();
+            $this->info('📄 Installing demo CMS pages...');
+            $this->call('blogr:publish-demo-pages');
+        }
+
+        // Step 7: Handle npm dependencies (unless skipped)
         if (!$this->option('skip-npm')) {
             $this->handleNpmDependencies();
         }
 
-        // Step 7: Build assets (unless skipped)
+        // Step 8: Build assets (unless skipped)
         if (!$this->option('skip-build') && !$this->option('skip-npm')) {
             $this->buildAssets();
         }
 
-        // Step 8: Check AdminPanelProvider configuration
+        // Step 9: Check AdminPanelProvider configuration
         $this->checkAdminPanelProvider();
 
-        // Step 9: Comment out default Laravel welcome route
+        // Step 10: Comment out default Laravel welcome route
         $this->commentOutDefaultRoute();
 
-        // Step 10: GitHub star prompt
+        // Step 11: GitHub star prompt
         $this->promptForGitHubStar();
 
         $this->newLine();
@@ -913,13 +922,18 @@ JS;
 
     protected function displayNextSteps(): void
     {
+        // Get the configured APP_URL or fallback to localhost
+        $appUrl = config('app.url', 'http://localhost');
+        $blogPrefix = config('blogr.route.prefix', 'blog');
+        $blogUrl = rtrim($appUrl, '/') . ($blogPrefix ? '/' . $blogPrefix : '');
+        
         $this->info('🎯 Next steps:');
-        $this->line('1. Access your Filament admin panel');
+        $this->line('1. Access your Filament admin panel at: ' . rtrim($appUrl, '/') . '/admin');
         $this->line('2. Update your profile (bio and avatar) via the user menu → Edit Profile');
         $this->line('3. Go to "Blog Posts" to create your first post');
         $this->line('4. Check out the tutorial posts and series (if installed)');
         $this->line('5. Configure settings in the "Blogr Settings" section');
-        $this->line('6. Visit your blog at: ' . url(config('blogr.route.prefix', 'blog')));
+        $this->line('6. Visit your blog at: ' . $blogUrl);
         $this->newLine();
 
         if ($this->option('skip-build') || $this->option('skip-npm')) {
@@ -928,11 +942,12 @@ JS;
         }
 
         $this->line('📚 Useful commands:');
-        $this->line('• php artisan blogr list-tutorials    - List tutorial posts');
-        $this->line('• php artisan blogr remove-tutorials  - Remove tutorial posts');
-        $this->line('• php artisan blogr install-tutorials - Install tutorial posts');
-        $this->line('• npm run build                       - Build frontend assets');
-        $this->line('• npm run dev                         - Watch and build assets (development)');
+        $this->line('• php artisan blogr:list-tutorials    - List tutorial posts');
+        $this->line('• php artisan blogr:remove-tutorials  - Remove tutorial posts');
+        $this->line('• php artisan blogr:install-tutorials - Install tutorial posts');
+        $this->line('• php artisan blogr:publish-demo-pages - Install demo CMS pages');
+        $this->line('• npm run build                        - Build frontend assets');
+        $this->line('• npm run dev                          - Watch and build assets (development)');
         $this->newLine();
 
         $this->line('📖 Documentation: https://github.com/happytodev/blogr');
@@ -1402,6 +1417,19 @@ METHOD;
                 'cms.enabled' => true,
                 'homepage.type' => $homepageType,
             ]);
+            
+            // Ask if user wants to install demo CMS pages
+            $this->newLine();
+            $installDemoPages = $this->forceableConfirm('Would you like to install demo CMS pages? (About, Contact, etc.)', true);
+            
+            if ($installDemoPages) {
+                $this->line('✅ Demo CMS pages will be installed.');
+                // Store this choice to execute after migrations
+                $this->demoPagesRequested = true;
+            } else {
+                $this->line('⊘ Demo CMS pages will not be installed.');
+                $this->demoPagesRequested = false;
+            }
         } else {
             $this->line('✅ CMS functionality will be disabled (blog only).');
             
@@ -1542,11 +1570,35 @@ METHOD;
         if (str_contains($content, "Route::get('/', function ()") && 
             !str_contains($content, "// Route::get('/', function ()")) {
             
-            // Comment out the default route
-            $pattern = "/(Route::get\('\/'\s*,\s*function\s*\(\)\s*\{[^}]*return\s+view\('welcome'\);[^}]*\}\);)/s";
-            $replacement = "// Commented out by Blogr installation\n// $1";
+            // Comment out the default route - match each line separately
+            $lines = explode("\n", $content);
+            $newLines = [];
+            $inRoute = false;
+            $routeStarted = false;
             
-            $newContent = preg_replace($pattern, $replacement, $content);
+            foreach ($lines as $line) {
+                // Detect start of the route
+                if (!$routeStarted && preg_match("/Route::get\('\/'\s*,\s*function\s*\(\)/", $line)) {
+                    $routeStarted = true;
+                    $inRoute = true;
+                    $newLines[] = "// Commented out by Blogr installation";
+                    $newLines[] = "// " . $line;
+                    continue;
+                }
+                
+                // If we're inside the route, comment out the line
+                if ($inRoute) {
+                    $newLines[] = "// " . $line;
+                    // Check if this is the closing line (ends with });)
+                    if (preg_match("/\}\);\s*$/", $line)) {
+                        $inRoute = false;
+                    }
+                } else {
+                    $newLines[] = $line;
+                }
+            }
+            
+            $newContent = implode("\n", $newLines);
             
             if ($newContent !== $content) {
                 file_put_contents($webRoutesPath, $newContent);
