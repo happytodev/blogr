@@ -28,7 +28,7 @@
                         </h3>
                         
                         @if(!empty($event['description']))
-                            <p class="text-gray-600 dark:text-gray-400">
+                            <p>
                                 {{ $event['description'] }}
                             </p>
                         @endif

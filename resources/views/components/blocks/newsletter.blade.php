@@ -9,12 +9,12 @@
 
 <x-blogr::background-wrapper :data="$data">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">
             {{ $heading }}
         </h2>
         
         @if($description)
-            <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
+            <p class="subtitle text-lg mb-8">
                 {{ $description }}
             </p>
         @endif

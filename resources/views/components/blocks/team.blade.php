@@ -68,7 +68,7 @@
                             @endif
 
                             @if(!empty($member['bio']))
-                                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                                <p class="subtitle text-sm mb-4">
                                     {{ $member['bio'] }}
                                 </p>
                             @endif

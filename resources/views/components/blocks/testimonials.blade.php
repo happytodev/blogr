@@ -17,7 +17,7 @@ $cardPadding = $fullWidth ? 'p-10' : 'p-8';
 <x-blogr::background-wrapper :data="$data" class="py-16 sm:py-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         @if($title)
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-16 text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-16 text-center">
                 {{ $title }}
             </h2>
         @endif
@@ -32,11 +32,11 @@ $cardPadding = $fullWidth ? 'p-10' : 'p-8';
                                  class="{{ $fullWidth ? 'w-20 h-20' : 'w-16 h-16' }} rounded-full object-cover mr-4">
                         @endif
                         <div>
-                            <h3 class="font-bold text-gray-900 dark:text-white {{ $fullWidth ? 'text-xl' : '' }}">
+                            <h3 class="font-bold {{ $fullWidth ? 'text-xl' : '' }}">
                                 {{ $item['name'] }}
                             </h3>
                             @if(!empty($item['role']))
-                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                <p class="subtitle text-sm">
                                     {{ $item['role'] }}
                                 </p>
                             @endif

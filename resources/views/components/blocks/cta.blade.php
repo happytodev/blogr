@@ -12,12 +12,12 @@ $buttonStyle = $data['button_style'] ?? 'primary';
 
 <x-blogr::background-wrapper :data="$data" class="py-16 sm:py-20">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">
             {{ $heading }}
         </h2>
         
         @if($subheading)
-            <p class="text-xl text-white/90 mb-8">
+            <p class="subtitle text-xl mb-8">
                 {{ $subheading }}
             </p>
         @endif

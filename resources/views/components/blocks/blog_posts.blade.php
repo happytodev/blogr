@@ -20,7 +20,7 @@
 <x-blogr::background-wrapper :data="$data">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         @if($heading)
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-12 text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center">
                 {{ $heading }}
             </h2>
         @endif
@@ -44,18 +44,18 @@
                                 </a>
                             @endif
                             
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            <div class="subtitle text-sm mb-2">
                                 {{ $post->published_at->format('M d, Y') }}
                             </div>
                             
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                            <h3 class="text-xl font-bold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                                 <a href="{{ route('blog.show', ['locale' => app()->getLocale(), 'slug' => $translation->slug]) }}">
                                     {{ $translation->title }}
                                 </a>
                             </h3>
                             
                             @if($translation->excerpt)
-                                <p class="text-gray-600 dark:text-gray-400 mb-4">
+                                <p class="mb-4">
                                     {{ Str::limit($translation->excerpt, 120) }}
                                 </p>
                             @endif
@@ -68,8 +68,8 @@
                 @endforeach
             </div>
         @else
-            <p class="text-center text-gray-600 dark:text-gray-400">
-                {{ __('No posts available') }}
+            <p class="text-center">
+                {{ __('No blog posts available') }}
             </p>
         @endif
     </div>
