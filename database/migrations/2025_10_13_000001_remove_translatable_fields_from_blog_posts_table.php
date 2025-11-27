@@ -14,7 +14,8 @@ return new class extends Migration
     {
         // Clear existing data before structural changes (required for SQLite)
         // This ensures no NOT NULL constraint violations during column drops
-        DB::table('blog_posts')->truncate();
+        // Use delete() instead of truncate() for MySQL compatibility with foreign keys
+        DB::table('blog_posts')->delete();
         
         Schema::table('blog_posts', function (Blueprint $table) {
             // Drop indexes first
