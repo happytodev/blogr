@@ -6,22 +6,28 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [v0.15.7](https://github.com/happytodev/blogr/compare/v0.15.6...v0.15.5) - 2025-11-27
 
-- **CMS Block Text Colors [Fixes #170](https://github.com/happytodev/blogr/issues/169)**:
+- **CMS Block Text Colors Fix [Fixes #169](https://github.com/happytodev/blogr/issues/169)**:
   - Fixed CMS blocks not respecting custom text colors configured in the admin panel (Heading Color, Subtitle Color, Body Text Color)
-  - **Root Cause**: Blocks used hardcoded Tailwind classes (e.g., `text-gray-600 dark:text-gray-400`) that override custom colors defined in `background-wrapper` 
-  - **Solution**: Removed hardcoded color classes and added `subtitle` class to subtitle elements to allow `background-wrapper` CSS to apply custom colors
-  - **Blocks Fixed** (10 blocks):
-    - `features.blade.php`: Subtitle and item descriptions now respect custom colors
-    - `hero.blade.php`: Subtitle now respects custom colors
-    - `cta.blade.php`: Heading and subheading now respect custom colors
-    - `testimonials.blade.php`: Title, names, and roles now respect custom colors
-    - `newsletter.blade.php`: Heading and description now respect custom colors
-    - `faq.blade.php`: Questions and answers now respect custom colors
-    - `team.blade.php`: Heading, description, names, and bios now respect custom colors
-    - `gallery.blade.php`: Heading and description now respect custom colors
-    - `blog_posts.blade.php`: Heading, dates, titles, and excerpts now respect custom colors
-    - `timeline.blade.php`: Event descriptions now respect custom colors
-  - **Impact**: Users can now fully customize text colors in Dark Mode and Light Mode, and blocks will correctly display those choices instead of using default gray colors
+  - **Root Cause**: Blocks used hardcoded Tailwind classes (e.g., `text-gray-900 dark:text-white`, `text-gray-600 dark:text-gray-400`) that override custom colors defined in `background-wrapper` 
+  - **Solution**: Removed hardcoded color classes from all text elements (titles, subtitles, paragraphs) and added `subtitle` class where appropriate to allow `background-wrapper` CSS to apply custom colors
+  - **Blocks Fixed** (18 blocks covering all text elements):
+    - `features.blade.php`: Title (h2), subtitle, item titles (h3), descriptions
+    - `hero.blade.php`: Title (h1), subtitle
+    - `cta.blade.php`: Heading (h2), subheading
+    - `testimonials.blade.php`: Title (h2), names (h3), roles
+    - `newsletter.blade.php`: Heading (h2), description
+    - `faq.blade.php`: Title (h2), questions, answers
+    - `team.blade.php`: Heading (h2), description, member names (h3), bios
+    - `gallery.blade.php`: Heading (h2), description
+    - `blog_posts.blade.php`: Heading (h2), dates, post titles (h3), excerpts
+    - `timeline.blade.php`: Heading (h2), event titles (h3), descriptions
+    - `pricing.blade.php`: Heading (h2), plan names (h3), descriptions
+    - `map.blade.php`: Heading (h2), sub-headings (h3)
+    - `video.blade.php`: Heading (h2)
+    - `blog-title.blade.php`: Title (h1), description
+    - `content.blade.php`: Prose headings and paragraphs (removed `prose-headings:text-gray-900` and `prose-p:text-gray-700` override classes)
+    - `stats.blade.php`: Heading (h2)
+  - **Impact**: Users can now fully customize ALL text colors (headings h1-h6, subtitles, body text) in Dark Mode and Light Mode, and blocks will correctly display those choices instead of using hardcoded colors
 
 
 ## [v0.15.6](https://github.com/happytodev/blogr/compare/v0.15.6...v0.15.5) - 2025-11-27
