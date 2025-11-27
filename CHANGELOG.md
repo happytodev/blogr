@@ -5,6 +5,28 @@ All notable changes to `blogr` will be documented in this file.
 ## Unpublished
 
 
+## [v0.15.6](https://github.com/happytodev/blogr/compare/v0.15.6...v0.15.5) - 2025-11-27
+
+- **Stats Counter Fix ([Issue #167](https://github.com/happytodev/blogr/issues/167))**:
+  - Fixed Alpine.js console errors on CMS pages with stats blocks
+  - Replaced `x-intersect` directive (requires plugin) with native Intersection Observer API
+  - No longer requires `@alpinejs/intersect` plugin installation
+  - Counter animation works out-of-the-box without additional dependencies
+
+- **Hero Block Button Fix ([Issue #168](https://github.com/happytodev/blogr/issues/168))**:
+  - Fixed Hero block button not appearing for non-external link types (Blog Home, Category, CMS Page)
+  - **Root Cause**: `LinkResolver::resolve()` returned `null` when Laravel routes were unavailable (e.g., in FilamentPHP admin panel context)
+  - **Solution**: Enhanced `LinkResolver` to construct URLs manually using configuration when `route()` helper fails
+  - **Improvements**:
+    - `resolveBlogLink()`: Builds URLs using `blogr.route.prefix`, `blogr.route.homepage`, and `blogr.locales.*` config
+    - `resolveCategoryLink()`: Builds category URLs with proper locale and prefix handling
+    - `resolveCmsPageLink()`: Builds CMS page URLs with support for homepage detection and prefix
+  - **Affected Link Types**: All types now work consistently (External URL, Blog Home, Category, CMS Page)
+  - **Files Modified**:
+    - `src/Helpers/LinkResolver.php`: Added manual URL construction fallbacks for all link types
+    - `resources/views/components/blocks/hero.blade.php`: Button displays when both `cta_text` and resolved URL are present
+  - **Tests Added**: 7 comprehensive tests covering all link types and edge cases (including invalid references)
+  - **Impact**: Hero block buttons now consistently visible in both frontend and FilamentPHP admin panel, improving user experience during content editing
 
 ## [v0.15.5](https://github.com/happytodev/blogr/compare/v0.15.5...v0.15.4) - 2025-11-25
 
