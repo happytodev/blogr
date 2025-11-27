@@ -47,8 +47,23 @@ class LinkResolver
         try {
             return route('blogr.blog.index');
         } catch (\Exception $e) {
-            // Route not available (e.g., in tests)
-            return null;
+            // Fallback: construct URL manually using config
+            $localesEnabled = config('blogr.locales.enabled', false);
+            $defaultLocale = config('blogr.locales.default', 'en');
+            $prefix = config('blogr.route.prefix', 'blog');
+            $isHomepage = config('blogr.route.homepage', false);
+            
+            if ($localesEnabled) {
+                if ($isHomepage || empty($prefix) || $prefix === '/') {
+                    return "/{$defaultLocale}";
+                }
+                return "/{$defaultLocale}/{$prefix}";
+            } else {
+                if ($isHomepage || empty($prefix) || $prefix === '/') {
+                    return "/";
+                }
+                return "/{$prefix}";
+            }
         }
     }
 
@@ -69,8 +84,28 @@ class LinkResolver
         try {
             return route('blogr.blog.category', ['category' => $category]);
         } catch (\Exception $e) {
-            // Route not available (e.g., in tests)
-            return null;
+            // Fallback: construct URL manually using config
+            $translation = $category->translations()->first();
+            if (!$translation) {
+                return null;
+            }
+            
+            $localesEnabled = config('blogr.locales.enabled', false);
+            $defaultLocale = config('blogr.locales.default', 'en');
+            $prefix = config('blogr.route.prefix', 'blog');
+            $isHomepage = config('blogr.route.homepage', false);
+            
+            if ($localesEnabled) {
+                if ($isHomepage || empty($prefix) || $prefix === '/') {
+                    return "/{$defaultLocale}/category/{$translation->slug}";
+                }
+                return "/{$defaultLocale}/{$prefix}/category/{$translation->slug}";
+            } else {
+                if ($isHomepage || empty($prefix) || $prefix === '/') {
+                    return "/category/{$translation->slug}";
+                }
+                return "/{$prefix}/category/{$translation->slug}";
+            }
         }
     }
 
@@ -107,8 +142,35 @@ class LinkResolver
                 return route('cms.page.show', ['slug' => $translation->slug]);
             }
         } catch (\Exception $e) {
-            // Route not available (e.g., in tests)
-            return null;
+            // Fallback: construct URL manually using config
+            $translation = $page->translations()->first();
+            if (!$translation) {
+                return null;
+            }
+            
+            $localesEnabled = config('blogr.locales.enabled', false);
+            $prefix = config('blogr.cms.prefix', 'page');
+            
+            // Check if this page is marked as homepage
+            if ($page->is_homepage ?? false) {
+                if ($localesEnabled) {
+                    return "/{$translation->locale}";
+                }
+                return "/";
+            }
+            
+            // Regular CMS page with prefix
+            if ($localesEnabled) {
+                if (empty($prefix)) {
+                    return "/{$translation->locale}/{$translation->slug}";
+                }
+                return "/{$translation->locale}/{$prefix}/{$translation->slug}";
+            } else {
+                if (empty($prefix)) {
+                    return "/{$translation->slug}";
+                }
+                return "/{$prefix}/{$translation->slug}";
+            }
         }
     }
 }

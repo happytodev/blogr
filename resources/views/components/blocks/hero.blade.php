@@ -1,4 +1,4 @@
-@props(['data'])
+{{-- No @props needed when using @include - $data is passed directly --}}
 
 @php
 use Happytodev\Blogr\Helpers\LinkResolver;
@@ -8,6 +8,11 @@ $subtitle = $data['subtitle'] ?? '';
 $image = $data['image'] ?? '';
 $ctaText = $data['cta_text'] ?? '';
 $ctaUrl = LinkResolver::resolve($data, 'cta_link_type', 'cta_url', 'cta_category_id', 'cta_cms_page_id');
+
+// Show button if both text and valid URL are present
+// With improved LinkResolver, URLs should always be generated for all link types
+$showButton = !empty($ctaText) && !empty($ctaUrl);
+
 $alignment = $data['alignment'] ?? 'center';
 $imagePosition = $data['image_position'] ?? 'top';
 $imageMaxWidth = $data['image_max_width'] ?? 'max-w-2xl';
@@ -72,7 +77,7 @@ $layoutClass = match($imagePosition) {
                     </p>
                 @endif
                 
-                @if($ctaText && $ctaUrl)
+                @if($showButton)
                     <div class="pt-4 {{ $alignment === 'center' ? 'flex justify-center' : ($alignment === 'left' ? '' : 'flex justify-end') }}">
                         <a href="{{ $ctaUrl }}" 
                            class="inline-flex items-center px-8 py-4 bg-white text-blue-600 dark:bg-gray-900 dark:text-blue-400 rounded-lg font-semibold text-lg hover:scale-105 transition-transform duration-200 shadow-xl">

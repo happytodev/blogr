@@ -23,22 +23,30 @@
                             target: {{ $stat['number'] ?? 0 }},
                             animated: false 
                         }"
-                        x-intersect="if (!animated) {
-                            animated = true;
-                            let duration = 2000;
-                            let steps = 60;
-                            let increment = target / steps;
-                            let current = 0;
-                            let interval = setInterval(() => {
-                                current += increment;
-                                if (current >= target) {
-                                    count = target;
-                                    clearInterval(interval);
-                                } else {
-                                    count = Math.floor(current);
-                                }
-                            }, duration / steps);
-                        }"
+                        x-init="
+                            const observer = new IntersectionObserver((entries) => {
+                                entries.forEach(entry => {
+                                    if (entry.isIntersecting && !animated) {
+                                        animated = true;
+                                        let duration = 2000;
+                                        let steps = 60;
+                                        let increment = target / steps;
+                                        let current = 0;
+                                        let interval = setInterval(() => {
+                                            current += increment;
+                                            if (current >= target) {
+                                                count = target;
+                                                clearInterval(interval);
+                                            } else {
+                                                count = Math.floor(current);
+                                            }
+                                        }, duration / steps);
+                                        observer.disconnect();
+                                    }
+                                });
+                            }, { threshold: 0.5 });
+                            observer.observe($el);
+                        "
                     >
                         <div class="text-4xl sm:text-5xl font-bold text-primary-600 dark:text-primary-400 mb-2">
                             <span x-text="count"></span><span>{{ $stat['suffix'] ?? '' }}</span>
