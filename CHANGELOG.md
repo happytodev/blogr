@@ -4,6 +4,25 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.15.7](https://github.com/happytodev/blogr/compare/v0.15.6...v0.15.5) - 2025-11-27
+
+- **CMS Block Text Colors [Fixes #170](https://github.com/happytodev/blogr/issues/169)**:
+  - Fixed CMS blocks not respecting custom text colors configured in the admin panel (Heading Color, Subtitle Color, Body Text Color)
+  - **Root Cause**: Blocks used hardcoded Tailwind classes (e.g., `text-gray-600 dark:text-gray-400`) that override custom colors defined in `background-wrapper` 
+  - **Solution**: Removed hardcoded color classes and added `subtitle` class to subtitle elements to allow `background-wrapper` CSS to apply custom colors
+  - **Blocks Fixed** (10 blocks):
+    - `features.blade.php`: Subtitle and item descriptions now respect custom colors
+    - `hero.blade.php`: Subtitle now respects custom colors
+    - `cta.blade.php`: Heading and subheading now respect custom colors
+    - `testimonials.blade.php`: Title, names, and roles now respect custom colors
+    - `newsletter.blade.php`: Heading and description now respect custom colors
+    - `faq.blade.php`: Questions and answers now respect custom colors
+    - `team.blade.php`: Heading, description, names, and bios now respect custom colors
+    - `gallery.blade.php`: Heading and description now respect custom colors
+    - `blog_posts.blade.php`: Heading, dates, titles, and excerpts now respect custom colors
+    - `timeline.blade.php`: Event descriptions now respect custom colors
+  - **Impact**: Users can now fully customize text colors in Dark Mode and Light Mode, and blocks will correctly display those choices instead of using default gray colors
+
 
 ## [v0.15.6](https://github.com/happytodev/blogr/compare/v0.15.6...v0.15.5) - 2025-11-27
 
