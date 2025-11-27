@@ -16,11 +16,11 @@ $gridClass = match($columns) {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         @if($title)
             <div class="text-center mb-16">
-                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">
                     {{ $title }}
                 </h2>
                 @if($subtitle)
-                    <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                    <p class="subtitle text-lg max-w-3xl mx-auto">
                         {{ $subtitle }}
                     </p>
                 @endif
@@ -35,10 +35,10 @@ $gridClass = match($columns) {
                             <x-dynamic-component :component="$item['icon']" class="w-12 h-12 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]" />
                         </div>
                     @endif
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    <h3 class="text-xl font-bold mb-2">
                         {{ $item['title'] }}
                     </h3>
-                    <p class="text-gray-600 dark:text-gray-400">
+                    <p>
                         {{ $item['description'] }}
                     </p>
                 </div>

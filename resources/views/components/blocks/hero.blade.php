@@ -72,7 +72,7 @@ $layoutClass = match($imagePosition) {
                 </h1>
                 
                 @if($subtitle)
-                    <p class="text-xl sm:text-2xl text-white/95 drop-shadow-md">
+                    <p class="subtitle text-xl sm:text-2xl drop-shadow-md">
                         {{ $subtitle }}
                     </p>
                 @endif

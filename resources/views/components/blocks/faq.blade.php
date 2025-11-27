@@ -8,7 +8,7 @@ $items = $data['items'] ?? [];
 <x-blogr::background-wrapper :data="$data" class="py-16 sm:py-24">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         @if($title)
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-12 text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center">
                 {{ $title }}
             </h2>
         @endif
@@ -18,7 +18,7 @@ $items = $data['items'] ?? [];
                 <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                     <button @click="activeItem = activeItem === {{ $index }} ? null : {{ $index }}"
                             class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        <span class="font-semibold text-gray-900 dark:text-white">
+                        <span class="font-semibold">
                             {{ $item['question'] }}
                         </span>
                         <svg x-show="activeItem !== {{ $index }}" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,7 +36,7 @@ $items = $data['items'] ?? [];
                          x-transition:leave-start="opacity-100 transform scale-100"
                          x-transition:leave-end="opacity-0 transform scale-95"
                          class="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-                        <p class="text-gray-600 dark:text-gray-400">
+                        <p>
                             {{ $item['answer'] }}
                         </p>
                     </div>
