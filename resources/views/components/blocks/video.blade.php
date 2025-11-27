@@ -28,7 +28,7 @@
 <x-blogr::background-wrapper :data="$data">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         @if($heading)
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-12 text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center">
                 {{ $heading }}
             </h2>
         @endif
