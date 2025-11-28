@@ -3,6 +3,7 @@
 namespace Happytodev\Blogr\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
@@ -18,6 +19,7 @@ class BlogrInstallCommand extends Command
     public $description = 'Install and configure Blogr with all necessary steps';
     
     protected bool $demoPagesRequested = false;
+    protected ?array $cmsPreferences = null;
 
     /**
      * Helper method to handle confirm() with --force option
@@ -51,6 +53,11 @@ class BlogrInstallCommand extends Command
 
         // Step 1: Publish configuration and migrations
         $this->publishFiles();
+        
+        // Step 1.5: Apply CMS preferences after config file is published
+        if ($this->cmsPreferences) {
+            $this->updateConfigFile($this->cmsPreferences);
+        }
 
         // Step 2: Run migrations
         $this->runMigrations();
@@ -1278,6 +1285,9 @@ METHOD;
     /**
      * Assign admin role to the first user if one exists
      * This ensures immediate access to all Blogr features after installation
+     * 
+     * Uses direct database insertion to bypass the HasRoles trait requirement,
+     * since the trait may have been just added but not yet loaded in memory.
      */
     protected function assignAdminRoleToFirstUser(): void
     {
@@ -1295,25 +1305,35 @@ METHOD;
                 return;
             }
 
-            // Check if HasRoles trait is available
-            if (!method_exists($firstUser, 'assignRole')) {
-                $this->warn('⚠️  User model does not have assignRole method. Make sure HasRoles trait is used.');
+            // Get the admin role
+            $adminRole = \Spatie\Permission\Models\Role::where('name', 'admin')
+                ->where('guard_name', 'web')
+                ->first();
+
+            if (!$adminRole) {
+                $this->warn('⚠️  Admin role not found in database.');
                 return;
             }
 
-            // Check if user already has admin role
-            if ($firstUser->hasAnyRole(['admin'])) {
+            // Check if user already has admin role (using direct database query)
+            $hasRole = DB::table('model_has_roles')
+                ->where('role_id', $adminRole->id)
+                ->where('model_type', get_class($firstUser))
+                ->where('model_id', $firstUser->id)
+                ->exists();
+
+            if ($hasRole) {
                 $this->line("✅ User '{$firstUser->name}' already has admin role.");
                 return;
             }
 
-            // Sync roles to ensure ONLY admin role is assigned (removes any other roles)
-            if (method_exists($firstUser, 'syncRoles')) {
-                $firstUser->syncRoles(['admin']);
-            } else {
-                // Fallback to assignRole if syncRoles not available
-                $firstUser->assignRole('admin');
-            }
+            // Assign role using direct database insertion
+            // This works even if HasRoles trait is not loaded in memory yet
+            DB::table('model_has_roles')->insert([
+                'role_id' => $adminRole->id,
+                'model_type' => get_class($firstUser),
+                'model_id' => $firstUser->id,
+            ]);
             
             $this->info("✅ Admin role assigned to user: {$firstUser->name} ({$firstUser->email})");
             $this->line('🎉 This user now has full access to all Blogr features!');
@@ -1412,11 +1432,11 @@ METHOD;
 
             $this->line("✅ Homepage type set to: {$homepageType}");
             
-            // Update config file
-            $this->updateConfigFile([
+            // Store preferences to apply after config file is published
+            $this->cmsPreferences = [
                 'cms.enabled' => true,
                 'homepage.type' => $homepageType,
-            ]);
+            ];
             
             // Ask if user wants to install demo CMS pages
             $this->newLine();
@@ -1433,11 +1453,11 @@ METHOD;
         } else {
             $this->line('✅ CMS functionality will be disabled (blog only).');
             
-            // Update config file
-            $this->updateConfigFile([
+            // Store preferences to apply after config file is published
+            $this->cmsPreferences = [
                 'cms.enabled' => false,
                 'homepage.type' => 'blog',
-            ]);
+            ];
         }
     }
 
