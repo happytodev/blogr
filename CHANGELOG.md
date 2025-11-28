@@ -4,6 +4,19 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+- **MySQL Migration Fix [Fixes #172](https://github.com/happytodev/blogr/issues/172)**:
+  - Fixed installation failure on MySQL databases
+  - **Error**: `SQLSTATE[42000]: Cannot truncate a table referenced in a foreign key constraint`
+  - **Root Cause**: Migration `2025_10_13_000001_remove_translatable_fields_from_blog_posts_table.php` used `truncate()` which fails on MySQL when tables have foreign key constraints
+  - **Solution**: Replaced `DB::table('blog_posts')->truncate()` with `DB::table('blog_posts')->delete()` 
+  - **Impact**: Blogr now installs correctly on MySQL, PostgreSQL, SQLite, and other databases. The `delete()` method works across all database engines regardless of foreign key constraints.
+  - **Tests Added**: 4 new tests in `MigrationWithForeignKeysTest.php` verify:
+    - Migration executes successfully with `delete()` instead of `truncate()`
+    - `delete()` works on empty tables (fresh installation scenario)
+    - Migration rollback works correctly
+    - Database compatibility across SQLite, MySQL, PostgreSQL
+  - **Test Coverage**: 764 tests, 2226 assertions (all passing)
+
 ## [v0.15.7](https://github.com/happytodev/blogr/compare/v0.15.6...v0.15.5) - 2025-11-27
 
 - **CMS Block Text Colors Fix [Fixes #169](https://github.com/happytodev/blogr/issues/169)**:
