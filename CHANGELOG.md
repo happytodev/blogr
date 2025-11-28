@@ -4,6 +4,29 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.15.9](https://github.com/happytodev/blogr/compare/v0.15.9...v0.15.8) - 2025-11-28
+
+- **CMS Homepage Route Conflict Fix [Fixes #174](https://github.com/happytodev/blogr/issues/174)**:
+  - Fixed CMS homepage not appearing when selected during installation - root URL returned 404 instead of CMS homepage
+  - **Root Cause**: Blog routes were registered at root (`/` and `/{locale}`) regardless of `homepage.type` configuration, causing blog to override CMS homepage routes
+  - **Solution**: Modified `BlogrServiceProvider::registerFrontendRoutes()` to:
+    - Check `blogr.homepage.type` configuration ('blog' or 'cms')
+    - Calculate `$blogIsHomepage` boolean to determine if blog should actually be homepage
+    - Only register blog root routes when `$blogIsHomepage === true`
+    - Allow CMS routes to register at root when `homepage.type = 'cms'`
+  - **Files Modified**:
+    - `src/BlogrServiceProvider.php`: Added homepage type detection and conditional route registration (lines 247-268, 280-287, 433-441)
+  - **Tests Added**: 3 new tests in `Issue174CmsHomepageTest.php`:
+    - CMS homepage accessible at root URL when configured as homepage
+    - Blog still accessible at `/blog` when CMS is homepage
+    - Root URL shows CMS homepage not blog index
+  - **Supporting Files**:
+    - `tests/LocalizedCmsTestCase.php`: New test case for CMS tests with locales enabled
+  - **Test Coverage**: 765 tests, 2234 assertions (all passing)
+  - **Impact**: Users can now successfully set CMS as homepage during installation and CMS homepage will display at root URL as expected
+
+## [v0.15.8](https://github.com/happytodev/blogr/compare/v0.15.8...v0.15.7) - 2025-11-28
+
 - **MySQL Migration Fix [Fixes #172](https://github.com/happytodev/blogr/issues/172)**:
   - Fixed installation failure on MySQL databases
   - **Error**: `SQLSTATE[42000]: Cannot truncate a table referenced in a foreign key constraint`

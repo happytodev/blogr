@@ -244,9 +244,13 @@ class BlogrServiceProvider extends PackageServiceProvider
         $localesEnabled = config('blogr.locales.enabled', false);
         $availableLocales = config('blogr.locales.available', ['en']);
         $localePattern = implode('|', $availableLocales);
+        $homepageType = config('blogr.homepage.type', 'blog');
+        
+        // If CMS is configured as homepage, blog should NOT override root routes
+        $blogIsHomepage = ($homepageType === 'blog' || ($isHomepage && $homepageType === 'blog'));
 
-        // If homepage is explicitly set, override prefix
-        if ($isHomepage) {
+        // If homepage is explicitly set AND blog is the homepage type, override prefix
+        if ($isHomepage && $blogIsHomepage) {
             $prefix = '';
         }
 
@@ -254,9 +258,10 @@ class BlogrServiceProvider extends PackageServiceProvider
             // Add fallback redirect from non-localized URL to default locale
             $defaultLocale = config('blogr.locales.default', 'en');
 
-            if ($prefix === '' || $prefix === '/' || $isHomepage) {
-                // When blog is homepage, override the root route to redirect to default locale
+            if (($prefix === '' || $prefix === '/') && $blogIsHomepage) {
+                // When blog is homepage (not CMS), override the root route to redirect to default locale
                 // This ensures it takes precedence over any other root route
+                // Only register this redirect if blog is actually the homepage
                 $this->app['router']
                     ->middleware(config('blogr.route.middleware', ['web']))
                     ->get('/', function () use ($defaultLocale) {
@@ -271,8 +276,9 @@ class BlogrServiceProvider extends PackageServiceProvider
                     });
             }            // Register localized routes with locale prefix
             // Blog routes with locale - REFACTORED: No nested prefix groups to avoid Laravel parameter binding bug
-            if ($prefix === '' || $prefix === '/' || $isHomepage) {
+            if (($prefix === '' || $prefix === '/') && $blogIsHomepage) {
                 // Blog as homepage with locale: /{locale}/
+                // Only register these routes if blog is actually the homepage
                 $this->app['router']->get('{locale}', [BlogController::class, 'index'])
                     ->where('locale', $localePattern)
                     ->middleware(array_merge(
@@ -426,8 +432,8 @@ class BlogrServiceProvider extends PackageServiceProvider
             }
         } else {
             // Original non-localized routes
-            if ($prefix === '' || $prefix === '/' || $isHomepage) {
-                // Blog route as homepage
+            if (($prefix === '' || $prefix === '/') && $blogIsHomepage) {
+                // Blog route as homepage - only if blog is actually the homepage
                 $this->app['router']
                     ->middleware(config('blogr.route.middleware', ['web']))
                     ->group(function () {
