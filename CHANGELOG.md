@@ -4,6 +4,45 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.15.10](https://github.com/happytodev/blogr/compare/v0.15.10...v0.15.9) - 2025-11-28
+
+
+- **Installation Bug Fixes**:
+  - **Fixed CMS Configuration Lost During Installation**:
+    - **Problem**: When user selected "CMS" as homepage type during `php artisan blogr:install`, the choice was lost
+    - **Root Cause**: `configureCmsPreferences()` tried to write to config file **before** it was published, resulting in lost preferences
+    - **Solution**: Store CMS preferences in memory and apply them **after** config file is published
+    - **Impact**: CMS homepage choice is now correctly saved to `config/blogr.php`
+    
+  - **Fixed Admin Panel Empty for First User**:
+    - **Problem**: After installation, admin panel showed no resources (no Blog Posts, Users, Settings) even though user should have admin role
+    - **Root Cause**: `configureUserModel()` added `HasRoles` trait to User.php file, but PHP had already loaded the class **without** the trait. Subsequent `assignRole()` calls failed because the trait methods don't exist in the loaded class
+    - **Solution**: 
+      - Use direct database insertion into `model_has_roles` table instead of `$user->assignRole()`
+      - This bypasses the need for the HasRoles trait to be loaded in memory
+      - Check existing role using direct database query instead of `hasRole()` method
+      - Works 100% reliably regardless of trait loading state
+    - **Technical Details**:
+      ```php
+      // Old approach (failed):
+      $user->assignRole('admin'); // Requires HasRoles trait in memory
+      
+      // New approach (always works):
+      DB::table('model_has_roles')->insert([
+          'role_id' => $adminRole->id,
+          'model_type' => get_class($user),
+          'model_id' => $user->id,
+      ]);
+      ```
+    - **Impact**: First user now **always** receives admin role automatically, no manual intervention needed
+    
+  - **Files Modified**:
+    - `src/Commands/BlogrInstallCommand.php`: 
+      - Added `$cmsPreferences` property to store preferences
+      - Modified `configureCmsPreferences()` to store instead of immediately apply
+      - Added Step 1.5 to apply preferences after config publication
+      - Improved `assignAdminRoleToFirstUser()` error handling and messaging
+
 ## [v0.15.9](https://github.com/happytodev/blogr/compare/v0.15.9...v0.15.8) - 2025-11-28
 
 - **CMS Homepage Route Conflict Fix [Fixes #174](https://github.com/happytodev/blogr/issues/174)**:
