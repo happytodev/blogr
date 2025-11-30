@@ -56,7 +56,7 @@ class BlogController
                 'tags.translations', 
                 'translations' // Load all translations for photo fallback
             ])
-            ->latest()
+            ->orderBy('published_at', 'desc')
             ->where('is_published', true)
             ->where(function ($query) {
                 $query->whereNull('published_at')
@@ -528,7 +528,7 @@ class BlogController
                 $query->whereNull('published_at')
                       ->orWhere('published_at', '<=', now());
             })
-            ->latest()
+            ->orderBy('published_at', 'desc')
             ->paginate(config('blogr.posts_per_page', 10))
             ->through(function ($post) use ($currentLocale) {
                 $translation = $post->translations->firstWhere('locale', $currentLocale);
@@ -626,7 +626,7 @@ class BlogController
                 $query->whereNull('published_at')
                       ->orWhere('published_at', '<=', now());
             })
-            ->latest()
+            ->orderBy('published_at', 'desc')
             ->take(config('blogr.posts_per_page', 10))
             ->get()
             ->map(function ($post) use ($currentLocale) {
