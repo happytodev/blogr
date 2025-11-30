@@ -959,3 +959,163 @@ it('default TOC state respects global settings', function () {
     config(['blogr.toc.enabled' => true]);
     expect(BlogPost::getDefaultTocDisabled())->toBe(false);
 });
+
+it('displays blog posts ordered by publication date descending on index page', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create posts with different publication dates
+    $oldPost = BlogPost::create([
+        'title' => 'Old Post',
+        'content' => 'This is an old post.',
+        'slug' => 'old-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now()->subDays(10),
+    ]);
+
+    $recentPost = BlogPost::create([
+        'title' => 'Recent Post',
+        'content' => 'This is a recent post.',
+        'slug' => 'recent-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now()->subDays(2),
+    ]);
+
+    $newestPost = BlogPost::create([
+        'title' => 'Newest Post',
+        'content' => 'This is the newest post.',
+        'slug' => 'newest-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Visit the blog index
+    $response = $this->get(route('blog.index'));
+    $response->assertOk();
+
+    // Get the content
+    $content = $response->getContent();
+
+    // Find positions of each post title in the content
+    $newestPos = strpos($content, 'Newest Post');
+    $recentPos = strpos($content, 'Recent Post');
+    $oldPos = strpos($content, 'Old Post');
+
+    // Assert posts appear in correct order (newest first)
+    expect($newestPos)->toBeLessThan($recentPos)
+        ->and($recentPos)->toBeLessThan($oldPos);
+});
+
+it('displays blog posts ordered by publication date descending in category pages', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+
+    // Create posts with different publication dates in same category
+    $oldPost = BlogPost::create([
+        'title' => 'Old Category Post',
+        'content' => 'This is an old post.',
+        'slug' => 'old-category-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now()->subDays(10),
+    ]);
+
+    $recentPost = BlogPost::create([
+        'title' => 'Recent Category Post',
+        'content' => 'This is a recent post.',
+        'slug' => 'recent-category-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now()->subDays(2),
+    ]);
+
+    $newestPost = BlogPost::create([
+        'title' => 'Newest Category Post',
+        'content' => 'This is the newest post.',
+        'slug' => 'newest-category-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+
+    // Visit the category page
+    $response = $this->get(route('blog.category', ['categorySlug' => $category->slug]));
+    $response->assertOk();
+
+    // Get the content
+    $content = $response->getContent();
+
+    // Find positions of each post title in the content
+    $newestPos = strpos($content, 'Newest Category Post');
+    $recentPos = strpos($content, 'Recent Category Post');
+    $oldPos = strpos($content, 'Old Category Post');
+
+    // Assert posts appear in correct order (newest first)
+    expect($newestPos)->toBeLessThan($recentPos)
+        ->and($recentPos)->toBeLessThan($oldPos);
+});
+
+it('displays blog posts ordered by publication date descending in tag pages', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
+    $tag = Tag::factory()->create();
+
+    // Create posts with different publication dates with same tag
+    $oldPost = BlogPost::create([
+        'title' => 'Old Tagged Post',
+        'content' => 'This is an old post.',
+        'slug' => 'old-tagged-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now()->subDays(10),
+    ]);
+    $oldPost->tags()->attach($tag->id);
+
+    $recentPost = BlogPost::create([
+        'title' => 'Recent Tagged Post',
+        'content' => 'This is a recent post.',
+        'slug' => 'recent-tagged-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now()->subDays(2),
+    ]);
+    $recentPost->tags()->attach($tag->id);
+
+    $newestPost = BlogPost::create([
+        'title' => 'Newest Tagged Post',
+        'content' => 'This is the newest post.',
+        'slug' => 'newest-tagged-post',
+        'is_published' => true,
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+        'published_at' => now(),
+    ]);
+    $newestPost->tags()->attach($tag->id);
+
+    // Visit the tag page
+    $response = $this->get(route('blog.tag', ['tagSlug' => $tag->slug]));
+    $response->assertOk();
+
+    // Get the content
+    $content = $response->getContent();
+
+    // Find positions of each post title in the content
+    $newestPos = strpos($content, 'Newest Tagged Post');
+    $recentPos = strpos($content, 'Recent Tagged Post');
+    $oldPos = strpos($content, 'Old Tagged Post');
+
+    // Assert posts appear in correct order (newest first)
+    expect($newestPos)->toBeLessThan($recentPos)
+        ->and($recentPos)->toBeLessThan($oldPos);
+});
