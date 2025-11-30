@@ -4,6 +4,28 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.15.11](https://github.com/happytodev/blogr/compare/v0.15.11...v0.15.10) - 2025-11-30
+
+### 🐛 Bug Fixes
+
+- **Blog Post Display Order Fix [Fixes #191](https://github.com/happytodev/blogr/issues/191)**:
+  - Fixed blog posts not being displayed by publication date (`published_at`) but by creation date (`created_at`)
+  - **Root Cause**: `BlogController` used `->latest()` which sorts by `created_at` instead of `published_at`
+  - **Solution**: Replaced all `->latest()` calls with `->orderBy('published_at', 'desc')` in 3 locations:
+    - Blog index page (`/blog`)
+    - Category pages (`/blog/category/{slug}`)
+    - Tag pages (`/blog/tag/{slug}`)
+  - **Impact**: Posts now correctly displayed with newest publication date first, older posts appearing later
+  - **Test Coverage**: Added 3 new tests validating publication date order on index, category, and tag pages
+  - **Files Modified**:
+    - `src/Http/Controllers/BlogController.php` (3 query modifications)
+    - `tests/Feature/BlogPostDisplayTest.php` (+3 tests)
+
+### 🧪 Testing
+
+- **All 768 tests passing** (2244 assertions)
+- New tests ensure posts are always ordered by `published_at` descending across all listing pages
+
 ## [v0.15.10](https://github.com/happytodev/blogr/compare/v0.15.10...v0.15.9) - 2025-11-28
 
 
