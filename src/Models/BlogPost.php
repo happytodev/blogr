@@ -197,8 +197,38 @@ class BlogPost extends Model
     // Many-to-many relationship with Tag model
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, config('blogr.tables.prefix', '') . 'blog_post_tag')
-            ->orderBy('name', 'asc');
+        return $this->belongsToMany(Tag::class, config('blogr.tables.prefix', '') . 'blog_post_tag');
+    }
+    
+    /**
+     * Accessor for tags attribute - returns tags sorted alphabetically by translated name
+     * This ensures $post->tags always returns sorted tags
+     */
+    public function getTagsAttribute($value)
+    {
+        // If the relation hasn't been loaded yet, load it first
+        if (!$this->relationLoaded('tags')) {
+            $this->load('tags.translations');
+        }
+        
+        $locale = app()->getLocale();
+        $tags = $this->getRelationValue('tags');
+        
+        // Sort by translated name
+        return $tags->sortBy(function($tag) use ($locale) {
+            $translation = $tag->translate($locale);
+            return strtolower($translation ? $translation->name : $tag->name);
+        })->values();
+    }
+
+    /**
+     * Get tags sorted alphabetically by their translated name in the current locale
+     * This method should be used in views to display tags in alphabetical order
+     * @deprecated Use $post->tags directly instead (it's now automatically sorted)
+     */
+    public function tagsSorted()
+    {
+        return $this->tags;
     }
 
     /**
