@@ -197,7 +197,8 @@ class BlogPost extends Model
     // Many-to-many relationship with Tag model
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, config('blogr.tables.prefix', '') . 'blog_post_tag');
+        return $this->belongsToMany(Tag::class, config('blogr.tables.prefix', '') . 'blog_post_tag')
+            ->orderBy('name', 'asc');
     }
 
     /**
