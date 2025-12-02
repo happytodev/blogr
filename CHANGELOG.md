@@ -4,6 +4,30 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.15.12](https://github.com/happytodev/blogr/compare/v0.15.12...v0.15.11) - 2025-12-02
+
+### 🐛 Bug Fixes
+
+- **Tags Alphabetical Order Fix [Fixes #203](https://github.com/happytodev/blogr/issues/203)**:
+  - Fixed tags not being displayed in alphabetical order in frontend (blog cards and post detail pages)
+  - **Root Cause**: The `tags()` relation in `BlogPost` model had no ordering, tags were displayed in database insertion order
+  - **Solution**: Added `->orderBy('name', 'asc')` to the `tags()` relationship in `BlogPost` model
+  - **Impact**: Tags now consistently appear in alphabetical order across all pages:
+    - Blog index cards
+    - Blog post detail pages
+    - Category pages
+    - Tag pages
+    - Author pages
+  - **Test Coverage**: Added 2 new tests validating alphabetical order on index and detail pages
+  - **Files Modified**:
+    - `src/Models/BlogPost.php` (added orderBy to tags relation)
+    - `tests/Feature/TagsAlphabeticalOrderTest.php` (+2 tests)
+
+### 🧪 Testing
+
+- **All 772 tests passing** (2251 assertions)
+- New tests ensure tags are always ordered alphabetically across all listing pages
+
 ## [v0.15.11](https://github.com/happytodev/blogr/compare/v0.15.11...v0.15.10) - 2025-11-30
 
 ### 🐛 Bug Fixes
