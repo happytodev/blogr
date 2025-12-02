@@ -90,9 +90,12 @@
         <!-- Bottom Section: Tags + Author + Read More (always at bottom) -->
         <div class="mt-auto space-y-4">
             <!-- Tags -->
-            @if ($post->tags->count())
+            @php
+                $sortedTags = $post->tagsSorted();
+            @endphp
+            @if ($sortedTags->count())
                 <div class="flex flex-wrap gap-2">
-                    @foreach ($post->tags->take(3) as $tag)
+                    @foreach ($sortedTags->take(3) as $tag)
                         @php
                             $tagTranslation = $tag->translate($currentLocale);
                             $tagName = $tagTranslation ? $tagTranslation->name : $tag->name;
@@ -103,9 +106,9 @@
                             #{{ $tagName }}
                         </a>
                     @endforeach
-                    @if ($post->tags->count() > 3)
+                    @if ($sortedTags->count() > 3)
                         <span class="inline-block text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] text-xs px-2.5 py-1">
-                            +{{ $post->tags->count() - 3 }}
+                            +{{ $sortedTags->count() - 3 }}
                         </span>
                     @endif
                 </div>

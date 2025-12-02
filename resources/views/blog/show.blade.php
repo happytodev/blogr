@@ -645,10 +645,13 @@
         @endif
 
         <!-- Tags (Top Position) -->
-        @if ($post->tags->count() && config('blogr.ui.posts.tags_position', 'bottom') === 'top')
+        @php
+            $sortedTags = $post->tagsSorted();
+        @endphp
+        @if ($sortedTags->count() && config('blogr.ui.posts.tags_position', 'bottom') === 'top')
             <div class="mb-8 flex flex-wrap gap-2">
                 <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Tags:</span>
-                @foreach ($post->tags as $tag)
+                @foreach ($sortedTags as $tag)
                     @php
                         $tagTranslation = $tag->translate($currentLocale);
                         $tagName = $tagTranslation ? $tagTranslation->name : $tag->name;
@@ -677,10 +680,13 @@
         </div>
 
         <!-- Tags (Bottom Position) -->
-        @if ($post->tags->count() && config('blogr.ui.posts.tags_position', 'bottom') === 'bottom')
+        @php
+            $sortedTags = $post->tagsSorted();
+        @endphp
+        @if ($sortedTags->count() && config('blogr.ui.posts.tags_position', 'bottom') === 'bottom')
             <div class="mb-8 flex flex-wrap gap-2">
                 <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Tags:</span>
-                @foreach ($post->tags as $tag)
+                @foreach ($sortedTags as $tag)
                     @php
                         $tagTranslation = $tag->translate($currentLocale);
                         $tagName = $tagTranslation ? $tagTranslation->name : $tag->name;

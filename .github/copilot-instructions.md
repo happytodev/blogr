@@ -100,6 +100,30 @@ public function translations() {
 
 // Always query through translations:
 BlogPost::with('translations')->get(); // NOT BlogPost::all()
+
+// Tags with automatic alphabetical sorting (v0.15.12+)
+// The BlogPost model has a getTagsAttribute() accessor that automatically
+// sorts tags alphabetically by their translated name in the current locale
+$post->tags; // Returns Collection sorted alphabetically
+```
+
+### Sorting Multilingual Relations
+**Pattern**: Use Eloquent accessors for automatic sorting with translations
+
+```php
+// Example: BlogPost tags sorted alphabetically
+public function getTagsAttribute($value) {
+    if (!$this->relationLoaded('tags')) {
+        $this->load('tags.translations');
+    }
+    $locale = app()->getLocale();
+    $tags = $this->getRelationValue('tags'); // Avoid accessor recursion
+    return $tags->sortBy(function($tag) use ($locale) {
+        $translation = $tag->translate($locale);
+        return strtolower($translation ? $translation->name : $tag->name);
+    })->values();
+}
+// Usage in views: $post->tags is now automatically sorted
 ```
 
 ### FilamentPHP Integration
