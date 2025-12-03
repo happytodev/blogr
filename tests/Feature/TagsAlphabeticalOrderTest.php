@@ -8,6 +8,7 @@ use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\TagTranslation;
 use Happytodev\Blogr\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 uses(RefreshDatabase::class);
 
@@ -101,4 +102,8 @@ it('displays tags in alphabetical order on blog post detail page', function () {
     expect($applePos)->toBeLessThan($bananaPos)
         ->and($bananaPos)->toBeLessThan($mangoPos)
         ->and($mangoPos)->toBeLessThan($zebraPos);
+});
+
+it('keeps the tags relation available for filters', function () {
+    expect((new BlogPost())->tags())->toBeInstanceOf(BelongsToMany::class);
 });
