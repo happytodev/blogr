@@ -10,24 +10,22 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Tags Alphabetical Order Fix [Fixes #203](https://github.com/happytodev/blogr/issues/203)**:
   - Fixed tags not being displayed in alphabetical order in frontend (blog cards and post detail pages)
-  - **Root Cause**: The `tags()` relation in `BlogPost` model had no ordering, tags were displayed in database pivot table insertion order
-  - **Technical Challenge**: Simple `orderBy('name')` doesn't work because tag names are stored in `tag_translations` table (multilingual architecture)
-  - **Solution**: Implemented a `getTagsAttribute()` accessor in `BlogPost` model that:
-    - Automatically sorts tags by their translated name in the current locale
-    - Uses `strtolower()` for case-insensitive alphabetical sorting
-    - Handles missing translations gracefully with fallback to `tag.name`
-    - Works seamlessly with both `$post->tags` and `$post->tagsSorted()` (deprecated)
+  - **Root Cause**: Tags were rendered in the natural pivot insertion order because the views iterated over `$post->tags` without any sorting
+  - **Solution**: Added a `tagsSorted()` helper on `BlogPost` that:
+    - Loads each tag's translations before sorting
+    - Compares the translated name for the current locale (falling back to the main tag name when needed)
+    - Returns a normalized collection so the views can call `->take(3)` safely and still get the first alphabetical entries
   - **Impact**: Tags now consistently appear in alphabetical order across all pages:
     - Blog index cards (showing first 3 tags)
     - Blog post detail pages (showing all tags)
     - Category pages
     - Tag pages
     - Author pages
-  - **Backward Compatibility**: `tagsSorted()` method maintained but deprecated (now just returns `$this->tags`)
-  - **Test Coverage**: Added 2 new tests validating alphabetical order on index and detail pages (772 tests passing, 2254 assertions)
+  - **Regression Guardrail**: Added a test that asserts `BlogPost::tags()` still returns a `BelongsToMany` relation so Filament filters keep working
+  - **Test Coverage**: Added 3 new tests validating alphabetical order on index/detail pages and verifying the tags relation (772 tests passing, 2254 assertions)
   - **Files Modified**:
-    - `src/Models/BlogPost.php` (added `getTagsAttribute()` accessor)
-    - `tests/Feature/TagsAlphabeticalOrderTest.php` (+2 tests)
+    - `src/Models/BlogPost.php` (introduced the `tagsSorted()` helper and kept the `tags()` relation clean)
+    - `tests/Feature/TagsAlphabeticalOrderTest.php` (+3 tests)
 
 ### 🧪 Testing
 
