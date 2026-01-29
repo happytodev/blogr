@@ -102,6 +102,9 @@
         </script>
     @endif
 
+    {{-- Analytics Tracking --}}
+    @include('blogr::components.analytics-tracker')
+
     @stack('head')
     @stack('styles')
     

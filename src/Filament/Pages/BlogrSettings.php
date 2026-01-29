@@ -176,6 +176,21 @@ class BlogrSettings extends Page
     public ?string $back_to_top_shape = null;
     public ?string $back_to_top_color = null;
 
+    // Analytics Settings
+    public ?bool $analytics_enabled = null;
+    public ?string $analytics_provider = null;
+    // Google Analytics
+    public ?string $analytics_google_measurement_id = null;
+    // Plausible
+    public ?string $analytics_plausible_domain = null;
+    public ?string $analytics_plausible_src = null;
+    // Umami
+    public ?string $analytics_umami_website_id = null;
+    public ?string $analytics_umami_src = null;
+    // Matomo
+    public ?string $analytics_matomo_url = null;
+    public ?string $analytics_matomo_site_id = null;
+
     // Import/Export
     public array $import_file = [];
     public bool $overwrite_existing_data = false;
@@ -400,6 +415,21 @@ class BlogrSettings extends Page
         $this->back_to_top_enabled = $config['ui']['back_to_top']['enabled'] ?? true;
         $this->back_to_top_shape = $config['ui']['back_to_top']['shape'] ?? 'circle';
         $this->back_to_top_color = $config['ui']['back_to_top']['color'] ?? null; // null = use primary color
+
+        // Load analytics settings
+        $this->analytics_enabled = $config['analytics']['enabled'] ?? false;
+        $this->analytics_provider = $config['analytics']['provider'] ?? null;
+        // Google Analytics
+        $this->analytics_google_measurement_id = $config['analytics']['google']['measurement_id'] ?? null;
+        // Plausible
+        $this->analytics_plausible_domain = $config['analytics']['plausible']['domain'] ?? null;
+        $this->analytics_plausible_src = $config['analytics']['plausible']['src'] ?? null;
+        // Umami
+        $this->analytics_umami_website_id = $config['analytics']['umami']['website_id'] ?? null;
+        $this->analytics_umami_src = $config['analytics']['umami']['src'] ?? null;
+        // Matomo
+        $this->analytics_matomo_url = $config['analytics']['matomo']['url'] ?? null;
+        $this->analytics_matomo_site_id = $config['analytics']['matomo']['site_id'] ?? null;
     }
 
     public function getFormSchema(): array
@@ -1286,6 +1316,130 @@ class BlogrSettings extends Page
                         ]),
 
                     // ========================================
+                    // ANALYTICS TAB
+                    // ========================================
+                    Tabs\Tab::make('Analytics')
+                        ->icon('heroicon-o-chart-bar')
+                        ->schema([
+                            Section::make('Web Analytics Configuration')
+                                ->description('Configure your web analytics provider to track visitor statistics')
+                                ->schema([
+                                    Toggle::make('analytics_enabled')
+                                        ->label('Enable Analytics')
+                                        ->helperText('Enable or disable analytics tracking on the frontend')
+                                        ->default(false)
+                                        ->live(),
+
+                                    Select::make('analytics_provider')
+                                        ->label('Analytics Provider')
+                                        ->options([
+                                            'google' => 'Google Analytics',
+                                            'plausible' => 'Plausible Analytics',
+                                            'umami' => 'Umami Analytics',
+                                            'matomo' => 'Matomo Analytics',
+                                        ])
+                                        ->placeholder('Select your analytics provider')
+                                        ->helperText('Choose your preferred analytics service')
+                                        ->visible(fn(Get $get) => $get('analytics_enabled'))
+                                        ->live()
+                                        ->native(false),
+                                ]),
+
+                            // Google Analytics Configuration
+                            Section::make('Google Analytics')
+                                ->description('Configure Google Analytics 4 (GA4) or Universal Analytics')
+                                ->icon('heroicon-o-chart-pie')
+                                ->schema([
+                                    TextInput::make('analytics_google_measurement_id')
+                                        ->label('Measurement ID')
+                                        ->placeholder('G-XXXXXXXXXX or UA-XXXXX-X')
+                                        ->helperText('Your Google Analytics Measurement ID. Find it in GA Admin → Data Streams → Web stream details')
+                                        ->required(fn(Get $get) => $get('analytics_enabled') && $get('analytics_provider') === 'google'),
+
+                                    Placeholder::make('google_info')
+                                        ->content('Google Analytics will inject the gtag.js script and track page views automatically. Make sure to configure your GA4 property correctly in the Google Analytics dashboard.')
+                                        ->columnSpanFull(),
+                                ])
+                                ->visible(fn(Get $get) => $get('analytics_enabled') && $get('analytics_provider') === 'google')
+                                ->collapsible(),
+
+                            // Plausible Analytics Configuration
+                            Section::make('Plausible Analytics')
+                                ->description('Configure Plausible Analytics (privacy-friendly alternative)')
+                                ->icon('heroicon-o-shield-check')
+                                ->schema([
+                                    TextInput::make('analytics_plausible_domain')
+                                        ->label('Domain')
+                                        ->placeholder('yoursite.com')
+                                        ->helperText('Your site domain as registered in Plausible (without https://)')
+                                        ->required(fn(Get $get) => $get('analytics_enabled') && $get('analytics_provider') === 'plausible'),
+
+                                    TextInput::make('analytics_plausible_src')
+                                        ->label('Script URL (optional)')
+                                        ->placeholder('https://plausible.io/js/script.js')
+                                        ->helperText('Leave empty to use the default Plausible Cloud script. For self-hosted: https://your-plausible-instance.com/js/script.js')
+                                        ->url(),
+
+                                    Placeholder::make('plausible_info')
+                                        ->content('Plausible is a privacy-friendly, cookie-free analytics service. It\'s GDPR, CCPA and PECR compliant out of the box without requiring a cookie banner.')
+                                        ->columnSpanFull(),
+                                ])
+                                ->visible(fn(Get $get) => $get('analytics_enabled') && $get('analytics_provider') === 'plausible')
+                                ->collapsible(),
+
+                            // Umami Analytics Configuration
+                            Section::make('Umami Analytics')
+                                ->description('Configure Umami Analytics (open-source, privacy-focused)')
+                                ->icon('heroicon-o-eye-slash')
+                                ->schema([
+                                    TextInput::make('analytics_umami_website_id')
+                                        ->label('Website ID')
+                                        ->placeholder('a93a8ed3-88da-4f54-b9ce-378d8f33f06a')
+                                        ->helperText('Your Umami Website ID (UUID format). Find it in Umami → Websites → Edit')
+                                        ->required(fn(Get $get) => $get('analytics_enabled') && $get('analytics_provider') === 'umami'),
+
+                                    TextInput::make('analytics_umami_src')
+                                        ->label('Script URL')
+                                        ->placeholder('https://cloud.umami.is/script.js')
+                                        ->helperText('Umami Cloud: https://cloud.umami.is/script.js | Self-hosted: https://your-umami.com/script.js')
+                                        ->url()
+                                        ->required(fn(Get $get) => $get('analytics_enabled') && $get('analytics_provider') === 'umami'),
+
+                                    Placeholder::make('umami_info')
+                                        ->content('Umami is a simple, fast, privacy-focused alternative to Google Analytics. It doesn\'t use cookies and collects only essential data.')
+                                        ->columnSpanFull(),
+                                ])
+                                ->visible(fn(Get $get) => $get('analytics_enabled') && $get('analytics_provider') === 'umami')
+                                ->collapsible(),
+
+                            // Matomo Analytics Configuration
+                            Section::make('Matomo Analytics')
+                                ->description('Configure Matomo Analytics (formerly Piwik)')
+                                ->icon('heroicon-o-server')
+                                ->schema([
+                                    TextInput::make('analytics_matomo_url')
+                                        ->label('Matomo URL')
+                                        ->placeholder('https://matomo.yoursite.com')
+                                        ->helperText('Your Matomo instance URL (without trailing slash)')
+                                        ->url()
+                                        ->required(fn(Get $get) => $get('analytics_enabled') && $get('analytics_provider') === 'matomo'),
+
+                                    TextInput::make('analytics_matomo_site_id')
+                                        ->label('Site ID')
+                                        ->placeholder('1')
+                                        ->helperText('Your Matomo Site ID (numeric). Find it in Matomo → Administration → Websites → Manage')
+                                        ->numeric()
+                                        ->required(fn(Get $get) => $get('analytics_enabled') && $get('analytics_provider') === 'matomo'),
+
+                                    Placeholder::make('matomo_info')
+                                        ->content('Matomo is an open-source web analytics platform. You can self-host it for complete data ownership or use Matomo Cloud.')
+                                        ->columnSpanFull(),
+                                ])
+                                ->visible(fn(Get $get) => $get('analytics_enabled') && $get('analytics_provider') === 'matomo')
+                                ->collapsible(),
+                        ]),
+
+                    // ========================================
                     // BACKUP TAB
                     // ========================================
                     Tabs\Tab::make('Backup')
@@ -1891,6 +2045,25 @@ class BlogrSettings extends Page
                     'enabled' => $this->back_to_top_enabled,
                     'shape' => $this->back_to_top_shape,
                     'color' => $this->back_to_top_color,
+                ],
+            ],
+            'analytics' => [
+                'enabled' => $this->analytics_enabled,
+                'provider' => $this->analytics_provider,
+                'google' => [
+                    'measurement_id' => $this->analytics_google_measurement_id,
+                ],
+                'plausible' => [
+                    'domain' => $this->analytics_plausible_domain,
+                    'src' => $this->analytics_plausible_src,
+                ],
+                'umami' => [
+                    'website_id' => $this->analytics_umami_website_id,
+                    'src' => $this->analytics_umami_src,
+                ],
+                'matomo' => [
+                    'url' => $this->analytics_matomo_url,
+                    'site_id' => $this->analytics_matomo_site_id,
                 ],
             ],
         ];

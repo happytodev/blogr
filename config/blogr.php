@@ -479,4 +479,47 @@ return [
             'livewire',
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Analytics Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure web analytics tracking for your blog.
+    | Supported providers: Google Analytics, Plausible, Umami, Matomo
+    |
+    | Each provider has its own set of configuration options:
+    | - Google Analytics: measurement_id (G-XXXXXXXXXX or UA-XXXXX-X)
+    | - Plausible: domain, src (optional, for self-hosted)
+    | - Umami: website_id (UUID), src (script URL)
+    | - Matomo: url (Matomo instance URL), site_id (numeric)
+    |
+    */
+    'analytics' => [
+        'enabled' => false, // Enable/disable analytics tracking
+        'provider' => null, // 'google', 'plausible', 'umami', or 'matomo'
+        
+        // Google Analytics (GA4 or Universal Analytics)
+        'google' => [
+            'measurement_id' => null, // e.g., 'G-XXXXXXXXXX' or 'UA-XXXXX-X'
+        ],
+        
+        // Plausible Analytics (privacy-friendly)
+        'plausible' => [
+            'domain' => null, // Your site domain (e.g., 'yoursite.com')
+            'src' => null, // Script URL (null = default Plausible Cloud: https://plausible.io/js/script.js)
+        ],
+        
+        // Umami Analytics (open-source, privacy-focused)
+        'umami' => [
+            'website_id' => null, // Your Website ID (UUID format)
+            'src' => null, // Script URL (e.g., 'https://cloud.umami.is/script.js')
+        ],
+        
+        // Matomo Analytics (self-hosted or cloud)
+        'matomo' => [
+            'url' => null, // Matomo instance URL (e.g., 'https://matomo.yoursite.com')
+            'site_id' => null, // Site ID (numeric)
+        ],
+    ],
 ];
