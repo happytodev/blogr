@@ -4,6 +4,33 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.16.0](https://github.com/happytodev/blogr/compare/v0.16.0...v0.15.12) - 2026-01-29
+
+### ✨ Features
+
+- **Web Analytics Integration**:
+  - Added support for 4 major web analytics providers configurable via BlogrSettings
+  - **Supported Providers**:
+    - **Google Analytics**: Measurement ID (GA4: `G-XXXXXXXXXX` or Universal: `UA-XXXXX-X`)
+    - **Plausible Analytics**: Domain + optional self-hosted script URL (privacy-friendly)
+    - **Umami Analytics**: Website ID (UUID) + Script URL (open-source, privacy-focused)
+    - **Matomo Analytics**: Instance URL + Site ID (self-hosted or cloud)
+  - **Admin UI**: New "Analytics" tab in BlogrSettings with:
+    - Global toggle to enable/disable tracking
+    - Provider selector with conditional field display
+    - Validation for required fields per provider
+    - Helpful descriptions and placeholders for each configuration
+  - **Frontend**: Analytics scripts automatically injected in `<head>` via `analytics-tracker` component
+  - **Configuration**: New `analytics` section in `config/blogr.php`
+  - **Test Coverage**: 22 tests (60 assertions) covering settings, blade component rendering, and config structure
+  - **Files Added/Modified**:
+    - `src/Filament/Pages/BlogrSettings.php` (properties + Analytics tab)
+    - `config/blogr.php` (analytics configuration section)
+    - `resources/views/components/analytics-tracker.blade.php` (new component)
+    - `resources/views/layouts/blog.blade.php` (include analytics component)
+    - `tests/Feature/AnalyticsSettingsTest.php` (new test file)
+  - **Note**: Users with published views must add `@include('blogr::components.analytics-tracker')` to their layout
+
 ## [v0.15.12](https://github.com/happytodev/blogr/compare/v0.15.12...v0.15.11) - 2025-12-03
 
 ### 🐛 Bug Fixes
