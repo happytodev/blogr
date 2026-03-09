@@ -4,6 +4,12 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.17.1](https://github.com/happytodev/blogr/compare/v0.17.1...v0.17.0) - 2026-03-09
+
+### 🐛 Bug Fixes
+
+- **Missing version bump in `composer.json`**: the `0.17.0` release forgot to update the `version` field, preventing `composer update` from resolving the package correctly. Bumped to `0.17.1`.
+
 ## [v0.17.0](https://github.com/happytodev/blogr/compare/v0.17.0...v0.16.0) - 2026-03-09
 
 ### ✨ Features
