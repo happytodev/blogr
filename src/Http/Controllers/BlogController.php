@@ -13,10 +13,12 @@ use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
 use Illuminate\Support\Facades\Storage;
+use Happytodev\Blogr\Extensions\VideoEmbedAdapter;
 use League\CommonMark\MarkdownConverter;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Extension\Embed\EmbedExtension;
 use League\CommonMark\Extension\TableOfContents\TableOfContentsExtension;
 use League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension;
 
@@ -268,11 +270,17 @@ class BlogController
                 'normalize' => 'relative',
                 'html_class' => $tocHtmlClass,
             ],
+            'embed' => [
+                'adapter' => new VideoEmbedAdapter(),
+                'allowed_domains' => [],
+                'fallback' => 'link',
+            ],
         ]);
 
         $environment->addExtension(new CommonMarkCoreExtension());
         $environment->addExtension(new HeadingPermalinkExtension());
         $environment->addExtension(new TableOfContentsExtension());
+        $environment->addExtension(new EmbedExtension());
 
         $converter = new MarkdownConverter($environment);
 

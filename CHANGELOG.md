@@ -4,6 +4,30 @@ All notable changes to `blogr` will be documented in this file.
 
 ## Unpublished
 
+## [v0.17.0](https://github.com/happytodev/blogr/compare/v0.17.0...v0.16.0) - 2026-03-09
+
+### ✨ Features
+
+- **Video Embed Integration in Blog Posts and CMS Pages**:
+  - Standalone video URLs placed on their own line in Markdown content are automatically converted to responsive embedded players — no shortcode or extra syntax needed
+  - **Supported Providers**:
+    - **YouTube**: `youtube.com/watch?v=ID` and short `youtu.be/ID` URLs (served via `youtube-nocookie.com` for enhanced privacy)
+    - **Vimeo**: `vimeo.com/ID`
+    - **Dailymotion**: `dailymotion.com/video/ID`
+  - **Implementation**: Uses the built-in `league/commonmark` `EmbedExtension` with a custom `VideoEmbedAdapter` — zero new dependencies required
+  - **Scope**: Works in all Markdown-rendered areas:
+    - Blog post content (with TOC support)
+    - CMS page content blocks
+    - FAQ page content
+  - **Responsive output**: Embeds render inside a 16/9 `aspect-video` wrapper with Tailwind classes (`rounded-xl`, `shadow-lg`)
+  - **Security**: URLs are escaped with `htmlspecialchars()` before being placed in `src` attributes; inline URLs in paragraphs are never converted
+  - **Test Coverage**: 8 tests (17 assertions) in `tests/Unit/VideoEmbedAdapterTest.php`
+  - **Files Added/Modified**:
+    - `src/Extensions/VideoEmbedAdapter.php` (new)
+    - `src/Helpers/MarkdownHelper.php` (EmbedExtension added)
+    - `src/Http/Controllers/BlogController.php` (EmbedExtension added to converter)
+    - `tests/Unit/VideoEmbedAdapterTest.php` (new)
+
 ## [v0.16.0](https://github.com/happytodev/blogr/compare/v0.16.0...v0.15.12) - 2026-01-29
 
 ### ✨ Features
