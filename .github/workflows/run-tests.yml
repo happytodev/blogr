@@ -20,8 +20,6 @@ jobs:
           - laravel: 12.*
             testbench: 10.*
             carbon: 3.*
-            pest: 3.*
-            pest_plugin: 3.*
             os: ubuntu-latest
             php: 8.4
             stability: prefer-stable
@@ -37,12 +35,20 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo, xdebug
-          coverage: xdebug
+          coverage: none
 
       - name: Setup problem matchers
         run: |
           echo "::add-matcher::${{ runner.tool_cache }}/php.json"
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-${{ matrix.php }}-
 
       - name: Install dependencies
         run: |
