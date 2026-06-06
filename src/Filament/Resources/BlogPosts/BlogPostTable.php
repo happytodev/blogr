@@ -39,7 +39,38 @@ class BlogPostTable
                     ->searchable()
                     ->toggleable(),
                 ImageColumn::make('photo')
-                    ->getStateUsing(fn ($record) => $record->photo_url)
+                    ->getStateUsing(function ($record) {
+                        $photoToUse = null;
+
+                        if ($record->relationLoaded('translations')) {
+                            $defaultTranslation = $record->translations
+                                ->firstWhere('locale', app()->getLocale())
+                                ?? $record->translations->first();
+
+                            if ($defaultTranslation?->photo) {
+                                $photoToUse = $defaultTranslation->photo;
+                            }
+                        }
+
+                        if (! $photoToUse && $record->photo) {
+                            $photoToUse = $record->photo;
+                        }
+
+                        if (! $photoToUse && $record->relationLoaded('translations')) {
+                            $anyTranslationWithPhoto = $record->translations
+                                ->first(fn ($t) => ! empty($t->photo));
+
+                            if ($anyTranslationWithPhoto) {
+                                $photoToUse = $anyTranslationWithPhoto->photo;
+                            }
+                        }
+
+                        if ($photoToUse) {
+                            $record->setAttribute('photo', $photoToUse);
+                        }
+
+                        return $record->photo_url;
+                    })
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('user.name')
                     ->label('Author')
