@@ -774,7 +774,6 @@ class BlogController
                       ->orWhere('published_at', '<=', now());
             })
             ->orderBy('series_position')
-            ->orderBy('position')
             ->get()
             ->map(function ($post) use ($locale) {
                 // Add translated slug for each post

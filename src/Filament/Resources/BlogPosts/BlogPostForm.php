@@ -289,8 +289,8 @@ class BlogPostForm
                             ->label('Position in Series')
                             ->numeric()
                             ->minValue(1)
-                            ->default(1)
-                            ->helperText('Order of this post within the series')
+                            ->placeholder('Auto')
+                            ->helperText('Order of this post within the series. Leave empty to auto-assign at the end. You can reorder posts by drag and drop later from the series edit page (click "Reorder Posts").')
                             ->visible(fn ($get) => $get('blog_series_id') !== null),
                         
                         Toggle::make('display_toc')

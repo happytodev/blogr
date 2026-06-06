@@ -95,6 +95,15 @@ class BlogPost extends Model
             }
         });
         
+        // Auto-calculate series position when assigned to a series without explicit position
+        static::saving(function ($post) {
+            if ($post->blog_series_id && is_null($post->series_position)) {
+                $maxPosition = static::where('blog_series_id', $post->blog_series_id)
+                    ->max('series_position');
+                $post->series_position = $maxPosition ? $maxPosition + 1 : 1;
+            }
+        });
+
         // After creating a post, create translation from pending data
         static::created(function ($post) {
             // If we have pending translatable data, create a translation
