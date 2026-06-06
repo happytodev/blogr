@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.20.0](https://github.com/happytodev/blogr/compare/v0.19.0...v0.20.0) - 2026-06-06
+
+### ✨ Features
+
+- **Navigation**: reorder admin menu to Dashboard > View Website > Users > Blogr (Posts, Series, Categories, Tags) > CMS > Settings. Introduced explicit `Settings` navigation group.
+
 ## [v0.19.0](https://github.com/happytodev/blogr/compare/v0.19.0...v0.18.6) - 2026-06-06
 
 ### ✨ Features
