@@ -2,6 +2,22 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.18.1](https://github.com/happytodev/blogr/compare/v0.18.1...v0.18.0) - 2026-06-06
+
+### 🐛 Bug Fixes
+
+- **Livewire DataStore Singleton Fix**: Fixed `ViewErrorBag::put(null)` TypeError crashing all Livewire/Filament tests after Laravel 12.61.1 upgrade.
+  - **Root Cause**: Livewire's `DataStore` was registered as a container `bind()` instead of `instance()` in Testbench, causing `app(DataStore::class)` to return a **new instance on every call**. This broke Livewire's internal `store()` mechanism: error bags were written to one DataStore instance but read from another (always `null`).
+  - **Fix**: Force `DataStore` as a true singleton via `app()->instance()` in `setUp()` of `TestCase` and `LocalizedTestCase`.
+  - **Tests**: 815 passed (56 skipped, 0 failures), up from 799 before fix.
+
+### ⬆️ Dependencies
+
+- `filament/actions`: `^4.0` → `^4.8.5` (CVE patches)
+- `filament/filament`: `^4.0` → `^4.8.5` (CVE patches)
+- `filament/tables`: Added as direct dependency `^4.8.5` (was transitive)
+- `orchestra/testbench`: `^10.6` → `^10.11`
+
 ## [v0.18.0](https://github.com/happytodev/blogr/compare/v0.18.0...v0.17.1) - 2026-06-06
 
 ### ✨ Features
