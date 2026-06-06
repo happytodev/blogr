@@ -2,4 +2,12 @@
 
 namespace Happytodev\Blogr;
 
-class Blogr {}
+class Blogr
+{
+    const VERSION = '0.18.1';
+
+    public static function getVersion(): string
+    {
+        return static::VERSION;
+    }
+}

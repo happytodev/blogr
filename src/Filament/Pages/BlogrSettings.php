@@ -598,6 +598,20 @@ class BlogrSettings extends Page
                                         ->helperText('Comma-separated list of available locales (e.g., en, fr, es, de)'),
                                 ])
                                 ->columns(2),
+
+                            Section::make('About Blogr')
+                                ->description('Version information and resources')
+                                ->schema([
+                                    Placeholder::make('blogr_version')
+                                        ->label('Version')
+                                        ->content(fn() => \Happytodev\Blogr\Blogr::getVersion()),
+                                    Placeholder::make('blogr_releases')
+                                        ->label('Releases')
+                                        ->content(fn() => 'https://blogr.happytodev.dev/releases/v' . \Happytodev\Blogr\Blogr::getVersion())
+                                        ->view('blogr::filament.components.version-link'),
+                                ])
+                                ->columns(2)
+                                ->collapsible(),
                         ]),
 
                     // ========================================
