@@ -47,29 +47,20 @@ class TestCase extends Orchestra
         // We need to ensure translations are preloaded and cached for __() to work
         $this->loadTranslationsForTests();
 
-        // Patch Livewire ViewErrorBag null bug in test environment
-        // Livewire's SupportValidation::render() calls ViewErrorBag::put('default', $errorBag)
-        // where $errorBag can be null, causing: "Argument #2 must be of type MessageBag, null given"
-        // This patch ensures we always have a valid MessageBag
-        $this->patchLivewireViewErrorBag();
+        // Fix Livewire DataStore non-singleton bug in test environment
+        // Livewire's DataStore::register() calls app()->instance() but
+        // something in Testbench re-binds it (bindings instead of instances),
+        // causing app(DataStore::class) to return a NEW instance each call.
+        // This breaks store($component)->get('errorBag') which always returns null
+        // because the DataStore used by set() is different from the one used by get().
+        // ViewErrorBag::put('default', null) then throws TypeError in Laravel 12.61.1+.
+        $this->ensureLivewireDataStoreIsSingleton();
     }
 
-    private function patchLivewireViewErrorBag(): void
+    private function ensureLivewireDataStoreIsSingleton(): void
     {
-        // Patch Livewire's ViewErrorBag bug where put() receives null
-        // Instead of trying to prevent null, we make ViewErrorBag::put() handle null gracefully
-        
-        // Use monkey-patching with reflection or simpler: replace put method behavior
-        // Actually, simplest: just initialize the session errors early
-        
-        // The issue is: Livewire calls getErrorBag() which can return null
-        // We can't patch that directly, but we CAN ensure session has errors
-        view()->share('errors', new \Illuminate\Support\ViewErrorBag());
-        
-        // Also ensure the session driver creates a valid ViewErrorBag
-        if (app()->has('view') && app('view')->shared('errors') === null) {
-            app('view')->share('errors', new \Illuminate\Support\ViewErrorBag());
-        }
+        $ds = app(\Livewire\Mechanisms\DataStore::class);
+        app()->instance(\Livewire\Mechanisms\DataStore::class, $ds);
     }
 
     protected function getPackageProviders($app)

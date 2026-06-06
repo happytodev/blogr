@@ -46,6 +46,10 @@ class LocalizedTestCase extends Orchestra
         $this->mock(Vite::class, function (MockInterface $mock) {
             $mock->shouldReceive('__invoke')->andReturn(new HtmlString(''));
         });
+
+        // Fix Livewire DataStore non-singleton bug (see TestCase for details)
+        $ds = app(\Livewire\Mechanisms\DataStore::class);
+        app()->instance(\Livewire\Mechanisms\DataStore::class, $ds);
     }
 
     protected function getPackageProviders($app)
