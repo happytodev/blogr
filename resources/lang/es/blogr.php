@@ -50,6 +50,7 @@ return [
         'part_number' => 'Parte :number',
         'view_all_series' => 'Ver todas las series',
         'authors' => 'Autores',
+        'current' => 'actual',
     ],
     
     // Dates

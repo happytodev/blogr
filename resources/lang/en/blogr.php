@@ -42,6 +42,7 @@ return [
     // Series
     'series' => [
         'authors' => 'Authors',
+        'current' => 'current',
         'all_posts_in_series' => 'All Posts in This Series',
         'description' => 'Browse all our blog series and learn step by step.',
         'featured' => 'Featured',

@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.18.4](https://github.com/happytodev/blogr/compare/v0.18.4...v0.18.3) - 2026-06-06
+
+### 🐛 Bug Fixes
+
+- **Missing `series.current` translations**: Added missing `(current)` label translations for English, Spanish, and German in the series list (`resources/lang/{en,es,de}/blogr.php`). Only French had the key defined.
+
 ## [v0.18.3](https://github.com/happytodev/blogr/compare/v0.18.3...v0.18.2) - 2026-06-06
 
 ### 🐛 Bug Fixes

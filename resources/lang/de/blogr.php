@@ -49,6 +49,7 @@ return [
         'all_posts_in_series' => 'Alle Beiträge in dieser Serie',
         'part_number' => 'Teil :number',
         'authors' => 'Autoren',
+        'current' => 'aktuell',
         'view_all_series' => 'Alle Serien ansehen',
     ],
     
