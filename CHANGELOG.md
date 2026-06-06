@@ -2,6 +2,22 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.19.0](https://github.com/happytodev/blogr/compare/v0.19.0...v0.18.6) - 2026-06-06
+
+### ✨ Features
+
+- **Series auto-position**: When a post is assigned to a series with no explicit position, it now auto-assigns to the end of the series (max position + 1).
+- **Drag-and-drop reordering**: Added "Reorder Posts" action on the BlogSeries edit page — opens a modal with drag-and-drop to reorder posts within a series.
+
+### 🤖 Tooling
+
+- **release-manager skill**: Now automatically creates a GitHub Release after tagging.
+- **Removed GitHub Actions**: Both `run-tests.yml` and `update-changelog.yml` deleted (tests run locally, CHANGELOG managed by the skill).
+
+### 🐛 Bug Fixes
+
+- **Controller cleanup**: Removed orphaned `->orderBy('position')` in `BlogController::series()` (column `position` doesn't exist on `blog_posts`).
+
 ## [v0.18.6](https://github.com/happytodev/blogr/compare/v0.18.6...v0.18.5) - 2026-06-06
 
 ### 🤖 Tooling
