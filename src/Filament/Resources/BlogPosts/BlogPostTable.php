@@ -32,27 +32,34 @@ class BlogPostTable
             ->columns([
                 TextColumn::make('title')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('slug')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 ImageColumn::make('photo')
-                    ->getStateUsing(fn ($record) => $record->photo_url),
+                    ->getStateUsing(fn ($record) => $record->photo_url)
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('user.name')
                     ->label('Author')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('category.name')
                     ->label('Category')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('locales')
                     ->label('Locales')
                     ->badge()
                     ->getStateUsing(fn ($record) => $record->translations->pluck('locale')->map('strtoupper')->toArray())
-                    ->color('primary'),
+                    ->color('primary')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('series.title')
                     ->label('Series')
-                    ->placeholder('—'),
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('tags.name')
                     ->badge()
                     ->getStateUsing(function ($record) {
@@ -71,21 +78,25 @@ class BlogPostTable
 
                         return $displayTags;
                     })
-                    ->listWithLineBreaks(),
+                    ->listWithLineBreaks()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('publication_status')
                     ->label('Status')
                     ->badge()
                     ->sortable()
                     ->color(fn ($record) => $record->getPublicationStatusColor())
-                    ->getStateUsing(fn ($record) => ucfirst($record->getPublicationStatus())),
+                    ->getStateUsing(fn ($record) => ucfirst($record->getPublicationStatus()))
+                    ->toggleable(),
                 TextColumn::make('published_at')
                     ->label('Publish Date')
                     ->dateTime()
                     ->sortable()
-                    ->placeholder('Not set'),
+                    ->placeholder('Not set')
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 SelectFilter::make('category')
