@@ -56,7 +56,10 @@ git tag v{version}
 git push origin main v{version}
 ```
 
-### 7. Confirm
+### 7. Create GitHub Release
 
-- Inform the user the release was published with the commit hash
-- Ask if they want to create a GitHub Release (`gh release create v{version} --generate-notes`)
+- Run: `gh release create v{version} --generate-notes`
+
+### 8. Confirm
+
+- Inform the user the release was published with the URL and commit hash
