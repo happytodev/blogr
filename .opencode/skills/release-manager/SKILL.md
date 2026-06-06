@@ -21,11 +21,12 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
 - Format as markdown with conventional commit categories (Features, Bug Fixes, Dependencies, etc.)
 - Present to user for editing/confirmation before proceeding
 
-### 3. Run tests
+### 3. Run tests (ZERO TOLERANCE)
 
 - Run: `vendor/bin/pest --parallel`
-- If any **real** failures (not flaky parallel artifacts), abort and tell the user
-- If only the known flaky `blogr.php` config-not-found error, continue
+- **If ANY test fails (even 1), abort immediately.** Do not proceed, do not commit, do not push.
+- Zero tolerance: "skipped" is OK, but "failed" or "error" means STOP.
+- Report the failure count to the user and tell them what tests failed.
 
 ### 4. Update version files
 
@@ -58,7 +59,7 @@ git push origin main v{version}
 
 ### 7. Create GitHub Release
 
-- Run: `gh release create v{version} --generate-notes`
+- Run: `gh release create v{version} --notes "$RELEASE_NOTES"` where RELEASE_NOTES is the user-approved markdown from step 2
 
 ### 8. Confirm
 

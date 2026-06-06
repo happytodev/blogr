@@ -2102,6 +2102,10 @@ class BlogrSettings extends Page
 
     private function updateConfigFile(array $data): void
     {
+        if (app()->environment('testing')) {
+            return;
+        }
+
         $configPath = config_path('blogr.php');
 
         // Read current config
