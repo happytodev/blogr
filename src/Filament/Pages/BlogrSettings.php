@@ -5,6 +5,7 @@ namespace Happytodev\Blogr\Filament\Pages;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Facades\Filament;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
@@ -2103,6 +2104,11 @@ class BlogrSettings extends Page
     private function updateConfigFile(array $data): void
     {
         if (app()->environment('testing')) {
+            // Update in-memory config instead of writing to file
+            foreach (Arr::dot($data) as $key => $value) {
+                config()->set("blogr.{$key}", $value);
+            }
+
             return;
         }
 

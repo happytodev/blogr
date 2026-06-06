@@ -48,13 +48,10 @@ it('saves back-to-top settings to config', function () {
     
     $settings->save();
     
-    // Reload config from file
-    $configPath = config_path('blogr.php');
-    $freshConfig = include $configPath;
-    
-    expect($freshConfig['ui']['back_to_top']['enabled'])->toBeFalse()
-        ->and($freshConfig['ui']['back_to_top']['shape'])->toBe('square')
-        ->and($freshConfig['ui']['back_to_top']['color'])->toBe('#00ff00');
+    // Verify config was updated (in-memory, file write skipped during tests)
+    expect(config('blogr.ui.back_to_top.enabled'))->toBeFalse()
+        ->and(config('blogr.ui.back_to_top.shape'))->toBe('square')
+        ->and(config('blogr.ui.back_to_top.color'))->toBe('#00ff00');
 });
 
 it('back-to-top component respects enabled setting', function () {

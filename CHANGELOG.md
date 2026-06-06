@@ -8,6 +8,14 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Navigation**: reorder admin menu to Dashboard > View Website > Users > Blogr (Posts, Series, Categories, Tags) > CMS > Settings. Introduced explicit `Settings` navigation group.
 
+### 🐛 Bug Fixes
+
+- **Flaky parallel tests**: `BlogrSettings::updateConfigFile()` now skips file write in testing environment, preventing race conditions with the testbench skeleton config directory during parallel test execution.
+
+### 🤖 Tooling
+
+- **release-manager skill**: Now enforces zero tolerance on test failures — aborts immediately if even 1 test fails.
+
 ## [v0.19.0](https://github.com/happytodev/blogr/compare/v0.19.0...v0.18.6) - 2026-06-06
 
 ### ✨ Features
