@@ -2,6 +2,15 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.18.6](https://github.com/happytodev/blogr/compare/v0.18.6...v0.18.5) - 2026-06-06
+
+### 🤖 Tooling
+
+- **release-manager skill**: Added `.opencode/skills/release-manager/SKILL.md` to automate version bumping, CHANGELOG updates, tagging, and publishing.
+- **Removed obsolete GitHub Action**: `update-changelog.yml` deleted (CHANGELOG now managed locally by the skill).
+- **CI improvements**: Cleaned up `run-tests.yml` — removed dead `pest: 3.*` ref, disabled unused xdebug coverage, added Composer cache.
+- **Version sync**: Fixed `src/Blogr.php` VERSION constant to match `composer.json` (0.18.5).
+
 ## [v0.18.4](https://github.com/happytodev/blogr/compare/v0.18.4...v0.18.3) - 2026-06-06
 
 ### 🐛 Bug Fixes
