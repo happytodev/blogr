@@ -607,7 +607,7 @@ class BlogrSettings extends Page
                                         ->content(fn() => \Happytodev\Blogr\Blogr::getVersion()),
                                     Placeholder::make('blogr_releases')
                                         ->label('Releases')
-                                        ->content(fn() => 'https://blogr.happytodev.dev/releases/v' . \Happytodev\Blogr\Blogr::getVersion())
+                                        ->content(fn() => 'https://blogr.happyto.dev/en/blog/v' . \Happytodev\Blogr\Blogr::getVersion())
                                         ->view('blogr::filament.components.version-link'),
                                 ])
                                 ->columns(2)
