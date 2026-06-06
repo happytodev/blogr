@@ -33,9 +33,9 @@ class BlogrSettings extends Page
 
     protected static string | null $navigationLabel = 'Settings';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Blogr';
+    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 1;
 
     protected string $view = 'blogr::filament.pages.blogr-settings';
 

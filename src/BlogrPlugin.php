@@ -60,7 +60,14 @@ class BlogrPlugin implements Plugin
                 ->label(fn (): string => __('blogr::ui.view_website'))
                 ->url(fn (): string => $this->getWebsiteUrl(), shouldOpenInNewTab: true)
                 ->icon('heroicon-o-arrow-top-right-on-square')
-                ->sort(1),
+                ->sort(2),
+        ]);
+
+        // Explicit navigation group ordering
+        $panel->navigationGroups([
+            'Blogr',
+            'CMS',
+            'Settings',
         ]);
 
         $panel->colors([
