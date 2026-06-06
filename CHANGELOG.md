@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.18.3](https://github.com/happytodev/blogr/compare/v0.18.3...v0.18.2) - 2026-06-06
+
+### 🐛 Bug Fixes
+
+- **Release link URL**: Fixed version link in admin panel to point to `https://blogr.happyto.dev/en/blog/v{version}`.
+
 ## [v0.18.2](https://github.com/happytodev/blogr/compare/v0.18.2...v0.18.1) - 2026-06-06
 
 ### ✨ Features
