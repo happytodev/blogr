@@ -42,6 +42,7 @@ class CmsBlockBuilder
                 self::videoBlock(),
                 self::newsletterBlock(),
                 self::mapBlock(),
+                self::contactFormBlock(),
                 self::transitionDiagonalBlock(),
                 self::blogTitleBlock(),
             ])
@@ -852,19 +853,38 @@ class CmsBlockBuilder
                             ->maxLength(255)
                             ->columnSpan(2),
 
-                        TextInput::make('address')
-                            ->label(__('Address'))
-                            ->required()
+                        TextInput::make('subtitle')
+                            ->label(__('Subtitle'))
+                            ->maxLength(255)
                             ->columnSpan(2),
 
-                        TextInput::make('latitude')
-                            ->label(__('Latitude'))
-                            ->numeric()
+                        TextInput::make('tagline')
+                            ->label(__('Tagline'))
+                            ->maxLength(255)
+                            ->default('Made with love in the world capital of perfume')
+                            ->columnSpan(2),
+
+                        Select::make('tagline_position')
+                            ->label(__('Tagline Position'))
+                            ->options([
+                                'bottom' => __('Bottom'),
+                                'hidden' => __('Hidden'),
+                            ])
+                            ->default('bottom')
                             ->columnSpan(1),
 
-                        TextInput::make('longitude')
-                            ->label(__('Longitude'))
+                        TextInput::make('center_lat')
+                            ->label(__('Center Latitude'))
                             ->numeric()
+                            ->default(43.6589)
+                            ->step(0.0001)
+                            ->columnSpan(1),
+
+                        TextInput::make('center_lng')
+                            ->label(__('Center Longitude'))
+                            ->numeric()
+                            ->default(6.9252)
+                            ->step(0.0001)
                             ->columnSpan(1),
 
                         TextInput::make('zoom')
@@ -872,8 +892,91 @@ class CmsBlockBuilder
                             ->numeric()
                             ->minValue(1)
                             ->maxValue(20)
-                            ->default(14)
+                            ->default(13)
                             ->columnSpan(1),
+
+                        TextInput::make('height')
+                            ->label(__('Map Height (px)'))
+                            ->numeric()
+                            ->default(450)
+                            ->minValue(200)
+                            ->maxValue(800)
+                            ->columnSpan(1),
+
+                        Repeater::make('markers')
+                            ->label(__('Markers'))
+                            ->schema([
+                                TextInput::make('lat')
+                                    ->label(__('Latitude'))
+                                    ->numeric()
+                                    ->required()
+                                    ->step(0.0001)
+                                    ->default(43.6589)
+                                    ->columnSpan(1),
+
+                                TextInput::make('lng')
+                                    ->label(__('Longitude'))
+                                    ->numeric()
+                                    ->required()
+                                    ->step(0.0001)
+                                    ->default(6.9252)
+                                    ->columnSpan(1),
+
+                                TextInput::make('popup_text')
+                                    ->label(__('Popup Text'))
+                                    ->maxLength(255)
+                                    ->default('📍 Grasse — World Capital of Perfume')
+                                    ->columnSpan(2),
+                            ])
+                            ->columns(2)
+                            ->defaultItems(3)
+                            ->maxItems(10)
+                            ->collapsible()
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2),
+
+                self::getBackgroundFields(),
+            ])
+            ->columns(1);
+    }
+
+    protected static function contactFormBlock(): Block
+    {
+        return Block::make(CmsBlockType::CONTACT_FORM->value)
+            ->label(CmsBlockType::CONTACT_FORM->getLabel())
+            ->icon(CmsBlockType::CONTACT_FORM->getIcon())
+            ->schema([
+                Section::make(__('Content'))
+                    ->schema([
+                        TextInput::make('heading')
+                            ->label(__('Heading'))
+                            ->maxLength(255)
+                            ->default(__('Send Us a Message'))
+                            ->columnSpan(2),
+
+                        TextInput::make('subtitle')
+                            ->label(__('Subtitle'))
+                            ->maxLength(255)
+                            ->default(__('We\'ll get back to you within 24 hours.'))
+                            ->columnSpan(2),
+
+                        TextInput::make('submit_text')
+                            ->label(__('Submit Button Text'))
+                            ->maxLength(255)
+                            ->default(__('Send Message'))
+                            ->columnSpan(1),
+
+                        TextInput::make('success_message')
+                            ->label(__('Success Message'))
+                            ->maxLength(255)
+                            ->default(__('Thank you! Your message has been sent.'))
+                            ->columnSpan(1),
+
+                        TextInput::make('to_email')
+                            ->label(__('Send To Email (leave empty for site default)'))
+                            ->email()
+                            ->columnSpan(2),
                     ])
                     ->columns(2),
 

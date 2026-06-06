@@ -2,6 +2,31 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.21.0](https://github.com/happytodev/blogr/compare/v0.20.0...v0.21.0) - 2026-06-07
+
+### ✨ Features
+
+- **Contact form block**: New `contact_form` CMS block with Alpine.js validation, email submission via `CmsContactController`, and full i18n for EN/FR/ES/PL
+- **CMS Page Import/Export**: New `CmsPageImportExportService` with JSON format for duplicating CMS pages across environments
+- **Contact page redesign**: Hero → Stats → Leaflet map → Contact form → Features (X + Bluesky) → CTA with 4 locales
+- **Map block rewrite**: OpenStreetMap iframe embed replaced with Leaflet (open-source, no API key), centered on Grasse, 3 markers, dark-mode tiles via CartoDB
+- **Seeder additions**: Spanish (es) and Polish (pl) translations for contact page; CTA, pricing, team, custom, faq pages
+
+### 🐛 Bug Fixes
+
+- **Button invisible in light mode**: Added `--color-primary-*` palette to CSS `@theme`; switched frontend button to `bg-indigo-600` (standard Tailwind color) so it works without consuming app importing package CSS
+- **Map showed whole world**: Fixed Leaflet initialization with `invalidateSize()`, `ResizeObserver`, and proper container height
+- **Map JS failed silently**: Replaced dynamic CDN injection with static `<script>` tags, added `<noscript>` fallback, server-rendered static fallback, and `onerror` handler
+- **Stale published views**: Auto-repair in `BlogrServiceProvider::repairStalePublishedViews()` — detects old iframe/Google Maps patterns in published views and overwrites with current package version
+- **"Open in Google Maps" link eliminated**: Zero occurrences remain in codebase; verified by rendered-view tests
+- **Removed silly branding**: "No fragrance fees" / "frais de parfum" etc. removed from CTA block subheadings
+- **Map zoom increased**: 13→15 for better marker visibility; markers enlarged 28px→36px
+
+### ✅ Tests
+
+- **52 tests in CmsContactPageTest** covering: block types, seeder locales, block structure, map centering on Grasse, zero Google Maps, contact form controller validation, rendered view output with old/new data formats, dark-mode contrast, leaflet CDN loading, noscript/fallback, old data backward compatibility
+- **879 total tests passing** (2649 assertions)
+
 ## [v0.20.0](https://github.com/happytodev/blogr/compare/v0.19.0...v0.20.0) - 2026-06-06
 
 ### ✨ Features

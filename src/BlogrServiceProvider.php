@@ -235,6 +235,52 @@ class BlogrServiceProvider extends PackageServiceProvider
         if (config('blogr.cms.enabled', false)) {
             $this->registerCmsRoutes();
         }
+
+        // Auto-repair stale published views that may contain old iframe/Google Maps patterns.
+        // When users run `php artisan vendor:publish --tag=blogr-views`, the current views
+        // are copied to resources/views/vendor/blogr/. These published views take precedence
+        // over package views. If the package is later updated, the published views become
+        // stale and silently override the new package views.
+        // We detect this by checking if the published map view contains patterns from the
+        // old embed-based implementation, and overwrite it with the current package view.
+        if (app()->runningInConsole()) {
+            $this->repairStalePublishedViews();
+        }
+    }
+
+    protected function repairStalePublishedViews(): void
+    {
+        $publishedDir = resource_path('views/vendor/blogr/components/blocks');
+        $publishedMap = $publishedDir . '/map.blade.php';
+
+        if (!file_exists($publishedMap)) {
+            return;
+        }
+
+        $stalePatterns = [
+            'openstreetmap.org/export/embed',
+            'google.com/maps',
+            'Open in ' . 'Google Maps',
+        ];
+
+        $content = file_get_contents($publishedMap);
+        foreach ($stalePatterns as $pattern) {
+            if (str_contains($content, $pattern)) {
+                // Stale published view detected — overwrite with current package version
+                $packageMap = __DIR__ . '/../resources/views/components/blocks/map.blade.php';
+                if (file_exists($packageMap)) {
+                    $fresh = file_get_contents($packageMap);
+                    file_put_contents($publishedMap, $fresh);
+                    $this->logRepair('map.blade.php', $pattern);
+                }
+                break;
+            }
+        }
+    }
+
+    protected function logRepair(string $file, string $trigger): void
+    {
+        logger()->warning("Blogr: repaired stale published view {$file} (triggered by pattern '{$trigger}'). Run `php artisan view:clear` to apply.");
     }
 
     protected function registerFrontendRoutes(): void
@@ -546,7 +592,14 @@ class BlogrServiceProvider extends PackageServiceProvider
         }
         
         // ==============================================
-        // 2. CMS PAGE ROUTES (with or without prefix)
+        // 2. CONTACT FORM SUBMIT ROUTE
+        // ==============================================
+        $router->post('/contact/submit', [\Happytodev\Blogr\Http\Controllers\CmsContactController::class, 'submit'])
+            ->middleware($middleware)
+            ->name('blogr.cms.contact.submit');
+
+        // ==============================================
+        // 3. CMS PAGE ROUTES (with or without prefix)
         // ==============================================
         if ($localesEnabled) {
             if (!empty($cmsPrefix)) {

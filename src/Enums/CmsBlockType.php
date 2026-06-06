@@ -21,6 +21,7 @@ enum CmsBlockType: string implements HasLabel
     case VIDEO = 'video';
     case NEWSLETTER = 'newsletter';
     case MAP = 'map';
+    case CONTACT_FORM = 'contact_form';
     case WAVE_SEPARATOR = 'wave-separator';
     case TRANSITION_DIAGONAL = 'transition-diagonal';
     case TRANSITION_CLIPPATH = 'transition-clippath';
@@ -46,6 +47,7 @@ enum CmsBlockType: string implements HasLabel
             self::VIDEO => __('Video'),
             self::NEWSLETTER => __('Newsletter'),
             self::MAP => __('Map'),
+            self::CONTACT_FORM => __('Contact Form'),
             self::WAVE_SEPARATOR => __('Wave Separator'),
             self::TRANSITION_DIAGONAL => __('Section Separator'),
             self::TRANSITION_CLIPPATH => __('Transition: Clip Path'),
@@ -73,6 +75,7 @@ enum CmsBlockType: string implements HasLabel
             self::VIDEO => __('Embed YouTube or Vimeo videos'),
             self::NEWSLETTER => __('Newsletter subscription form'),
             self::MAP => __('Interactive map with location marker'),
+            self::CONTACT_FORM => __('Contact form with name, email, subject and message fields'),
             self::WAVE_SEPARATOR => __('Decorative wave separator to transition between sections'),
             self::TRANSITION_DIAGONAL => __('Smooth SVG transition with automatic color blending from next block. Works best when next block has solid color (not gradient).'),
             self::TRANSITION_CLIPPATH => __('CSS clip-path transition with wavy, zigzag or smooth style'),
@@ -100,6 +103,7 @@ enum CmsBlockType: string implements HasLabel
             self::VIDEO => 'heroicon-o-play-circle',
             self::NEWSLETTER => 'heroicon-o-envelope',
             self::MAP => 'heroicon-o-map-pin',
+            self::CONTACT_FORM => 'heroicon-o-envelope',
             self::WAVE_SEPARATOR => 'heroicon-o-bars-3',
             self::TRANSITION_DIAGONAL => 'heroicon-o-arrow-trending-down',
             self::TRANSITION_CLIPPATH => 'heroicon-o-scissors',

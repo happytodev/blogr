@@ -69,10 +69,10 @@ it('demo pages have valid block structure', function () {
     expect($featuresBlock['data']['items'])->toBeArray();
     expect(count($featuresBlock['data']['items']))->toBeGreaterThanOrEqual(3);
 
-    // Verify content block
-    $contentBlock = collect($blocks)->firstWhere('type', 'content');
-    expect($contentBlock)->not->toBeNull();
-    expect($contentBlock['data']['content'])->toContain('FilamentPHP');
+    // Verify timeline block
+    $timelineBlock = collect($blocks)->firstWhere('type', 'timeline');
+    expect($timelineBlock)->not->toBeNull();
+    expect($timelineBlock['data']['events'])->toBeArray();
 
     // Verify CTA block
     $ctaBlock = collect($blocks)->firstWhere('type', 'cta');

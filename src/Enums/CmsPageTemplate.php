@@ -52,7 +52,7 @@ enum CmsPageTemplate: string
         return match($this) {
             self::DEFAULT => ['markdown'],
             self::LANDING => ['hero', 'features', 'cta', 'testimonials', 'pricing', 'statistics'],
-            self::CONTACT => ['hero', 'contact_form', 'map', 'markdown'],
+            self::CONTACT => ['hero', 'cta', 'features', 'stats', 'map', 'contact_form', 'faq', 'markdown'],
             self::ABOUT => ['hero', 'markdown', 'team', 'timeline', 'statistics'],
             self::PRICING => ['hero', 'pricing', 'faq', 'testimonials', 'cta'],
             self::FAQ => ['hero', 'faq', 'contact_form', 'markdown'],

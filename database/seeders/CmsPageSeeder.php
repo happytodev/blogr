@@ -43,10 +43,10 @@ class CmsPageSeeder extends Seeder
             [
                 'slug' => 'home',
                 'title' => 'Welcome to Blogr',
-                'meta_title' => 'Blogr - Modern Multilingual Blog Platform',
-                'meta_description' => 'Discover Blogr, a powerful FilamentPHP plugin for creating stunning multilingual blog content.',
-                'meta_keywords' => 'blog, CMS, multilingual, Laravel, FilamentPHP',
-                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                'meta_title' => 'Blogr — Multilingual CMS for Laravel & FilamentPHP',
+                'meta_description' => 'A translation-first CMS built on Laravel 12 and FilamentPHP v4. Create, manage, and scale multilingual content with 24+ block types.',
+                'meta_keywords' => 'blog, CMS, multilingual, Laravel, FilamentPHP, translation-first',
+                'content' => '',
                 'blocks' => $this->getHomePageBlocksEN(),
             ]
         );
@@ -57,10 +57,10 @@ class CmsPageSeeder extends Seeder
             [
                 'slug' => 'accueil',
                 'title' => 'Bienvenue sur Blogr',
-                'meta_title' => 'Blogr - Plateforme de Blog Multilingue Moderne',
-                'meta_description' => 'Découvrez Blogr, un plugin FilamentPHP puissant pour créer du contenu blog multilingue époustouflant.',
-                'meta_keywords' => 'blog, CMS, multilingue, Laravel, FilamentPHP',
-                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                'meta_title' => 'Blogr — CMS Multilingue pour Laravel & FilamentPHP',
+                'meta_description' => 'Un CMS traduction-first construit sur Laravel 12 et FilamentPHP v4. Créez, gérez et passez à l\'échelle du contenu multilingue avec 24+ types de blocs.',
+                'meta_keywords' => 'blog, CMS, multilingue, Laravel, FilamentPHP, traduction-first',
+                'content' => '',
                 'blocks' => $this->getHomePageBlocksFR(),
             ]
         );
@@ -105,392 +105,448 @@ We are always excited to hear from you. Whether you have a question about featur
             [
                 'slug' => 'contact',
                 'title' => 'Nous Contacter',
-                'meta_title' => 'Contactez-nous - Blogr',
-                'meta_description' => 'Des questions ? Contactez notre équipe. Nous aimerions beaucoup vous entendre !',
-                'meta_keywords' => 'contact, support, aide',
+                'meta_title' => 'Contactez-nous — Blogr',
+                'meta_description' => 'Conçu avec soin à Grasse, la capitale mondiale du parfum. Contactez notre équipe.',
+                'meta_keywords' => 'contact, support, aide, grasse, parfum',
                 'content' => '# Contactez Blogr
 
 Nous sommes toujours ravis de vous entendre. Que vous ayez une question sur les fonctionnalités, la tarification ou autre chose, notre équipe est prête à répondre à toutes vos questions.',
                 'blocks' => $this->getContactPageBlocksFR(),
             ]
         );
+
+        // Spanish translation
+        $page->translations()->updateOrCreate(
+            ['locale' => 'es'],
+            [
+                'slug' => 'contacto',
+                'title' => 'Contáctenos',
+                'meta_title' => 'Contáctenos — Blogr',
+                'meta_description' => 'Hecho con amor en Grasse, la capital mundial del perfume. Póngase en contacto con nuestro equipo.',
+                'meta_keywords' => 'contacto, soporte, ayuda, grasse, perfume',
+                'content' => '# Contacte a Blogr
+
+Siempre estamos encantados de saber de usted. Si tiene una pregunta sobre las funciones, los precios o cualquier otra cosa, nuestro equipo está listo para responder a todas sus preguntas.',
+                'blocks' => $this->getContactPageBlocksES(),
+            ]
+        );
+
+        // Polish translation
+        $page->translations()->updateOrCreate(
+            ['locale' => 'pl'],
+            [
+                'slug' => 'kontakt',
+                'title' => 'Skontaktuj się z nami',
+                'meta_title' => 'Kontakt — Blogr',
+                'meta_description' => 'Wykonane z miłością w Grasse, światowej stolicy perfum. Skontaktuj się z naszym zespołem.',
+                'meta_keywords' => 'kontakt, wsparcie, pomoc, grasse, perfumy',
+                'content' => '# Skontaktuj się z Blogr
+
+Zawsze chętnie słyszymy od Ciebie. Niezależnie od tego, czy masz pytanie dotyczące funkcji, cen, czy czegokolwiek innego, nasz zespół jest gotowy odpowiedzieć na wszystkie Twoje pytania.',
+                'blocks' => $this->getContactPageBlocksPL(),
+            ]
+        );
     }
 
-    /**
-     * Get homepage blocks structure (English)
-     */
     private function getHomePageBlocksEN(): array
     {
         return [
-            // Hero Section
+            // Hero — dark enough for white text in both modes
             [
                 'type' => 'hero',
                 'data' => [
-                    'title' => 'Blogr: Modern Multilingual Blog Platform',
-                    'subtitle' => 'Create stunning, SEO-friendly blog content in multiple languages with ease',
-                    'cta_text' => 'Start Blogging',
-                    'cta_link_type' => 'external',
-                    'cta_url' => '/blog',
+                    'title' => 'Blogr',
+                    'subtitle' => 'A multilingual CMS for Laravel & FilamentPHP — natively designed for global content.',
+                    'cta_text' => 'Read the Blog',
+                    'cta_link_type' => 'blog',
+                    'cta_url' => null,
                     'cta_category_id' => null,
                     'cta_cms_page_id' => null,
                     'alignment' => 'center',
-                    'background_type' => 'color',
-                    'background_color' => '#667eea',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#4f46e5',
+                    'gradient_to' => '#7c3aed',
+                    'gradient_direction' => 'to-br',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#0f0c29',
+                    'gradient_to_dark' => '#302b63',
+                    'gradient_direction_dark' => 'to-br',
                     'text_shadow' => true,
                     'shadow_intensity' => 'medium',
                 ],
             ],
 
-            // Transition: Wavy with solid colors
-            [
-                'type' => 'transition-diagonal',
-                'data' => [
-                    'shape' => 'wavy',
-                    'amplitude' => 40,
-                ],
-            ],
-
-            // Stats Section
+            // Stats — light bg in light mode, dark bg in dark mode
             [
                 'type' => 'stats',
                 'data' => [
-                    'heading' => 'Trusted by Content Creators',
+                    'heading' => 'Built for content, engineered for scale',
                     'stats' => [
-                        ['number' => 5000, 'label' => 'Active Bloggers'],
-                        ['number' => 50000, 'label' => 'Published Posts'],
-                        ['number' => 25, 'label' => 'Languages Supported'],
-                        ['number' => 99, 'label' => 'Uptime %'],
+                        ['number' => 24, 'suffix' => '+', 'label' => 'Block Types'],
+                        ['number' => 25, 'suffix' => '+', 'label' => 'Supported Languages'],
+                        ['number' => 100, 'suffix' => '%', 'label' => 'Open Source'],
+                        ['number' => 12, 'suffix' => '.x', 'label' => 'Laravel Native'],
                     ],
                     'background_type' => 'color',
-                    'background_color' => '#f093fb',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
                 ],
             ],
 
-            // Features Section
+            // Features — light bg in light mode, dark bg in dark mode
             [
                 'type' => 'features',
                 'data' => [
-                    'title' => 'Powerful Features for Modern Bloggers',
-                    'subtitle' => 'Everything you need to create, manage, and grow your blog',
+                    'title' => "Everything you need, nothing you don't",
+                    'subtitle' => 'Translation-first architecture, FilamentPHP v4 admin, and a modern Laravel 12 stack.',
                     'columns' => '3',
                     'items' => [
                         [
-                            'title' => '✍️ Intuitive Editor',
-                            'description' => 'Block-based editor with live preview, markdown support, and rich formatting options',
+                            'icon' => 'heroicon-o-globe-alt',
+                            'title' => 'Translation-First',
+                            'description' => 'Every entity — posts, pages, categories, tags, series — is multilingual by design, not as an afterthought.',
                         ],
                         [
-                            'title' => '🌍 Global Reach',
-                            'description' => 'Write in 25+ languages with automatic SEO optimization for each locale',
+                            'icon' => 'heroicon-o-squares-2x2',
+                            'title' => '24+ Content Blocks',
+                            'description' => 'Hero, features, testimonials, pricing, gallery, timeline, FAQ, team, video, newsletter, maps, and more.',
                         ],
                         [
-                            'title' => '⚡ Lightning Fast',
-                            'description' => 'Optimized performance with caching, CDN ready, and zero-lag loading',
+                            'icon' => 'heroicon-o-shield-check',
+                            'title' => 'FilamentPHP v4 Admin',
+                            'description' => 'Full-featured admin panel with role-based access, audit logs, and a beautiful block-based page builder.',
                         ],
                         [
-                            'title' => '📈 SEO Mastery',
-                            'description' => 'Built-in SEO tools, meta tags, structured data, and sitemap generation',
+                            'icon' => 'heroicon-o-magnifying-glass',
+                            'title' => 'SEO Optimized',
+                            'description' => 'Automatic XML sitemaps, canonical URLs, structured data, meta tags, and locale-aware routing.',
                         ],
                         [
-                            'title' => '🔐 Enterprise Security',
-                            'description' => 'Advanced permissions, role-based access, audit logs, and automated backups',
+                            'icon' => 'heroicon-o-cube',
+                            'title' => 'Custom Templates',
+                            'description' => '7 page templates: landing, about, pricing, FAQ, contact, custom, and default — each with tailored blocks.',
                         ],
                         [
-                            'title' => '🎨 Design Freedom',
-                            'description' => 'Customize colors, fonts, layouts - no coding required',
+                            'icon' => 'heroicon-o-arrow-path',
+                            'title' => 'Import / Export',
+                            'description' => 'Full content portability with JSON export/import. Backup, restore, and migrate your content freely.',
+                        ],
+                        [
+                            'icon' => 'heroicon-o-clock',
+                            'title' => 'Content Scheduling',
+                            'description' => 'Schedule posts for automatic publication across time zones. Draft, review, and publish workflows.',
+                        ],
+                        [
+                            'icon' => 'heroicon-o-code-bracket',
+                            'title' => 'Developer Friendly',
+                            'description' => 'PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, Pest tests, and Playwright E2E — fully open source.',
+                        ],
+                        [
+                            'icon' => 'heroicon-o-tag',
+                            'title' => 'Categories & Tags',
+                            'description' => 'Multi-level categorization with per-locale slugs. Tags auto-sort alphabetically. Full pivot relationships.',
                         ],
                     ],
                     'background_type' => 'color',
-                    'background_color' => '#667eea',
+                    'background_color' => '#f8fafc',
+                    'heading_color' => '#0f172a',
+                    'text_color' => '#334155',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#0f172a',
+                    'heading_color_dark' => '#f1f5f9',
+                    'text_color_dark' => '#cbd5e1',
+                    'subtitle_color_dark' => '#94a3b8',
                 ],
             ],
 
-            // Content Section
+            // Blog Posts — light bg in light mode, dark bg in dark mode
             [
-                'type' => 'content',
+                'type' => 'blog_posts',
                 'data' => [
-                    'content' => '## Why Leading Content Creators Choose Blogr
-
-Blogr is built on **FilamentPHP** and **Laravel 12**, giving you enterprise-grade performance with a focus on content creation. Whether you\'re a solo blogger or managing a team of writers, Blogr scales with your needs.
-
-### What Makes Blogr Different
-- **Multilingual by Design**: Not an afterthought - multilingual support is baked into every feature
-- **SEO First**: Every post is optimized for search engines with automatic sitemaps and structured data
-- **Performance Obsessed**: Avg load time under 1s, even with thousands of posts
-- **Team Collaboration**: Roles, permissions, and workflows built for teams
-- **Content Portability**: Export your content anytime in standard formats',
-                    'max_width' => 'prose',
-                    'background_type' => 'color',
-                    'background_color' => '#f5f7fa',
-                    'text_shadow' => true,
-                    'shadow_intensity' => 'medium',
-                ],
-            ],
-
-            // Transition: Zigzag with solid colors
-            [
-                'type' => 'transition-diagonal',
-                'data' => [
-                    'shape' => 'zigzag',
-                    'amplitude' => 35,
-                ],
-            ],
-
-            // Gallery Section
-            [
-                'type' => 'gallery',
-                'data' => [
-                    'heading' => 'Showcase Your Visual Stories',
-                    'description' => 'Stunning gallery layouts to display your best content',
+                    'heading' => 'Latest from the blog',
+                    'limit' => 3,
                     'layout' => 'grid',
-                    'columns' => '3',
-                    'images' => [],
                     'background_type' => 'color',
-                    'background_color' => '#f5576c',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#f1f5f9',
+                    'text_color_dark' => '#94a3b8',
                 ],
             ],
 
-            // Transition: Smooth with solid colors
+            // Timeline — light bg in light mode, dark bg in dark mode
             [
-                'type' => 'transition-diagonal',
+                'type' => 'timeline',
                 'data' => [
-                    'shape' => 'smooth',
-                    'amplitude' => 30,
-                ],
-            ],
-
-            // Features Grid
-            [
-                'type' => 'features',
-                'data' => [
-                    'title' => 'Advanced Capabilities',
-                    'columns' => '2',
-                    'items' => [
+                    'heading' => 'Roadmap',
+                    'events' => [
                         [
-                            'title' => '📱 Responsive Design',
-                            'description' => 'Perfect on mobile, tablet, desktop. Your blog looks amazing everywhere.',
+                            'date' => 'v0.20 — 2026',
+                            'title' => 'CMS Pages & Blocks',
+                            'description' => 'Full page builder with 24+ block types, 7 templates, transitions, and dark mode support.',
                         ],
                         [
-                            'title' => '🔗 SEO Optimization',
-                            'description' => 'Automatic meta tags, canonical URLs, XML sitemaps, and structured data.',
+                            'date' => 'v0.15 — 2025',
+                            'title' => 'Multilingual Everywhere',
+                            'description' => 'Translation-first architecture: all entities support per-locale slugs, SEO, and content.',
                         ],
                         [
-                            'title' => '🔄 Content Scheduling',
-                            'description' => 'Schedule posts to publish automatically for global audiences.',
+                            'date' => 'v0.10 — 2025',
+                            'title' => 'FilamentPHP v4 Upgrade',
+                            'description' => 'Migrated to Filament v4 with new Schema system, improved navigation, and panel structure.',
                         ],
                         [
-                            'title' => '📊 Advanced Analytics',
-                            'description' => 'Track views, engagement, bounce rates. Integrate with analytics tools.',
+                            'date' => 'v0.1 — 2024',
+                            'title' => 'Initial Release',
+                            'description' => 'First public release — Laravel blog plugin with basic posts, categories, and tags.',
                         ],
                     ],
                     'background_type' => 'color',
-                    'background_color' => '#4facfe',
+                    'background_color' => '#f8fafc',
+                    'heading_color' => '#0f172a',
+                    'text_color' => '#334155',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#0f172a',
+                    'heading_color_dark' => '#f1f5f9',
+                    'text_color_dark' => '#cbd5e1',
                 ],
             ],
 
-            // CTA Section
+            // CTA — dark enough for white button text in both modes
             [
                 'type' => 'cta',
                 'data' => [
-                    'heading' => 'Join the Blogr Revolution',
-                    'subheading' => 'Start creating amazing multilingual content today. No credit card required.',
-                    'button_text' => 'Begin Your Journey',
-                    'button_link_type' => 'external',
-                    'button_url' => 'https://example.com/join',
+                    'heading' => 'Start building in multiple languages today.',
+                    'subheading' => 'Open source and MIT licensed. No credit card required.',
+                    'button_text' => 'Get Started',
+                    'button_link_type' => 'blog',
+                    'button_url' => null,
                     'button_category_id' => null,
                     'button_cms_page_id' => null,
                     'button_style' => 'primary',
-                    'background_type' => 'color',
-                    'background_color' => '#f5576c',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#4f46e5',
+                    'gradient_to' => '#7c3aed',
+                    'gradient_direction' => 'to-l',
+                    'heading_color' => '#ffffff',
+                    'subtitle_color' => '#e0e7ff',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#24243e',
+                    'gradient_to_dark' => '#0f0c29',
+                    'gradient_direction_dark' => 'to-l',
+                    'heading_color_dark' => '#f1f5f9',
+                    'subtitle_color_dark' => '#94a3b8',
                 ],
             ],
         ];
     }
 
-    /**
-     * Get homepage blocks structure (French)
-     */
     private function getHomePageBlocksFR(): array
     {
         return [
-            // Hero Section
+            // Hero
             [
                 'type' => 'hero',
                 'data' => [
-                    'title' => 'Blogr : Plateforme de Blog Multilingue Moderne',
-                    'subtitle' => 'Créez un contenu de blog magnifique et optimisé pour le SEO en plusieurs langues facilement',
-                    'cta_text' => 'Commencer à bloguer',
-                    'cta_link_type' => 'external',
-                    'cta_url' => '/blog',
+                    'title' => 'Blogr',
+                    'subtitle' => 'Un CMS multilingue pour Laravel & FilamentPHP — conçu nativement pour le contenu global.',
+                    'cta_text' => 'Lire le Blog',
+                    'cta_link_type' => 'blog',
+                    'cta_url' => null,
                     'cta_category_id' => null,
                     'cta_cms_page_id' => null,
                     'alignment' => 'center',
-                    'background_type' => 'color',
-                    'background_color' => '#667eea',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#4f46e5',
+                    'gradient_to' => '#7c3aed',
+                    'gradient_direction' => 'to-br',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#0f0c29',
+                    'gradient_to_dark' => '#302b63',
+                    'gradient_direction_dark' => 'to-br',
                     'text_shadow' => true,
                     'shadow_intensity' => 'medium',
                 ],
             ],
 
-            // Transition: Wavy with solid colors
-            [
-                'type' => 'transition-diagonal',
-                'data' => [
-                    'shape' => 'wavy',
-                    'amplitude' => 40,
-                ],
-            ],
-
-            // Stats Section
+            // Stats
             [
                 'type' => 'stats',
                 'data' => [
-                    'heading' => 'Approuvé par les Créateurs de Contenu',
+                    'heading' => "Conçu pour le contenu, architecturé pour l'échelle",
                     'stats' => [
-                        ['number' => 5000, 'label' => 'Blogueurs Actifs'],
-                        ['number' => 50000, 'label' => 'Articles Publiés'],
-                        ['number' => 25, 'label' => 'Langues Supportées'],
-                        ['number' => 99, 'label' => 'Disponibilité %'],
+                        ['number' => 24, 'suffix' => '+', 'label' => 'Types de Blocs'],
+                        ['number' => 25, 'suffix' => '+', 'label' => 'Langues Supportées'],
+                        ['number' => 100, 'suffix' => '%', 'label' => 'Open Source'],
+                        ['number' => 12, 'suffix' => '.x', 'label' => 'Laravel Natif'],
                     ],
                     'background_type' => 'color',
-                    'background_color' => '#f093fb',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
                 ],
             ],
 
-            // Features Section
+            // Features
             [
                 'type' => 'features',
                 'data' => [
-                    'title' => 'Fonctionnalités Puissantes pour les Blogueurs Modernes',
-                    'subtitle' => 'Tout ce dont vous avez besoin pour créer, gérer et développer votre blog',
+                    'title' => 'Tout ce dont vous avez besoin, rien de superflu',
+                    'subtitle' => 'Architecture traduction-first, admin FilamentPHP v4, et une stack Laravel 12 moderne.',
                     'columns' => '3',
                     'items' => [
                         [
-                            'title' => '✍️ Éditeur Intuitif',
-                            'description' => 'Éditeur basé sur des blocs avec aperçu en direct, support Markdown et options de formatage avancées',
+                            'icon' => 'heroicon-o-globe-alt',
+                            'title' => 'Traduction-First',
+                            'description' => 'Chaque entité — posts, pages, catégories, tags, séries — est multilingue par conception, pas par ajout.',
                         ],
                         [
-                            'title' => '🌍 Portée Mondiale',
-                            'description' => 'Écrivez en 25+ langues avec optimisation SEO automatique pour chaque locale',
+                            'icon' => 'heroicon-o-squares-2x2',
+                            'title' => '24+ Blocs de Contenu',
+                            'description' => 'Hero, fonctionnalités, témoignages, tarifs, galerie, timeline, FAQ, équipe, vidéo, newsletter, cartes et plus.',
                         ],
                         [
-                            'title' => '⚡ Ultra Rapide',
-                            'description' => 'Performance optimisée avec mise en cache, prêt pour CDN et zéro latence',
+                            'icon' => 'heroicon-o-shield-check',
+                            'title' => 'Admin FilamentPHP v4',
+                            'description' => "Panneau d'administration complet avec accès basé sur les rôles, journaux d'audit et constructeur de pages par blocs.",
                         ],
                         [
-                            'title' => '📈 Maîtrise du SEO',
-                            'description' => 'Outils SEO intégrés, balises meta, données structurées et génération de sitemap',
+                            'icon' => 'heroicon-o-magnifying-glass',
+                            'title' => 'Optimisé SEO',
+                            'description' => 'Sitemaps XML automatiques, URLs canoniques, données structurées, balises meta et routage par locale.',
                         ],
                         [
-                            'title' => '🔐 Sécurité Entreprise',
-                            'description' => 'Permissions avancées, accès basé sur les rôles, journaux d\'audit et sauvegardes automatisées',
+                            'icon' => 'heroicon-o-cube',
+                            'title' => 'Templates Personnalisés',
+                            'description' => '7 templates : landing, about, pricing, FAQ, contact, custom et default — chacun avec ses blocs dédiés.',
                         ],
                         [
-                            'title' => '🎨 Liberté de Conception',
-                            'description' => 'Personnalisez les couleurs, les polices, les mises en page - aucune programmation requise',
+                            'icon' => 'heroicon-o-arrow-path',
+                            'title' => 'Import / Export',
+                            'description' => 'Portabilité totale du contenu avec export/import JSON. Sauvegardez, restaurez et migrez librement.',
+                        ],
+                        [
+                            'icon' => 'heroicon-o-clock',
+                            'title' => 'Planification de Contenu',
+                            'description' => 'Programmez les publications automatiquement par fuseau horaire. Workflows de brouillon, relecture et publication.',
+                        ],
+                        [
+                            'icon' => 'heroicon-o-code-bracket',
+                            'title' => 'Développeur Friendly',
+                            'description' => 'PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, tests Pest et Playwright E2E — 100% open source.',
+                        ],
+                        [
+                            'icon' => 'heroicon-o-tag',
+                            'title' => 'Catégories & Tags',
+                            'description' => 'Catégorisation multi-niveaux avec slugs par locale. Tri alphabétique automatique des tags. Relations pivot complètes.',
                         ],
                     ],
                     'background_type' => 'color',
-                    'background_color' => '#667eea',
+                    'background_color' => '#f8fafc',
+                    'heading_color' => '#0f172a',
+                    'text_color' => '#334155',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#0f172a',
+                    'heading_color_dark' => '#f1f5f9',
+                    'text_color_dark' => '#cbd5e1',
+                    'subtitle_color_dark' => '#94a3b8',
                 ],
             ],
 
-            // Content Section
+            // Blog Posts
             [
-                'type' => 'content',
+                'type' => 'blog_posts',
                 'data' => [
-                    'content' => '## Pourquoi les Meilleurs Créateurs de Contenu Choisissent Blogr
-
-Blogr est construit sur **FilamentPHP** et **Laravel 12**, vous offrant une performance de qualité entreprise avec un focus sur la création de contenu. Que vous soyez un blogueur solo ou que vous gériez une équipe d\'écrivains, Blogr évolue selon vos besoins.
-
-### Ce qui Rend Blogr Différent
-- **Multilingue par Conception** : Pas un ajout secondaire - le support multilingue est intégré dans chaque fonctionnalité
-- **SEO en Premier** : Chaque article est optimisé pour les moteurs de recherche avec sitemaps automatiques et données structurées
-- **Obsédé par la Performance** : Temps de chargement moyen inférieur à 1s, même avec des milliers d\'articles
-- **Collaboration d\'Équipe** : Rôles, permissions et workflows construits pour les équipes
-- **Portabilité du Contenu** : Exportez votre contenu à tout moment dans des formats standards',
-                    'max_width' => 'prose',
-                    'background_type' => 'color',
-                    'background_color' => '#f5f7fa',
-                    'text_shadow' => true,
-                    'shadow_intensity' => 'medium',
-                ],
-            ],
-
-            // Transition: Zigzag with solid colors
-            [
-                'type' => 'transition-diagonal',
-                'data' => [
-                    'shape' => 'zigzag',
-                    'amplitude' => 35,
-                ],
-            ],
-
-            // Gallery Section
-            [
-                'type' => 'gallery',
-                'data' => [
-                    'heading' => 'Mettez en Valeur Vos Histoires Visuelles',
-                    'description' => 'Des mises en page galerie magnifiques pour afficher votre meilleur contenu',
+                    'heading' => 'Derniers articles',
+                    'limit' => 3,
                     'layout' => 'grid',
-                    'columns' => '3',
-                    'images' => [],
                     'background_type' => 'color',
-                    'background_color' => '#f5576c',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#f1f5f9',
+                    'text_color_dark' => '#94a3b8',
                 ],
             ],
 
-            // Transition: Smooth with solid colors
+            // Timeline
             [
-                'type' => 'transition-diagonal',
+                'type' => 'timeline',
                 'data' => [
-                    'shape' => 'smooth',
-                    'amplitude' => 30,
-                ],
-            ],
-
-            // Features Grid
-            [
-                'type' => 'features',
-                'data' => [
-                    'title' => 'Capacités Avancées',
-                    'columns' => '2',
-                    'items' => [
+                    'heading' => 'Feuille de route',
+                    'events' => [
                         [
-                            'title' => '📱 Design Responsif',
-                            'description' => 'Parfait sur mobile, tablette, desktop. Votre blog est magnifique partout.',
+                            'date' => 'v0.20 — 2026',
+                            'title' => 'Pages CMS & Blocs',
+                            'description' => 'Constructeur de page complet avec 24+ types de blocs, 7 templates, transitions et support dark mode.',
                         ],
                         [
-                            'title' => '🔗 Optimisation SEO',
-                            'description' => 'Balises meta automatiques, URLs canoniques, sitemaps XML et données structurées.',
+                            'date' => 'v0.15 — 2025',
+                            'title' => 'Multilingue Partout',
+                            'description' => 'Architecture traduction-first : toutes les entités supportent les slugs, le SEO et le contenu par locale.',
                         ],
                         [
-                            'title' => '🔄 Planification de Contenu',
-                            'description' => 'Programmez les articles pour publier automatiquement pour un audience mondial.',
+                            'date' => 'v0.10 — 2025',
+                            'title' => 'Migration FilamentPHP v4',
+                            'description' => 'Migration vers Filament v4 avec le nouveau système Schema, navigation améliorée et structure du panneau.',
                         ],
                         [
-                            'title' => '📊 Analyse Avancée',
-                            'description' => 'Suivi des vues, engagement, taux de rebond. Intégrez avec les outils d\'analyse.',
+                            'date' => 'v0.1 — 2024',
+                            'title' => 'Première Release',
+                            'description' => 'Première publication publique — plugin blog Laravel avec posts, catégories et tags de base.',
                         ],
                     ],
                     'background_type' => 'color',
-                    'background_color' => '#4facfe',
+                    'background_color' => '#f8fafc',
+                    'heading_color' => '#0f172a',
+                    'text_color' => '#334155',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#0f172a',
+                    'heading_color_dark' => '#f1f5f9',
+                    'text_color_dark' => '#cbd5e1',
                 ],
             ],
 
-            // CTA Section
+            // CTA
             [
                 'type' => 'cta',
                 'data' => [
-                    'heading' => 'Rejoignez la Révolution Blogr',
-                    'subheading' => 'Commencez à créer un contenu multilingue incroyable dès aujourd\'hui. Aucune carte de crédit requise.',
-                    'button_text' => 'Commencer Votre Voyage',
-                    'button_link_type' => 'external',
-                    'button_url' => 'https://example.com/rejoindre',
+                    'heading' => "Construisez en plusieurs langues dès aujourd'hui.",
+                    'subheading' => 'Open source sous licence MIT. Aucune carte de crédit requise.',
+                    'button_text' => 'Commencer',
+                    'button_link_type' => 'blog',
+                    'button_url' => null,
                     'button_category_id' => null,
                     'button_cms_page_id' => null,
                     'button_style' => 'primary',
-                    'background_type' => 'color',
-                    'background_color' => '#f5576c',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#4f46e5',
+                    'gradient_to' => '#7c3aed',
+                    'gradient_direction' => 'to-l',
+                    'heading_color' => '#ffffff',
+                    'subtitle_color' => '#e0e7ff',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#24243e',
+                    'gradient_to_dark' => '#0f0c29',
+                    'gradient_direction_dark' => 'to-l',
+                    'heading_color_dark' => '#f1f5f9',
+                    'subtitle_color_dark' => '#94a3b8',
                 ],
             ],
         ];
@@ -502,20 +558,113 @@ Blogr est construit sur **FilamentPHP** et **Laravel 12**, vous offrant une perf
     private function getContactPageBlocksEN(): array
     {
         return [
-            // Contact CTA Section
+            // Hero
             [
-                'type' => 'cta',
+                'type' => 'hero',
                 'data' => [
-                    'heading' => 'Let\'s Connect',
-                    'subheading' => 'Send us a message and we\'ll respond as soon as possible',
-                    'button_text' => 'Send Message',
-                    'button_link_type' => 'external',
-                    'button_url' => '#contact-form',
-                    'button_category_id' => null,
-                    'button_cms_page_id' => null,
-                    'button_style' => 'primary',
+                    'title' => 'Get in Touch',
+                    'subtitle' => 'Built with care in Grasse — the world capital of perfume. We\'d love to hear from you.',
+                    'cta_text' => 'Send a Message',
+                    'cta_link_type' => 'external',
+                    'cta_url' => '#contact-form',
+                    'cta_category_id' => null,
+                    'cta_cms_page_id' => null,
+                    'alignment' => 'center',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#0f0c29',
+                    'gradient_to' => '#302b63',
+                    'gradient_direction' => 'to-br',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#0f0c29',
+                    'gradient_to_dark' => '#24243e',
+                    'gradient_direction_dark' => 'to-br',
+                    'text_shadow' => true,
+                    'shadow_intensity' => 'medium',
+                ],
+            ],
+
+            // Stats
+            [
+                'type' => 'stats',
+                'data' => [
+                    'heading' => 'Built with passion in the South of France',
+                    'stats' => [
+                        ['number' => 25, 'suffix' => '+', 'label' => 'Languages Supported'],
+                        ['number' => 24, 'suffix' => '+', 'label' => 'Content Blocks'],
+                        ['number' => 100, 'suffix' => '%', 'label' => 'Open Source'],
+                        ['number' => 12, 'suffix' => '.x', 'label' => 'Laravel Native'],
+                    ],
                     'background_type' => 'color',
-                    'background_color' => '#667eea',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                ],
+            ],
+
+            // Interactive Map — Grasse, France
+            [
+                'type' => 'map',
+                'data' => [
+                    'heading' => 'Find Us in Grasse',
+                    'subtitle' => 'Nestled in the hills of the French Riviera, where perfume has been an art for centuries.',
+                    'tagline' => 'Made with love in the world capital of perfume',
+                    'tagline_position' => 'bottom',
+                    'center_lat' => 43.6589,
+                    'center_lng' => 6.9252,
+                    'zoom' => 15,
+                    'height' => 480,
+                    'markers' => [
+                        [
+                            'lat' => 43.6589,
+                            'lng' => 6.9252,
+                            'popup_text' => '📍 Grasse — World Capital of Perfume',
+                        ],
+                        [
+                            'lat' => 43.6580,
+                            'lng' => 6.9200,
+                            'popup_text' => '🏭 Fragonard Perfume Factory',
+                        ],
+                        [
+                            'lat' => 43.6600,
+                            'lng' => 6.9300,
+                            'popup_text' => '🌿 Molinard Perfume House (est. 1849)',
+                        ],
+                    ],
+                    'background_type' => 'color',
+                    'background_color' => '#f8fafc',
+                    'heading_color' => '#0f172a',
+                    'text_color' => '#334155',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#0f172a',
+                    'heading_color_dark' => '#f1f5f9',
+                    'text_color_dark' => '#cbd5e1',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+
+            // Contact Form
+            [
+                'type' => 'contact_form',
+                'data' => [
+                    'heading' => 'Send Us a Message',
+                    'subtitle' => "We'll get back to you within 24 hours.",
+                    'submit_text' => 'Send Message',
+                    'success_message' => 'Thank you! Your message has been sent.',
+                    'background_type' => 'color',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                    'subtitle_color_dark' => '#94a3b8',
                 ],
             ],
 
@@ -523,50 +672,178 @@ Blogr est construit sur **FilamentPHP** et **Laravel 12**, vous offrant une perf
             [
                 'type' => 'features',
                 'data' => [
-                    'title' => 'How to Reach Us',
-                    'subtitle' => 'Multiple ways to get in touch with our team',
+                    'title' => 'Find Us Online',
+                    'subtitle' => 'We respond faster than a Grasse perfumer can name a fragrance note.',
                     'columns' => '3',
                     'items' => [
                         [
-                            'title' => '📧 Email',
-                            'description' => 'Send us an email and we\'ll get back to you within 24 hours',
+                            'icon' => 'heroicon-o-envelope',
+                            'title' => 'Email Us',
+                            'description' => 'Send an email and we\'ll get back to you within 24 hours — even on weekends.',
                         ],
                         [
-                            'title' => '💬 Live Chat',
-                            'description' => 'Chat with our support team in real-time during business hours',
+                            'icon' => 'heroicon-o-x-mark',
+                            'title' => 'X (formerly Twitter)',
+                            'description' => 'Follow us @blogr for the latest news, releases, and behind-the-scenes updates.',
                         ],
                         [
-                            'title' => '📱 Social Media',
-                            'description' => 'Follow us on social media for updates and announcements',
+                            'icon' => 'heroicon-o-chat-bubble-oval-left-ellipsis',
+                            'title' => 'Bluesky',
+                            'description' => 'Find us on Bluesky for community discussions, tips, and support.',
                         ],
                     ],
                     'background_type' => 'color',
-                    'background_color' => '#f093fb',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+
+            // CTA
+            [
+                'type' => 'cta',
+                'data' => [
+                    'heading' => 'Let\'s build something beautiful together.',
+                    'subheading' => 'Open source and MIT licensed. No credit card required.',
+                    'button_text' => 'Get Started',
+                    'button_link_type' => 'blog',
+                    'button_url' => null,
+                    'button_category_id' => null,
+                    'button_cms_page_id' => null,
+                    'button_style' => 'primary',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#4f46e5',
+                    'gradient_to' => '#7c3aed',
+                    'gradient_direction' => 'to-l',
+                    'heading_color' => '#ffffff',
+                    'subtitle_color' => '#e0e7ff',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#24243e',
+                    'gradient_to_dark' => '#0f0c29',
+                    'gradient_direction_dark' => 'to-l',
+                    'heading_color_dark' => '#f1f5f9',
+                    'subtitle_color_dark' => '#94a3b8',
                 ],
             ],
         ];
     }
 
-    /**
-     * Get contact page blocks (French)
-     */
     private function getContactPageBlocksFR(): array
     {
         return [
-            // Contact CTA Section
+            // Hero
             [
-                'type' => 'cta',
+                'type' => 'hero',
                 'data' => [
-                    'heading' => 'Connectons-nous',
-                    'subheading' => 'Envoyez-nous un message et nous répondrons dès que possible',
-                    'button_text' => 'Envoyer un Message',
-                    'button_link_type' => 'external',
-                    'button_url' => '#contact-form',
-                    'button_category_id' => null,
-                    'button_cms_page_id' => null,
-                    'button_style' => 'primary',
+                    'title' => 'Contactez-Nous',
+                    'subtitle' => 'Conçu avec soin à Grasse — la capitale mondiale du parfum. Nous serions ravis de vous entendre.',
+                    'cta_text' => 'Envoyer un Message',
+                    'cta_link_type' => 'external',
+                    'cta_url' => '#contact-form',
+                    'cta_category_id' => null,
+                    'cta_cms_page_id' => null,
+                    'alignment' => 'center',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#0f0c29',
+                    'gradient_to' => '#302b63',
+                    'gradient_direction' => 'to-br',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#0f0c29',
+                    'gradient_to_dark' => '#24243e',
+                    'gradient_direction_dark' => 'to-br',
+                    'text_shadow' => true,
+                    'shadow_intensity' => 'medium',
+                ],
+            ],
+
+            // Stats
+            [
+                'type' => 'stats',
+                'data' => [
+                    'heading' => 'Développé avec passion dans le Sud de la France',
+                    'stats' => [
+                        ['number' => 25, 'suffix' => '+', 'label' => 'Langues Supportées'],
+                        ['number' => 24, 'suffix' => '+', 'label' => 'Blocs de Contenu'],
+                        ['number' => 100, 'suffix' => '%', 'label' => 'Open Source'],
+                        ['number' => 12, 'suffix' => '.x', 'label' => 'Laravel Natif'],
+                    ],
                     'background_type' => 'color',
-                    'background_color' => '#667eea',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                ],
+            ],
+
+            // Interactive Map — Grasse, France
+            [
+                'type' => 'map',
+                'data' => [
+                    'heading' => 'Retrouvez-nous à Grasse',
+                    'subtitle' => 'Nichée dans les collines de la Riviera française, où le parfum est un art depuis des siècles.',
+                    'tagline' => 'Fabriqué avec amour dans la capitale mondiale du parfum',
+                    'tagline_position' => 'bottom',
+                    'center_lat' => 43.6589,
+                    'center_lng' => 6.9252,
+                    'zoom' => 15,
+                    'height' => 480,
+                    'markers' => [
+                        [
+                            'lat' => 43.6589,
+                            'lng' => 6.9252,
+                            'popup_text' => '📍 Grasse — Capitale Mondiale du Parfum',
+                        ],
+                        [
+                            'lat' => 43.6580,
+                            'lng' => 6.9200,
+                            'popup_text' => '🏭 Parfumerie Fragonard',
+                        ],
+                        [
+                            'lat' => 43.6600,
+                            'lng' => 6.9300,
+                            'popup_text' => '🌿 Maison Molinard (fondée en 1849)',
+                        ],
+                    ],
+                    'background_type' => 'color',
+                    'background_color' => '#f8fafc',
+                    'heading_color' => '#0f172a',
+                    'text_color' => '#334155',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#0f172a',
+                    'heading_color_dark' => '#f1f5f9',
+                    'text_color_dark' => '#cbd5e1',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+
+            // Contact Form
+            [
+                'type' => 'contact_form',
+                'data' => [
+                    'heading' => 'Envoyez-nous un Message',
+                    'subtitle' => 'Nous répondons sous 24 heures.',
+                    'submit_text' => 'Envoyer le Message',
+                    'success_message' => 'Merci ! Votre message a été envoyé.',
+                    'background_type' => 'color',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                    'subtitle_color_dark' => '#94a3b8',
                 ],
             ],
 
@@ -574,25 +851,351 @@ Blogr est construit sur **FilamentPHP** et **Laravel 12**, vous offrant une perf
             [
                 'type' => 'features',
                 'data' => [
-                    'title' => 'Comment Nous Joindre',
-                    'subtitle' => 'Plusieurs façons de nous contacter',
+                    'title' => 'Retrouvez-nous en Ligne',
+                    'subtitle' => 'Nous répondons plus vite qu\'un parfumeur grassois ne nomme une note.',
                     'columns' => '3',
                     'items' => [
                         [
-                            'title' => '📧 Email',
-                            'description' => 'Envoyez-nous un email et nous répondrons dans les 24 heures',
+                            'icon' => 'heroicon-o-envelope',
+                            'title' => 'Email',
+                            'description' => 'Envoyez-nous un email et nous répondrons sous 24 heures — même le week-end.',
                         ],
                         [
-                            'title' => '💬 Chat en Direct',
-                            'description' => 'Chattez avec notre équipe d\'assistance en temps réel pendant les heures de bureau',
+                            'icon' => 'heroicon-o-x-mark',
+                            'title' => 'X (anciennement Twitter)',
+                            'description' => 'Suivez @blogr pour les dernières nouvelles et mises à jour.',
                         ],
                         [
-                            'title' => '📱 Réseaux Sociaux',
-                            'description' => 'Suivez-nous sur les réseaux sociaux pour les mises à jour et annonces',
+                            'icon' => 'heroicon-o-chat-bubble-oval-left-ellipsis',
+                            'title' => 'Bluesky',
+                            'description' => 'Retrouvez-nous sur Bluesky pour des discussions, astuces et support.',
                         ],
                     ],
                     'background_type' => 'color',
-                    'background_color' => '#f093fb',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+
+            // CTA
+            [
+                'type' => 'cta',
+                'data' => [
+                    'heading' => 'Construisons ensemble quelque chose de beau.',
+                    'subheading' => 'Open source sous licence MIT. Aucune carte de crédit requise.',
+                    'button_text' => 'Commencer',
+                    'button_link_type' => 'blog',
+                    'button_url' => null,
+                    'button_category_id' => null,
+                    'button_cms_page_id' => null,
+                    'button_style' => 'primary',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#4f46e5',
+                    'gradient_to' => '#7c3aed',
+                    'gradient_direction' => 'to-l',
+                    'heading_color' => '#ffffff',
+                    'subtitle_color' => '#e0e7ff',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#24243e',
+                    'gradient_to_dark' => '#0f0c29',
+                    'gradient_direction_dark' => 'to-l',
+                    'heading_color_dark' => '#f1f5f9',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+        ];
+    }
+
+    private function getContactPageBlocksES(): array
+    {
+        return [
+            [
+                'type' => 'hero',
+                'data' => [
+                    'title' => 'Contáctenos',
+                    'subtitle' => 'Hecho con amor en Grasse — la capital mundial del perfume. Nos encantaría saber de usted.',
+                    'cta_text' => 'Enviar Mensaje',
+                    'cta_link_type' => 'external',
+                    'cta_url' => '#contact-form',
+                    'cta_category_id' => null,
+                    'cta_cms_page_id' => null,
+                    'alignment' => 'center',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#0f0c29',
+                    'gradient_to' => '#302b63',
+                    'gradient_direction' => 'to-br',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#0f0c29',
+                    'gradient_to_dark' => '#24243e',
+                    'gradient_direction_dark' => 'to-br',
+                    'text_shadow' => true,
+                    'shadow_intensity' => 'medium',
+                ],
+            ],
+            [
+                'type' => 'stats',
+                'data' => [
+                    'heading' => 'Desarrollado con pasión en el Sur de Francia',
+                    'stats' => [
+                        ['number' => 25, 'suffix' => '+', 'label' => 'Idiomas Compatibles'],
+                        ['number' => 24, 'suffix' => '+', 'label' => 'Bloques de Contenido'],
+                        ['number' => 100, 'suffix' => '%', 'label' => 'Código Abierto'],
+                        ['number' => 12, 'suffix' => '.x', 'label' => 'Laravel Nativo'],
+                    ],
+                    'background_type' => 'color',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                ],
+            ],
+            [
+                'type' => 'map',
+                'data' => [
+                    'heading' => 'Encuéntranos en Grasse',
+                    'subtitle' => 'Ubicado en las colinas de la Riviera francesa, donde el perfume ha sido un arte durante siglos.',
+                    'tagline' => 'Hecho con amor en la capital mundial del perfume',
+                    'tagline_position' => 'bottom',
+                    'center_lat' => 43.6589,
+                    'center_lng' => 6.9252,
+                    'zoom' => 15,
+                    'height' => 480,
+                    'markers' => [
+                        ['lat' => 43.6589, 'lng' => 6.9252, 'popup_text' => '📍 Grasse — Capital Mundial del Perfume'],
+                        ['lat' => 43.6580, 'lng' => 6.9200, 'popup_text' => '🏭 Fragonard Perfume Factory'],
+                        ['lat' => 43.6600, 'lng' => 6.9300, 'popup_text' => '🌿 Molinard Perfume House (est. 1849)'],
+                    ],
+                    'background_type' => 'color',
+                    'background_color' => '#f8fafc',
+                    'heading_color' => '#0f172a',
+                    'text_color' => '#334155',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#0f172a',
+                    'heading_color_dark' => '#f1f5f9',
+                    'text_color_dark' => '#cbd5e1',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+            [
+                'type' => 'contact_form',
+                'data' => [
+                    'heading' => 'Envíenos un Mensaje',
+                    'subtitle' => 'Le responderemos en un plazo de 24 horas.',
+                    'submit_text' => 'Enviar Mensaje',
+                    'success_message' => '¡Gracias! Su mensaje ha sido enviado.',
+                    'background_type' => 'color',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+            [
+                'type' => 'features',
+                'data' => [
+                    'title' => 'Encuéntranos en Línea',
+                    'subtitle' => 'Respondemos más rápido de lo que un perfumero de Grasse nombra una nota.',
+                    'columns' => '3',
+                    'items' => [
+                        ['icon' => 'heroicon-o-envelope', 'title' => 'Correo Electrónico', 'description' => 'Envíenos un correo y le responderemos en 24 horas — incluso los fines de semana.'],
+                        ['icon' => 'heroicon-o-x-mark', 'title' => 'X (antes Twitter)', 'description' => 'Siga a @blogr para las últimas noticias y novedades.'],
+                        ['icon' => 'heroicon-o-chat-bubble-oval-left-ellipsis', 'title' => 'Bluesky', 'description' => 'Encuéntrenos en Bluesky para debates, consejos y soporte.'],
+                    ],
+                    'background_type' => 'color',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+            [
+                'type' => 'cta',
+                'data' => [
+                    'heading' => 'Construyamos algo hermoso juntos.',
+                    'subheading' => 'Código abierto con licencia MIT. Sin tarjeta de crédito.',
+                    'button_text' => 'Comenzar',
+                    'button_link_type' => 'blog',
+                    'button_url' => null,
+                    'button_category_id' => null,
+                    'button_cms_page_id' => null,
+                    'button_style' => 'primary',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#4f46e5',
+                    'gradient_to' => '#7c3aed',
+                    'gradient_direction' => 'to-l',
+                    'heading_color' => '#ffffff',
+                    'subtitle_color' => '#e0e7ff',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#24243e',
+                    'gradient_to_dark' => '#0f0c29',
+                    'gradient_direction_dark' => 'to-l',
+                    'heading_color_dark' => '#f1f5f9',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+        ];
+    }
+
+    private function getContactPageBlocksPL(): array
+    {
+        return [
+            [
+                'type' => 'hero',
+                'data' => [
+                    'title' => 'Skontaktuj się z nami',
+                    'subtitle' => 'Wykonane z miłością w Grasse — światowej stolicy perfum. Chętnie Cię usłyszymy.',
+                    'cta_text' => 'Wyślij Wiadomość',
+                    'cta_link_type' => 'external',
+                    'cta_url' => '#contact-form',
+                    'cta_category_id' => null,
+                    'cta_cms_page_id' => null,
+                    'alignment' => 'center',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#0f0c29',
+                    'gradient_to' => '#302b63',
+                    'gradient_direction' => 'to-br',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#0f0c29',
+                    'gradient_to_dark' => '#24243e',
+                    'gradient_direction_dark' => 'to-br',
+                    'text_shadow' => true,
+                    'shadow_intensity' => 'medium',
+                ],
+            ],
+            [
+                'type' => 'stats',
+                'data' => [
+                    'heading' => 'Stworzone z pasją na Południu Francji',
+                    'stats' => [
+                        ['number' => 25, 'suffix' => '+', 'label' => 'Obsługiwane Języki'],
+                        ['number' => 24, 'suffix' => '+', 'label' => 'Bloki Treści'],
+                        ['number' => 100, 'suffix' => '%', 'label' => 'Open Source'],
+                        ['number' => 12, 'suffix' => '.x', 'label' => 'Laravel Natywny'],
+                    ],
+                    'background_type' => 'color',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                ],
+            ],
+            [
+                'type' => 'map',
+                'data' => [
+                    'heading' => 'Znajdź nas w Grasse',
+                    'subtitle' => 'Położone na wzgórzach Riwiery Francuskiej, gdzie perfumy są sztuką od wieków.',
+                    'tagline' => 'Wykonane z miłością w światowej stolicy perfum',
+                    'tagline_position' => 'bottom',
+                    'center_lat' => 43.6589,
+                    'center_lng' => 6.9252,
+                    'zoom' => 15,
+                    'height' => 480,
+                    'markers' => [
+                        ['lat' => 43.6589, 'lng' => 6.9252, 'popup_text' => '📍 Grasse — Stolica Perfum Świata'],
+                        ['lat' => 43.6580, 'lng' => 6.9200, 'popup_text' => '🏭 Fabryka Perfum Fragonard'],
+                        ['lat' => 43.6600, 'lng' => 6.9300, 'popup_text' => '🌿 Dom Perfum Molinard (zał. 1849)'],
+                    ],
+                    'background_type' => 'color',
+                    'background_color' => '#f8fafc',
+                    'heading_color' => '#0f172a',
+                    'text_color' => '#334155',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#0f172a',
+                    'heading_color_dark' => '#f1f5f9',
+                    'text_color_dark' => '#cbd5e1',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+            [
+                'type' => 'contact_form',
+                'data' => [
+                    'heading' => 'Wyślij Nam Wiadomość',
+                    'subtitle' => 'Odpowiemy w ciągu 24 godzin.',
+                    'submit_text' => 'Wyślij Wiadomość',
+                    'success_message' => 'Dziękujemy! Twoja wiadomość została wysłana.',
+                    'background_type' => 'color',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+            [
+                'type' => 'features',
+                'data' => [
+                    'title' => 'Znajdź nas w Sieci',
+                    'subtitle' => 'Odpowiadamy szybciej, niż perfumiarz z Grasse nazwie nutę zapachową.',
+                    'columns' => '3',
+                    'items' => [
+                        ['icon' => 'heroicon-o-envelope', 'title' => 'Email', 'description' => 'Wyślij email, a odpowiemy w ciągu 24 godzin — nawet w weekendy.'],
+                        ['icon' => 'heroicon-o-x-mark', 'title' => 'X (dawniej Twitter)', 'description' => 'Obserwuj @blogr, aby być na bieżąco z nowościami.'],
+                        ['icon' => 'heroicon-o-chat-bubble-oval-left-ellipsis', 'title' => 'Bluesky', 'description' => 'Znajdź nas na Bluesky, aby dyskutować i uzyskać pomoc.'],
+                    ],
+                    'background_type' => 'color',
+                    'background_color' => '#ffffff',
+                    'heading_color' => '#1e293b',
+                    'text_color' => '#475569',
+                    'subtitle_color' => '#64748b',
+                    'background_type_dark' => 'color',
+                    'background_color_dark' => '#111827',
+                    'heading_color_dark' => '#e2e8f0',
+                    'text_color_dark' => '#94a3b8',
+                    'subtitle_color_dark' => '#94a3b8',
+                ],
+            ],
+            [
+                'type' => 'cta',
+                'data' => [
+                    'heading' => 'Zbudujmy razem coś pięknego.',
+                    'subheading' => 'Open source na licencji MIT. Bez karty kredytowej.',
+                    'button_text' => 'Rozpocznij',
+                    'button_link_type' => 'blog',
+                    'button_url' => null,
+                    'button_category_id' => null,
+                    'button_cms_page_id' => null,
+                    'button_style' => 'primary',
+                    'background_type' => 'gradient',
+                    'gradient_from' => '#4f46e5',
+                    'gradient_to' => '#7c3aed',
+                    'gradient_direction' => 'to-l',
+                    'heading_color' => '#ffffff',
+                    'subtitle_color' => '#e0e7ff',
+                    'background_type_dark' => 'gradient',
+                    'gradient_from_dark' => '#24243e',
+                    'gradient_to_dark' => '#0f0c29',
+                    'gradient_direction_dark' => 'to-l',
+                    'heading_color_dark' => '#f1f5f9',
+                    'subtitle_color_dark' => '#94a3b8',
                 ],
             ],
         ];

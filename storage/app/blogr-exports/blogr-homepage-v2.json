@@ -1,0 +1,437 @@
+{
+    "type": "cms_page",
+    "format_version": "1.0",
+    "name": "Blogr Homepage",
+    "description": "Blogr homepage — dark minimal design showcasing all features",
+    "exported_at": "2026-06-06T21:04:29+00:00",
+    "data": {
+        "slug": "blogr-homepage-v2",
+        "template": "landing",
+        "is_published": true,
+        "is_homepage": false,
+        "default_locale": "en",
+        "translations": [
+            {
+                "locale": "en",
+                "slug": "blogr-homepage-v2",
+                "title": "Blogr — Multilingual CMS",
+                "meta_title": "Blogr — Multilingual CMS for Laravel \\u0026 FilamentPHP",
+                "meta_description": "A translation-first CMS built on Laravel 12 and FilamentPHP v4.",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Blogr",
+                            "subtitle": "A multilingual CMS for Laravel & FilamentPHP — natively designed for global content.",
+                            "cta_text": "Read the Blog",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#302b63",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "stats",
+                        "data": {
+                            "heading": "Built for content, engineered for scale",
+                            "stats": [
+                                {
+                                    "number": 24,
+                                    "suffix": "+",
+                                    "label": "Block Types"
+                                },
+                                {
+                                    "number": 25,
+                                    "suffix": "+",
+                                    "label": "Supported Languages"
+                                },
+                                {
+                                    "number": 100,
+                                    "suffix": "%",
+                                    "label": "Open Source"
+                                },
+                                {
+                                    "number": 12,
+                                    "suffix": ".x",
+                                    "label": "Laravel Native"
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#1e293b",
+                            "text_color": "#475569",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#e2e8f0",
+                            "text_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "features",
+                        "data": {
+                            "title": "Everything you need, nothing you don't",
+                            "subtitle": "Translation-first architecture, FilamentPHP v4 admin, and a modern Laravel 12 stack.",
+                            "columns": "3",
+                            "items": [
+                                {
+                                    "icon": "heroicon-o-globe-alt",
+                                    "title": "Translation-First",
+                                    "description": "Every entity — posts, pages, categories, tags, series — is multilingual by design, not as an afterthought."
+                                },
+                                {
+                                    "icon": "heroicon-o-squares-2x2",
+                                    "title": "24+ Content Blocks",
+                                    "description": "Hero, features, testimonials, pricing, gallery, timeline, FAQ, team, video, newsletter, maps, and more."
+                                },
+                                {
+                                    "icon": "heroicon-o-shield-check",
+                                    "title": "FilamentPHP v4 Admin",
+                                    "description": "Full-featured admin panel with role-based access, audit logs, and a beautiful block-based page builder."
+                                },
+                                {
+                                    "icon": "heroicon-o-magnifying-glass",
+                                    "title": "SEO Optimized",
+                                    "description": "Automatic XML sitemaps, canonical URLs, structured data, meta tags, and locale-aware routing."
+                                },
+                                {
+                                    "icon": "heroicon-o-cube",
+                                    "title": "Custom Templates",
+                                    "description": "7 page templates: landing, about, pricing, FAQ, contact, custom, and default — each with tailored blocks."
+                                },
+                                {
+                                    "icon": "heroicon-o-arrow-path",
+                                    "title": "Import \/ Export",
+                                    "description": "Full content portability with JSON export\/import. Backup, restore, and migrate your content freely."
+                                },
+                                {
+                                    "icon": "heroicon-o-clock",
+                                    "title": "Content Scheduling",
+                                    "description": "Schedule posts for automatic publication across time zones. Draft, review, and publish workflows."
+                                },
+                                {
+                                    "icon": "heroicon-o-code-bracket",
+                                    "title": "Developer Friendly",
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, Pest tests, and Playwright E2E — fully open source."
+                                },
+                                {
+                                    "icon": "heroicon-o-tag",
+                                    "title": "Categories & Tags",
+                                    "description": "Multi-level categorization with per-locale slugs. Tags auto-sort alphabetically. Full pivot relationships."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "blog_posts",
+                        "data": {
+                            "heading": "Latest from the blog",
+                            "limit": 3,
+                            "layout": "grid",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#1e293b",
+                            "text_color": "#475569",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "timeline",
+                        "data": {
+                            "heading": "Roadmap",
+                            "events": [
+                                {
+                                    "date": "v0.20 — 2026",
+                                    "title": "CMS Pages & Blocks",
+                                    "description": "Full page builder with 24+ block types, 7 templates, transitions, and dark mode support."
+                                },
+                                {
+                                    "date": "v0.15 — 2025",
+                                    "title": "Multilingual Everywhere",
+                                    "description": "Translation-first architecture: all entities support per-locale slugs, SEO, and content."
+                                },
+                                {
+                                    "date": "v0.10 — 2025",
+                                    "title": "FilamentPHP v4 Upgrade",
+                                    "description": "Migrated to Filament v4 with new Schema system, improved navigation, and panel structure."
+                                },
+                                {
+                                    "date": "v0.1 — 2024",
+                                    "title": "Initial Release",
+                                    "description": "First public release — Laravel blog plugin with basic posts, categories, and tags."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Start building in multiple languages today.",
+                            "subheading": "Open source and MIT licensed. No credit card required.",
+                            "button_text": "Get Started",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "fr",
+                "slug": "blogr-homepage-v2",
+                "title": "Blogr — CMS Multilingue",
+                "meta_title": "Blogr — CMS Multilingue pour Laravel \\u0026 FilamentPHP",
+                "meta_description": "Un CMS traduction-first construit sur Laravel 12 et FilamentPHP v4.",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Blogr",
+                            "subtitle": "Un CMS multilingue pour Laravel & FilamentPHP — conçu nativement pour le contenu global.",
+                            "cta_text": "Lire le Blog",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#302b63",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "stats",
+                        "data": {
+                            "heading": "Conçu pour le contenu, architecturé pour l'échelle",
+                            "stats": [
+                                {
+                                    "number": 24,
+                                    "suffix": "+",
+                                    "label": "Types de Blocs"
+                                },
+                                {
+                                    "number": 25,
+                                    "suffix": "+",
+                                    "label": "Langues Supportées"
+                                },
+                                {
+                                    "number": 100,
+                                    "suffix": "%",
+                                    "label": "Open Source"
+                                },
+                                {
+                                    "number": 12,
+                                    "suffix": ".x",
+                                    "label": "Laravel Natif"
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#1e293b",
+                            "text_color": "#475569",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#e2e8f0",
+                            "text_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "features",
+                        "data": {
+                            "title": "Tout ce dont vous avez besoin, rien de superflu",
+                            "subtitle": "Architecture traduction-first, admin FilamentPHP v4, et une stack Laravel 12 moderne.",
+                            "columns": "3",
+                            "items": [
+                                {
+                                    "icon": "heroicon-o-globe-alt",
+                                    "title": "Traduction-First",
+                                    "description": "Chaque entité — posts, pages, catégories, tags, séries — est multilingue par conception, pas par ajout."
+                                },
+                                {
+                                    "icon": "heroicon-o-squares-2x2",
+                                    "title": "24+ Blocs de Contenu",
+                                    "description": "Hero, fonctionnalités, témoignages, tarifs, galerie, timeline, FAQ, équipe, vidéo, newsletter, cartes et plus."
+                                },
+                                {
+                                    "icon": "heroicon-o-shield-check",
+                                    "title": "Admin FilamentPHP v4",
+                                    "description": "Panneau d'administration complet avec accès basé sur les rôles, journaux d'audit et constructeur de pages par blocs."
+                                },
+                                {
+                                    "icon": "heroicon-o-magnifying-glass",
+                                    "title": "Optimisé SEO",
+                                    "description": "Sitemaps XML automatiques, URLs canoniques, données structurées, balises meta et routage par locale."
+                                },
+                                {
+                                    "icon": "heroicon-o-cube",
+                                    "title": "Templates Personnalisés",
+                                    "description": "7 templates : landing, about, pricing, FAQ, contact, custom et default — chacun avec ses blocs dédiés."
+                                },
+                                {
+                                    "icon": "heroicon-o-arrow-path",
+                                    "title": "Import \/ Export",
+                                    "description": "Portabilité totale du contenu avec export\/import JSON. Sauvegardez, restaurez et migrez librement."
+                                },
+                                {
+                                    "icon": "heroicon-o-clock",
+                                    "title": "Planification de Contenu",
+                                    "description": "Programmez les publications automatiquement par fuseau horaire. Workflows de brouillon, relecture et publication."
+                                },
+                                {
+                                    "icon": "heroicon-o-code-bracket",
+                                    "title": "Développeur Friendly",
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, tests Pest et Playwright E2E — 100% open source."
+                                },
+                                {
+                                    "icon": "heroicon-o-tag",
+                                    "title": "Catégories & Tags",
+                                    "description": "Catégorisation multi-niveaux avec slugs par locale. Tri alphabétique automatique des tags. Relations pivot complètes."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "blog_posts",
+                        "data": {
+                            "heading": "Derniers articles",
+                            "limit": 3,
+                            "layout": "grid",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#1e293b",
+                            "text_color": "#475569",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "timeline",
+                        "data": {
+                            "heading": "Feuille de route",
+                            "events": [
+                                {
+                                    "date": "v0.20 — 2026",
+                                    "title": "Pages CMS & Blocs",
+                                    "description": "Constructeur de page complet avec 24+ types de blocs, 7 templates, transitions et support dark mode."
+                                },
+                                {
+                                    "date": "v0.15 — 2025",
+                                    "title": "Multilingue Partout",
+                                    "description": "Architecture traduction-first : toutes les entités supportent les slugs, le SEO et le contenu par locale."
+                                },
+                                {
+                                    "date": "v0.10 — 2025",
+                                    "title": "Migration FilamentPHP v4",
+                                    "description": "Migration vers Filament v4 avec le nouveau système Schema, navigation améliorée et structure du panneau."
+                                },
+                                {
+                                    "date": "v0.1 — 2024",
+                                    "title": "Première Release",
+                                    "description": "Première publication publique — plugin blog Laravel avec posts, catégories et tags de base."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Construisez en plusieurs langues dès aujourd'hui.",
+                            "subheading": "Open source sous licence MIT. Aucune carte de crédit requise.",
+                            "button_text": "Commencer",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "media": []
+}
