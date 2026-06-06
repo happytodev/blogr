@@ -2,6 +2,13 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.18.2](https://github.com/happytodev/blogr/compare/v0.18.2...v0.18.1) - 2026-06-06
+
+### ✨ Features
+
+- **Version display in admin panel**: BlogrSettings now shows the current version (`Blogr::VERSION`) in the General tab, with a clickable link to `blogr.happytodev.dev/releases/v{version}` for release notes.
+- **`Blogr::VERSION` constant**: Added a centralized version constant (`src/Blogr.php`) so the version can be accessed at runtime via `Blogr::getVersion()` or `Blogr::VERSION`.
+
 ## [v0.18.1](https://github.com/happytodev/blogr/compare/v0.18.1...v0.18.0) - 2026-06-06
 
 ### 🐛 Bug Fixes
