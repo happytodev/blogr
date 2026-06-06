@@ -6,25 +6,28 @@ use Filament\Tables\Table;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Support\Facades\Storage;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
 use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Builder;
+use Happytodev\Blogr\Models\BlogSeries;
 
 class BlogPostTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->modifyQueryUsing(function ($query) {
                 $user = Filament::auth()->user();
                 if ($user->hasRole('writer') && !$user->hasRole('admin')) {
-                    // Writers can only see their own posts
                     $query->where('user_id', $user->id);
                 }
-                // Admins can see all posts
-                return $query;
+
+                return $query->with('translations', 'category', 'tags', 'user', 'series.translations');
             })
             ->columns([
                 TextColumn::make('title')
@@ -34,9 +37,7 @@ class BlogPostTable
                     ->sortable()
                     ->searchable(),
                 ImageColumn::make('photo')
-                    ->getStateUsing(function ($record) {
-                        return $record->photo ? Storage::temporaryUrl($record->photo, now()->addMinutes(5)) : null;
-                    }),
+                    ->getStateUsing(fn ($record) => $record->photo_url),
                 TextColumn::make('user.name')
                     ->label('Author')
                     ->sortable()
@@ -44,6 +45,14 @@ class BlogPostTable
                 TextColumn::make('category.name')
                     ->label('Category')
                     ->sortable(),
+                TextColumn::make('locales')
+                    ->label('Locales')
+                    ->badge()
+                    ->getStateUsing(fn ($record) => $record->translations->pluck('locale')->map('strtoupper')->toArray())
+                    ->color('primary'),
+                TextColumn::make('series.title')
+                    ->label('Series')
+                    ->placeholder('—'),
                 TextColumn::make('tags.name')
                     ->badge()
                     ->getStateUsing(function ($record) {
@@ -54,11 +63,9 @@ class BlogPostTable
                             return $tagNames;
                         }
 
-                        // Take first 3 tags and add "+X other(s)"
                         $displayTags = array_slice($tagNames, 0, 3);
                         $remainingCount = count($tagNames) - 3;
 
-                        // Use singular "other" for 1, plural "others" for > 1
                         $otherText = $remainingCount === 1 ? 'other' : 'others';
                         $displayTags[] = "+{$remainingCount} {$otherText}";
 
@@ -91,6 +98,29 @@ class BlogPostTable
                     ->label('Publication Status')
                     ->trueLabel('Published')
                     ->falseLabel(__('blogr::date.draft')),
+                Filter::make('published_at')
+                    ->form([
+                        DatePicker::make('published_from'),
+                        DatePicker::make('published_until'),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        return $query
+                            ->when($data['published_from'], fn ($q, $date) => $q->whereDate('published_at', '>=', $date))
+                            ->when($data['published_until'], fn ($q, $date) => $q->whereDate('published_at', '<=', $date));
+                    }),
+                SelectFilter::make('blog_series_id')
+                    ->label('Series')
+                    ->options(fn () => BlogSeries::with('translations')->get()->pluck('title', 'id'))
+                    ->attribute('blog_series_id'),
+                SelectFilter::make('locale')
+                    ->label('Language')
+                    ->options([
+                        'en' => 'English',
+                        'fr' => 'Français',
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        return $query->when($data['value'], fn ($q, $locale) => $q->whereHas('translations', fn ($q) => $q->where('locale', $locale)));
+                    }),
             ])
             ->actions([
                 EditAction::make(),
