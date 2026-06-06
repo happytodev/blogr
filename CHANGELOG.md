@@ -2,7 +2,26 @@
 
 All notable changes to `blogr` will be documented in this file.
 
-## Unpublished
+## [v0.18.0](https://github.com/happytodev/blogr/compare/v0.18.0...v0.17.1) - 2026-06-06
+
+### ✨ Features
+
+- **Improved Blog Posts Admin Table**:
+  - **Default sorting**: Posts now sorted by most recent first (`created_at` desc)
+  - **Eager loading**: Preload `translations`, `category`, `tags`, `user`, `series` to eliminate N+1 queries
+  - **New columns**: Locale badges, series title, photo (using `photo_url` accessor)
+  - **Toggleable columns**: All columns can be shown/hidden via dropdown; photo, locales, series, and tags hidden by default
+  - **New filters**: Date range (published from/until), series select, language/locale filter
+  - **Fixed SQL crash**: Series filter no longer crashes with `no such column: blog_series.title` (title lives in translations table)
+
+### 🧪 Tests
+
+- **12 new Pest tests** for the blog posts table covering: rendering, default sort, all filters, locale badges, series accessor, photo column, and the SQL crash regression
+- **TDD approach**: Tests written first, then the fix applied
+
+### 🤖 Tooling
+
+- **AGENTS.md**: New instruction file for future OpenCode sessions
 
 ## [v0.17.1](https://github.com/happytodev/blogr/compare/v0.17.1...v0.17.0) - 2026-03-09
 
