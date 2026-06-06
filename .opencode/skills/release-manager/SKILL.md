@@ -1,6 +1,7 @@
-# release-manager
-
-Automates Blogr package releases: version bumping, CHANGELOG updates, tagging, and publishing to GitHub.
+---
+name: release-manager
+description: Automate Blogr package releases: version bumping, CHANGELOG updates, tagging, and publishing to GitHub.
+---
 
 ## When to use
 
