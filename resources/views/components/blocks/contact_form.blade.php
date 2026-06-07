@@ -9,7 +9,8 @@
     $uniqueId = 'contact-form-' . uniqid();
 @endphp
 
-<x-blogr::background-wrapper :data="$data">
+<div id="contact-form">
+    <x-blogr::background-wrapper :data="$data">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         @if($heading || $subtitle)
             <div class="text-center mb-10">
@@ -174,3 +175,4 @@
         });
     </script>
 </x-blogr::background-wrapper>
+</div>
