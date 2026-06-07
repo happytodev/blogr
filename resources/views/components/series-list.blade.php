@@ -9,7 +9,10 @@
     
     $currentLocale = app()->getLocale();
     $seriesTranslation = $series->translate($currentLocale) ?? $series->getDefaultTranslation();
-    $posts = $series->posts()->orderBy('series_position')->get();
+    $posts = $series->posts()
+        ->published()
+        ->orderBy('series_position')
+        ->get();
 @endphp
 
 @if($posts->count() > 0)
@@ -50,7 +53,6 @@
             @php
                 $postTranslation = $post->translate($currentLocale) ?? $post->getDefaultTranslation();
                 $isCurrentPost = $currentPost && $currentPost->id === $post->id;
-                $isPublished = $post->isCurrentlyPublished();
             @endphp
             
             <div class="flex items-start">
@@ -62,17 +64,10 @@
                         <span class="font-semibold text-gray-900 dark:text-gray-100">{{ $postTranslation?->title ?? __('blogr::blogr.ui.untitled') }}</span>
                         <span class="ml-2 text-xs text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]">({{ __('blogr::blogr.series.current') }})</span>
                     @else
-                        @if($isPublished)
-                            <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $postTranslation?->slug ?? $post->slug]) }}" 
-                               class="relative z-10 text-gray-700 dark:text-gray-300 hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] hover:underline">
-                                {{ $postTranslation?->title ?? __('blogr::blogr.ui.untitled') }}
-                            </a>
-                        @else
-                            <span class="text-gray-500 dark:text-gray-500">
-                                {{ $postTranslation?->title ?? __('blogr::blogr.ui.untitled') }}
-                                <span class="ml-2 text-xs">({{ __('blogr::blogr.ui.unpublished') }})</span>
-                            </span>
-                        @endif
+                        <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $postTranslation?->slug ?? $post->slug]) }}" 
+                           class="relative z-10 text-gray-700 dark:text-gray-300 hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] hover:underline">
+                            {{ $postTranslation?->title ?? __('blogr::blogr.ui.untitled') }}
+                        </a>
                     @endif
                     <div class="text-xs text-gray-500 dark:text-gray-500 mt-1">
                         {{ $post->published_at?->locale($currentLocale ?? app()->getLocale())->isoFormat('LL') }}

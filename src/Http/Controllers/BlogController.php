@@ -452,6 +452,9 @@ class BlogController
             $post->series->translated_title = $seriesTranslation?->title ?? $post->series->title;
             $post->series->translated_description = $seriesTranslation?->description ?? $post->series->description;
             
+            // Filter to only published posts in the series
+            $post->series->posts = $post->series->posts->filter->isCurrentlyPublished()->values();
+            
             // Translate each post in the series
             $post->series->posts->each(function ($seriesPost) use ($locale) {
                 $seriesTranslation = $seriesPost->translations->firstWhere('locale', $locale);
@@ -767,11 +770,7 @@ class BlogController
         
         $posts = $series->posts()
             ->with(['translations'])
-            ->where('is_published', true)
-            ->where(function ($query) {
-                $query->whereNull('published_at')
-                      ->orWhere('published_at', '<=', now());
-            })
+            ->published()
             ->orderBy('series_position')
             ->get()
             ->map(function ($post) use ($locale) {

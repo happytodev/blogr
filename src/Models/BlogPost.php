@@ -159,6 +159,15 @@ class BlogPost extends Model
         return $this->is_published && (!$this->published_at || $this->published_at->isPast());
     }
 
+    // Scope: published posts only
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true)
+            ->where(function ($q) {
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
+            });
+    }
+
     // Get the publication status text
     public function getPublicationStatus()
     {
@@ -412,6 +421,7 @@ class BlogPost extends Model
 
         return static::where('blog_series_id', $this->blog_series_id)
             ->where('series_position', '>', $this->series_position)
+            ->published()
             ->orderBy('series_position')
             ->first();
     }
@@ -427,6 +437,7 @@ class BlogPost extends Model
 
         return static::where('blog_series_id', $this->blog_series_id)
             ->where('series_position', '<', $this->series_position)
+            ->published()
             ->orderBy('series_position', 'desc')
             ->first();
     }
@@ -445,6 +456,7 @@ class BlogPost extends Model
             'current' => $this,
             'next' => $this->nextInSeries(),
             'all' => static::where('blog_series_id', $this->blog_series_id)
+                ->published()
                 ->orderBy('series_position')
                 ->get(),
         ];

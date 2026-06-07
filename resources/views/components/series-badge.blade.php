@@ -12,8 +12,10 @@
     $currentLocale = app()->getLocale();
     $seriesTranslation = $series?->translate($currentLocale) ?? $series?->getDefaultTranslation();
     
-    // Get position in series
-    $totalPosts = $series->posts()->count();
+    // Get position in series (published posts only)
+    $totalPosts = $series->posts()
+        ->published()
+        ->count();
     $position = $post->series_position ?? 1;
 @endphp
 

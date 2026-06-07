@@ -68,6 +68,8 @@ it('can list articles in a series ordered by position', function () {
         'default_locale' => 'en',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $post3 = BlogPost::create([
@@ -79,6 +81,8 @@ it('can list articles in a series ordered by position', function () {
         'default_locale' => 'en',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $post2 = BlogPost::create([
@@ -90,6 +94,8 @@ it('can list articles in a series ordered by position', function () {
         'default_locale' => 'en',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $orderedPosts = $series->posts()->orderBy('series_position')->get();
@@ -112,6 +118,8 @@ it('allows gaps in series positions', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $post5 = BlogPost::create([
@@ -123,6 +131,8 @@ it('allows gaps in series positions', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     expect($series->posts)->toHaveCount(2)
@@ -141,6 +151,8 @@ it('can get the next article in a series', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $post2 = BlogPost::create([
@@ -152,6 +164,8 @@ it('can get the next article in a series', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $nextPost = $post1->nextInSeries();
@@ -173,6 +187,8 @@ it('can get the previous article in a series', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $post2 = BlogPost::create([
@@ -184,6 +200,8 @@ it('can get the previous article in a series', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $previousPost = $post2->previousInSeries();
@@ -205,6 +223,8 @@ it('returns null when there is no next article in series', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $nextPost = $post->nextInSeries();
@@ -224,6 +244,8 @@ it('returns null when there is no previous article in series', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $previousPost = $post->previousInSeries();
@@ -243,6 +265,8 @@ it('can get series navigation for a post', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $post2 = BlogPost::create([
@@ -254,6 +278,8 @@ it('can get series navigation for a post', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $post3 = BlogPost::create([
@@ -265,6 +291,8 @@ it('can get series navigation for a post', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     $navigation = $post2->getSeriesNavigation();
@@ -286,6 +314,8 @@ it('series is optional for blog posts', function () {
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
+        'is_published' => true,
+        'published_at' => now(),
     ]);
 
     expect($post->blog_series_id)->toBeNull()
