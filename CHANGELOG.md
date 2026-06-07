@@ -2,6 +2,23 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.1.0](https://github.com/happytodev/blogr/compare/v1.0.3...v1.1.0) - 2026-06-07
+
+### ✨ Features
+
+- **CMS page templates**: Each template (Landing, Contact, About, Pricing, FAQ) now pre-populates the page with fully-styled, ready-to-edit blocks. User creates a page → blocks are injected → just modify the content.
+- **Pricing block columns**: New "Columns" setting (2, 3, or 4) for the pricing cards grid.
+- **Yearly pricing toggle**: New "Show yearly pricing toggle" option on pricing blocks. Alpine.js toggle lets visitors switch between Monthly and Yearly.
+- **3 discount modes**: Per-plan, choose Percentage (%), Fixed amount ($), or Free months discount for yearly pricing. Each mode shows a different save badge ("Save 20%", "$50 off", "2 months free").
+
+### 🐛 Bug Fixes
+
+- **CMS page creation**: Auto-create a default `CmsPageTranslation` when a CMS page is created — prevents landing on empty edit page.
+- **Add Translation action**: New "Add Translation" header button on the CMS page edit view with locale selector.
+- **Translations disappearing after save**: `EditCmsPage` now reloads translations after save instead of showing "Aucune traduction disponible".
+- **Pricing badge styling**: Replaced broken `bg-primary-600` with CSS variables + star icon for the "Popular" badge.
+- **Tailwind v4 color fixes**: Replaced `text-primary-600` and `border-primary-600` with `var(--color-primary)` throughout the pricing block.
+
 ## [v1.0.3](https://github.com/happytodev/blogr/compare/v1.0.2...v1.0.3) - 2026-06-07
 
 ### 🐛 Bug Fixes
