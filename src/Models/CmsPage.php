@@ -99,7 +99,10 @@ class CmsPage extends Model
      */
     public function availableLocales(): array
     {
-        return $this->translations()->pluck('locale')->toArray();
+        $locales = $this->translations()->pluck('locale')->toArray();
+        $disabled = config('blogr.locales.disabled', []);
+
+        return array_values(array_diff($locales, $disabled));
     }
 
     /**

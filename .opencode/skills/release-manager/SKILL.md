@@ -28,12 +28,17 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
 - Zero tolerance: "skipped" is OK, but "failed" or "error" means STOP.
 - Report the failure count to the user and tell them what tests failed.
 
-### 4. Update version files
+### 4. Update version files (atomic commit)
 
 - **`composer.json`**: Edit the `"version"` field
 - **`src/Blogr.php`**: Edit `const VERSION = '...'`
+- **Commit** these two changes atomically:
+  ```bash
+  git add composer.json src/Blogr.php
+  git commit -m "chore: bump version to v{version}"
+  ```
 
-### 5. Update CHANGELOG.md
+### 5. Update CHANGELOG.md (atomic commit)
 
 - Prepend a new entry at the top following the existing format:
 
@@ -47,13 +52,21 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
 
 - Use the user-approved release notes content
 - Keep existing entries intact
+- **Commit** only CHANGELOG.md:
+  ```bash
+  git add CHANGELOG.md
+  git commit -m "docs(changelog): v{version}"
+  ```
 
-### 6. Commit, tag, push
+### 6. Tag
 
 ```bash
-git add -A
-git commit -m "Release v{version}"
 git tag v{version}
+```
+
+### 7. Push commits and tag
+
+```bash
 git push origin main v{version}
 ```
 

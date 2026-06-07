@@ -129,7 +129,6 @@
         @if(config('blogr.ui.navigation.enabled', true))
             @include('blogr::components.navigation', [
                 'currentLocale' => $currentLocale ?? config('blogr.locales.default', 'en'),
-                'availableLocales' => $availableLocales ?? config('blogr.locales.available', ['en']),
                 'cmsPageId' => $page?->id ?? null,
             ])
         @endif

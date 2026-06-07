@@ -1,6 +1,22 @@
-@props(['currentLocale' => config('blogr.locales.default', 'en'), 'availableLocales' => config('blogr.locales.available', ['en']), 'cmsPageId' => null])
+@props(['currentLocale' => config('blogr.locales.default', 'en'), 'availableLocales' => app(\Happytodev\Blogr\Services\LocaleService::class)->getAvailable(), 'cmsPageId' => null])
 
 @php
+    // Flag emoji mapping for locales
+    if (!function_exists('localeFlag')) {
+        function localeFlag($locale) {
+            $flags = [
+                'en' => '🇬🇧', 'fr' => '🇫🇷', 'es' => '🇪🇸', 'de' => '🇩🇪',
+                'it' => '🇮🇹', 'pt' => '🇵🇹', 'ru' => '🇷🇺', 'pl' => '🇵🇱',
+                'el' => '🇬🇷', 'no' => '🇳🇴', 'nl' => '🇳🇱', 'ja' => '🇯🇵',
+                'zh' => '🇨🇳', 'ko' => '🇰🇷', 'ar' => '🇸🇦', 'sv' => '🇸🇪',
+                'da' => '🇩🇰', 'fi' => '🇫🇮', 'cs' => '🇨🇿', 'hu' => '🇭🇺',
+                'ro' => '🇷🇴', 'uk' => '🇺🇦', 'tr' => '🇹🇷', 'vi' => '🇻🇳',
+                'th' => '🇹🇭', 'id' => '🇮🇩', 'ms' => '🇲🇾',
+            ];
+            return $flags[$locale] ?? '🌐';
+        }
+    }
+
     // Helper function to get label for current locale
     if (!function_exists('getMenuLabel')) {
         function getMenuLabel($item, $locale) {
@@ -251,7 +267,10 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
                         </svg>
-                        <span class="uppercase">{{ $currentLocale }}</span>
+                            <span class="inline-flex items-center gap-1">
+                                <span>{{ localeFlag($currentLocale) }}</span>
+                                <span class="uppercase">{{ $currentLocale }}</span>
+                            </span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
@@ -289,7 +308,10 @@
                             <a href="{{ route($currentRouteName, $currentParams) }}" 
                                class="block px-4 py-2 text-sm {{ $locale === $currentLocale ? 'bg-gray-100 dark:bg-gray-700 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }} transition-colors"
                                role="menuitem">
-                                <span class="uppercase font-semibold">{{ $locale }}</span>
+                                <span class="inline-flex items-center gap-2">
+                                    <span>{{ localeFlag($locale) }}</span>
+                                    <span class="uppercase font-semibold">{{ $locale }}</span>
+                                </span>
                             </a>
                             @endforeach
                         </div>

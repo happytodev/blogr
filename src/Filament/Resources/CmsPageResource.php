@@ -14,10 +14,8 @@ use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages;
 use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\Repeater;
-use Illuminate\Support\HtmlString;
+use Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages\EditCmsPageTranslation;
 use Illuminate\Database\Eloquent\Builder;
-use Happytodev\Blogr\Filament\Resources\CmsPages\CmsBlockBuilder;
 
 class CmsPageResource extends Resource
 {
@@ -105,99 +103,6 @@ class CmsPageResource extends Resource
                     ->columns(2)
                     ->columnSpanFull(),
 
-                Section::make(__('Traductions'))
-                    ->description(__('Ajoutez des traductions pour différentes langues'))
-                    ->schema([
-                        Repeater::make('translations')
-                            ->relationship()
-                            ->schema([
-                                Forms\Components\Select::make('locale')
-                                    ->label(__('Langue'))
-                                    ->options([
-                                        'fr' => 'Français',
-                                        'en' => 'English',
-                                        'es' => 'Español',
-                                        'de' => 'Deutsch',
-                                    ])
-                                    ->required()
-                                    ->columnSpan(2),
-
-                                Forms\Components\TextInput::make('title')
-                                    ->label(__('Titre'))
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->columnSpan(2),
-
-                                Forms\Components\TextInput::make('slug')
-                                    ->label(__('Slug'))
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->helperText(__('URL traduite de la page'))
-                                    ->columnSpan(2),
-
-                                Forms\Components\Textarea::make('excerpt')
-                                    ->label(__('Extrait'))
-                                    ->maxLength(500)
-                                    ->rows(3)
-                                    ->columnSpan(2),
-
-                                Forms\Components\TextInput::make('seo_title')
-                                    ->label(__('Titre SEO'))
-                                    ->maxLength(255)
-                                    ->helperText(__('Titre pour les moteurs de recherche (60 caractères max)'))
-                                    ->columnSpan(2),
-
-                                Forms\Components\Textarea::make('seo_description')
-                                    ->label(__('Description SEO'))
-                                    ->maxLength(160)
-                                    ->rows(2)
-                                    ->helperText(__('Description pour les moteurs de recherche (160 caractères max)'))
-                                    ->columnSpan(2),
-
-                                Forms\Components\TextInput::make('seo_keywords')
-                                    ->label(__('Mots-clés SEO'))
-                                    ->maxLength(255)
-                                    ->helperText(__('Mots-clés séparés par des virgules'))
-                                    ->columnSpan(2),
-
-                                // Content Blocks pour cette traduction
-                                Section::make(__('Content Blocks'))
-                                    ->description(__('Ajoutez des blocs de contenu pour cette langue'))
-                                    ->schema([
-                                        CmsBlockBuilder::make(),
-                                    ])
-                                    ->collapsible()
-                                    ->collapsed()
-                                    ->columnSpan(2),
-                            ])
-                            ->columns(2)
-                            ->collapsible()
-                            ->itemLabel(function (array $state): HtmlString {
-                                $locale = $state['locale'] ?? 'new';
-                                $title = $state['title'] ?? '';
-                                
-                                $flags = [
-                                    'en' => '🇬🇧',
-                                    'fr' => '🇫🇷',
-                                    'es' => '🇪🇸',
-                                    'de' => '🇩🇪',
-                                ];
-                                
-                                $flag = $flags[$locale] ?? '🌐';
-                                $localeUpper = strtoupper($locale === 'new' ? 'NEW' : $locale);
-                                
-                                $label = "<span style='font-size: 1.1rem; font-weight: 600; color: #6366f1;'>{$flag} {$localeUpper}</span>";
-                                
-                                if ($title) {
-                                    $label .= "<span style='color: #374151; margin-left: 0.5rem;'>- {$title}</span>";
-                                }
-                                
-                                return new HtmlString($label);
-                            })
-                            ->addActionLabel(__('Ajouter une traduction'))
-                            ->defaultItems(0),
-                    ])
-                    ->columnSpan('full'),
             ]);
     }
 
@@ -303,6 +208,7 @@ class CmsPageResource extends Resource
             'index' => Pages\ListCmsPages::route('/'),
             'create' => Pages\CreateCmsPage::route('/create'),
             'edit' => Pages\EditCmsPage::route('/{record}/edit'),
+            'edit-translation' => EditCmsPageTranslation::route('/{record}/translations/{translation}/edit'),
         ];
     }
 }

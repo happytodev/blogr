@@ -9,5 +9,5 @@ class CreateCmsPage extends CreateRecord
 {
     protected static string $resource = CmsPageResource::class;
     
-    // Le Repeater avec relationship() gère automatiquement les traductions
+    // Les traductions sont ajoutées après création via les liens dans l'en-tête
 }

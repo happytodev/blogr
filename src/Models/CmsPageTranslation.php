@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CmsPageTranslation extends Model
 {
+    use \Happytodev\Blogr\Traits\ClearsLocaleCache;
+
     protected $fillable = [
         'cms_page_id',
         'locale',

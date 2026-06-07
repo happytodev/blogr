@@ -154,7 +154,6 @@ class BlogController
             'featuredSeries' => $featuredSeries,
             'seoData' => $seoData,
             'currentLocale' => $locale,
-            'availableLocales' => config('blogr.locales.available', ['en']),
         ]);
     }
 

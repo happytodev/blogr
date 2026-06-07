@@ -209,6 +209,60 @@ it('handles invalid roles gracefully during import', function () {
     File::delete($importPath);
 });
 
+it('detects cms page format and delegates to CmsPageImportExportService', function () {
+    $cmsPageExport = [
+        'type' => 'cms_page',
+        'format_version' => '1.0',
+        'name' => 'Installation Guide',
+        'exported_at' => now()->toIso8601String(),
+        'data' => [
+            'slug' => 'installation-guide',
+            'template' => 'default',
+            'is_published' => true,
+            'is_homepage' => false,
+            'default_locale' => 'en',
+            'translations' => [
+                [
+                    'locale' => 'en',
+                    'slug' => 'installation-guide',
+                    'title' => 'Installation Guide',
+                    'meta_title' => 'Installation Guide',
+                    'meta_description' => 'Guide',
+                    'blocks' => [
+                        ['type' => 'hero', 'data' => ['title' => 'Install', 'subtitle' => 'Guide']],
+                    ],
+                ],
+                [
+                    'locale' => 'fr',
+                    'slug' => 'guide-installation',
+                    'title' => 'Guide d\'Installation',
+                    'meta_title' => 'Guide d\'Installation',
+                    'meta_description' => 'Guide',
+                    'blocks' => [
+                        ['type' => 'hero', 'data' => ['title' => 'Installer', 'subtitle' => 'Guide']],
+                    ],
+                ],
+            ],
+        ],
+        'media' => [],
+    ];
+
+    $importPath = storage_path('app/test-cms-page-format.json');
+    File::put($importPath, json_encode($cmsPageExport, JSON_PRETTY_PRINT));
+
+    $this->artisan('blogr:import', ['file' => $importPath])
+        ->expectsOutput('📄 Detected CMS page export format')
+        ->expectsOutput('✅ CMS page imported successfully')
+        ->assertExitCode(0);
+
+    // Verify CMS page was imported
+    $page = \Happytodev\Blogr\Models\CmsPage::where('slug', 'installation-guide')->first();
+    expect($page)->not->toBeNull();
+    expect($page->translations)->toHaveCount(2);
+
+    File::delete($importPath);
+});
+
 it('can import cms pages with their translations and blocks', function () {
     $exportData = [
         'version' => '0.12.5',

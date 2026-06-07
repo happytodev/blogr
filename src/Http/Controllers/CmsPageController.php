@@ -11,6 +11,15 @@ use Illuminate\Support\Facades\App;
 class CmsPageController extends Controller
 {
     /**
+     * Check if a locale is disabled (returns 404 when accessed directly).
+     */
+    protected function isLocaleDisabled(string $locale): bool
+    {
+        $disabled = config('blogr.locales.disabled', []);
+        return in_array($locale, $disabled, true);
+    }
+
+    /**
      * Display the homepage CMS page
      *
      * @param string|null $locale The locale (optional if locales disabled)
@@ -23,6 +32,11 @@ class CmsPageController extends Controller
         
         // Determine the locale to use
         $currentLocale = $locale ?? $defaultLocale;
+        
+        // 404 if the locale is explicitly disabled
+        if ($localesEnabled && $this->isLocaleDisabled($currentLocale)) {
+            abort(404);
+        }
         
         // Set application locale
         if ($localesEnabled) {
@@ -101,6 +115,11 @@ class CmsPageController extends Controller
             $actualSlug = $localeOrSlug;
         }
         
+        // 404 if the locale is explicitly disabled
+        if ($localesEnabled && $this->isLocaleDisabled($currentLocale)) {
+            abort(404);
+        }
+        
         // Set application locale
         if ($localesEnabled) {
             App::setLocale($currentLocale);
@@ -166,6 +185,8 @@ class CmsPageController extends Controller
             'blocks' => $translation->blocks ?? [], // Blocks are now per-translation
             'template' => $page->template,
             'locale' => $currentLocale,
+            'currentLocale' => $currentLocale,
+            'availableLocales' => $page->availableLocales(),
             'seoTitle' => $translation->seo_title ?? $translation->title,
             'seoDescription' => $translation->seo_description ?? $translation->excerpt,
             'seoKeywords' => $translation->seo_keywords,

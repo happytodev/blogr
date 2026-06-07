@@ -2,6 +2,8 @@
 
 namespace Happytodev\Blogr\Helpers;
 
+use Happytodev\Blogr\Services\LocaleService;
+
 class LocaleHelper
 {
     /**
@@ -33,7 +35,7 @@ class LocaleHelper
      */
     public static function availableLocales(): array
     {
-        return config('blogr.locales.available', ['en']);
+        return app(LocaleService::class)->getAvailable();
     }
 
     /**

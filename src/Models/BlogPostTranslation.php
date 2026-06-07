@@ -35,6 +35,8 @@ class BlogPostTranslation extends Model
         return \Happytodev\Blogr\Tests\Database\Factories\BlogPostTranslationFactory::new();
     }
 
+    use \Happytodev\Blogr\Traits\ClearsLocaleCache;
+
     /**
      * Get the post that owns this translation.
      */

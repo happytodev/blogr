@@ -25,6 +25,16 @@
             @endif
         </header>
 
+        @if($content)
+            <div class="markdown-content">
+                {!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($content) !!}
+            </div>
+        @endif
+
+        @if(isset($blocks) && !empty($blocks))
+            <x-blogr::blocks-renderer :blocks="$blocks" />
+        @endif
+
         @if($translation->seo_keywords)
             <footer class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
                 <div class="flex flex-wrap gap-2">

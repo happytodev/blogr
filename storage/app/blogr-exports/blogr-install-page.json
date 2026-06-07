@@ -1,0 +1,1477 @@
+{
+    "type": "cms_page",
+    "format_version": "1.0",
+    "name": "Blogr Installation Guide",
+    "description": "Step-by-step installation guide for Blogr — 10 languages (EN, FR, ES, PL, DE, PT, EL, RU, IT, NO)",
+    "exported_at": "2026-06-07T12:00:00+00:00",
+    "data": {
+        "slug": "install",
+        "template": "default",
+        "is_published": true,
+        "is_homepage": false,
+        "default_locale": "en",
+        "translations": [
+            {
+                "locale": "de",
+                "slug": "installierung",
+                "title": "Installationsanleitung",
+                "meta_title": "Installationsanleitung — Blogr",
+                "meta_description": "Schritt-für-Schritt-Anleitung zur Installation von Blogr: Laravel, FilamentPHP und Blogr Setup.",
+                "meta_keywords": "installation, anleitung, blogr, laravel, filamentphp, setup",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Installationsanleitung",
+                            "subtitle": "Schritt-für-Schritt-Anleitung zur Einrichtung von Blogr — keine Vorkenntnisse erforderlich.",
+                            "cta_text": "Loslegen",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#0f0c29",
+                            "gradient_to": "#302b63",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#24243e",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Voraussetzungen\n\nStellen Sie sicher, dass die folgenden Komponenten auf Ihrem System installiert sind:\n\n| Voraussetzung | Version |\n|---------------|---------|\n| **PHP** | 8.3 oder höher |\n| **Composer** | Aktuelle stabile Version |\n| **Node.js** | 18 oder höher |\n| **npm** | 9 oder höher |\n| **Datenbank** | MySQL 8+, PostgreSQL 15+, oder SQLite |\n\nSie benötigen außerdem ein Terminal (bash, zsh, PowerShell) und einen Code-Editor Ihrer Wahl.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Schritt-für-Schritt-Installation\n\n### 1. Ein Laravel-Projekt erstellen\n\n```bash\ncomposer create-project laravel/laravel my-blog\ncd my-blog\n```\n\nOder mit dem Laravel-Installer:\n\n```bash\nlaravel new my-blog\ncd my-blog\n```\n\n### 2. FilamentPHP installieren\n\n```bash\ncomposer require filament/filament\nphp artisan filament:install --panels\n```\n\nDann erstellen Sie Ihren ersten Admin-Benutzer:\n\n```bash\nphp artisan make:filament-user\n```\n\nNotieren Sie sich E-Mail und Passwort — Sie werden sie zum Einloggen benötigen.\n\n### 3. Blogr installieren\n\n```bash\ncomposer require happytodev/blogr\nphp artisan blogr:install\n```\n\nDer Installer ist interaktiv und führt Sie durch:\n\n- **CMS** — Statische Seiten aktivieren (Über uns, Kontakt, etc.)\n- **Startseitentyp** — Blog-Index oder eine benutzerdefinierte CMS-Seite\n- **Alpine.js** — Erforderlich für den Theme-Wechsler\n- **Tailwind CSS v4** — Dark-Mode-Konfiguration\n- **Tutorials** — Beispielinhalte für den Start\n- **NPM-Abhängigkeiten** — Automatische Installation\n- **Asset-Building** — Frontend-Assets kompilieren\n\n> **Tipp:** Antworten Sie mit \"Ja\" auf alle Eingabeaufforderungen für eine vollständige Einrichtung.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Nach der Installation\n\n### Admin-Panel überprüfen\n\nÖffnen Sie `http://my-blog.test/admin` und melden Sie sich mit den Anmeldedaten aus Schritt 2 an. Sie sollten das Blogr-Dashboard mit Blog-Statistiken und Widgets sehen.\n\n### Ersten Blogbeitrag erstellen\n\n1. Gehen Sie zu **Blog Posts → Neuer Beitrag** in der Admin-Seitenleiste\n2. Geben Sie einen Titel und Inhalt ein (Markdown wird unterstützt)\n3. Fügen Sie eine Kategorie und Schlagwörter hinzu\n4. Wählen Sie ein Titelbild (Drag & Drop)\n5. Konfigurieren Sie SEO-Metafelder (optional)\n6. Klicken Sie auf **Veröffentlichen**\n\nBesuchen Sie Ihr Blog unter `/blog` (oder `/` wenn das Blog als Startseite konfiguriert ist).\n\n### Einstellungen konfigurieren\n\nGehen Sie zu **Blogr Settings** im Admin-Panel, um anzupassen:\n\n- **Allgemein** — Blog-Name, Beschreibung, Beiträge pro Seite\n- **SEO** — Seitenname, Standard-Meta, Open Graph-Bild\n- **Navigation** — Menülinks, fixierte Navigation, Logo\n- **Erscheinungsbild** — Farben, Kartendesigns, Dark Mode\n- **Fußzeile** — Soziale Links, Copyright-Text\n- **Backup** — Daten exportieren/importieren",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Optionale Funktionen\n\n### CMS-Seiten aktivieren\n\nWenn Sie das CMS während der Installation übersprungen haben, aktivieren Sie es in `config/blogr.php`:\n\n```php\n'cms' => [\n    'enabled' => true,\n    'prefix' => '',\n],\n```\n\nErstellen Sie dann Seiten unter **CMS → Pages CMS** im Admin-Panel.\n\n### Mehrsprachigkeit aktivieren\n\nBearbeiten Sie `config/blogr.php`:\n\n```php\n'locales' => [\n    'enabled' => true,\n    'default' => 'en',\n    'available' => ['en', 'fr', 'es', 'de', 'pl'],\n],\n```\n\nMit aktivierten Sprachen erhalten Ihre Inhalte sprachspezifische URLs:\n- `/en/blog/my-post`\n- `/de/blog/mein-beitrag`\n\n### Demo-Inhalte installieren\n\n```bash\nphp artisan blogr:publish-demo-pages\nphp artisan blogr:install-tutorials\n```",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "faq",
+                        "data": {
+                            "title": "Fehlerbehebung",
+                            "items": [
+                                {
+                                    "question": "Admin-Panel zeigt keine Ressourcen nach der Installation",
+                                    "answer": "Führen Sie `php artisan blogr:install --force` aus, um die Installation erneut durchzuführen."
+                                },
+                                {
+                                    "question": "Der Theme-Wechsler funktioniert nicht",
+                                    "answer": "Stellen Sie sicher, dass `@variant dark (.dark &);` in Ihrer `resources/css/app.css` vorhanden ist."
+                                },
+                                {
+                                    "question": "Ich sehe eine leere Seite beim Besuch des Blogs",
+                                    "answer": "Führen Sie `npm run build` aus, um die Frontend-Assets zu kompilieren. Überprüfen Sie auch `php artisan storage:link` und Ihre APP_URL."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Bereit, Ihren Blog zu erstellen?",
+                            "subheading": "Blogr ist Open Source unter MIT-Lizenz. Keine Kreditkarte erforderlich.",
+                            "button_text": "Blog besuchen",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "el",
+                "slug": "egkatastasi",
+                "title": "Οδηγός Εγκατάστασης",
+                "meta_title": "Οδηγός Εγκατάστασης — Blogr",
+                "meta_description": "Οδηγός βήμα προς βήμα για την εγκατάσταση του Blogr από την αρχή: ρύθμιση Laravel, FilamentPHP και Blogr.",
+                "meta_keywords": "εγκατάσταση, οδηγός, blogr, laravel, filamentphp, ρύθμιση",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Οδηγός Εγκατάστασης",
+                            "subtitle": "Βήμα προς βήμα οδηγίες για τη ρύθμιση του Blogr από την αρχή — δεν απαιτείται προηγούμενη εμπειρία.",
+                            "cta_text": "Ξεκινήστε",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#0f0c29",
+                            "gradient_to": "#302b63",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#24243e",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "Προϋποθέσεις\n\nΠριν αρχίσετε, βεβαιωθείτε ότι έχετε τα ακόλουθα εγκατεστημένα στο σύστημά σας:\n\n| Προϋπόθεση | Έκδοση |\n|-----------------|---------|\n| **PHP** | 8.3 ή νεότερη |\n| **Composer** | Τελευταία σταθερή έκδοση |\n| **Node.js** | 18 ή νεότερη |\n| **npm** | 9 ή νεότερη |\n| **Βάση Δεδομένων** | MySQL 8+, PostgreSQL 15+, ή SQLite |\n\nΘα χρειαστείτε επίσης ένα τερματικό (bash, zsh, PowerShell) και έναν επεξεργαστή κώδικα της επιλογής σας.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "Εγκατάσταση Βήμα προς Βήμα\n\n### 1. Δημιουργία ένος έργου Laravel\n\n```bash\ncomposer create-project laravel/laravel my-blog\ncd my-blog\n```\n\nΉ με το εγκαταστάτη Laravel:\n\n```bash\nlaravel new my-blog\ncd my-blog\n```\n\n### 2. Εγκατάσταση FilamentPHP\n\n```bash\ncomposer require filament/filament\nphp artisan filament:install --panels\n```\n\nΌπως δημιουργήστε τον πρώτο χρήστη διαχειριστή:\n\n```bash\nphp artisan make:filament-user\n```\n\nΚρατήστε το email και τον κωδικό πρόσβασης — θα τα χρειαστείτε για σύνδεση.\n\n### 3. Εγκατάσταση Blogr\n\n```bash\ncomposer require happytodev/blogr\nphp artisan blogr:install\n```\n\nΟ εγκαταστάτης είναι διαδραστικός. Θα σας καθοδηγήσει μέσω:\n\n- **CMS** — Ενεργοποίηση στατικών σελίδων (Προφίλ, Επικοινωνία, κ.λπ.)\n- **Τύπος Αρχικής** — Ευρετήριο blog ή προσαρμοσμένη σελίδα CMS\n- **Alpine.js** — Απαραίτητο για τον εναλλάκτη θέματος\n- **Tailwind CSS v4** — Ρύθμιση σκοτεινού λειτουργίας\n- **Φροντίστες** — Παραδείγματα περιεχομένου για εξοικείωση\n- **NPM dependencies** — Αυτόματη εγκατάσταση\n- **Δημιουργία assets** — Συμπερίληση αρχείων frontend\n\n> **Συμβουλή:** Απαντήστε \"Ναι\" σε όλες τις προτροπές για πλήρη ρύθμιση.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "Μετά την Εγκατάσταση\n\n### Επαλήθευση πίνακα διαχείρισης\n\nΑνοίξτε `http://my-blog.test/admin` και συνδεθείτε με τα διαπιστευτήρια από το βήμα 2. Θα δείτε τον πίνακα εργαλείων Blogr με στατιστικά και προγραμματίδια.\n\n### Δημιουργία του πρώτου σας άρθρου\n\n1. Πηγαίνετε στο **Blog Posts → New Post** στην πλαϊκή γραμμή διαχείρισης\n2. Γράψτε έναν τίτλο και περιεχόμενο (υποστηρίζεται Markdown)\n3. Προσθέστε μια κατηγορία και ετικέτες\n4. Ορίστε μια προβολή εικόνα (σύρετε και αφήστε)\n5. Διαμορφώστε τα πεδία SEO (προαιρετικά)\n6. Κάντε κλικ στο **Δημοσίευση**\n\nΕπισκεφτείτε το blog σας στη `/blog` (ή `/` εάν το blog είναι ρυθμισμένο ως αρχική σελίδα).\n\n### Ρύθμιση παραμετρών\n\nΠηγαίνετε στο **Blogr Settings** στον πίνακα εργαλείων για προσαρμογή:\n\n- **Γενικά** — Όνομα blog, περιγραφή, αρθρα ανά σελίδα\n- **SEO** — Όνομα ιστότοπου, προεπιλεγμένα meta, Open Graph εικόνα\n- **Πλοήγηση** — Σύνδεσμοι μενού, σταθερή πλοήγηση, λογότυπο\n- **Εμφάνιση** — Χρώματα, στυλ καρτών, σκοτεινό θέμα\n- **Υποσέλιδο** — Σύνδεσμοι κοινωνικών δικτύων, πνευματικά δικαιώματα\n- **Backup** — Εξαγωγή/εισαγωγή δεδομένων",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "Προαιρετικές Λειτουργίες\n\n### Ενεργοποίηση σελίδων CMS\n\nΕάν παραλείψατε το CMS κατά την εγκατάσταση, ενεργοποιήστε το στο `config/blogr.php`:\n\n```php\n'cms' => [\n    'enabled' => true,\n    'prefix' => '',\n],\n```\n\nΌπως δημιουργήστε σελίδες στο **CMS → Pages CMS** στον πίνακα εργαλείων.\n\n### Ενεργοποίηση πολυγλωσσίας\n\nΕπεξεργαστείτε το `config/blogr.php`:\n\n```php\n'locales' => [\n    'enabled' => true,\n    'default' => 'en',\n    'available' => ['en', 'fr', 'es', 'de', 'pl'],\n],\n```\n\nΜε τις γλώσσες ενεργοποιημένες, το περιεχόμενό σας αποκτά URLs ανά γλώσσα:\n- `/en/blog/my-post`\n- `/fr/blog/mon-article`\n\n### Εγκατάσταση περιεχομένου επίδειξης\n\n```bash\nphp artisan blogr:publish-demo-pages\nphp artisan blogr:install-tutorials\n```",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "faq",
+                        "data": {
+                            "title": "Αντιμετώπιση Προβλημάτων",
+                            "items": [
+                                {
+                                    "question": "Ο πίνακας διαχείρισης δεν εμφανίζει πόρους μετά την εγκατάσταση",
+                                    "answer": "Εκτελέστε `php artisan blogr:install --force` για επανεκτέλεση της εγκατάστασης."
+                                },
+                                {
+                                    "question": "Ο εναλλάκτης θέματος δεν λειτουργεί",
+                                    "answer": "Βεβαιωθείτε ότι το `@variant dark (.dark &);` υπάρχει στο `resources/css/app.css`."
+                                },
+                                {
+                                    "question": "Βλέπω λευκή σελίδα όταν επισκέπτομαι το blog",
+                                    "answer": "Εκτελέστε `npm run build` για μεταγλώττιση assets. Ελέγξτε επίσης το `php artisan storage:link` και το APP_URL."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Έτοιμοι να δημιουργήσετε το blog σας;",
+                            "subheading": "Το Blogr είναι ανοιχτού κώδικα με άδεια MIT. Δεν απαιτείται πιστωτική κάρτα.",
+                            "button_text": "Επισκεφθείτε το Blog",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "en",
+                "slug": "install",
+                "title": "Installation Guide",
+                "meta_title": "Installation Guide — Blogr",
+                "meta_description": "Step-by-step guide to install Blogr from scratch: Laravel, FilamentPHP, and Blogr setup.",
+                "meta_keywords": "installation, guide, blogr, laravel, filamentphp, setup",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Installation Guide",
+                            "subtitle": "Step-by-step instructions to set up Blogr from scratch — no prior experience needed.",
+                            "cta_text": "Get Started",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#0f0c29",
+                            "gradient_to": "#302b63",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#24243e",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Prerequisites\n\nBefore you begin, make sure you have the following installed on your system:\n\n| Requirement | Version |\n|-------------|---------|\n| **PHP** | 8.3 or higher |\n| **Composer** | Latest stable |\n| **Node.js** | 18 or higher |\n| **npm** | 9 or higher |\n| **Database** | MySQL 8+, PostgreSQL 15+, or SQLite |\n\nYou'll also need a terminal (bash, zsh, PowerShell) and a code editor of your choice.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Step-by-Step Installation\n\n### 1. Create a Laravel project\n\n```bash\ncomposer create-project laravel/laravel my-blog\ncd my-blog\n```\n\nOr using the Laravel installer:\n\n```bash\nlaravel new my-blog\ncd my-blog\n```\n\n### 2. Install FilamentPHP\n\n```bash\ncomposer require filament/filament\nphp artisan filament:install --panels\n```\n\nThen create your first admin user:\n\n```bash\nphp artisan make:filament-user\n```\n\nKeep the email and password handy — you'll need them to log in.\n\n### 3. Install Blogr\n\n```bash\ncomposer require happytodev/blogr\nphp artisan blogr:install\n```\n\nThe installer is interactive. It will guide you through:\n\n- **CMS** — Enable static pages (About, Contact, etc.)\n- **Homepage type** — Blog index or a custom CMS page\n- **Alpine.js** — Required for the theme switcher\n- **Tailwind CSS v4** — Dark mode configuration\n- **Tutorials** — Sample content to get started\n- **NPM dependencies** — Automatic installation\n- **Asset building** — Compile frontend assets\n\n> **Tip:** Answer \"Yes\" to all prompts for a complete setup.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Post-Installation\n\n### Verify the admin panel\n\nOpen `http://my-blog.test/admin` and log in with the credentials from step 2. You should see the Blogr dashboard with post statistics and widgets.\n\n### Create your first blog post\n\n1. Go to **Blog Posts → New Post** in the admin sidebar\n2. Write a title and content (Markdown is supported)\n3. Add a category and tags\n4. Set a featured image (drag & drop)\n5. Configure SEO meta fields (optional)\n6. Click **Publish**\n\nVisit your blog at `/blog` (or `/` if blog is set as homepage).\n\n### Configure settings\n\nGo to **Blogr Settings** in the admin panel to customize:\n\n- **General** — Blog name, description, posts per page\n- **SEO** — Site name, default meta, Open Graph image\n- **Navigation** — Menu links, sticky nav, logo\n- **Appearance** — Colors, card styles, dark mode\n- **Footer** — Social links, copyright text\n- **Backup** — Export/import your data",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Optional Features\n\n### Enable CMS pages\n\nIf you skipped CMS during installation, enable it in `config/blogr.php`:\n\n```php\n'cms' => [\n    'enabled' => true,\n    'prefix' => '',\n],\n```\n\nThen create pages in **CMS → Pages CMS** in the admin panel.\n\n### Enable multilingual\n\nEdit `config/blogr.php`:\n\n```php\n'locales' => [\n    'enabled' => true,\n    'default' => 'en',\n    'available' => ['en', 'fr', 'es', 'de', 'pl'],\n],\n```\n\nWith locales enabled, your content gets per-language URLs:\n- `/en/blog/my-post`\n- `/fr/blog/mon-article`\n\n### Install demo content\n\n```bash\nphp artisan blogr:publish-demo-pages\nphp artisan blogr:install-tutorials\n```",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "faq",
+                        "data": {
+                            "title": "Troubleshooting",
+                            "items": [
+                                {
+                                    "question": "Admin panel shows no resources after installation",
+                                    "answer": "Run `php artisan blogr:install --force` to re-run the setup. This will re-publish config, re-run migrations, and reconfigure your AdminPanelProvider."
+                                },
+                                {
+                                    "question": "The theme switcher doesn't work",
+                                    "answer": "Make sure `@variant dark (.dark &);` is present in your `resources/css/app.css` file. Then run `npm run build` to recompile assets."
+                                },
+                                {
+                                    "question": "I see a blank page when visiting the blog",
+                                    "answer": "Run `npm run build` to compile frontend assets. If the issue persists, check that `php artisan storage:link` has been created and that your APP_URL is correctly configured in `.env`."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Ready to start building your blog?",
+                            "subheading": "Blogr is open source and MIT licensed. No credit card required.",
+                            "button_text": "Visit the Blog",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "es",
+                "slug": "instalacion",
+                "title": "Guía de Instalación",
+                "meta_title": "Guía de Instalación — Blogr",
+                "meta_description": "Guía paso a paso para instalar Blogr desde cero: configuración de Laravel, FilamentPHP y Blogr.",
+                "meta_keywords": "instalación, guía, blogr, laravel, filamentphp, configuración",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Guía de Instalación",
+                            "subtitle": "Instrucciones paso a paso para configurar Blogr desde cero — no se necesita experiencia previa.",
+                            "cta_text": "Comenzar",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#0f0c29",
+                            "gradient_to": "#302b63",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#24243e",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Requisitos Previos\n\nAntes de comenzar, asegúrese de tener lo siguiente instalado en su sistema:\n\n| Requisito | Versión |\n|-----------|---------|\n| **PHP** | 8.3 o superior |\n| **Composer** | Última versión estable |\n| **Node.js** | 18 o superior |\n| **npm** | 9 o superior |\n| **Base de datos** | MySQL 8+, PostgreSQL 15+, o SQLite |\n\nTambién necesitará una terminal (bash, zsh, PowerShell) y un editor de código.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Instalación Paso a Paso\n\n### 1. Crear un proyecto Laravel\n\n```bash\ncomposer create-project laravel/laravel mi-blog\ncd mi-blog\n```\n\nO usando el instalador de Laravel:\n\n```bash\nlaravel new mi-blog\ncd mi-blog\n```\n\n### 2. Instalar FilamentPHP\n\n```bash\ncomposer require filament/filament\nphp artisan filament:install --panels\n```\n\nLuego cree su primer usuario administrador:\n\n```bash\nphp artisan make:filament-user\n```\n\nGuarde el correo y la contraseña — los necesitará para iniciar sesión.\n\n### 3. Instalar Blogr\n\n```bash\ncomposer require happytodev/blogr\nphp artisan blogr:install\n```\n\nEl instalador es interactivo. Le guiará a través de:\n\n- **CMS** — Active páginas estáticas (Acerca de, Contacto, etc.)\n- **Tipo de página de inicio** — Índice del blog o página CMS\n- **Alpine.js** — Requerido para el selector de tema\n- **Tailwind CSS v4** — Configuración del modo oscuro\n- **Tutoriales** — Contenido de ejemplo para empezar\n- **Dependencias NPM** — Instalación automática\n- **Compilación de assets** — Build de archivos frontend\n\n> **Consejo:** Responda «Sí» a todas las preguntas para una configuración completa.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Post-Instalación\n\n### Verificar el panel de administración\n\nAbra `http://mi-blog.test/admin` e inicie sesión con las credenciales del paso 2. Debería ver el panel de Blogr con estadísticas y widgets.\n\n### Crear su primer artículo\n\n1. Vaya a **Blog Posts → Nuevo Artículo** en la barra lateral\n2. Escriba un título y contenido (Markdown compatible)\n3. Añada una categoría y etiquetas\n4. Establezca una imagen destacada (arrastrar y soltar)\n5. Configure los campos SEO (opcional)\n6. Haga clic en **Publicar**\n\nVisite su blog en `/blog` (o `/` si el blog está configurado como página de inicio).\n\n### Configurar ajustes\n\nVaya a **Blogr Settings** en el panel de administración para personalizar:\n\n- **General** — Nombre del blog, descripción, artículos por página\n- **SEO** — Nombre del sitio, meta por defecto, imagen Open Graph\n- **Navegación** — Enlaces del menú, navegación fija, logo\n- **Apariencia** — Colores, estilos de tarjetas, modo oscuro\n- **Pie de página** — Enlaces sociales, texto de copyright\n- **Respaldo** — Exportar/importar sus datos",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Funcionalidades Opcionales\n\n### Activar páginas CMS\n\nSi omitió el CMS durante la instalación, actívelo en `config/blogr.php`:\n\n```php\n'cms' => [\n    'enabled' => true,\n    'prefix' => '',\n],\n```\n\nLuego cree páginas en **CMS → Pages CMS** del panel de administración.\n\n### Activar multilingüe\n\nEdite `config/blogr.php`:\n\n```php\n'locales' => [\n    'enabled' => true,\n    'default' => 'en',\n    'available' => ['en', 'fr', 'es', 'de', 'pl'],\n],\n```\n\nCon los idiomas activados, su contenido tendrá URLs por idioma:\n- `/en/blog/my-post`\n- `/es/blog/mi-articulo`\n\n### Instalar contenido demo\n\n```bash\nphp artisan blogr:publish-demo-pages\nphp artisan blogr:install-tutorials\n```",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "faq",
+                        "data": {
+                            "title": "Solución de Problemas",
+                            "items": [
+                                {
+                                    "question": "El panel de administración no muestra recursos después de la instalación",
+                                    "answer": "Ejecute `php artisan blogr:install --force` para reiniciar la instalación. Esto volverá a publicar la configuración, ejecutará las migraciones y reconfigurará su AdminPanelProvider."
+                                },
+                                {
+                                    "question": "El selector de tema no funciona",
+                                    "answer": "Asegúrese de que `@variant dark (.dark &);` esté presente en su archivo `resources/css/app.css`. Luego ejecute `npm run build` para recompilar los assets."
+                                },
+                                {
+                                    "question": "Veo una página en blanco al visitar el blog",
+                                    "answer": "Ejecute `npm run build` para compilar los assets frontend. Si el problema persiste, verifique que `php artisan storage:link` se haya creado y que su APP_URL esté configurada correctamente en `.env`."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "¿Listo para construir su blog?",
+                            "subheading": "Blogr es código abierto con licencia MIT. Sin tarjeta de crédito.",
+                            "button_text": "Visitar el Blog",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "fr",
+                "slug": "installation",
+                "title": "Guide d'Installation",
+                "meta_title": "Guide d'Installation — Blogr",
+                "meta_description": "Guide pas à pas pour installer Blogr de zéro : configuration Laravel, FilamentPHP et Blogr.",
+                "meta_keywords": "installation, guide, blogr, laravel, filamentphp, configuration",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Guide d'Installation",
+                            "subtitle": "Instructions pas à pas pour installer Blogr de zéro — aucune expérience préalable requise.",
+                            "cta_text": "Commencer",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#0f0c29",
+                            "gradient_to": "#302b63",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#24243e",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Prérequis\n\nAvant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre système :\n\n| Prérequis | Version |\n|-----------|---------|\n| **PHP** | 8.3 ou supérieur |\n| **Composer** | Dernière version stable |\n| **Node.js** | 18 ou supérieur |\n| **npm** | 9 ou supérieur |\n| **Base de données** | MySQL 8+, PostgreSQL 15+, ou SQLite |\n\nVous aurez également besoin d'un terminal (bash, zsh, PowerShell) et d'un éditeur de code.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Installation Pas à Pas\n\n### 1. Créer un projet Laravel\n\n```bash\ncomposer create-project laravel/laravel mon-blog\ncd mon-blog\n```\n\nOu avec l'installateur Laravel :\n\n```bash\nlaravel new mon-blog\ncd mon-blog\n```\n\n### 2. Installer FilamentPHP\n\n```bash\ncomposer require filament/filament\nphp artisan filament:install --panels\n```\n\nCréez ensuite votre premier utilisateur admin :\n\n```bash\nphp artisan make:filament-user\n```\n\nGardez l'email et le mot de passe — vous en aurez besoin pour vous connecter.\n\n### 3. Installer Blogr\n\n```bash\ncomposer require happytodev/blogr\nphp artisan blogr:install\n```\n\nL'installateur est interactif. Il va vous guider à travers :\n\n- **CMS** — Activez les pages statiques (À propos, Contact, etc.)\n- **Type de page d'accueil** — Index du blog ou page CMS\n- **Alpine.js** — Requis pour le changement de thème\n- **Tailwind CSS v4** — Configuration du mode sombre\n- **Tutoriels** — Contenu d'exemple pour démarrer\n- **Dépendances NPM** — Installation automatique\n- **Compilation des assets** — Build des fichiers frontend\n\n> **Astuce :** Répondez « Oui » à toutes les questions pour une configuration complète.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Post-Installation\n\n### Vérifier le panneau d'administration\n\nOuvrez `http://mon-blog.test/admin` et connectez-vous avec les identifiants de l'étape 2. Vous devriez voir le tableau de bord Blogr avec les statistiques et widgets.\n\n### Créer votre premier article\n\n1. Allez dans **Blog Posts → Nouvel Article** dans la barre latérale\n2. Écrivez un titre et du contenu (Markdown supporté)\n3. Ajoutez une catégorie et des tags\n4. Définissez une image à la une (glisser-déposer)\n5. Configurez les champs SEO (optionnel)\n6. Cliquez sur **Publier**\n\nVisitez votre blog à `/blog` (ou `/` si le blog est défini comme page d'accueil).\n\n### Configurer les paramètres\n\nAllez dans **Blogr Settings** dans le panneau d'administration pour personnaliser :\n\n- **Général** — Nom du blog, description, articles par page\n- **SEO** — Nom du site, meta par défaut, image Open Graph\n- **Navigation** — Liens du menu, navigation collante, logo\n- **Apparence** — Couleurs, styles des cartes, mode sombre\n- **Pied de page** — Liens sociaux, texte de copyright\n- **Sauvegarde** — Export/import de vos données",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Fonctionnalités Optionnelles\n\n### Activer les pages CMS\n\nSi vous avez ignoré le CMS lors de l'installation, activez-le dans `config/blogr.php` :\n\n```php\n'cms' => [\n    'enabled' => true,\n    'prefix' => '',\n],\n```\n\nCréez ensuite des pages dans **CMS → Pages CMS** du panneau d'administration.\n\n### Activer le multilingue\n\nModifiez `config/blogr.php` :\n\n```php\n'locales' => [\n    'enabled' => true,\n    'default' => 'en',\n    'available' => ['en', 'fr', 'es', 'de', 'pl'],\n],\n```\n\nAvec les locales activées, votre contenu aura des URLs par langue :\n- `/en/blog/my-post`\n- `/fr/blog/mon-article`\n\n### Installer le contenu démo\n\n```bash\nphp artisan blogr:publish-demo-pages\nphp artisan blogr:install-tutorials\n```",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "faq",
+                        "data": {
+                            "title": "Dépannage",
+                            "items": [
+                                {
+                                    "question": "Le panneau d'administration n'affiche aucune ressource après l'installation",
+                                    "answer": "Exécutez `php artisan blogr:install --force` pour relancer l'installation. Cela va re-publier la configuration, relancer les migrations et reconfigurer votre AdminPanelProvider."
+                                },
+                                {
+                                    "question": "Le changement de thème ne fonctionne pas",
+                                    "answer": "Assurez-vous que `@variant dark (.dark &);` est présent dans votre fichier `resources/css/app.css`. Puis exécutez `npm run build` pour recompiler les assets."
+                                },
+                                {
+                                    "question": "J'obtiens une page blanche en visitant le blog",
+                                    "answer": "Exécutez `npm run build` pour compiler les assets frontend. Si le problème persiste, vérifiez que `php artisan storage:link` a été créé et que votre APP_URL est correctement configurée dans `.env`."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Prêt à construire votre blog ?",
+                            "subheading": "Blogr est open source sous licence MIT. Aucune carte de crédit requise.",
+                            "button_text": "Visiter le Blog",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "it",
+                "slug": "installazione",
+                "title": "Guida all'Installazione",
+                "meta_title": "Guida all'Installazione — Blogr",
+                "meta_description": "Guida passo passo per installare Blogr da zero: configurazione Laravel, FilamentPHP e Blogr.",
+                "meta_keywords": "installazione, guida, blogr, laravel, filamentphp, configurazione",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Guida all'Installazione",
+                            "subtitle": "Istruzioni passo passo per configurare Blogr da zero — nessuna esperienza richiesta.",
+                            "cta_text": "Inizia",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#0f0c29",
+                            "gradient_to": "#302b63",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#24243e",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Prerequisiti\n\nPrima di iniziare, assicurati di avere quanto segue installato sul tuo sistema:\n\n| Prerequisito | Versione |\n|--------------|---------|\n| **PHP** | 8.3 o superiore |\n| **Composer** | Ultima versione stabile |\n| **Node.js** | 18 o superiore |\n| **npm** | 9 o superiore |\n| **Database** | MySQL 8+, PostgreSQL 15+, o SQLite |\n\nAvrai anche bisogno di un terminale (bash, zsh, PowerShell) e di un editor di codice a tua scelta.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Installazione Passo dopo Passo\n\n### 1. Creare un progetto Laravel\n\n```bash\ncomposer create-project laravel/laravel my-blog\ncd my-blog\n```\n\nOppure usando l'installer Laravel:\n\n```bash\nlaravel new my-blog\ncd my-blog\n```\n\n### 2. Installare FilamentPHP\n\n```bash\ncomposer require filament/filament\nphp artisan filament:install --panels\n```\n\nPoi crea il tuo primo utente amministratore:\n\n```bash\nphp artisan make:filament-user\n```\n\nTieni a portata di mano email e password — ti serviranno per accedere.\n\n### 3. Installare Blogr\n\n```bash\ncomposer require happytodev/blogr\nphp artisan blogr:install\n```\n\nL'installer è interattivo. Ti guiderà attraverso:\n\n- **CMS** — Attiva pagine statiche (Chi siamo, Contatti, ecc.)\n- **Tipo di homepage** — Indice del blog o una pagina CMS personalizzata\n- **Alpine.js** — Necessario per il cambio tema\n- **Tailwind CSS v4** — Configurazione della modalità scura\n- **Tutorial** — Contenuti di esempio per iniziare\n- **Dipendenze NPM** — Installazione automatica\n- **Compilazione asset** — Build dei file frontend\n\n> **Consiglio:** Rispondi \"Sì\" a tutti i prompt per una configurazione completa.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Post-Installazione\n\n### Verificare il pannello di amministrazione\n\nApri `http://my-blog.test/admin` e accedi con le credenziali del passaggio 2. Dovresti vedere la dashboard di Blogr con statistiche e widget.\n\n### Creare il primo articolo del blog\n\n1. Vai su **Blog Posts → Nuovo Articolo** nella barra laterale admin\n2. Scrivi un titolo e un contenuto (Markdown supportato)\n3. Aggiungi una categoria e tag\n4. Imposta un'immagine in evidenza (trascina e rilascia)\n5. Configura i campi SEO (opzionale)\n6. Clicca su **Pubblica**\n\nVisita il tuo blog su `/blog` (o `/` se il blog è impostato come homepage).\n\n### Configurare le impostazioni\n\nVai su **Blogr Settings** nel pannello di amministrazione per personalizzare:\n\n- **Generale** — Nome blog, descrizione, articoli per pagina\n- **SEO** — Nome sito, meta predefiniti, immagine Open Graph\n- **Navigazione** — Link menu, navigazione fissa, logo\n- **Aspetto** — Colori, stili delle card, modalità scura\n- **Piè di pagina** — Link social, testo copyright\n- **Backup** — Esporta/importa i tuoi dati",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Funzionalità Opzionali\n\n### Attivare pagine CMS\n\nSe hai saltato il CMS durante l'installazione, attivalo in `config/blogr.php`:\n\n```php\n'cms' => [\n    'enabled' => true,\n    'prefix' => '',\n],\n```\n\nPoi crea pagine in **CMS → Pages CMS** nel pannello di amministrazione.\n\n### Attivare il multilingua\n\nModifica `config/blogr.php`:\n\n```php\n'locales' => [\n    'enabled' => true,\n    'default' => 'en',\n    'available' => ['en', 'fr', 'es', 'de', 'pl'],\n],\n```\n\nCon le lingue attivate, i tuoi contenuti ottengono URL per lingua:\n- `/en/blog/my-post`\n- `/it/blog/mio-articolo`\n\n### Installare contenuti demo\n\n```bash\nphp artisan blogr:publish-demo-pages\nphp artisan blogr:install-tutorials\n```",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "faq",
+                        "data": {
+                            "title": "Risoluzione dei Problemi",
+                            "items": [
+                                {
+                                    "question": "Il pannello admin non mostra risorse dopo l'installazione",
+                                    "answer": "Esegui `php artisan blogr:install --force` per riavviare l'installazione."
+                                },
+                                {
+                                    "question": "Il selettore di tema non funziona",
+                                    "answer": "Assicurati che `@variant dark (.dark &);` sia presente in `resources/css/app.css`."
+                                },
+                                {
+                                    "question": "Vedo una pagina bianca quando visito il blog",
+                                    "answer": "Esegui `npm run build` per compilare gli asset. Controlla anche `php artisan storage:link` e APP_URL."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Pronto a costruire il tuo blog?",
+                            "subheading": "Blogr è open source con licenza MIT. Nessuna carta di credito.",
+                            "button_text": "Visita il Blog",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "no",
+                "slug": "installasjon",
+                "title": "Installasjonsveiledning",
+                "meta_title": "Installasjonsveiledning — Blogr",
+                "meta_description": "Steg-for-steg veiledning for å installere Blogr fra bunnen av: Laravel, FilamentPHP og Blogr oppsett.",
+                "meta_keywords": "installasjon, veiledning, blogr, laravel, filamentphp, oppsett",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Installasjonsveiledning",
+                            "subtitle": "Trinn-for-trinn instruksjoner for å sette opp Blogr fra bunnen av — ingen forkunnskaper nødvendig.",
+                            "cta_text": "Kom i gang",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#0f0c29",
+                            "gradient_to": "#302b63",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#24243e",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Forutsetninger\n\nFør du begynner, sørg for at du har følgende installert på systemet ditt:\n\n| Forutsetning | Versjon |\n|--------------|---------|\n| **PHP** | 8.3 eller nyere |\n| **Composer** | Siste stabile versjon |\n| **Node.js** | 18 eller nyere |\n| **npm** | 9 eller nyere |\n| **Database** | MySQL 8+, PostgreSQL 15+, eller SQLite |\n\nDu trenger også en terminal (bash, zsh, PowerShell) og en kodeeditor etter eget valg.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Installasjon Steg for Steg\n\n### 1. Opprett et Laravel-prosjekt\n\n```bash\ncomposer create-project laravel/laravel my-blog\ncd my-blog\n```\n\nEller med Laravel-installasjonsprogrammet:\n\n```bash\nlaravel new my-blog\ncd my-blog\n```\n\n### 2. Installer FilamentPHP\n\n```bash\ncomposer require filament/filament\nphp artisan filament:install --panels\n```\n\nDeretter oppretter du din første admin-bruker:\n\n```bash\nphp artisan make:filament-user\n```\n\nHold på e-post og passord — du trenger dem for å logge inn.\n\n### 3. Installer Blogr\n\n```bash\ncomposer require happytodev/blogr\nphp artisan blogr:install\n```\n\nInstallasjonsprogrammet er interaktivt. Det vil veilede deg gjennom:\n\n- **CMS** — Aktiver statiske sider (Om oss, Kontakt, etc.)\n- **Hjemmesidetype** — Bloggindeks eller en tilpasset CMS-side\n- **Alpine.js** — Påkrevd for temaveksleren\n- **Tailwind CSS v4** — Konfigurasjon for mørk modus\n- **Veiledninger** — Eksempelinnhold for å komme i gang\n- **NPM-avhengigheter** — Automatisk installasjon\n- **Bygging av eiendeler** — Kompiler frontend-ressurser\n\n> **Tips:** Svar \"Ja\" på alle spørsmål for et komplett oppsett.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Etter Installasjon\n\n### Bekreft administrasjonspanelet\n\nÅpne `http://my-blog.test/admin` og logg inn med påloggingsinformasjonen fra trinn 2. Du bør se Blogr-dashbordet med bloggstatistikk og widgeter.\n\n### Opprett ditt første blogginnlegg\n\n1. Gå til **Blog Posts → Nytt Innlegg** i administrasjonssidemenyen\n2. Skriv en tittel og innhold (Markdown støttes)\n3. Legg til en kategori og stikkord\n4. Angi et fremhevet bilde (dra og slipp)\n5. Konfigurer SEO-metadata (valgfritt)\n6. Klikk **Publiser**\n\nBesøk bloggen din på `/blog` (eller `/` hvis bloggen er satt som hjemmeside).\n\n### Konfigurer innstillinger\n\nGå til **Blogr Settings** i administrasjonspanelet for å tilpasse:\n\n- **Generelt** — Bloggnavn, beskrivelse, innlegg per side\n- **SEO** — Sidenavn, standard meta, Open Graph-bilde\n- **Navigasjon** — Menylenker, festet navigasjon, logo\n- **Utseende** — Farger, kortstiler, mørk modus\n- **Bunntekst** — Sosiale lenker, opphavsrettstekst\n- **Sikkerhetskopi** — Eksporter/importer dine data",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Valgfrie Funksjoner\n\n### Aktivere CMS-sider\n\nHvis du hoppet over CMS under installasjonen, aktiver det i `config/blogr.php`:\n\n```php\n'cms' => [\n    'enabled' => true,\n    'prefix' => '',\n],\n```\n\nDeretter oppretter du sider under **CMS → Pages CMS** i administrasjonspanelet.\n\n### Aktivere flerspråklighet\n\nRediger `config/blogr.php`:\n\n```php\n'locales' => [\n    'enabled' => true,\n    'default' => 'en',\n    'available' => ['en', 'fr', 'es', 'de', 'pl'],\n],\n```\n\nMed språk aktivert får innholdet ditt språkspesifikke URL-er:\n- `/en/blog/my-post`\n- `/no/blog/mitt-innlegg`\n\n### Installere demoinnhold\n\n```bash\nphp artisan blogr:publish-demo-pages\nphp artisan blogr:install-tutorials\n```",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "faq",
+                        "data": {
+                            "title": "Feilsøking",
+                            "items": [
+                                {
+                                    "question": "Admin-panelet viser ingen ressurser etter installasjon",
+                                    "answer": "Kjør `php artisan blogr:install --force` for å kjøre installasjonen på nytt."
+                                },
+                                {
+                                    "question": "Temaveksleren fungerer ikke",
+                                    "answer": "Sørg for at `@variant dark (.dark &);` finnes i `resources/css/app.css`."
+                                },
+                                {
+                                    "question": "Jeg ser en blank side når jeg besøker bloggen",
+                                    "answer": "Kjør `npm run build` for å kompilere frontend-ressurser. Sjekk også `php artisan storage:link` og APP_URL."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Klar til å bygge bloggen din?",
+                            "subheading": "Blogr er åpen kildekode under MIT-lisens. Ingen kredittkort nødvendig.",
+                            "button_text": "Besøk Bloggen",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "pl",
+                "slug": "instalacja",
+                "title": "Przewodnik Instalacji",
+                "meta_title": "Przewodnik Instalacji — Blogr",
+                "meta_description": "Instrukcja krok po kroku jak zainstalować Blogr od zera: konfiguracja Laravel, FilamentPHP i Blogr.",
+                "meta_keywords": "instalacja, przewodnik, blogr, laravel, filamentphp, konfiguracja",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Przewodnik Instalacji",
+                            "subtitle": "Instrukcje krok po kroku jak skonfigurować Blogr od zera — bez wcześniejszego doświadczenia.",
+                            "cta_text": "Rozpocznij",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#0f0c29",
+                            "gradient_to": "#302b63",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#24243e",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Wymagania\n\nPrzed rozpoczęciem upewnij się, że masz zainstalowane następujące elementy:\n\n| Wymaganie | Wersja |\n|-----------|--------|\n| **PHP** | 8.3 lub nowszy |\n| **Composer** | Najnowsza stabilna |\n| **Node.js** | 18 lub nowszy |\n| **npm** | 9 lub nowszy |\n| **Baza danych** | MySQL 8+, PostgreSQL 15+, lub SQLite |\n\nBędziesz również potrzebować terminala (bash, zsh, PowerShell) i edytora kodu.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Instalacja Krok po Kroku\n\n### 1. Utwórz projekt Laravel\n\n```bash\ncomposer create-project laravel/laravel moj-blog\ncd moj-blog\n```\n\nLub za pomocą instalatora Laravel:\n\n```bash\nlaravel new moj-blog\ncd moj-blog\n```\n\n### 2. Zainstaluj FilamentPHP\n\n```bash\ncomposer require filament/filament\nphp artisan filament:install --panels\n```\n\nNastępnie utwórz pierwszego użytkownika administracyjnego:\n\n```bash\nphp artisan make:filament-user\n```\n\nZapisz adres email i hasło — będą potrzebne do zalogowania.\n\n### 3. Zainstaluj Blogr\n\n```bash\ncomposer require happytodev/blogr\nphp artisan blogr:install\n```\n\nInstalator jest interaktywny. Przeprowadzi Cię przez:\n\n- **CMS** — Włącz strony statyczne (O nas, Kontakt, itp.)\n- **Typ strony głównej** — Indeks bloga lub strona CMS\n- **Alpine.js** — Wymagany do przełącznika motywów\n- **Tailwind CSS v4** — Konfiguracja trybu ciemnego\n- **Tutoriale** — Przykładowa treść na początek\n- **Zależności NPM** — Automatyczna instalacja\n- **Budowanie assetów** — Kompilacja plików frontendowych\n\n> **Wskazówka:** Odpowiadaj „Tak” na wszystkie pytania, aby uzyskać pełną konfigurację.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Po Instalacji\n\n### Sprawdź panel administracyjny\n\nOtwórz `http://moj-blog.test/admin` i zaloguj się przy użyciu danych z kroku 2. Powinieneś zobaczyć pulpit Blogr ze statystykami i widżetami.\n\n### Utwórz pierwszy wpis na blogu\n\n1. Przejdź do **Blog Posts → Nowy Wpis** na pasku bocznym\n2. Wpisz tytuł i treść (Markdown jest obsługiwany)\n3. Dodaj kategorię i tagi\n4. Ustaw wyróżniony obraz (przeciągnij i upuść)\n5. Skonfiguruj pola SEO (opcjonalnie)\n6. Kliknij **Publikuj**\n\nOdwiedź swojego bloga pod `/blog` (lub `/` jeśli blog jest ustawiony jako strona główna).\n\n### Skonfiguruj ustawienia\n\nPrzejdź do **Blogr Settings** w panelu administracyjnym, aby dostosować:\n\n- **Ogólne** — Nazwa bloga, opis, wpisy na stronę\n- **SEO** — Nazwa strony, domyślne meta, obraz Open Graph\n- **Nawigacja** — Linki menu, przyklejona nawigacja, logo\n- **Wygląd** — Kolory, style kart, tryb ciemny\n- **Stopka** — Linki społecznościowe, tekst praw autorskich\n- **Kopia zapasowa** — Eksport/import danych",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Funkcje Opcjonalne\n\n### Włącz strony CMS\n\nJeśli pominąłeś CMS podczas instalacji, włącz go w `config/blogr.php`:\n\n```php\n'cms' => [\n    'enabled' => true,\n    'prefix' => '',\n],\n```\n\nNastępnie twórz strony w **CMS → Pages CMS** w panelu administracyjnym.\n\n### Włącz wielojęzyczność\n\nEdytuj `config/blogr.php`:\n\n```php\n'locales' => [\n    'enabled' => true,\n    'default' => 'en',\n    'available' => ['en', 'fr', 'es', 'de', 'pl'],\n],\n```\n\nZ włączonymi językami, Twoje treści będą miały adresy URL w poszczególnych językach:\n- `/en/blog/my-post`\n- `/pl/blog/moj-wpis`\n\n### Zainstaluj treści demo\n\n```bash\nphp artisan blogr:publish-demo-pages\nphp artisan blogr:install-tutorials\n```",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "faq",
+                        "data": {
+                            "title": "Rozwiązywanie Problemów",
+                            "items": [
+                                {
+                                    "question": "Panel administracyjny nie pokazuje zasobów po instalacji",
+                                    "answer": "Uruchom `php artisan blogr:install --force`, aby ponownie uruchomić instalację. Opublikuje to ponownie konfigurację, uruchomi migracje i przekonfiguruje AdminPanelProvider."
+                                },
+                                {
+                                    "question": "Przełącznik motywów nie działa",
+                                    "answer": "Upewnij się, że `@variant dark (.dark &);` znajduje się w pliku `resources/css/app.css`. Następnie uruchom `npm run build`, aby ponownie skompilować assety."
+                                },
+                                {
+                                    "question": "Widzę pustą stronę podczas odwiedzania bloga",
+                                    "answer": "Uruchom `npm run build`, aby skompilować assety frontendowe. Jeśli problem nadal występuje, sprawdź, czy `php artisan storage:link` został utworzony i czy APP_URL jest poprawnie skonfigurowane w `.env`."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Gotowy do budowy swojego bloga?",
+                            "subheading": "Blogr jest open source na licencji MIT. Bez karty kredytowej.",
+                            "button_text": "Odwiedź Bloga",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "pt",
+                "slug": "instalacao",
+                "title": "Guia de Instalação",
+                "meta_title": "Guia de Instalação — Blogr",
+                "meta_description": "Guia passo a passo para instalar o Blogr do zero: configuração Laravel, FilamentPHP e Blogr.",
+                "meta_keywords": "instalação, guia, blogr, laravel, filamentphp, configuração",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Guia de Instalação",
+                            "subtitle": "Instruções passo a passo para configurar o Blogr do zero — sem experiência necessária.",
+                            "cta_text": "Começar",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#0f0c29",
+                            "gradient_to": "#302b63",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#24243e",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Pré-requisitos\n\nAntes de começar, certifique-se de ter o seguinte instalado no seu sistema:\n\n| Pré-requisito | Versão |\n|----------------|---------|\n| **PHP** | 8.3 ou superior |\n| **Composer** | Última versão estável |\n| **Node.js** | 18 ou superior |\n| **npm** | 9 ou superior |\n| **Banco de Dados** | MySQL 8+, PostgreSQL 15+, ou SQLite |\n\nVocê também precisará de um terminal (bash, zsh, PowerShell) e um editor de código de sua preferência.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Instalação Passo a Passo\n\n### 1. Criar um projeto Laravel\n\n```bash\ncomposer create-project laravel/laravel my-blog\ncd my-blog\n```\n\nOu usando o instalador Laravel:\n\n```bash\nlaravel new my-blog\ncd my-blog\n```\n\n### 2. Instalar FilamentPHP\n\n```bash\ncomposer require filament/filament\nphp artisan filament:install --panels\n```\n\nEm seguida, crie seu primeiro usuário administrador:\n\n```bash\nphp artisan make:filament-user\n```\n\nGuarde o e-mail e a senha — você precisará deles para fazer login.\n\n### 3. Instalar Blogr\n\n```bash\ncomposer require happytodev/blogr\nphp artisan blogr:install\n```\n\nO instalador é interativo. Ele irá guiá-lo através de:\n\n- **CMS** — Ativar páginas estáticas (Sobre, Contato, etc.)\n- **Tipo de página inicial** — Índice do blog ou uma página CMS personalizada\n- **Alpine.js** — Necessário para o alternador de tema\n- **Tailwind CSS v4** — Configuração do modo escuro\n- **Tutoriais** — Conteúdo de exemplo para começar\n- **Dependências NPM** — Instalação automática\n- **Compilação de assets** — Compilar arquivos frontend\n\n> **Dica:** Responda \"Sim\" a todas as perguntas para uma configuração completa.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Pós-Instalação\n\n### Verificar o painel de administração\n\nAbra `http://my-blog.test/admin` e faça login com as credenciais do passo 2. Você deve ver o painel do Blogr com estatísticas e widgets.\n\n### Criar seu primeiro artigo\n\n1. Vá para **Blog Posts → Novo Artigo** na barra lateral admin\n2. Escreva um título e conteúdo (Markdown é suportado)\n3. Adicione uma categoria e tags\n4. Defina uma imagem em destaque (arrastar e soltar)\n5. Configure campos SEO (opcional)\n6. Clique em **Publicar**\n\nVisite seu blog em `/blog` (ou `/` se o blog estiver configurado como página inicial).\n\n### Configurar ajustes\n\nVá para **Blogr Settings** no painel de administração para personalizar:\n\n- **Geral** — Nome do blog, descrição, artigos por página\n- **SEO** — Nome do site, meta padrão, imagem Open Graph\n- **Navegação** — Links do menu, navegação fixa, logotipo\n- **Aparência** — Cores, estilos de cartão, modo escuro\n- **Rodapé** — Links sociais, texto de direitos autorais\n- **Backup** — Exportar/importar seus dados",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Funcionalidades Opcionais\n\n### Ativar páginas CMS\n\nSe você pulou o CMS durante a instalação, ative-o em `config/blogr.php`:\n\n```php\n'cms' => [\n    'enabled' => true,\n    'prefix' => '',\n],\n```\n\nEm seguida, crie páginas em **CMS → Pages CMS** no painel de administração.\n\n### Ativar multilíngue\n\nEdite `config/blogr.php`:\n\n```php\n'locales' => [\n    'enabled' => true,\n    'default' => 'en',\n    'available' => ['en', 'fr', 'es', 'de', 'pl'],\n],\n```\n\nCom os idiomas ativados, seu conteúdo ganha URLs por idioma:\n- `/en/blog/my-post`\n- `/pt/blog/meu-artigo`\n\n### Instalar conteúdo demo\n\n```bash\nphp artisan blogr:publish-demo-pages\nphp artisan blogr:install-tutorials\n```",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "faq",
+                        "data": {
+                            "title": "Solução de Problemas",
+                            "items": [
+                                {
+                                    "question": "Painel admin não mostra recursos após instalação",
+                                    "answer": "Execute `php artisan blogr:install --force` para reexecutar a instalação."
+                                },
+                                {
+                                    "question": "O alternador de temas não funciona",
+                                    "answer": "Certifique-se de que `@variant dark (.dark &);` está presente em `resources/css/app.css`."
+                                },
+                                {
+                                    "question": "Vejo uma página em branco ao visitar o blog",
+                                    "answer": "Execute `npm run build` para compilar assets. Verifique também `php artisan storage:link` e seu APP_URL."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Pronto para construir seu blog?",
+                            "subheading": "Blogr é open source licenciado sob MIT. Sem cartão de crédito.",
+                            "button_text": "Visitar o Blog",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "ru",
+                "slug": "ustanovka",
+                "title": "Руководство по установке",
+                "meta_title": "Руководство по установке — Blogr",
+                "meta_description": "Пошаговое руководство по установке Blogr с нуля: настройка Laravel, FilamentPHP и Blogr.",
+                "meta_keywords": "установка, руководство, blogr, laravel, filamentphp, настройка",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Руководство по установке",
+                            "subtitle": "Пошаговые инструкции по настройке Blogr с нуля — без предварительного опыта.",
+                            "cta_text": "Начать",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#0f0c29",
+                            "gradient_to": "#302b63",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#24243e",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Предпосылки\n\nПрежде чем начать, убедитесь, что у вас установлено следующее:\n\n| Требование | Версия |\n|-----------------|---------|\n| **PHP** | 8.3 или выше |\n| **Composer** | Последняя стабильная версия |\n| **Node.js** | 18 или выше |\n| **npm** | 9 или выше |\n| **База данных** | MySQL 8+, PostgreSQL 15+, или SQLite |\n\nТакже понадобится терминал (bash, zsh, PowerShell) и редактор кода по вашему выбору.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Пошаговая установка\n\n### 1. Создание проекта Laravel\n\n```bash\ncomposer create-project laravel/laravel my-blog\ncd my-blog\n```\n\nИли с помощью установщика Laravel:\n\n```bash\nlaravel new my-blog\ncd my-blog\n```\n\n### 2. Установка FilamentPHP\n\n```bash\ncomposer require filament/filament\nphp artisan filament:install --panels\n```\n\nЗатем создайте первого администратора:\n\n```bash\nphp artisan make:filament-user\n```\n\nСохраните email и пароль — они понадобятся для входа.\n\n### 3. Установка Blogr\n\n```bash\ncomposer require happytodev/blogr\nphp artisan blogr:install\n```\n\nУстановщик интерактивный. Он проведет вас через:\n\n- **CMS** — Включить статические страницы (О нас, Контакты и др.)\n- **Тип главной** — Лента блога или пользовательская страница CMS\n- **Alpine.js** — Требуется для переключателя тем\n- **Tailwind CSS v4** — Настройка тёмной темы\n- **Учебники** — Примеры контента для начала\n- **NPM зависимости** — Автоматическая установка\n- **Сборка ассетов** — Компиляция frontend файлов\n\n> **Совет:** Отвечайте \"Да\" на все запросы для полной настройки.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## После установки\n\n### Проверка панели администратора\n\nОткройте `http://my-blog.test/admin` и войдите с учётными данными из шага 2. Вы увидите панель управления Blogr со статистикой и виджетами.\n\n### Создание первой записи в блоге\n\n1. Перейдите в **Blog Posts → Новая запись** в боковой панели админки\n2. Напишите заголовок и содержание (Markdown поддерживается)\n3. Добавьте категорию и теги\n4. Задайте изображение (перетащите и бросьте)\n5. Настройте поля SEO (опционально)\n6. Нажмите **Опубликовать**\n\nПосетите свой блог по адресу `/blog` (или `/`, если блог настроен как главная страница).\n\n### Настройка параметров\n\nПерейдите в **Blogr Settings** в панели администратора для настройки:\n\n- **Основное** — Название блога, описание, записей на страницу\n- **SEO** — Название сайта, meta по умолчанию, Open Graph изображение\n- **Навигация** — Ссылки меню, липкая навигация, логотип\n- **Внешний вид** — Цвета, стили карточек, тёмная тема\n- **Подвал** — Ссылки на соцсети, текст авторских прав\n- **Резервное копирование** — Экспорт/импорт данных",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Дополнительные возможности\n\n### Включение страниц CMS\n\nЕсли вы пропустили CMS во время установки, включите его в `config/blogr.php`:\n\n```php\n'cms' => [\n    'enabled' => true,\n    'prefix' => '',\n],\n```\n\nЗатем создавайте страницы в **CMS → Pages CMS** в панели администратора.\n\n### Включение многоязычности\n\nОтредактируйте `config/blogr.php`:\n\n```php\n'locales' => [\n    'enabled' => true,\n    'default' => 'en',\n    'available' => ['en', 'fr', 'es', 'de', 'pl'],\n],\n```\n\nС включёнными языками ваш контент получает URL-адреса на каждом языке:\n- `/en/blog/my-post`\n- `/ru/blog/moya-zapis`\n\n### Установка демо-контента\n\n```bash\nphp artisan blogr:publish-demo-pages\nphp artisan blogr:install-tutorials\n```",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "faq",
+                        "data": {
+                            "title": "Устранение неполадок",
+                            "items": [
+                                {
+                                    "question": "Панель администратора не показывает ресурсы после установки",
+                                    "answer": "Запустите `php artisan blogr:install --force` для повторного выполнения установки."
+                                },
+                                {
+                                    "question": "Переключатель тем не работает",
+                                    "answer": "Убедитесь, что `@variant dark (.dark &);` присутствует в `resources/css/app.css`."
+                                },
+                                {
+                                    "question": "Я вижу пустую страницу при посещении блога",
+                                    "answer": "Запустите `npm run build` для компиляции ассетов. Также проверьте `php artisan storage:link` и APP_URL."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Готовы создать свой блог?",
+                            "subheading": "Blogr — это открытый исходный код под лицензией MIT. Без кредитной карты.",
+                            "button_text": "Посетить Блог",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "media": []
+}

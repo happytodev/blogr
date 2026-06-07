@@ -86,3 +86,5 @@ test('CMS page respects navigation disabled setting', function () {
     // The nav element might still exist but should not have menu items
     expect($content)->not->toContain('class="container mx-auto px-4"');
 });
+
+

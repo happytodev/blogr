@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Support\Facades\Artisan;
 use Filament\Forms\Components\TextInput;
@@ -125,6 +126,8 @@ class BlogrSettings extends Page
     public ?bool $locales_enabled = null;
     public ?string $locales_default = null;
     public ?string $locales_available = null;
+    public ?bool $locales_auto_detect = null;
+    public array $locales_disabled = [];
     public ?bool $series_enabled = null;
     public ?array $series_default_image = null; // FileUpload expects array
 
@@ -364,6 +367,8 @@ class BlogrSettings extends Page
         $this->locales_available = is_array($config['locales']['available'] ?? [])
             ? implode(', ', $config['locales']['available'])
             : 'en, fr, es, de';
+        $this->locales_auto_detect = $config['locales']['auto_detect'] ?? false;
+        $this->locales_disabled = $config['locales']['disabled'] ?? [];
         $this->series_enabled = $config['series']['enabled'] ?? true;
 
         // FileUpload expects array, but config stores string - convert
@@ -586,17 +591,77 @@ class BlogrSettings extends Page
                                         ->label('Enable Localized Routes')
                                         ->default(false)
                                         ->helperText('Enable URL structure like /{locale}/blog/... (e.g., /en/blog/my-post, /fr/blog/mon-article)'),
-                                    TextInput::make('locales_default')
+                                    Select::make('locales_default')
                                         ->label('Default Locale')
                                         ->required()
                                         ->default('en')
-                                        ->helperText('The default locale used when no translation is available'),
+                                        ->helperText('The default locale used when no translation is available')
+                                        ->options(function () {
+                                            $localeNames = [
+                                                'en' => 'English',
+                                                'fr' => 'Français',
+                                                'es' => 'Español',
+                                                'de' => 'Deutsch',
+                                                'it' => 'Italiano',
+                                                'pt' => 'Português',
+                                                'ru' => 'Русский',
+                                                'pl' => 'Polski',
+                                                'el' => 'Ελληνικά',
+                                                'no' => 'Norsk',
+                                            ];
+                                            $available = config('blogr.locales.available', ['en']);
+                                            $options = [];
+                                            foreach ($available as $locale) {
+                                                $name = $localeNames[$locale] ?? strtoupper($locale);
+                                                $options[$locale] = "{$name} ({$locale})";
+                                            }
+                                            return $options;
+                                        }),
+                                    Toggle::make('locales_auto_detect')
+                                        ->label('Auto-detect Languages')
+                                        ->default(false)
+                                        ->helperText('When enabled, available locales are automatically detected from published content. When disabled, the manual list below is used.')
+                                        ->live()
+                                        ->afterStateUpdated(function ($state, $set) {
+                                            if ($state) {
+                                                $set('locales_available', null);
+                                            }
+                                        }),
                                     Textarea::make('locales_available')
-                                        ->label('Available Locales')
+                                        ->label('Available Locales (Manual)')
                                         ->required()
                                         ->default('en, fr, es, de')
                                         ->rows(2)
-                                        ->helperText('Comma-separated list of available locales (e.g., en, fr, es, de)'),
+                                        ->helperText('Comma-separated list of available locales (e.g., en, fr, es, de). Only used when Auto-detect is OFF.')
+                                        ->visible(fn ($get) => ! $get('locales_auto_detect')),
+                                    CheckboxList::make('locales_disabled')
+                                        ->label('Disabled Languages')
+                                        ->helperText('Languages checked here will be hidden from the frontend language switcher and will return a 404 when accessed directly. Only used when Auto-detect is ON.')
+                                        ->options(function () {
+                                            $service = app(\Happytodev\Blogr\Services\LocaleService::class);
+                                            $available = $service->getAvailable();
+                                            $localeNames = [
+                                                'en' => 'English',
+                                                'fr' => 'Français',
+                                                'es' => 'Español',
+                                                'de' => 'Deutsch',
+                                                'it' => 'Italiano',
+                                                'pt' => 'Português',
+                                                'ru' => 'Русский',
+                                                'pl' => 'Polski',
+                                                'el' => 'Ελληνικά',
+                                                'no' => 'Norsk',
+                                            ];
+
+                                            $options = [];
+                                            foreach ($available as $locale) {
+                                                $name = $localeNames[$locale] ?? strtoupper($locale);
+                                                $options[$locale] = "{$name} ({$locale})";
+                                            }
+
+                                            return $options;
+                                        })
+                                        ->visible(fn ($get) => $get('locales_auto_detect')),
                                 ])
                                 ->columns(2),
 
@@ -1943,6 +2008,8 @@ class BlogrSettings extends Page
                 'enabled' => $this->locales_enabled,
                 'default' => $this->locales_default,
                 'available' => array_map('trim', explode(',', $this->locales_available ?? 'en')),
+                'auto_detect' => $this->locales_auto_detect,
+                'disabled' => is_array($this->locales_disabled ?? []) ? $this->locales_disabled : [],
             ],
             'series' => [
                 'enabled' => $this->series_enabled,

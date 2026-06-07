@@ -153,11 +153,21 @@ return [
     | Posts, series, categories, and tags can be translated into these locales.
     | The default locale is used when no translation is available.
     |
+    | auto_detect: When true, available locales are automatically detected from
+    |   published blog posts and CMS pages. When false (default), the 'available'
+    |   list is used as-is.
+    | restrict: When auto_detect is true, restrict detected locales to this list.
+    |   Useful when you want to allow content in any of these locales but not
+    |   display all of them in the language switcher.
+    |
     */
     'locales' => [
         'enabled' => false, // Enable localized routes (/{locale}/blog/...)
         'default' => 'en', // Default locale
-        'available' => ['en', 'fr'], // Available locales for translations
+        'available' => ['en', 'fr'], // Available locales for translations (fallback when auto_detect=false)
+        'auto_detect' => false, // Auto-detect available locales from published content
+        'disabled' => [], // Locales disabled by the user (not shown in frontend switcher)
+        'restrict' => [], // Restrict auto-detected locales to this list (empty = no restriction)
     ],
 
     /*
@@ -330,7 +340,10 @@ return [
     'locales' => [
         'enabled' => true, // Enable/disable multilingual support
         'default' => 'en', // Default locale
-        'available' => ['en', 'fr'], // Available locales
+        'available' => ['en', 'fr'], // Available locales (fallback when auto_detect=false)
+        'auto_detect' => false, // Auto-detect available locales from published content
+        'disabled' => [], // Locales disabled by the user (not shown in frontend switcher)
+        'restrict' => [], // Restrict auto-detected locales to this list (empty = no restriction)
     ],
 
     /*

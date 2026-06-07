@@ -338,6 +338,50 @@ it('published scope excludes scheduled pages', function () {
 });
 
 // ============================================================================
+// Disabled Locales Tests
+// ============================================================================
+
+it('availableLocales filters out disabled locales', function () {
+    $page = CmsPage::factory()->create();
+
+    $page->translations()->create([
+        'locale' => 'en',
+        'slug' => 'about',
+        'title' => 'About Us',
+    ]);
+
+    $page->translations()->create([
+        'locale' => 'fr',
+        'slug' => 'a-propos',
+        'title' => 'À propos',
+    ]);
+
+    config()->set('blogr.locales.disabled', ['fr']);
+
+    expect($page->availableLocales())->toBe(['en']);
+});
+
+it('returns all locales when disabled list is empty', function () {
+    $page = CmsPage::factory()->create();
+
+    $page->translations()->create([
+        'locale' => 'en',
+        'slug' => 'about',
+        'title' => 'About Us',
+    ]);
+
+    $page->translations()->create([
+        'locale' => 'fr',
+        'slug' => 'a-propos',
+        'title' => 'À propos',
+    ]);
+
+    config()->set('blogr.locales.disabled', []);
+
+    expect($page->availableLocales())->toBe(['en', 'fr']);
+});
+
+// ============================================================================
 // SEO Methods Tests
 // ============================================================================
 

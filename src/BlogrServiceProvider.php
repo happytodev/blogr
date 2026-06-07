@@ -6,7 +6,9 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Asset;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
 use Happytodev\Blogr\Models\BlogPost;
+use Happytodev\Blogr\Services\LocaleService;
 use Illuminate\Filesystem\Filesystem;
 use Spatie\LaravelPackageTools\Package;
 use Happytodev\Blogr\Testing\TestsBlogr;
@@ -236,6 +238,14 @@ class BlogrServiceProvider extends PackageServiceProvider
             $this->registerCmsRoutes();
         }
 
+        // Share available locales with frontend views that don't already have
+        // a controller-specific value (e.g. CmsPageController passes per-page locales).
+        View::composer('blogr::*', function ($view) {
+            if (!$view->offsetExists('availableLocales')) {
+                $view->with('availableLocales', app(LocaleService::class)->getAvailable());
+            }
+        });
+
         // Auto-repair stale published views that may contain old iframe/Google Maps patterns.
         // When users run `php artisan vendor:publish --tag=blogr-views`, the current views
         // are copied to resources/views/vendor/blogr/. These published views take precedence
@@ -289,7 +299,7 @@ class BlogrServiceProvider extends PackageServiceProvider
         $isHomepage = config('blogr.route.homepage', false);
         $localesEnabled = config('blogr.locales.enabled', false);
         $availableLocales = config('blogr.locales.available', ['en']);
-        $localePattern = implode('|', $availableLocales);
+        $localePattern = '[a-z]{2}(?:[_-][a-zA-Z]{2,4})?';
         $homepageType = config('blogr.homepage.type', 'blog');
         
         // If CMS is configured as homepage, blog should NOT override root routes
@@ -540,7 +550,7 @@ class BlogrServiceProvider extends PackageServiceProvider
         $localesEnabled = config('blogr.locales.enabled', false);
         $defaultLocale = config('blogr.locales.default', 'en');
         $availableLocales = config('blogr.locales.available', ['en']);
-        $localePattern = implode('|', $availableLocales);
+        $localePattern = '[a-z]{2}(?:[_-][a-zA-Z]{2,4})?';
         $cmsPrefix = trim(config('blogr.cms.prefix', ''), '/');
         $middleware = config('blogr.route.middleware', ['web']);
         
