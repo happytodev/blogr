@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.24.1](https://github.com/happytodev/blogr/compare/v0.24.0...v0.24.1) - 2026-06-07
+
+### 📝 Documentation
+
+- **Release-manager skill**: Improve test step to capture raw output instead of piping through grep/tail.
+
 ## [v0.24.0](https://github.com/happytodev/blogr/compare/v0.23.0...v0.24.0) - 2026-06-07
 
 ### ✨ Features
