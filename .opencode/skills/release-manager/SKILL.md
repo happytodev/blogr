@@ -13,7 +13,17 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
 
 - Read current version from `composer.json` (`"version": "0.x.y"`)
 - Ask user for bump type: `patch`, `minor`, `major`, or an explicit version like `0.19.0`
-- Compute the new version accordingly
+- **Compute the new version using semver rules correctly**:
+
+  | Current | patch (Z+1) | minor (Y+1, Z=0) | major (X+1, Y=Z=0) |
+  |---------|-------------|------------------|-------------------|
+  | `0.22.0` | `0.22.1` | `0.23.0` | `1.0.0` |
+  | `0.22.5` | `0.22.6` | `0.23.0` | `1.0.0` |
+  | `1.0.0` | `1.0.1` | `1.1.0` | `2.0.0` |
+
+  ⚠️ **Common mistake**: patch is NOT `0.22.0 → 0.23.0` — that is a minor bump. Patch only increments the last digit.
+
+- Present the computed version to the user for confirmation
 
 ### 2. Organize uncommitted changes into feature-grouped commits
 
