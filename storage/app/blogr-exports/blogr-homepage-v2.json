@@ -2,20 +2,20 @@
     "type": "cms_page",
     "format_version": "1.0",
     "name": "Blogr Homepage",
-    "description": "Blogr homepage — dark minimal design showcasing all features",
+    "description": "Blogr homepage — fully translated in 10 languages with comparison block",
     "exported_at": "2026-06-06T21:04:29+00:00",
     "data": {
         "slug": "blogr-homepage-v2",
         "template": "landing",
         "is_published": true,
-        "is_homepage": false,
+        "is_homepage": true,
         "default_locale": "en",
         "translations": [
             {
                 "locale": "en",
                 "slug": "blogr-homepage-v2",
                 "title": "Blogr — Multilingual CMS",
-                "meta_title": "Blogr — Multilingual CMS for Laravel \\u0026 FilamentPHP",
+                "meta_title": "Blogr — Multilingual CMS for Laravel & FilamentPHP",
                 "meta_description": "A translation-first CMS built on Laravel 12 and FilamentPHP v4.",
                 "blocks": [
                     {
@@ -69,12 +69,12 @@
                             ],
                             "background_type": "color",
                             "background_color": "#ffffff",
-                            "heading_color": "#1e293b",
-                            "text_color": "#475569",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
                             "background_type_dark": "color",
                             "background_color_dark": "#111827",
-                            "heading_color_dark": "#e2e8f0",
-                            "text_color_dark": "#94a3b8"
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
                         }
                     },
                     {
@@ -82,52 +82,52 @@
                         "data": {
                             "title": "Everything you need, nothing you don't",
                             "subtitle": "Translation-first architecture, FilamentPHP v4 admin, and a modern Laravel 12 stack.",
-                            "columns": "3",
+                            "columns": 3,
                             "items": [
                                 {
                                     "icon": "heroicon-o-globe-alt",
                                     "title": "Translation-First",
-                                    "description": "Every entity — posts, pages, categories, tags, series — is multilingual by design, not as an afterthought."
+                                    "description": "Every entity — posts, pages, categories, tags, series — is multilingual by design."
                                 },
                                 {
                                     "icon": "heroicon-o-squares-2x2",
                                     "title": "24+ Content Blocks",
-                                    "description": "Hero, features, testimonials, pricing, gallery, timeline, FAQ, team, video, newsletter, maps, and more."
+                                    "description": "Hero, features, testimonials, pricing, gallery, timeline, FAQ, stats, teams, and more."
                                 },
                                 {
                                     "icon": "heroicon-o-shield-check",
                                     "title": "FilamentPHP v4 Admin",
-                                    "description": "Full-featured admin panel with role-based access, audit logs, and a beautiful block-based page builder."
+                                    "description": "Full-featured admin panel with role-based access, audit logs, and media management."
                                 },
                                 {
                                     "icon": "heroicon-o-magnifying-glass",
                                     "title": "SEO Optimized",
-                                    "description": "Automatic XML sitemaps, canonical URLs, structured data, meta tags, and locale-aware routing."
+                                    "description": "Automatic XML sitemaps, canonical URLs, structured data, meta fields, and Open Graph."
                                 },
                                 {
                                     "icon": "heroicon-o-cube",
                                     "title": "Custom Templates",
-                                    "description": "7 page templates: landing, about, pricing, FAQ, contact, custom, and default — each with tailored blocks."
+                                    "description": "7 page templates: landing, about, pricing, FAQ, contact, custom, and default."
                                 },
                                 {
                                     "icon": "heroicon-o-arrow-path",
-                                    "title": "Import \/ Export",
-                                    "description": "Full content portability with JSON export\/import. Backup, restore, and migrate your content freely."
+                                    "title": "Import / Export",
+                                    "description": "Full content portability with JSON export/import. Backup, restore, and migrate seamlessly."
                                 },
                                 {
                                     "icon": "heroicon-o-clock",
                                     "title": "Content Scheduling",
-                                    "description": "Schedule posts for automatic publication across time zones. Draft, review, and publish workflows."
+                                    "description": "Schedule posts for automatic publication across time zones. Draft, review, publish workflow."
                                 },
                                 {
                                     "icon": "heroicon-o-code-bracket",
                                     "title": "Developer Friendly",
-                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, Pest tests, and Playwright E2E — fully open source."
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, Pest tests, and Playwright E2E."
                                 },
                                 {
                                     "icon": "heroicon-o-tag",
                                     "title": "Categories & Tags",
-                                    "description": "Multi-level categorization with per-locale slugs. Tags auto-sort alphabetically. Full pivot relationships."
+                                    "description": "Multi-level categorization with per-locale slugs. Tags auto-sorted alphabetically."
                                 }
                             ],
                             "background_type": "color",
@@ -150,12 +150,12 @@
                             "layout": "grid",
                             "background_type": "color",
                             "background_color": "#ffffff",
-                            "heading_color": "#1e293b",
-                            "text_color": "#475569",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
                             "background_type_dark": "color",
                             "background_color_dark": "#111827",
                             "heading_color_dark": "#f1f5f9",
-                            "text_color_dark": "#94a3b8"
+                            "text_color_dark": "#cbd5e1"
                         }
                     },
                     {
@@ -166,30 +166,47 @@
                                 {
                                     "date": "v0.20 — 2026",
                                     "title": "CMS Pages & Blocks",
-                                    "description": "Full page builder with 24+ block types, 7 templates, transitions, and dark mode support."
+                                    "description": "Full page builder with 24+ block types, 7 templates, transitions, import/export, and multilingual support."
                                 },
                                 {
                                     "date": "v0.15 — 2025",
                                     "title": "Multilingual Everywhere",
-                                    "description": "Translation-first architecture: all entities support per-locale slugs, SEO, and content."
+                                    "description": "Translation-first architecture: all entities support per-locale content, slugs, and SEO meta fields."
                                 },
                                 {
                                     "date": "v0.10 — 2025",
-                                    "title": "FilamentPHP v4 Upgrade",
-                                    "description": "Migrated to Filament v4 with new Schema system, improved navigation, and panel structure."
+                                    "title": "FilamentPHP v4 Migration",
+                                    "description": "Migrated to Filament v4 with the new Schema system, nested resources, theme config, and panel builder."
                                 },
                                 {
                                     "date": "v0.1 — 2024",
-                                    "title": "Initial Release",
-                                    "description": "First public release — Laravel blog plugin with basic posts, categories, and tags."
+                                    "title": "First Release",
+                                    "description": "Initial public release — Laravel blog plugin with posts, categories, tags, SEO, and Markdown support."
                                 }
                             ],
                             "background_type": "color",
                             "background_color": "#f8fafc",
                             "heading_color": "#0f172a",
                             "text_color": "#334155",
+                            "subtitle_color": "#64748b",
                             "background_type_dark": "color",
                             "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Blogr vs WordPress vs Ghost vs Statamic\n\n| Feature | Blogr | WordPress | Ghost | Statamic |\n|---------|-------|-----------|-------|----------|\n| **Type** | Laravel PHP blog/CMS | PHP CMS | Node.js blogging | Laravel flat-file CMS |\n| **Multilingual** | ✅ Native | ⚠️ Plugin needed | ❌ Not built-in | ✅ Built-in |\n| **Open Source** | ✅ MIT | ✅ GPL | ✅ MIT | ✅ MIT (core) |\n| **Admin UI** | Modern (FilamentPHP) | Classic dashboard | Minimal | Modern |\n| **Markdown** | ✅ Full | ❌ Block editor | ✅ Native | ✅ Native |\n| **CMS Pages** | ✅ Yes | ✅ Yes | ❌ Limited | ✅ Yes |\n| **Comments** | ❌ Not built-in | ✅ Built-in | ✅ Built-in | ❌ Not built-in |\n| **Plugins/Addons** | ❌ Not yet | ✅ Massive ecosystem | ⚠️ Integrations | ✅ Addons |\n| **E-commerce** | ❌ Not built-in | ✅ WooCommerce | ❌ Not built-in | ❌ Not built-in |\n| **Newsletters** | ❌ Not built-in | ⚠️ Plugin needed | ✅ Built-in | ❌ Not built-in |\n| **Performance** | ⚡ Fast | 🐢 Can be slow | ⚡ Very fast | ⚡ Fast |\n| **Learning Curve** | Low (Laravel) | Low | Low | Medium |\n\n**Bottom line:** Blogr is ideal if you want a modern, multilingual Laravel blog with a beautiful admin panel and full CMS capabilities. WordPress is best for non-developers who need plugins and community support. Ghost excels at memberships and newsletters. Statamic is great for developers who want a flat-file approach with GraphQL.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
                             "heading_color_dark": "#f1f5f9",
                             "text_color_dark": "#cbd5e1"
                         }
@@ -225,14 +242,14 @@
                 "locale": "fr",
                 "slug": "blogr-homepage-v2",
                 "title": "Blogr — CMS Multilingue",
-                "meta_title": "Blogr — CMS Multilingue pour Laravel \\u0026 FilamentPHP",
+                "meta_title": "Blogr — CMS Multilingue pour Laravel & FilamentPHP",
                 "meta_description": "Un CMS traduction-first construit sur Laravel 12 et FilamentPHP v4.",
                 "blocks": [
                     {
                         "type": "hero",
                         "data": {
                             "title": "Blogr",
-                            "subtitle": "Un CMS multilingue pour Laravel & FilamentPHP — conçu nativement pour le contenu global.",
+                            "subtitle": "Un CMS multilingue pour Laravel & FilamentPHP — conçu nativement pour le contenu mondial.",
                             "cta_text": "Lire le Blog",
                             "cta_link_type": "blog",
                             "cta_url": null,
@@ -279,65 +296,65 @@
                             ],
                             "background_type": "color",
                             "background_color": "#ffffff",
-                            "heading_color": "#1e293b",
-                            "text_color": "#475569",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
                             "background_type_dark": "color",
                             "background_color_dark": "#111827",
-                            "heading_color_dark": "#e2e8f0",
-                            "text_color_dark": "#94a3b8"
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
                         }
                     },
                     {
                         "type": "features",
                         "data": {
                             "title": "Tout ce dont vous avez besoin, rien de superflu",
-                            "subtitle": "Architecture traduction-first, admin FilamentPHP v4, et une stack Laravel 12 moderne.",
-                            "columns": "3",
+                            "subtitle": "Architecture traduction-first, admin FilamentPHP v4, et stack Laravel 12 moderne.",
+                            "columns": 3,
                             "items": [
                                 {
                                     "icon": "heroicon-o-globe-alt",
                                     "title": "Traduction-First",
-                                    "description": "Chaque entité — posts, pages, catégories, tags, séries — est multilingue par conception, pas par ajout."
+                                    "description": "Chaque entité — posts, pages, catégories, tags, séries — est multilingue par conception."
                                 },
                                 {
                                     "icon": "heroicon-o-squares-2x2",
                                     "title": "24+ Blocs de Contenu",
-                                    "description": "Hero, fonctionnalités, témoignages, tarifs, galerie, timeline, FAQ, équipe, vidéo, newsletter, cartes et plus."
+                                    "description": "Hero, fonctionnalités, témoignages, tarifs, galerie, timeline, FAQ, stats, équipes, etc."
                                 },
                                 {
                                     "icon": "heroicon-o-shield-check",
                                     "title": "Admin FilamentPHP v4",
-                                    "description": "Panneau d'administration complet avec accès basé sur les rôles, journaux d'audit et constructeur de pages par blocs."
+                                    "description": "Panneau d'administration complet avec accès basé sur les rôles, logs d'audit et gestion des médias."
                                 },
                                 {
                                     "icon": "heroicon-o-magnifying-glass",
                                     "title": "Optimisé SEO",
-                                    "description": "Sitemaps XML automatiques, URLs canoniques, données structurées, balises meta et routage par locale."
+                                    "description": "Sitemaps XML automatiques, URLs canoniques, données structurées, champs meta et Open Graph."
                                 },
                                 {
                                     "icon": "heroicon-o-cube",
                                     "title": "Templates Personnalisés",
-                                    "description": "7 templates : landing, about, pricing, FAQ, contact, custom et default — chacun avec ses blocs dédiés."
+                                    "description": "7 templates de page : landing, about, pricing, FAQ, contact, custom et default."
                                 },
                                 {
                                     "icon": "heroicon-o-arrow-path",
-                                    "title": "Import \/ Export",
-                                    "description": "Portabilité totale du contenu avec export\/import JSON. Sauvegardez, restaurez et migrez librement."
+                                    "title": "Import / Export",
+                                    "description": "Portabilité totale du contenu avec export/import JSON. Sauvegarde, restauration et migration."
                                 },
                                 {
                                     "icon": "heroicon-o-clock",
                                     "title": "Planification de Contenu",
-                                    "description": "Programmez les publications automatiquement par fuseau horaire. Workflows de brouillon, relecture et publication."
+                                    "description": "Programmez les publications automatiquement par fuseau horaire. Workflow brouillon, relecture, publication."
                                 },
                                 {
                                     "icon": "heroicon-o-code-bracket",
                                     "title": "Développeur Friendly",
-                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, tests Pest et Playwright E2E — 100% open source."
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, tests Pest et Playwright E2E."
                                 },
                                 {
                                     "icon": "heroicon-o-tag",
                                     "title": "Catégories & Tags",
-                                    "description": "Catégorisation multi-niveaux avec slugs par locale. Tri alphabétique automatique des tags. Relations pivot complètes."
+                                    "description": "Catégorisation multi-niveaux avec slugs par locale. Tri alphabétique automatique des tags."
                                 }
                             ],
                             "background_type": "color",
@@ -360,12 +377,12 @@
                             "layout": "grid",
                             "background_type": "color",
                             "background_color": "#ffffff",
-                            "heading_color": "#1e293b",
-                            "text_color": "#475569",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
                             "background_type_dark": "color",
                             "background_color_dark": "#111827",
                             "heading_color_dark": "#f1f5f9",
-                            "text_color_dark": "#94a3b8"
+                            "text_color_dark": "#cbd5e1"
                         }
                     },
                     {
@@ -376,30 +393,47 @@
                                 {
                                     "date": "v0.20 — 2026",
                                     "title": "Pages CMS & Blocs",
-                                    "description": "Constructeur de page complet avec 24+ types de blocs, 7 templates, transitions et support dark mode."
+                                    "description": "Constructeur de page complet avec 24+ types de blocs, 7 templates, transitions, import/export et multilingue."
                                 },
                                 {
                                     "date": "v0.15 — 2025",
                                     "title": "Multilingue Partout",
-                                    "description": "Architecture traduction-first : toutes les entités supportent les slugs, le SEO et le contenu par locale."
+                                    "description": "Architecture traduction-first : toutes les entités supportent le contenu par locale, slugs et champs SEO."
                                 },
                                 {
                                     "date": "v0.10 — 2025",
                                     "title": "Migration FilamentPHP v4",
-                                    "description": "Migration vers Filament v4 avec le nouveau système Schema, navigation améliorée et structure du panneau."
+                                    "description": "Migration vers Filament v4 avec le nouveau système Schema, ressources imbriquées, config de thème et panel builder."
                                 },
                                 {
                                     "date": "v0.1 — 2024",
                                     "title": "Première Release",
-                                    "description": "Première publication publique — plugin blog Laravel avec posts, catégories et tags de base."
+                                    "description": "Première publication publique — plugin blog Laravel avec posts, catégories, tags, SEO et support Markdown."
                                 }
                             ],
                             "background_type": "color",
                             "background_color": "#f8fafc",
                             "heading_color": "#0f172a",
                             "text_color": "#334155",
+                            "subtitle_color": "#64748b",
                             "background_type_dark": "color",
                             "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Blogr vs WordPress vs Ghost vs Statamic\n\n| Caractéristique | Blogr | WordPress | Ghost | Statamic |\n|-----------------|-------|-----------|-------|----------|\n| **Type** | Blog/CMS Laravel PHP | CMS PHP | Blog Node.js | CMS Laravel flat-file |\n| **Multilingue** | ✅ Natif | ⚠️ Extension requise | ❌ Pas natif | ✅ Natif |\n| **Open Source** | ✅ MIT | ✅ GPL | ✅ MIT | ✅ MIT (core) |\n| **Interface Admin** | Moderne (FilamentPHP) | Classique | Minimale | Moderne |\n| **Markdown** | ✅ Complet | ❌ Éditeur blocs | ✅ Natif | ✅ Natif |\n| **Pages CMS** | ✅ Oui | ✅ Oui | ❌ Limité | ✅ Oui |\n| **Commentaires** | ❌ Pas natif | ✅ Intégré | ✅ Intégré | ❌ Pas natif |\n| **Extensions** | ❌ Pas encore | ✅ Écosystème massif | ⚠️ Intégrations | ✅ Extensions |\n| **E-commerce** | ❌ Pas natif | ✅ WooCommerce | ❌ Pas natif | ❌ Pas natif |\n| **Newsletters** | ❌ Pas natif | ⚠️ Extension requise | ✅ Intégré | ❌ Pas natif |\n| **Performances** | ⚡ Rapide | 🐢 Peut être lent | ⚡ Très rapide | ⚡ Rapide |\n| **Courbe d'apprentissage** | Faible (Laravel) | Faible | Faible | Moyenne |\n\n**En résumé :** Blogr est idéal si vous voulez un blog Laravel moderne et multilingue avec un bel interface d'administration et des fonctionnalités CMS complètes. WordPress est le meilleur choix pour les non-développeurs qui ont besoin d'extensions et de support communautaire. Ghost excelle dans les abonnements et les newsletters. Statamic est parfait pour les développeurs qui préfèrent une approche flat-file avec GraphQL.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
                             "heading_color_dark": "#f1f5f9",
                             "text_color_dark": "#cbd5e1"
                         }
@@ -410,6 +444,1822 @@
                             "heading": "Construisez en plusieurs langues dès aujourd'hui.",
                             "subheading": "Open source sous licence MIT. Aucune carte de crédit requise.",
                             "button_text": "Commencer",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "de",
+                "slug": "blogr-homepage-v2",
+                "title": "Blogr — Mehrsprachiges CMS",
+                "meta_title": "Blogr — Mehrsprachiges CMS für Laravel & FilamentPHP",
+                "meta_description": "Ein Translation-First-CMS, entwickelt mit Laravel 12 und FilamentPHP v4.",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Blogr",
+                            "subtitle": "Ein mehrsprachiges CMS für Laravel & FilamentPHP — nativ für globale Inhalte entwickelt.",
+                            "cta_text": "Zum Blog",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#302b63",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "stats",
+                        "data": {
+                            "heading": "Für Inhalte gebaut, für Skalierung entwickelt",
+                            "stats": [
+                                {
+                                    "number": 24,
+                                    "suffix": "+",
+                                    "label": "Blocktypen"
+                                },
+                                {
+                                    "number": 25,
+                                    "suffix": "+",
+                                    "label": "Unterstützte Sprachen"
+                                },
+                                {
+                                    "number": 100,
+                                    "suffix": "%",
+                                    "label": "Open Source"
+                                },
+                                {
+                                    "number": 12,
+                                    "suffix": ".x",
+                                    "label": "Laravel Nativ"
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "features",
+                        "data": {
+                            "title": "Alles was Sie brauchen, nichts was Sie nicht brauchen",
+                            "subtitle": "Translation-First-Architektur, FilamentPHP v4-Admin und moderner Laravel-12-Stack.",
+                            "columns": 3,
+                            "items": [
+                                {
+                                    "icon": "heroicon-o-globe-alt",
+                                    "title": "Translation-First",
+                                    "description": "Jede Entität — Beiträge, Seiten, Kategorien, Tags, Serien — ist von Haus aus mehrsprachig."
+                                },
+                                {
+                                    "icon": "heroicon-o-squares-2x2",
+                                    "title": "24+ Inhaltsblöcke",
+                                    "description": "Hero, Funktionen, Testimonials, Preise, Galerie, Zeitleiste, FAQ, Statistiken, Teams und mehr."
+                                },
+                                {
+                                    "icon": "heroicon-o-shield-check",
+                                    "title": "FilamentPHP v4 Admin",
+                                    "description": "Voll ausgestattetes Admin-Panel mit rollenbasierter Zugriffskontrolle, Audit-Logs und Medienverwaltung."
+                                },
+                                {
+                                    "icon": "heroicon-o-magnifying-glass",
+                                    "title": "SEO Optimiert",
+                                    "description": "Automatische XML-Sitemaps, kanonische URLs, strukturierte Daten, Meta-Felder und Open Graph."
+                                },
+                                {
+                                    "icon": "heroicon-o-cube",
+                                    "title": "Benutzerdefinierte Templates",
+                                    "description": "7 Seiten-Templates: Landing, Über uns, Preise, FAQ, Kontakt, Benutzerdefiniert und Standard."
+                                },
+                                {
+                                    "icon": "heroicon-o-arrow-path",
+                                    "title": "Import / Export",
+                                    "description": "Vollständige Inhaltsportabilität mit JSON-Export/Import. Backup, Wiederherstellung und Migration."
+                                },
+                                {
+                                    "icon": "heroicon-o-clock",
+                                    "title": "Inhaltsplanung",
+                                    "description": "Planen Sie Beiträge zur automatischen Veröffentlichung in verschiedenen Zeitzonen. Entwurf, Überprüfung, Veröffentlichung."
+                                },
+                                {
+                                    "icon": "heroicon-o-code-bracket",
+                                    "title": "Entwicklerfreundlich",
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, Pest-Tests und Playwright E2E."
+                                },
+                                {
+                                    "icon": "heroicon-o-tag",
+                                    "title": "Kategorien & Tags",
+                                    "description": "Mehrstufige Kategorisierung mit sprachspezifischen Slugs. Automatisch sortierte Tags."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "blog_posts",
+                        "data": {
+                            "heading": "Neueste aus dem Blog",
+                            "limit": 3,
+                            "layout": "grid",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "timeline",
+                        "data": {
+                            "heading": "Fahrplan",
+                            "events": [
+                                {
+                                    "date": "v0.20 — 2026",
+                                    "title": "CMS-Seiten & Blöcke",
+                                    "description": "Vollständiger Seiten-Builder mit 24+ Blocktypen, 7 Vorlagen, Übergängen, Import/Export und Mehrsprachigkeit."
+                                },
+                                {
+                                    "date": "v0.15 — 2025",
+                                    "title": "Überall Mehrsprachig",
+                                    "description": "Translation-First-Architektur: Alle Entitäten unterstützen sprachspezifische Inhalte, Slugs und SEO-Metafelder."
+                                },
+                                {
+                                    "date": "v0.10 — 2025",
+                                    "title": "FilamentPHP v4 Migration",
+                                    "description": "Migration zu Filament v4 mit dem neuen Schema-System, verschachtelten Ressourcen, Theme-Konfiguration und Panel-Builder."
+                                },
+                                {
+                                    "date": "v0.1 — 2024",
+                                    "title": "Erste Veröffentlichung",
+                                    "description": "Erste öffentliche Veröffentlichung — Laravel-Blog-Plugin mit Beiträgen, Kategorien, Tags, SEO und Markdown-Unterstützung."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Blogr vs WordPress vs Ghost vs Statamic\n\n| Merkmal | Blogr | WordPress | Ghost | Statamic |\n|---------|-------|-----------|-------|----------|\n| **Typ** | Laravel PHP Blog/CMS | PHP CMS | Node.js Blog | Laravel Flat-File CMS |\n| **Mehrsprachig** | ✅ Nativ | ⚠️ Plugin nötig | ❌ Nicht nativ | ✅ Nativ |\n| **Open Source** | ✅ MIT | ✅ GPL | ✅ MIT | ✅ MIT (Kern) |\n| **Admin-Oberfläche** | Modern (FilamentPHP) | Klassisch | Minimal | Modern |\n| **Markdown** | ✅ Vollständig | ❌ Block-Editor | ✅ Nativ | ✅ Nativ |\n| **CMS-Seiten** | ✅ Ja | ✅ Ja | ❌ Eingeschränkt | ✅ Ja |\n| **Kommentare** | ❌ Nicht nativ | ✅ Integriert | ✅ Integriert | ❌ Nicht nativ |\n| **Plugins/Erweiterungen** | ❌ Noch nicht | ✅ Riesiges Ökosystem | ⚠️ Integrationen | ✅ Erweiterungen |\n| **E-Commerce** | ❌ Nicht nativ | ✅ WooCommerce | ❌ Nicht nativ | ❌ Nicht nativ |\n| **Newsletter** | ❌ Nicht nativ | ⚠️ Plugin nötig | ✅ Integriert | ❌ Nicht nativ |\n| **Leistung** | ⚡ Schnell | 🐢 Kann langsam sein | ⚡ Sehr schnell | ⚡ Schnell |\n| **Lernkurve** | Niedrig (Laravel) | Niedrig | Niedrig | Mittel |\n\n**Fazit:** Blogr ist ideal, wenn Sie einen modernen, mehrsprachigen Laravel-Blog mit einem schönen Admin-Panel und vollständigem CMS wünschen. WordPress ist am besten für Nicht-Entwickler, die Plugins und Community-Unterstützung benötigen. Ghost glänzt bei Mitgliedschaften und Newslettern. Statamic ist großartig für Entwickler, die einen Flat-File-Ansatz mit GraphQL bevorzugen.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Beginnen Sie noch heute in mehreren Sprachen zu bauen.",
+                            "subheading": "Open Source unter MIT-Lizenz. Keine Kreditkarte erforderlich.",
+                            "button_text": "Loslegen",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "el",
+                "slug": "blogr-homepage-v2",
+                "title": "Blogr — Πολύγλωσσο CMS",
+                "meta_title": "Blogr — Πολύγλωσσο CMS για Laravel & FilamentPHP",
+                "meta_description": "Ένα CMS translation-first χτισμένο σε Laravel 12 και FilamentPHP v4.",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Blogr",
+                            "subtitle": "Ένα πολύγλωσσο CMS για Laravel & FilamentPHP — σχεδιασμένο για παγκόσμιο περιεχόμενο.",
+                            "cta_text": "Διαβάστε το Blog",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#302b63",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "stats",
+                        "data": {
+                            "heading": "Χτισμένο για περιεχόμενο, σχεδιασμένο για κλίμακα",
+                            "stats": [
+                                {
+                                    "number": 24,
+                                    "suffix": "+",
+                                    "label": "Τύποι Μπλοκ"
+                                },
+                                {
+                                    "number": 25,
+                                    "suffix": "+",
+                                    "label": "Υποστηριζόμενες Γλώσσες"
+                                },
+                                {
+                                    "number": 100,
+                                    "suffix": "%",
+                                    "label": "Ανοιχτός Κώδικας"
+                                },
+                                {
+                                    "number": 12,
+                                    "suffix": ".x",
+                                    "label": "Laravel Εγγενές"
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "features",
+                        "data": {
+                            "title": "Όλα όσα χρειάζεστε, τίποτα περιττό",
+                            "subtitle": "Αρχιτεκτονική translation-first, διαχείριση FilamentPHP v4 και σύγχρονη στοίβα Laravel 12.",
+                            "columns": 3,
+                            "items": [
+                                {
+                                    "icon": "heroicon-o-globe-alt",
+                                    "title": "Translation-First",
+                                    "description": "Κάθε οντότητα — αναρτήσεις, σελίδες, κατηγορίες, ετικέτες, σειρές — είναι εξ ορισμού πολύγλωσση."
+                                },
+                                {
+                                    "icon": "heroicon-o-squares-2x2",
+                                    "title": "24+ Μπλοκ Περιεχομένου",
+                                    "description": "Hero, λειτουργίες, μαρτυρίες, τιμολόγηση, γκαλερί, χρονολόγιο, FAQ, στατιστικά, ομάδες και άλλα."
+                                },
+                                {
+                                    "icon": "heroicon-o-shield-check",
+                                    "title": "Διαχείριση FilamentPHP v4",
+                                    "description": "Πλήρης πίνακας διαχείρισης με πρόσβαση βάσει ρόλων, αρχεία ελέγχου και διαχείριση πολυμέσων."
+                                },
+                                {
+                                    "icon": "heroicon-o-magnifying-glass",
+                                    "title": "Βελτιστοποίηση SEO",
+                                    "description": "Αυτόματους χάρτες ιστότοπου XML, κανονικές URLs, δομημένα δεδομένα, πεδία meta και Open Graph."
+                                },
+                                {
+                                    "icon": "heroicon-o-cube",
+                                    "title": "Προσαρμοσμένα Πρότυπα",
+                                    "description": "7 πρότυπα σελίδων: landing, about, pricing, FAQ, contact, custom και default."
+                                },
+                                {
+                                    "icon": "heroicon-o-arrow-path",
+                                    "title": "Εισαγωγή / Εξαγωγή",
+                                    "description": "Πλήρης φορητότητα περιεχομένου με εξαγωγή/εισαγωγή JSON. Δημιουργία αντιγράφων, επαναφορά και μετεγκατάσταση."
+                                },
+                                {
+                                    "icon": "heroicon-o-clock",
+                                    "title": "Προγραμματισμός Περιεχομένου",
+                                    "description": "Προγραμματίστε αναρτήσεις για αυτόματη δημοσίευση σε όλες τις ζώνες ώρας. Ροή εργασίας draft, review, publish."
+                                },
+                                {
+                                    "icon": "heroicon-o-code-bracket",
+                                    "title": "Φιλικό για Προγραμματιστές",
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, δοκιμές Pest και Playwright E2E."
+                                },
+                                {
+                                    "icon": "heroicon-o-tag",
+                                    "title": "Κατηγορίες & Ετικέτες",
+                                    "description": "Πολυεπίπεδη κατηγοριοποίηση με slugs ανά τοπική ρύθμιση. Αυτόματη αλφαβητική ταξινόμηση ετικετών."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "blog_posts",
+                        "data": {
+                            "heading": "Τελευταία από το blog",
+                            "limit": 3,
+                            "layout": "grid",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "timeline",
+                        "data": {
+                            "heading": "Χρονοδιάγραμμα",
+                            "events": [
+                                {
+                                    "date": "v0.20 — 2026",
+                                    "title": "Σελίδες CMS & Μπλοκ",
+                                    "description": "Πλήρης δημιουργός σελίδων με 24+ τύπους μπλοκ, 7 πρότυπα, μεταβάσεις, εισαγωγή/εξαγωγή και πολυγλωσσική υποστήριξη."
+                                },
+                                {
+                                    "date": "v0.15 — 2025",
+                                    "title": "Πολύγλωσσο Παντού",
+                                    "description": "Αρχιτεκτονική translation-first: όλες οι οντότητες υποστηρίζουν περιεχόμενο ανά γλώσσα, slugs και πεδία SEO."
+                                },
+                                {
+                                    "date": "v0.10 — 2025",
+                                    "title": "Μετεγκατάσταση FilamentPHP v4",
+                                    "description": "Μετεγκατάσταση σε Filament v4 με το νέο σύστημα Schema, ένθετους πόρους, διαμόρφωση θέματος και panel builder."
+                                },
+                                {
+                                    "date": "v0.1 — 2024",
+                                    "title": "Πρώτη Κυκλοφορία",
+                                    "description": "Αρχική δημόσια κυκλοφορία — πρόσθετο Laravel blog με αναρτήσεις, κατηγορίες, ετικέτες, SEO και υποστήριξη Markdown."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Blogr vs WordPress vs Ghost vs Statamic\n\n| Χαρακτηριστικό | Blogr | WordPress | Ghost | Statamic |\n|-----------------|-------|-----------|-------|----------|\n| **Τύπος** | Laravel PHP blog/CMS | PHP CMS | Node.js blogging | Laravel flat-file CMS |\n| **Πολυγλωσσικό** | ✅ Ενσωματωμένο | ⚠️ Απαιτείται πρόσθετο | ❌ Μη ενσωματωμένο | ✅ Ενσωματωμένο |\n| **Ανοιχτός Κώδικας** | ✅ MIT | ✅ GPL | ✅ MIT | ✅ MIT (πυρήνας) |\n| **Πίνακας Διαχείρισης** | Σύγχρονος (FilamentPHP) | Κλασικός | Ελάχιστος | Σύγχρονος |\n| **Markdown** | ✅ Πλήρης | ❌ Επεξεργαστής μπλοκ | ✅ Ενσωματωμένος | ✅ Ενσωματωμένος |\n| **Σελίδες CMS** | ✅ Ναι | ✅ Ναι | ❌ Περιορισμένες | ✅ Ναι |\n| **Σχόλια** | ❌ Μη ενσωματωμένα | ✅ Ενσωματωμένα | ✅ Ενσωματωμένα | ❌ Μη ενσωματωμένα |\n| **Πρόσθετα** | ❌ Όχι ακόμα | ✅ Τεράστιο οικοσύστημα | ⚠️ Ενσωματώσεις | ✅ Πρόσθετα |\n| **Ηλεκτρονικό Εμπόριο** | ❌ Μη ενσωματωμένο | ✅ WooCommerce | ❌ Μη ενσωματωμένο | ❌ Μη ενσωματωμένο |\n| **Ενημερωτικά Δελτία** | ❌ Μη ενσωματωμένα | ⚠️ Απαιτείται πρόσθετο | ✅ Ενσωματωμένα | ❌ Μη ενσωματωμένα |\n| **Απόδοση** | ⚡ Γρήγορο | 🐢 Μπορεί να είναι αργό | ⚡ Πολύ γρήγορο | ⚡ Γρήγορο |\n| **Καμπύλη Μάθησης** | Χαμηλή (Laravel) | Χαμηλή | Χαμηλή | Μεσαία |\n\n**Συμπέρασμα:** Το Blogr είναι ιδανικό αν θέλετε ένα σύγχρονο, πολύγλωσσο Laravel blog με όμορφο πίνακα διαχείρισης και πλήρεις δυνατότητες CMS. Το WordPress είναι το καλύτερο για μη προγραμματιστές που χρειάζονται πρόσθετα και υποστήριξη κοινότητας. Το Ghost υπερέχει σε συνδρομές και ενημερωτικά δελτία. Το Statamic είναι εξαιρετικό για προγραμματιστές που προτιμούν μια προσέγγιση flat-file με GraphQL.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Ξεκινήστε να χτίζετε σε πολλές γλώσσες σήμερα.",
+                            "subheading": "Ανοιχτός κώδικας με άδεια MIT. Δεν απαιτείται πιστωτική κάρτα.",
+                            "button_text": "Ξεκινήστε",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "es",
+                "slug": "blogr-homepage-v2",
+                "title": "Blogr — CMS Multilingüe",
+                "meta_title": "Blogr — CMS Multilingüe para Laravel & FilamentPHP",
+                "meta_description": "Un CMS translation-first construido sobre Laravel 12 y FilamentPHP v4.",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Blogr",
+                            "subtitle": "Un CMS multilingüe para Laravel & FilamentPHP — diseñado nativamente para contenido global.",
+                            "cta_text": "Leer el Blog",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#302b63",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "stats",
+                        "data": {
+                            "heading": "Construido para contenido, diseñado para escalar",
+                            "stats": [
+                                {
+                                    "number": 24,
+                                    "suffix": "+",
+                                    "label": "Tipos de Bloques"
+                                },
+                                {
+                                    "number": 25,
+                                    "suffix": "+",
+                                    "label": "Idiomas Soportados"
+                                },
+                                {
+                                    "number": 100,
+                                    "suffix": "%",
+                                    "label": "Código Abierto"
+                                },
+                                {
+                                    "number": 12,
+                                    "suffix": ".x",
+                                    "label": "Laravel Nativo"
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "features",
+                        "data": {
+                            "title": "Todo lo que necesitas, nada que no necesites",
+                            "subtitle": "Arquitectura translation-first, panel FilamentPHP v4 y stack moderno Laravel 12.",
+                            "columns": 3,
+                            "items": [
+                                {
+                                    "icon": "heroicon-o-globe-alt",
+                                    "title": "Translation-First",
+                                    "description": "Cada entidad — posts, páginas, categorías, etiquetas, series — es multilingüe por diseño."
+                                },
+                                {
+                                    "icon": "heroicon-o-squares-2x2",
+                                    "title": "24+ Bloques de Contenido",
+                                    "description": "Hero, características, testimonios, precios, galería, línea de tiempo, FAQ, estadísticas, equipos y más."
+                                },
+                                {
+                                    "icon": "heroicon-o-shield-check",
+                                    "title": "Admin FilamentPHP v4",
+                                    "description": "Panel de administración completo con acceso basado en roles, registros de auditoría y gestión de medios."
+                                },
+                                {
+                                    "icon": "heroicon-o-magnifying-glass",
+                                    "title": "Optimizado para SEO",
+                                    "description": "Mapas de sitio XML automáticos, URLs canónicas, datos estructurados, campos meta y Open Graph."
+                                },
+                                {
+                                    "icon": "heroicon-o-cube",
+                                    "title": "Plantillas Personalizadas",
+                                    "description": "7 plantillas de página: landing, about, pricing, FAQ, contact, custom y default."
+                                },
+                                {
+                                    "icon": "heroicon-o-arrow-path",
+                                    "title": "Importar / Exportar",
+                                    "description": "Portabilidad total de contenido con exportación/importación JSON. Copia de seguridad, restauración y migración."
+                                },
+                                {
+                                    "icon": "heroicon-o-clock",
+                                    "title": "Programación de Contenido",
+                                    "description": "Programe publicaciones para publicación automática en todas las zonas horarias. Flujo de trabajo borrador, revisión, publicación."
+                                },
+                                {
+                                    "icon": "heroicon-o-code-bracket",
+                                    "title": "Amigable para Desarrolladores",
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, pruebas Pest y Playwright E2E."
+                                },
+                                {
+                                    "icon": "heroicon-o-tag",
+                                    "title": "Categorías y Etiquetas",
+                                    "description": "Categorización multinivel con slugs por idioma. Etiquetas ordenadas alfabéticamente."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "blog_posts",
+                        "data": {
+                            "heading": "Últimas del blog",
+                            "limit": 3,
+                            "layout": "grid",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "timeline",
+                        "data": {
+                            "heading": "Hoja de ruta",
+                            "events": [
+                                {
+                                    "date": "v0.20 — 2026",
+                                    "title": "Páginas CMS & Bloques",
+                                    "description": "Constructor de páginas completo con 24+ tipos de bloques, 7 plantillas, transiciones, importación/exportación y soporte multilingüe."
+                                },
+                                {
+                                    "date": "v0.15 — 2025",
+                                    "title": "Multilingüe en Todas Partes",
+                                    "description": "Arquitectura translation-first: todas las entidades admiten contenido por idioma, slugs y campos SEO."
+                                },
+                                {
+                                    "date": "v0.10 — 2025",
+                                    "title": "Migración a FilamentPHP v4",
+                                    "description": "Migrado a Filament v4 con el nuevo sistema Schema, recursos anidados, configuración de tema y panel builder."
+                                },
+                                {
+                                    "date": "v0.1 — 2024",
+                                    "title": "Primer Lanzamiento",
+                                    "description": "Lanzamiento público inicial — plugin de blog Laravel con posts, categorías, etiquetas, SEO y soporte Markdown."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Blogr vs WordPress vs Ghost vs Statamic\n\n| Característica | Blogr | WordPress | Ghost | Statamic |\n|----------------|-------|-----------|-------|----------|\n| **Tipo** | Blog/CMS Laravel PHP | CMS PHP | Blog Node.js | CMS Laravel flat-file |\n| **Multilingüe** | ✅ Nativo | ⚠️ Requiere plugin | ❌ No nativo | ✅ Nativo |\n| **Código Abierto** | ✅ MIT | ✅ GPL | ✅ MIT | ✅ MIT (core) |\n| **Panel Admin** | Moderno (FilamentPHP) | Clásico | Mínimo | Moderno |\n| **Markdown** | ✅ Completo | ❌ Editor de bloques | ✅ Nativo | ✅ Nativo |\n| **Páginas CMS** | ✅ Sí | ✅ Sí | ❌ Limitado | ✅ Sí |\n| **Comentarios** | ❌ No nativo | ✅ Integrado | ✅ Integrado | ❌ No nativo |\n| **Plugins** | ❌ Aún no | ✅ Ecosistema masivo | ⚠️ Integraciones | ✅ Complementos |\n| **E-commerce** | ❌ No nativo | ✅ WooCommerce | ❌ No nativo | ❌ No nativo |\n| **Newsletters** | ❌ No nativo | ⚠️ Requiere plugin | ✅ Integrado | ❌ No nativo |\n| **Rendimiento** | ⚡ Rápido | 🐢 Puede ser lento | ⚡ Muy rápido | ⚡ Rápido |\n| **Curva de aprendizaje** | Baja (Laravel) | Baja | Baja | Media |\n\n**Conclusión:** Blogr es ideal si buscas un blog Laravel moderno y multilingüe con un hermoso panel de administración y CMS completo. WordPress es la mejor opción para no desarrolladores que necesitan plugins y apoyo comunitario. Ghost destaca en membresías y newsletters. Statamic es excelente para desarrolladores que quieren un enfoque flat-file con GraphQL.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Comience a construir en varios idiomas hoy.",
+                            "subheading": "Código abierto con licencia MIT. No se requiere tarjeta de crédito.",
+                            "button_text": "Comenzar",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "it",
+                "slug": "blogr-homepage-v2",
+                "title": "Blogr — CMS Multilingua",
+                "meta_title": "Blogr — CMS Multilingua per Laravel & FilamentPHP",
+                "meta_description": "Un CMS translation-first costruito su Laravel 12 e FilamentPHP v4.",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Blogr",
+                            "subtitle": "Un CMS multilingua per Laravel & FilamentPHP — progettato nativamente per contenuti globali.",
+                            "cta_text": "Leggi il Blog",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#302b63",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "stats",
+                        "data": {
+                            "heading": "Costruito per i contenuti, progettato per scalare",
+                            "stats": [
+                                {
+                                    "number": 24,
+                                    "suffix": "+",
+                                    "label": "Tipi di Blocchi"
+                                },
+                                {
+                                    "number": 25,
+                                    "suffix": "+",
+                                    "label": "Lingue Supportate"
+                                },
+                                {
+                                    "number": 100,
+                                    "suffix": "%",
+                                    "label": "Open Source"
+                                },
+                                {
+                                    "number": 12,
+                                    "suffix": ".x",
+                                    "label": "Laravel Nativo"
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "features",
+                        "data": {
+                            "title": "Tutto ciò che serve, niente di superfluo",
+                            "subtitle": "Architettura translation-first, admin FilamentPHP v4 e stack Laravel 12 moderno.",
+                            "columns": 3,
+                            "items": [
+                                {
+                                    "icon": "heroicon-o-globe-alt",
+                                    "title": "Translation-First",
+                                    "description": "Ogni entità — post, pagine, categorie, tag, serie — è multilingua per progettazione."
+                                },
+                                {
+                                    "icon": "heroicon-o-squares-2x2",
+                                    "title": "24+ Blocchi di Contenuto",
+                                    "description": "Hero, caratteristiche, testimonianze, prezzi, galleria, timeline, FAQ, statistiche, team e altro."
+                                },
+                                {
+                                    "icon": "heroicon-o-shield-check",
+                                    "title": "Admin FilamentPHP v4",
+                                    "description": "Pannello di amministrazione completo con accesso basato sui ruoli, log di audit e gestione media."
+                                },
+                                {
+                                    "icon": "heroicon-o-magnifying-glass",
+                                    "title": "Ottimizzato SEO",
+                                    "description": "Mappe del sito XML automatiche, URL canoniche, dati strutturati, campi meta e Open Graph."
+                                },
+                                {
+                                    "icon": "heroicon-o-cube",
+                                    "title": "Template Personalizzati",
+                                    "description": "7 template di pagina: landing, about, pricing, FAQ, contact, custom e default."
+                                },
+                                {
+                                    "icon": "heroicon-o-arrow-path",
+                                    "title": "Import / Export",
+                                    "description": "Portabilità completa dei contenuti con esportazione/importazione JSON. Backup, ripristino e migrazione."
+                                },
+                                {
+                                    "icon": "heroicon-o-clock",
+                                    "title": "Pianificazione Contenuti",
+                                    "description": "Pianifica post per pubblicazione automatica in tutti i fusi orari. Flusso bozza, revisione, pubblicazione."
+                                },
+                                {
+                                    "icon": "heroicon-o-code-bracket",
+                                    "title": "Amichevole per Sviluppatori",
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, test Pest e Playwright E2E."
+                                },
+                                {
+                                    "icon": "heroicon-o-tag",
+                                    "title": "Categorie & Tag",
+                                    "description": "Categorizzazione multilivello con slug per lingua. Tag ordinati alfabeticamente automaticamente."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "blog_posts",
+                        "data": {
+                            "heading": "Ultimi dal blog",
+                            "limit": 3,
+                            "layout": "grid",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "timeline",
+                        "data": {
+                            "heading": "Tabella di marcia",
+                            "events": [
+                                {
+                                    "date": "v0.20 — 2026",
+                                    "title": "Pagine CMS & Blocchi",
+                                    "description": "Page builder completo con 24+ tipi di blocco, 7 template, transizioni, import/export e supporto multilingua."
+                                },
+                                {
+                                    "date": "v0.15 — 2025",
+                                    "title": "Multilingua Ovunque",
+                                    "description": "Architettura translation-first: tutte le entità supportano contenuti per lingua, slug e campi SEO."
+                                },
+                                {
+                                    "date": "v0.10 — 2025",
+                                    "title": "Migrazione FilamentPHP v4",
+                                    "description": "Migrato a Filament v4 con il nuovo sistema Schema, risorse annidate, configurazione tema e panel builder."
+                                },
+                                {
+                                    "date": "v0.1 — 2024",
+                                    "title": "Primo Rilascio",
+                                    "description": "Rilascio pubblico iniziale — plugin blog Laravel con post, categorie, tag, SEO e supporto Markdown."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Blogr vs WordPress vs Ghost vs Statamic\n\n| Caratteristica | Blogr | WordPress | Ghost | Statamic |\n|----------------|-------|-----------|-------|----------|\n| **Tipo** | Blog/CMS Laravel PHP | CMS PHP | Blog Node.js | CMS Laravel flat-file |\n| **Multilingua** | ✅ Nativo | ⚠️ Plugin richiesto | ❌ Non nativo | ✅ Nativo |\n| **Open Source** | ✅ MIT | ✅ GPL | ✅ MIT | ✅ MIT (core) |\n| **Pannello Admin** | Moderno (FilamentPHP) | Classico | Minimo | Moderno |\n| **Markdown** | ✅ Completo | ❌ Editor a blocchi | ✅ Nativo | ✅ Nativo |\n| **Pagine CMS** | ✅ Sì | ✅ Sì | ❌ Limitato | ✅ Sì |\n| **Commenti** | ❌ Non nativo | ✅ Integrato | ✅ Integrato | ❌ Non nativo |\n| **Plugin/Estensioni** | ❌ Non ancora | ✅ Ecosistema enorme | ⚠️ Integrazioni | ✅ Estensioni |\n| **E-commerce** | ❌ Non nativo | ✅ WooCommerce | ❌ Non nativo | ❌ Non nativo |\n| **Newsletter** | ❌ Non nativo | ⚠️ Plugin richiesto | ✅ Integrato | ❌ Non nativo |\n| **Prestazioni** | ⚡ Veloce | 🐢 Può essere lento | ⚡ Molto veloce | ⚡ Veloce |\n| **Curva di apprendimento** | Bassa (Laravel) | Bassa | Bassa | Media |\n\n**In sintesi:** Blogr è ideale se vuoi un blog Laravel moderno e multilingue con una bellissima interfaccia di amministrazione e funzionalità CMS complete. WordPress è la scelta migliore per chi non è sviluppatore e ha bisogno di plugin e supporto dalla comunità. Ghost eccelle in abbonamenti e newsletter. Statamic è ottimo per sviluppatori che preferiscono un approccio flat-file con GraphQL.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Inizia a costruire in più lingue oggi.",
+                            "subheading": "Open source con licenza MIT. Nessuna carta di credito richiesta.",
+                            "button_text": "Inizia",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "no",
+                "slug": "blogr-homepage-v2",
+                "title": "Blogr — Flerspråklig CMS",
+                "meta_title": "Blogr — Flerspråklig CMS for Laravel & FilamentPHP",
+                "meta_description": "Et translation-first CMS bygget på Laravel 12 og FilamentPHP v4.",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Blogr",
+                            "subtitle": "Et flerspråklig CMS for Laravel & FilamentPHP — designet for globalt innhold.",
+                            "cta_text": "Les Bloggen",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#302b63",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "stats",
+                        "data": {
+                            "heading": "Bygget for innhold, konstruert for skala",
+                            "stats": [
+                                {
+                                    "number": 24,
+                                    "suffix": "+",
+                                    "label": "Blokktyper"
+                                },
+                                {
+                                    "number": 25,
+                                    "suffix": "+",
+                                    "label": "Støttede Språk"
+                                },
+                                {
+                                    "number": 100,
+                                    "suffix": "%",
+                                    "label": "Åpen Kildekode"
+                                },
+                                {
+                                    "number": 12,
+                                    "suffix": ".x",
+                                    "label": "Laravel Native"
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "features",
+                        "data": {
+                            "title": "Alt du trenger, ingenting du ikke trenger",
+                            "subtitle": "Translation-first-arkitektur, FilamentPHP v4-administrasjon og moderne Laravel 12-stabel.",
+                            "columns": 3,
+                            "items": [
+                                {
+                                    "icon": "heroicon-o-globe-alt",
+                                    "title": "Translation-First",
+                                    "description": "Hver enhet — innlegg, sider, kategorier, tagger, serier — er flerspråklig av design."
+                                },
+                                {
+                                    "icon": "heroicon-o-squares-2x2",
+                                    "title": "24+ Innholdsblokker",
+                                    "description": "Hero, funksjoner, attester, priser, galleri, tidslinje, FAQ, statistikk, team og mer."
+                                },
+                                {
+                                    "icon": "heroicon-o-shield-check",
+                                    "title": "FilamentPHP v4 Admin",
+                                    "description": "Fullt administrasjonspanel med rolletilgang, revisjonslogger og mediehåndtering."
+                                },
+                                {
+                                    "icon": "heroicon-o-magnifying-glass",
+                                    "title": "SEO-optimalisert",
+                                    "description": "Automatiske XML-sitemaps, kanoniske URL-er, strukturerte data, metafelt og Open Graph."
+                                },
+                                {
+                                    "icon": "heroicon-o-cube",
+                                    "title": "Egendefinerte Maler",
+                                    "description": "7 sidemaler: landing, about, pricing, FAQ, contact, custom og default."
+                                },
+                                {
+                                    "icon": "heroicon-o-arrow-path",
+                                    "title": "Import / Eksport",
+                                    "description": "Full innholdsportabilitet med JSON-eksport/import. Sikkerhetskopiering, gjenoppretting og migrering."
+                                },
+                                {
+                                    "icon": "heroicon-o-clock",
+                                    "title": "Innholdsplanlegging",
+                                    "description": "Planlegg innlegg for automatisk publisering på tvers av tidssoner. Utkast, gjennomgang, publisering."
+                                },
+                                {
+                                    "icon": "heroicon-o-code-bracket",
+                                    "title": "Utviklervennlig",
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, Pest-tester og Playwright E2E."
+                                },
+                                {
+                                    "icon": "heroicon-o-tag",
+                                    "title": "Kategorier & Tagger",
+                                    "description": "Flernivåkategorisering med per-lokale slug. Tagger sortert alfabetisk automatisk."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "blog_posts",
+                        "data": {
+                            "heading": "Siste fra bloggen",
+                            "limit": 3,
+                            "layout": "grid",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "timeline",
+                        "data": {
+                            "heading": "Veikart",
+                            "events": [
+                                {
+                                    "date": "v0.20 — 2026",
+                                    "title": "CMS-sider & Blokker",
+                                    "description": "Full sidebygger med 24+ blokktyper, 7 maler, overganger, import/eksport og flerspråklig støtte."
+                                },
+                                {
+                                    "date": "v0.15 — 2025",
+                                    "title": "Flerspråklig Overalt",
+                                    "description": "Translation-first-arkitektur: alle enheter støtter innhold per språk, slug og SEO-metafelt."
+                                },
+                                {
+                                    "date": "v0.10 — 2025",
+                                    "title": "FilamentPHP v4 Migrering",
+                                    "description": "Migrert til Filament v4 med det nye Schema-systemet, nestede ressurser, temakonfigurasjon og panelbygger."
+                                },
+                                {
+                                    "date": "v0.1 — 2024",
+                                    "title": "Første Utgivelse",
+                                    "description": "Første offentlige utgivelse — Laravel-bloggplugin med innlegg, kategorier, tagger, SEO og Markdown-støtte."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Blogr vs WordPress vs Ghost vs Statamic\n\n| Funksjon | Blogr | WordPress | Ghost | Statamic |\n|----------|-------|-----------|-------|----------|\n| **Type** | Laravel PHP blogg/CMS | PHP CMS | Node.js blogging | Laravel flat-file CMS |\n| **Flerspråklig** | ✅ Innebygd | ⚠️ Krever utvidelse | ❌ Ikke innebygd | ✅ Innebygd |\n| **Open Source** | ✅ MIT | ✅ GPL | ✅ MIT | ✅ MIT (kjerne) |\n| **Administrasjon** | Moderne (FilamentPHP) | Klassisk | Minimal | Moderne |\n| **Markdown** | ✅ Full støtte | ❌ Blokkredigering | ✅ Innebygd | ✅ Innebygd |\n| **CMS-sider** | ✅ Ja | ✅ Ja | ❌ Begrenset | ✅ Ja |\n| **Kommentarer** | ❌ Ikke innebygd | ✅ Innebygd | ✅ Innebygd | ❌ Ikke innebygd |\n| **Utvidelser** | ❌ Ikke ennå | ✅ Stort økosystem | ⚠️ Integrasjoner | ✅ Tillegg |\n| **E-handel** | ❌ Ikke innebygd | ✅ WooCommerce | ❌ Ikke innebygd | ❌ Ikke innebygd |\n| **Nyhetsbrev** | ❌ Ikke innebygd | ⚠️ Krever utvidelse | ✅ Innebygd | ❌ Ikke innebygd |\n| **Ytelse** | ⚡ Rask | 🐢 Kan være treg | ⚡ Veldig rask | ⚡ Rask |\n| **Læringskurve** | Lav (Laravel) | Lav | Lav | Middels |\n\n**Oppsummering:** Blogr er ideelt hvis du vil ha en moderne, flerspråklig Laravel-blogg med et vakkert administrasjonspanel og full CMS-funksjonalitet. WordPress er best for ikke-utviklere som trenger utvidelser og fellesskapsstøtte. Ghost utmerker seg med medlemskap og nyhetsbrev. Statamic er flott for utviklere som foretrekker en flat-file-tilnærming med GraphQL.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Begynn å bygge på flere språk i dag.",
+                            "subheading": "Åpen kildekode under MIT-lisens. Ingen kredittkort nødvendig.",
+                            "button_text": "Kom i gang",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "pl",
+                "slug": "blogr-homepage-v2",
+                "title": "Blogr — Wielojęzyczny CMS",
+                "meta_title": "Blogr — Wielojęzyczny CMS dla Laravel & FilamentPHP",
+                "meta_description": "CMS translation-first zbudowany na Laravel 12 i FilamentPHP v4.",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Blogr",
+                            "subtitle": "Wielojęzyczny CMS dla Laravel & FilamentPHP — zaprojektowany dla globalnych treści.",
+                            "cta_text": "Czytaj Blog",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#302b63",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "stats",
+                        "data": {
+                            "heading": "Zbudowany dla treści, zaprojektowany do skalowania",
+                            "stats": [
+                                {
+                                    "number": 24,
+                                    "suffix": "+",
+                                    "label": "Typy Bloków"
+                                },
+                                {
+                                    "number": 25,
+                                    "suffix": "+",
+                                    "label": "Obsługiwane Języki"
+                                },
+                                {
+                                    "number": 100,
+                                    "suffix": "%",
+                                    "label": "Open Source"
+                                },
+                                {
+                                    "number": 12,
+                                    "suffix": ".x",
+                                    "label": "Laravel Natywny"
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "features",
+                        "data": {
+                            "title": "Wszystko czego potrzebujesz, niczego zbędnego",
+                            "subtitle": "Architektura translation-first, panel FilamentPHP v4 i nowoczesny stos Laravel 12.",
+                            "columns": 3,
+                            "items": [
+                                {
+                                    "icon": "heroicon-o-globe-alt",
+                                    "title": "Translation-First",
+                                    "description": "Każda encja — posty, strony, kategorie, tagi, serie — jest wielojęzyczna z założenia."
+                                },
+                                {
+                                    "icon": "heroicon-o-squares-2x2",
+                                    "title": "24+ Bloków Treści",
+                                    "description": "Hero, funkcje, referencje, cennik, galeria, oś czasu, FAQ, statystyki, zespoły i więcej."
+                                },
+                                {
+                                    "icon": "heroicon-o-shield-check",
+                                    "title": "Admin FilamentPHP v4",
+                                    "description": "Pełny panel administracyjny z dostępem opartym na rolach, dziennikami audytu i zarządzaniem mediami."
+                                },
+                                {
+                                    "icon": "heroicon-o-magnifying-glass",
+                                    "title": "Zoptymalizowane SEO",
+                                    "description": "Automatyczne mapy XML, kanoniczne URL-e, dane strukturalne, pola meta i Open Graph."
+                                },
+                                {
+                                    "icon": "heroicon-o-cube",
+                                    "title": "Niestandardowe Szablony",
+                                    "description": "7 szablonów stron: landing, about, pricing, FAQ, contact, custom i default."
+                                },
+                                {
+                                    "icon": "heroicon-o-arrow-path",
+                                    "title": "Import / Eksport",
+                                    "description": "Pełna przenośność treści z eksportem/importem JSON. Kopia zapasowa, przywracanie i migracja."
+                                },
+                                {
+                                    "icon": "heroicon-o-clock",
+                                    "title": "Planowanie Treści",
+                                    "description": "Planuj posty do automatycznej publikacji w różnych strefach czasowych. Przepływ: szkic, recenzja, publikacja."
+                                },
+                                {
+                                    "icon": "heroicon-o-code-bracket",
+                                    "title": "Przyjazny Deweloperom",
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, testy Pest i Playwright E2E."
+                                },
+                                {
+                                    "icon": "heroicon-o-tag",
+                                    "title": "Kategorie i Tagi",
+                                    "description": "Wielopoziomowa kategoryzacja z slugami dla każdego języka. Tagi sortowane alfabetycznie."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "blog_posts",
+                        "data": {
+                            "heading": "Najnowsze z bloga",
+                            "limit": 3,
+                            "layout": "grid",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "timeline",
+                        "data": {
+                            "heading": "Plan działania",
+                            "events": [
+                                {
+                                    "date": "v0.20 — 2026",
+                                    "title": "Strony CMS & Bloki",
+                                    "description": "Pełny kreator stron z 24+ typami bloków, 7 szablonami, przejściami, importem/eksportem i obsługą wielojęzyczności."
+                                },
+                                {
+                                    "date": "v0.15 — 2025",
+                                    "title": "Wielojęzyczność Wszędzie",
+                                    "description": "Architektura translation-first: wszystkie encje obsługują treści dla każdego języka, slugi i pola SEO."
+                                },
+                                {
+                                    "date": "v0.10 — 2025",
+                                    "title": "Migracja do FilamentPHP v4",
+                                    "description": "Migracja do Filament v4 z nowym systemem Schema, zagnieżdżonymi zasobami, konfiguracją motywu i panel builder."
+                                },
+                                {
+                                    "date": "v0.1 — 2024",
+                                    "title": "Pierwsze Wydanie",
+                                    "description": "Pierwsze publiczne wydanie — wtyczka bloga Laravel z postami, kategoriami, tagami, SEO i obsługą Markdown."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Blogr vs WordPress vs Ghost vs Statamic\n\n| Cecha | Blogr | WordPress | Ghost | Statamic |\n|-------|-------|-----------|-------|----------|\n| **Typ** | Blog/CMS Laravel PHP | CMS PHP | Blog Node.js | CMS Laravel flat-file |\n| **Wielojęzyczność** | ✅ Natywna | ⚠️ Wymaga wtyczki | ❌ Brak natywnej | ✅ Natywna |\n| **Open Source** | ✅ MIT | ✅ GPL | ✅ MIT | ✅ MIT (rdzeń) |\n| **Panel admin** | Nowoczesny (FilamentPHP) | Klasyczny | Minimalny | Nowoczesny |\n| **Markdown** | ✅ Pełny | ❌ Edytor blokowy | ✅ Natywny | ✅ Natywny |\n| **Strony CMS** | ✅ Tak | ✅ Tak | ❌ Ograniczone | ✅ Tak |\n| **Komentarze** | ❌ Brak natywnych | ✅ Wbudowane | ✅ Wbudowane | ❌ Brak natywnych |\n| **Wtyczki** | ❌ Jeszcze nie | ✅ Ogromny ekosystem | ⚠️ Integracje | ✅ Dodatki |\n| **E-commerce** | ❌ Brak natywnego | ✅ WooCommerce | ❌ Brak natywnego | ❌ Brak natywnego |\n| **Newslettery** | ❌ Brak natywnego | ⚠️ Wymaga wtyczki | ✅ Wbudowane | ❌ Brak natywnego |\n| **Wydajność** | ⚡ Szybki | 🐢 Może być wolny | ⚡ Bardzo szybki | ⚡ Szybki |\n| **Krzywa uczenia** | Niska (Laravel) | Niska | Niska | Średnia |\n\n**Podsumowanie:** Blogr jest idealny, jeśli chcesz nowoczesnego, wielojęzycznego bloga Laravel z pięknym panelem administracyjnym i pełnym CMS. WordPress jest najlepszy dla nie-programistów potrzebujących wtyczek i wsparcia społeczności. Ghost wyróżnia się w subskrypcjach i newsletterach. Statamic jest świetny dla programistów szukających podejścia flat-file z GraphQL.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Zacznij budować w wielu językach już dziś.",
+                            "subheading": "Open source na licencji MIT. Karta kredytowa nie jest wymagana.",
+                            "button_text": "Rozpocznij",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "pt",
+                "slug": "blogr-homepage-v2",
+                "title": "Blogr — CMS Multilíngue",
+                "meta_title": "Blogr — CMS Multilíngue para Laravel & FilamentPHP",
+                "meta_description": "Um CMS translation-first construído no Laravel 12 e FilamentPHP v4.",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Blogr",
+                            "subtitle": "Um CMS multilingue para Laravel & FilamentPHP — projetado nativamente para conteúdo global.",
+                            "cta_text": "Ler o Blog",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#302b63",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "stats",
+                        "data": {
+                            "heading": "Construído para conteúdo, projetado para escalar",
+                            "stats": [
+                                {
+                                    "number": 24,
+                                    "suffix": "+",
+                                    "label": "Tipos de Bloco"
+                                },
+                                {
+                                    "number": 25,
+                                    "suffix": "+",
+                                    "label": "Idiomas Suportados"
+                                },
+                                {
+                                    "number": 100,
+                                    "suffix": "%",
+                                    "label": "Código Aberto"
+                                },
+                                {
+                                    "number": 12,
+                                    "suffix": ".x",
+                                    "label": "Laravel Nativo"
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "features",
+                        "data": {
+                            "title": "Tudo que você precisa, nada que não precise",
+                            "subtitle": "Arquitetura translation-first, admin FilamentPHP v4 e stack moderno Laravel 12.",
+                            "columns": 3,
+                            "items": [
+                                {
+                                    "icon": "heroicon-o-globe-alt",
+                                    "title": "Translation-First",
+                                    "description": "Cada entidade — posts, páginas, categorias, tags, séries — é multilíngue por design."
+                                },
+                                {
+                                    "icon": "heroicon-o-squares-2x2",
+                                    "title": "24+ Blocos de Conteúdo",
+                                    "description": "Hero, recursos, depoimentos, preços, galeria, linha do tempo, FAQ, estatísticas, equipes e mais."
+                                },
+                                {
+                                    "icon": "heroicon-o-shield-check",
+                                    "title": "Admin FilamentPHP v4",
+                                    "description": "Painel de administração completo com acesso baseado em funções, logs de auditoria e gerenciamento de mídia."
+                                },
+                                {
+                                    "icon": "heroicon-o-magnifying-glass",
+                                    "title": "Otimizado para SEO",
+                                    "description": "Mapas de site XML automáticos, URLs canônicas, dados estruturados, campos meta e Open Graph."
+                                },
+                                {
+                                    "icon": "heroicon-o-cube",
+                                    "title": "Modelos Personalizados",
+                                    "description": "7 modelos de página: landing, about, pricing, FAQ, contact, custom e default."
+                                },
+                                {
+                                    "icon": "heroicon-o-arrow-path",
+                                    "title": "Importar / Exportar",
+                                    "description": "Portabilidade total de conteúdo com exportação/importação JSON. Backup, restauração e migração."
+                                },
+                                {
+                                    "icon": "heroicon-o-clock",
+                                    "title": "Agendamento de Conteúdo",
+                                    "description": "Agende posts para publicação automática em todos os fusos horários. Fluxo rascunho, revisão, publicação."
+                                },
+                                {
+                                    "icon": "heroicon-o-code-bracket",
+                                    "title": "Amigável para Desenvolvedores",
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, testes Pest e Playwright E2E."
+                                },
+                                {
+                                    "icon": "heroicon-o-tag",
+                                    "title": "Categorias & Tags",
+                                    "description": "Categorização em vários níveis com slugs por idioma. Tags ordenadas automaticamente em ordem alfabética."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "blog_posts",
+                        "data": {
+                            "heading": "Últimos do blog",
+                            "limit": 3,
+                            "layout": "grid",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "timeline",
+                        "data": {
+                            "heading": "Roteiro",
+                            "events": [
+                                {
+                                    "date": "v0.20 — 2026",
+                                    "title": "Páginas CMS & Blocos",
+                                    "description": "Construtor de páginas completo com 24+ tipos de bloco, 7 modelos, transições, importação/exportação e suporte multilíngue."
+                                },
+                                {
+                                    "date": "v0.15 — 2025",
+                                    "title": "Multilíngue em Toda Parte",
+                                    "description": "Arquitetura translation-first: todas as entidades suportam conteúdo por idioma, slugs e campos SEO."
+                                },
+                                {
+                                    "date": "v0.10 — 2025",
+                                    "title": "Migração FilamentPHP v4",
+                                    "description": "Migrado para Filament v4 com o novo sistema Schema, recursos aninhados, configuração de tema e construtor de painel."
+                                },
+                                {
+                                    "date": "v0.1 — 2024",
+                                    "title": "Primeiro Lançamento",
+                                    "description": "Lançamento público inicial — plugin de blog Laravel com posts, categorias, tags, SEO e suporte Markdown."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Blogr vs WordPress vs Ghost vs Statamic\n\n| Característica | Blogr | WordPress | Ghost | Statamic |\n|----------------|-------|-----------|-------|----------|\n| **Tipo** | Blog/CMS Laravel PHP | CMS PHP | Blog Node.js | CMS Laravel flat-file |\n| **Multilíngue** | ✅ Nativo | ⚠️ Plugin necessário | ❌ Não nativo | ✅ Nativo |\n| **Código Aberto** | ✅ MIT | ✅ GPL | ✅ MIT | ✅ MIT (núcleo) |\n| **Painel Admin** | Moderno (FilamentPHP) | Clássico | Mínimo | Moderno |\n| **Markdown** | ✅ Completo | ❌ Editor de blocos | ✅ Nativo | ✅ Nativo |\n| **Páginas CMS** | ✅ Sim | ✅ Sim | ❌ Limitado | ✅ Sim |\n| **Comentários** | ❌ Não nativo | ✅ Integrado | ✅ Integrado | ❌ Não nativo |\n| **Plugins** | ❌ Ainda não | ✅ Ecossistema massivo | ⚠️ Integrações | ✅ Complementos |\n| **E-commerce** | ❌ Não nativo | ✅ WooCommerce | ❌ Não nativo | ❌ Não nativo |\n| **Newsletters** | ❌ Não nativo | ⚠️ Plugin necessário | ✅ Integrado | ❌ Não nativo |\n| **Desempenho** | ⚡ Rápido | 🐢 Pode ser lento | ⚡ Muito rápido | ⚡ Rápido |\n| **Curva de aprendizado** | Baixa (Laravel) | Baixa | Baixa | Média |\n\n**Resumo:** Blogr é ideal para quem quer um blog Laravel moderno e multilíngue com um belo painel de administração e CMS completo. WordPress é a melhor escolha para não desenvolvedores que precisam de plugins e suporte da comunidade. Ghost se destaca em assinaturas e newsletters. Statamic é ótimo para desenvolvedores que preferem uma abordagem flat-file com GraphQL.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Comece a construir em vários idiomas hoje.",
+                            "subheading": "Código aberto licenciado sob MIT. Sem cartão de crédito necessário.",
+                            "button_text": "Começar",
+                            "button_link_type": "blog",
+                            "button_url": null,
+                            "button_category_id": null,
+                            "button_cms_page_id": null,
+                            "button_style": "primary",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-l",
+                            "heading_color": "#ffffff",
+                            "subtitle_color": "#e0e7ff",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#24243e",
+                            "gradient_to_dark": "#0f0c29",
+                            "gradient_direction_dark": "to-l",
+                            "heading_color_dark": "#f1f5f9",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    }
+                ]
+            },
+            {
+                "locale": "ru",
+                "slug": "blogr-homepage-v2",
+                "title": "Blogr — Многоязычная CMS",
+                "meta_title": "Blogr — Многоязычная CMS для Laravel & FilamentPHP",
+                "meta_description": "Translation-first CMS, построенная на Laravel 12 и FilamentPHP v4.",
+                "blocks": [
+                    {
+                        "type": "hero",
+                        "data": {
+                            "title": "Blogr",
+                            "subtitle": "Многоязычная CMS для Laravel & FilamentPHP — создана для глобального контента.",
+                            "cta_text": "Читать Блог",
+                            "cta_link_type": "blog",
+                            "cta_url": null,
+                            "cta_category_id": null,
+                            "cta_cms_page_id": null,
+                            "alignment": "center",
+                            "background_type": "gradient",
+                            "gradient_from": "#4f46e5",
+                            "gradient_to": "#7c3aed",
+                            "gradient_direction": "to-br",
+                            "background_type_dark": "gradient",
+                            "gradient_from_dark": "#0f0c29",
+                            "gradient_to_dark": "#302b63",
+                            "gradient_direction_dark": "to-br",
+                            "text_shadow": true,
+                            "shadow_intensity": "medium"
+                        }
+                    },
+                    {
+                        "type": "stats",
+                        "data": {
+                            "heading": "Создан для контента, спроектирован для масштабирования",
+                            "stats": [
+                                {
+                                    "number": 24,
+                                    "suffix": "+",
+                                    "label": "Типы Блоков"
+                                },
+                                {
+                                    "number": 25,
+                                    "suffix": "+",
+                                    "label": "Поддерживаемые Языки"
+                                },
+                                {
+                                    "number": 100,
+                                    "suffix": "%",
+                                    "label": "Открытый Код"
+                                },
+                                {
+                                    "number": 12,
+                                    "suffix": ".x",
+                                    "label": "Laravel Нативный"
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "features",
+                        "data": {
+                            "title": "Всё необходимое, ничего лишнего",
+                            "subtitle": "Архитектура translation-first, панель FilamentPHP v4 и современный стек Laravel 12.",
+                            "columns": 3,
+                            "items": [
+                                {
+                                    "icon": "heroicon-o-globe-alt",
+                                    "title": "Translation-First",
+                                    "description": "Каждая сущность — записи, страницы, категории, теги, серии — многоязычна по умолчанию."
+                                },
+                                {
+                                    "icon": "heroicon-o-squares-2x2",
+                                    "title": "24+ Блоков Контента",
+                                    "description": "Hero, возможности, отзывы, цены, галерея, хронология, FAQ, статистика, команды и другое."
+                                },
+                                {
+                                    "icon": "heroicon-o-shield-check",
+                                    "title": "Панель FilamentPHP v4",
+                                    "description": "Полнофункциональная панель управления с ролевым доступом, журналами аудита и управлением медиа."
+                                },
+                                {
+                                    "icon": "heroicon-o-magnifying-glass",
+                                    "title": "Оптимизировано для SEO",
+                                    "description": "Автоматические XML-карты сайта, канонические URL, структурированные данные, мета-поля и Open Graph."
+                                },
+                                {
+                                    "icon": "heroicon-o-cube",
+                                    "title": "Пользовательские Шаблоны",
+                                    "description": "7 шаблонов страниц: landing, about, pricing, FAQ, contact, custom и default."
+                                },
+                                {
+                                    "icon": "heroicon-o-arrow-path",
+                                    "title": "Импорт / Экспорт",
+                                    "description": "Полная переносимость контента с JSON экспортом/импортом. Резервное копирование, восстановление и миграция."
+                                },
+                                {
+                                    "icon": "heroicon-o-clock",
+                                    "title": "Планирование Контента",
+                                    "description": "Планируйте публикации для автоматической публикации в разных часовых поясах. Рабочий процесс: черновик, рецензия, публикация."
+                                },
+                                {
+                                    "icon": "heroicon-o-code-bracket",
+                                    "title": "Для Разработчиков",
+                                    "description": "PHP 8.3+, Laravel 12, Tailwind CSS 4, Vite, тесты Pest и Playwright E2E."
+                                },
+                                {
+                                    "icon": "heroicon-o-tag",
+                                    "title": "Категории и Теги",
+                                    "description": "Многоуровневая категоризация с slug для каждого языка. Автоматическая сортировка тегов по алфавиту."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "blog_posts",
+                        "data": {
+                            "heading": "Последние из блога",
+                            "limit": 3,
+                            "layout": "grid",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "timeline",
+                        "data": {
+                            "heading": "План развития",
+                            "events": [
+                                {
+                                    "date": "v0.20 — 2026",
+                                    "title": "Страницы CMS и Блоки",
+                                    "description": "Полный конструктор страниц с 24+ типами блоков, 7 шаблонами, переходами, импортом/экспортом и мультиязычной поддержкой."
+                                },
+                                {
+                                    "date": "v0.15 — 2025",
+                                    "title": "Многоязычность Везде",
+                                    "description": "Архитектура translation-first: все сущности поддерживают контент для каждого языка, slug и SEO-поля."
+                                },
+                                {
+                                    "date": "v0.10 — 2025",
+                                    "title": "Миграция на FilamentPHP v4",
+                                    "description": "Мигрировано на Filament v4 с новой системой Schema, вложенными ресурсами, настройкой темы и конструктором панелей."
+                                },
+                                {
+                                    "date": "v0.1 — 2024",
+                                    "title": "Первый Релиз",
+                                    "description": "Первый публичный релиз — плагин блога Laravel с записями, категориями, тегами, SEO и поддержкой Markdown."
+                                }
+                            ],
+                            "background_type": "color",
+                            "background_color": "#f8fafc",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "subtitle_color": "#64748b",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#0f172a",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1",
+                            "subtitle_color_dark": "#94a3b8"
+                        }
+                    },
+                    {
+                        "type": "content",
+                        "data": {
+                            "content": "## Blogr vs WordPress vs Ghost vs Statamic\n\n| Характеристика | Blogr | WordPress | Ghost | Statamic |\n|----------------|-------|-----------|-------|----------|\n| **Тип** | Laravel PHP блог/CMS | PHP CMS | Node.js блог | Laravel flat-file CMS |\n| **Многоязычность** | ✅ Встроенная | ⚠️ Требуется плагин | ❌ Нет встроенной | ✅ Встроенная |\n| **Открытый код** | ✅ MIT | ✅ GPL | ✅ MIT | ✅ MIT (ядро) |\n| **Панель управления** | Современная (FilamentPHP) | Классическая | Минимальная | Современная |\n| **Markdown** | ✅ Полный | ❌ Блочный редактор | ✅ Встроенный | ✅ Встроенный |\n| **Страницы CMS** | ✅ Да | ✅ Да | ❌ Ограничено | ✅ Да |\n| **Комментарии** | ❌ Нет встроенных | ✅ Встроенные | ✅ Встроенные | ❌ Нет встроенных |\n| **Плагины** | ❌ Пока нет | ✅ Огромная экосистема | ⚠️ Интеграции | ✅ Дополнения |\n| **E-commerce** | ❌ Нет встроенного | ✅ WooCommerce | ❌ Нет встроенного | ❌ Нет встроенного |\n| **Рассылки** | ❌ Нет встроенных | ⚠️ Требуется плагин | ✅ Встроенные | ❌ Нет встроенных |\n| **Производительность** | ⚡ Быстрый | 🐢 Может быть медленным | ⚡ Очень быстрый | ⚡ Быстрый |\n| **Кривая обучения** | Низкая (Laravel) | Низкая | Низкая | Средняя |\n\n**Итог:** Blogr идеально подходит, если вы хотите современный многоязычный Laravel-блог с красивой панелью управления и полным CMS. WordPress лучше всего подходит для не-разработчиков, которым нужны плагины и поддержка сообщества. Ghost превосходен в подписках и рассылках. Statamic отлично подходит для разработчиков, предпочитающих flat-file подход с GraphQL.",
+                            "max_width": "prose",
+                            "background_type": "color",
+                            "background_color": "#ffffff",
+                            "heading_color": "#0f172a",
+                            "text_color": "#334155",
+                            "background_type_dark": "color",
+                            "background_color_dark": "#111827",
+                            "heading_color_dark": "#f1f5f9",
+                            "text_color_dark": "#cbd5e1"
+                        }
+                    },
+                    {
+                        "type": "cta",
+                        "data": {
+                            "heading": "Начните создавать на нескольких языках уже сегодня.",
+                            "subheading": "Открытый исходный код по лицензии MIT. Кредитная карта не требуется.",
+                            "button_text": "Начать",
                             "button_link_type": "blog",
                             "button_url": null,
                             "button_category_id": null,
