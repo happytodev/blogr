@@ -18,6 +18,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Services\LocaleService;
 use Illuminate\Support\HtmlString;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogPost;
@@ -39,10 +40,9 @@ class BlogPostForm
                                 Select::make('locale')
                                     ->label('Language')
                                     ->options(function () {
-                                        $availableLocales = config('blogr.locales.available', ['en']);
-                                        return collect($availableLocales)->mapWithKeys(function ($locale) {
-                                            return [$locale => strtoupper($locale)];
-                                        });
+                                        $localeService = app(LocaleService::class);
+                                        $locales = $localeService->getAvailable();
+                                        return collect($locales)->mapWithKeys(fn ($locale) => [$locale => $localeService->localeLabel($locale)]);
                                     })
                                     ->required()
                                     ->reactive()
@@ -285,13 +285,40 @@ class BlogPostForm
                             ->helperText('Assign this post to a series')
                             ->reactive(),
                         
-                        \Filament\Forms\Components\TextInput::make('series_position')
+                        Select::make('series_position')
                             ->label('Position in Series')
+                            ->options(function ($get) {
+                                $seriesId = $get('blog_series_id');
+                                if (!$seriesId) {
+                                    return [];
+                                }
+                                $maxPosition = \Happytodev\Blogr\Models\BlogPost::where('blog_series_id', $seriesId)->max('series_position');
+                                $nextPosition = $maxPosition ? $maxPosition + 1 : 1;
+                                return [
+                                    'auto-bottom' => "Auto (at end) — position {$nextPosition}",
+                                    'auto-top' => 'Auto (at beginning) — position 1',
+                                    'custom' => 'Custom position...',
+                                ];
+                            })
+                            ->default('auto-bottom')
+                            ->live()
+                            ->visible(fn ($get) => $get('blog_series_id') !== null)
+                            ->formatStateUsing(function ($state) {
+                                if (is_null($state) || $state === 'auto-bottom') {
+                                    return 'auto-bottom';
+                                }
+                                if (is_numeric($state)) {
+                                    return 'custom';
+                                }
+                                return $state;
+                            }),
+                        
+                        \Filament\Forms\Components\TextInput::make('series_position_custom')
+                            ->label('Custom Position')
                             ->numeric()
                             ->minValue(1)
-                            ->placeholder('Auto')
-                            ->helperText('Order of this post within the series. Leave empty to auto-assign at the end. You can reorder posts by drag and drop later from the series edit page (click "Reorder Posts").')
-                            ->visible(fn ($get) => $get('blog_series_id') !== null),
+                            ->visible(fn ($get) => $get('series_position') === 'custom' && $get('blog_series_id') !== null)
+                            ->helperText('You can reorder posts by drag and drop later from the series edit page (click "Reorder Posts").'),
                         
                         Toggle::make('display_toc')
                             ->label('Display Table of Contents')
@@ -382,10 +409,9 @@ class BlogPostForm
                         Select::make('default_locale')
                             ->label('Default Language')
                             ->options(function () {
-                                $availableLocales = config('blogr.locales.available', ['en']);
-                                return collect($availableLocales)->mapWithKeys(function ($locale) {
-                                    return [$locale => strtoupper($locale)];
-                                });
+                                $localeService = app(LocaleService::class);
+                                $locales = $localeService->getAvailable();
+                                return collect($locales)->mapWithKeys(fn ($locale) => [$locale => $localeService->localeLabel($locale)]);
                             })
                             ->default(config('blogr.locales.default', 'en'))
                             ->required()

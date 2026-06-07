@@ -15,6 +15,7 @@ use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages;
 use Filament\Schemas\Components\Section;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages\EditCmsPageTranslation;
+use Happytodev\Blogr\Services\LocaleService;
 use Illuminate\Database\Eloquent\Builder;
 
 class CmsPageResource extends Resource
@@ -74,8 +75,9 @@ class CmsPageResource extends Resource
                         Forms\Components\Select::make('default_locale')
                             ->label(__('Langue par défaut'))
                             ->options(function () {
-                                $locales = config('blogr.locales.available', ['fr', 'en']);
-                                return array_combine($locales, array_map('strtoupper', $locales));
+                                $localeService = app(LocaleService::class);
+                                $locales = $localeService->getAvailable();
+                                return collect($locales)->mapWithKeys(fn ($locale) => [$locale => $localeService->localeLabel($locale)]);
                             })
                             ->default(config('blogr.locales.default', 'fr'))
                             ->required()

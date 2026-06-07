@@ -13,6 +13,7 @@ use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Happytodev\Blogr\Services\LocaleService;
 use Illuminate\Database\Eloquent\Model;
 
 class TranslationsRelationManager extends RelationManager
@@ -33,19 +34,9 @@ class TranslationsRelationManager extends RelationManager
 
     public function form(Schema $schema): Schema
     {
-        $availableLocales = config('blogr.locales.available', ['en', 'fr', 'es', 'de']);
-        
-        $localeNames = [
-            'en' => 'English', 'fr' => 'Francais', 'es' => 'Espanol',
-            'de' => 'Deutsch', 'it' => 'Italiano', 'pt' => 'Portugues',
-            'nl' => 'Nederlands', 'ru' => 'Russian', 'ja' => 'Japanese',
-            'zh' => 'Chinese', 'ar' => 'Arabic', 'hi' => 'Hindi',
-        ];
-        
-        $localeOptions = [];
-        foreach ($availableLocales as $locale) {
-            $localeOptions[$locale] = $localeNames[$locale] ?? strtoupper($locale);
-        }
+        $localeService = app(LocaleService::class);
+        $locales = $localeService->getAvailable();
+        $localeOptions = collect($locales)->mapWithKeys(fn ($locale) => [$locale => $localeService->localeLabel($locale)])->toArray();
 
         return $schema->schema([
             Forms\Components\Select::make('locale')
@@ -128,7 +119,8 @@ class TranslationsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
-        $availableLocales = config('blogr.locales.available', ['en', 'fr', 'es', 'de']);
+        $localeService = app(LocaleService::class);
+        $availableLocales = $localeService->getAvailable();
 
         return $table
             ->columns([
@@ -230,7 +222,7 @@ class TranslationsRelationManager extends RelationManager
 
     protected function canCreate(): bool
     {
-        $availableLocales = config('blogr.locales.available', ['en', 'fr', 'es', 'de']);
+        $availableLocales = app(LocaleService::class)->getAvailable();
         $existingLocales = $this->getOwnerRecord()
             ->translations()
             ->pluck('locale')
