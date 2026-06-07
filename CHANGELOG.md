@@ -2,6 +2,17 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.23.0](https://github.com/happytodev/blogr/compare/v0.22.0...v0.23.0) - 2026-06-07
+
+### ✨ Features
+
+- **Homepage expanded to 10 locales**: Full translations for de, el, es, it, no, pl, pt, ru added alongside en and fr, with all 7 blocks (hero, stats, features, blog_posts, timeline, comparison, cta)
+- **Blogr comparison block**: New honest comparison table (Blogr vs WordPress vs Ghost vs Statamic) on the homepage in all 10 locales
+
+### 📝 Documentation
+
+- Improve release-manager skill with feature-grouped commits and auto release notes
+
 ## [v0.22.0](https://github.com/happytodev/blogr/compare/v0.21.0...v0.22.0) - 2026-06-07
 
 ### ✨ Features
