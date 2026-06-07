@@ -50,11 +50,13 @@ class EditCmsPage extends EditRecord
     protected function getTranslationGrid(): array
     {
         $record = $this->getRecord();
-        if (! $record || ! $record->relationLoaded('translations')) {
+        if (! $record) {
             return [
                 Text::make(__('Aucune traduction disponible.')),
             ];
         }
+
+        $record->loadMissing('translations');
 
         $defaultLocale = $record->default_locale;
 

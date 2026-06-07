@@ -569,6 +569,23 @@ class CmsBlockBuilder
                             ->rows(2)
                             ->columnSpan(2),
 
+                        Select::make('columns')
+                            ->label(__('Columns'))
+                            ->options([
+                                '2' => __('2 columns'),
+                                '3' => __('3 columns'),
+                                '4' => __('4 columns'),
+                            ])
+                            ->default('3')
+                            ->columnSpan(1),
+
+                        Toggle::make('show_yearly_toggle')
+                            ->label(__('Show yearly pricing toggle'))
+                            ->default(false)
+                            ->helperText(__('Lets visitors switch between monthly and annual pricing'))
+                            ->live()
+                            ->columnSpan(1),
+
                         Repeater::make('plans')
                             ->label(__('Pricing Plans'))
                             ->schema(fn() => [
@@ -593,6 +610,24 @@ class CmsBlockBuilder
                                         'once' => __('one-time'),
                                     ])
                                     ->default('month')
+                                    ->columnSpan(1),
+
+                                Select::make('yearly_discount_type')
+                                    ->label(__('Yearly discount type'))
+                                    ->options([
+                                        'percent' => __('Percentage (%)'),
+                                        'fixed' => __('Fixed amount ($)'),
+                                        'months' => __('Free months'),
+                                    ])
+                                    ->default('percent')
+                                    ->live()
+                                    ->columnSpan(1),
+
+                                TextInput::make('yearly_discount_value')
+                                    ->label(__('Yearly discount value'))
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->helperText(__('Amount off the annual total'))
                                     ->columnSpan(1),
 
                                 Textarea::make('description')

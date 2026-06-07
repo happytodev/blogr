@@ -19,6 +19,7 @@ class CreateCmsPage extends CreateRecord
             'locale' => $record->default_locale,
             'slug' => $record->slug,
             'title' => $record->slug,
+            'blocks' => $record->template->defaultBlocks(),
         ]);
     }
 }
