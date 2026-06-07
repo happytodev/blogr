@@ -2,6 +2,16 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.0.1](https://github.com/happytodev/blogr/compare/v1.0.0...v1.0.1) - 2026-06-07
+
+### 🐛 Bug Fixes
+
+- **Theme presets**: Auto-fill ColorPickers via client-side JS instead of Livewire hooks — eliminates server round-trip overwrite. Decoupled presets from published config via `THEME_PRESETS` PHP constant.
+
+### ✨ Features
+
+- **Settings tab URL persistence**: Settings tabs are now shareable/bookmarkable via `?tab=appearance::tab` using Filament's native `->persistTabInQueryString('tab')`.
+
 ## [v1.0.0](https://github.com/happytodev/blogr/compare/v0.24.1...v1.0.0) - 2026-06-07
 
 ### ✨ Features
