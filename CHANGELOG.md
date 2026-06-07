@@ -2,6 +2,22 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.24.0](https://github.com/happytodev/blogr/compare/v0.23.0...v0.24.0) - 2026-06-07
+
+### ✨ Features
+
+- **LocaleService in admin forms**: All locale selects now use `LocaleService::getAvailable()`, respecting auto-detect and disabled locales. Added `localeLabel()` returning "Name (code)" format for 34 locales.
+- **Unified series position Select**: Replaced `TextInput` with a Select offering "Auto (end)", "Auto (beginning)", and "Custom position..." options, allowing posts to be placed at the start of a series without drag-and-drop.
+
+### 🐛 Bug Fixes
+
+- **Draft posts in series**: Unpublished posts no longer appear in "Part of series" frontend display. Added `scopePublished()`, fixed `nextInSeries()`/`previousInSeries()`/`getSeriesNavigation()`, and filtered all series views and components.
+- **Contact form anchor**: Hero CTA "Send a Message" now correctly scrolls to the contact form via `id="contact-form"`.
+
+### 📝 Documentation
+
+- **Release-manager skill**: Fixed semver calculation table with correct patch/minor/major examples.
+
 ## [v0.23.0](https://github.com/happytodev/blogr/compare/v0.22.0...v0.23.0) - 2026-06-07
 
 ### ✨ Features
