@@ -53,11 +53,14 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
   git commit -m "<type>(<scope>): <description>"
   ```
 
-### 3. Generate release notes
+### 3. Generate and present release notes
 
 - Run: `git log $(git describe --tags --abbrev=0)..HEAD --oneline --no-decorate`
 - Format as markdown with conventional commit categories (Features, Bug Fixes, Dependencies, etc.)
-- Present to user for editing/confirmation before proceeding
+- **Show the formatted markdown to the user using the `question` tool** with a "Looks good, proceed" option and an "Edit notes" option.
+- **Do NOT just ask "proceed?"** — display the full formatted release notes in the question so the user can review every line before approving.
+- Include a third option "Cancel" in case the user wants to abort.
+- Only proceed when the user explicitly approves.
 
 ### 4. Run tests (ZERO TOLERANCE)
 
@@ -114,7 +117,8 @@ git push origin main v{version}
 
 ### 9. Create GitHub Release
 
-- Run: `gh release create v{version} --notes "$RELEASE_NOTES"` where RELEASE_NOTES is the user-approved markdown from step 3
+- Set `RELEASE_NOTES` to the *exact markdown* the user approved in step 3 (the body of the CHANGELOG entry, without the heading/date line)
+- Run: `gh release create v{version} --title "v{version}" --notes "$RELEASE_NOTES"`
 
 ### 10. Confirm
 
