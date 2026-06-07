@@ -402,7 +402,33 @@ class BlogrSettings extends Page
         $this->theme_preset = $config['ui']['theme']['preset'] ?? '';
     }
 
+    public function updated($name, $value): void
+    {
+        match ($name) {
+            'data.theme_preset' => $this->applyThemePreset($value),
+            'data.locales_auto_detect' => $this->autoDetectLocales($value),
+            default => null,
+        };
+    }
+
     public function updatedDataThemePreset(?string $value): void
+    {
+        $this->applyThemePreset($value);
+    }
+
+    public function updatedDataLocalesAutoDetect(?string $value): void
+    {
+        $this->autoDetectLocales($value);
+    }
+
+    private function autoDetectLocales(?string $value): void
+    {
+        if ($value) {
+            $this->data['locales_available'] = null;
+        }
+    }
+
+    private function applyThemePreset(?string $value): void
     {
         $presets = config('blogr.ui.theme.presets', []);
         if (!$value || !isset($presets[$value])) {
