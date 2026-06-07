@@ -2,6 +2,17 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.0.3](https://github.com/happytodev/blogr/compare/v1.0.2...v1.0.3) - 2026-06-07
+
+### 🐛 Bug Fixes
+
+- **CMS page creation**: Auto-create a default `CmsPageTranslation` when a CMS page is created — prevents landing on an empty edit page with no way to add translations.
+- **Add Translation action**: Added "Add Translation" header button on the CMS page edit view with locale selector modal. Creates the translation and redirects to the block editor.
+
+### 📝 Documentation
+
+- **FEATURES_v100.md**: Complete, blog-ready feature overview of all Blogr v1.0 features (English, no tables).
+
 ## [v1.0.2](https://github.com/happytodev/blogr/compare/v1.0.1...v1.0.2) - 2026-06-07
 
 ### 🐛 Bug Fixes
