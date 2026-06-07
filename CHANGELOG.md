@@ -2,6 +2,21 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.0.0](https://github.com/happytodev/blogr/compare/v0.24.1...v1.0.0) - 2026-06-07
+
+### ✨ Features
+
+- **XML Sitemap**: Auto-generated `/sitemap.xml` with published posts, categories, tags, series, and CMS pages. Proper priority hierarchy, respects published/draft state. Toggle in Settings.
+- **Contact form configuration**: Configurable recipient email for contact form submissions. Added `contact.to_email` to config and Settings page.
+- **Theme presets**: 5 pre-built color presets (Magenta, Ocean Blue, Emerald Green, Sunset Orange, Slate) with auto-fill all theme colors. Select from Settings → Appearance.
+- **Sitemap & contact Settings UI**: Added sitemap enable toggle, contact email field, and theme preset selector to the Filament admin settings page.
+
+### 🐛 Bug Fixes
+
+- **Config dedup**: Removed duplicate `cms`, `posts`, `locales`, `author_profile` keys in `config/blogr.php`. All canonical values now in a single location.
+- **CMS prefix backward compat**: Restored flat `config('blogr.cms.prefix')` access pattern alongside nested `cms.route.prefix`.
+- **Dynamic locale SEO fields**: Replaced 16 hardcoded locale-specific properties with 4 arrays keyed by locale. Adding a new locale no longer requires code changes.
+
 ## [v0.24.1](https://github.com/happytodev/blogr/compare/v0.24.0...v0.24.1) - 2026-06-07
 
 ### 📝 Documentation
