@@ -3,12 +3,16 @@
 namespace Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Html;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource;
+use Happytodev\Blogr\Models\CmsPageTranslation;
+use Happytodev\Blogr\Services\LocaleService;
 use Illuminate\Support\HtmlString;
 
 class EditCmsPage extends EditRecord
@@ -117,7 +121,52 @@ HTML;
 
     protected function getHeaderActions(): array
     {
+        $record = $this->getRecord();
+
         return [
+            Actions\Action::make('addTranslation')
+                ->label(__('Ajouter une traduction'))
+                ->icon('heroicon-o-language')
+                ->color('gray')
+                ->form([
+                    Forms\Components\Select::make('locale')
+                        ->label(__('Langue'))
+                        ->options(function () {
+                            $record = $this->getRecord();
+                            $existingLocales = $record->translations->pluck('locale')->toArray();
+                            $localeService = app(LocaleService::class);
+                            $allLocales = $localeService->getAvailable();
+                            $defaultLocale = $record->default_locale;
+
+                            return collect($allLocales)
+                                ->reject(fn ($locale) => in_array($locale, $existingLocales))
+                                ->mapWithKeys(fn ($locale) => [
+                                    $locale => $localeService->localeLabel($locale)
+                                        . ($locale === $defaultLocale ? ' (défaut)' : ''),
+                                ]);
+                        })
+                        ->required()
+                        ->searchable(),
+                ])
+                ->action(function (array $data) {
+                    $record = $this->getRecord();
+                    $translation = CmsPageTranslation::create([
+                        'cms_page_id' => $record->id,
+                        'locale' => $data['locale'],
+                        'slug' => $record->slug,
+                        'title' => $record->slug,
+                    ]);
+
+                    Notification::make()
+                        ->title(__('Traduction ajoutée'))
+                        ->success()
+                        ->send();
+
+                    $this->redirect(CmsPageResource::getUrl('edit-translation', [
+                        'record' => $record,
+                        'translation' => $translation,
+                    ]));
+                }),
             Actions\DeleteAction::make(),
         ];
     }
