@@ -38,11 +38,7 @@ return [
     | Pages can be accessed via /{prefix}/{slug} or /{slug} if prefix is empty.
     | If CMS is set as homepage, one page should be marked as the homepage page.
     |
-    */
-    'cms' => [
-        'enabled' => false,
-        'prefix' => '', // Leave empty for URLs like /about, or set to 'page' for /page/about
-    ],
+     */
     'blog_index' => [
         'cards' => [
             'colors' => [
@@ -65,11 +61,6 @@ return [
     | and all posts written by that author.
     |
     */
-    'author_profile' => [
-        'enabled' => true, // Enable author profile pages
-        'use_slug' => true, // Use slug instead of ID in URLs (requires 'slug' field in users table)
-    ],
-    
     /*
     |--------------------------------------------------------------------------
     | Reading Speed Configuration
@@ -123,12 +114,7 @@ return [
     | Images are published from vendor/happytodev/blogr/resources/images
     | to public/vendor/blogr/images during installation.
     |
-    */
-    'posts' => [
-        'default_image' => '/vendor/blogr/images/default-post.svg', // Default image for posts without photo
-        'show_language_switcher' => true, // Show available languages on post page
-    ],
-
+     */
     /*
     |--------------------------------------------------------------------------
     | Blog Series Configuration
@@ -160,16 +146,7 @@ return [
     |   Useful when you want to allow content in any of these locales but not
     |   display all of them in the language switcher.
     |
-    */
-    'locales' => [
-        'enabled' => false, // Enable localized routes (/{locale}/blog/...)
-        'default' => 'en', // Default locale
-        'available' => ['en', 'fr'], // Available locales for translations (fallback when auto_detect=false)
-        'auto_detect' => false, // Auto-detect available locales from published content
-        'disabled' => [], // Locales disabled by the user (not shown in frontend switcher)
-        'restrict' => [], // Restrict auto-detected locales to this list (empty = no restriction)
-    ],
-
+     */
     /*
     |--------------------------------------------------------------------------
     | Table of Contents Configuration
@@ -327,6 +304,73 @@ return [
             'author_bg' => '#f2e2f9', // Author background (light amber)
             'author_bg_dark' => '#9b0ab8', // Author background (dark mode)
         ],
+        'presets' => [
+            'magenta' => [
+                'label' => 'Magenta (default)',
+                'primary_color' => '#c20be5',
+                'primary_color_dark' => '#e166fa',
+                'primary_color_hover' => '#d946ef',
+                'primary_color_hover_dark' => '#e49df2',
+                'category_bg' => '#e0f2fe',
+                'category_bg_dark' => '#0c4a6e',
+                'tag_bg' => '#68fc12',
+                'tag_bg_dark' => '#48b00d',
+                'author_bg' => '#f2e2f9',
+                'author_bg_dark' => '#9b0ab8',
+            ],
+            'ocean' => [
+                'label' => 'Ocean Blue',
+                'primary_color' => '#2563eb',
+                'primary_color_dark' => '#60a5fa',
+                'primary_color_hover' => '#1d4ed8',
+                'primary_color_hover_dark' => '#93c5fd',
+                'category_bg' => '#dbeafe',
+                'category_bg_dark' => '#1e3a5f',
+                'tag_bg' => '#fde68a',
+                'tag_bg_dark' => '#92400e',
+                'author_bg' => '#e0f2fe',
+                'author_bg_dark' => '#075985',
+            ],
+            'emerald' => [
+                'label' => 'Emerald Green',
+                'primary_color' => '#059669',
+                'primary_color_dark' => '#34d399',
+                'primary_color_hover' => '#047857',
+                'primary_color_hover_dark' => '#6ee7b7',
+                'category_bg' => '#d1fae5',
+                'category_bg_dark' => '#064e3b',
+                'tag_bg' => '#fef3c7',
+                'tag_bg_dark' => '#78350f',
+                'author_bg' => '#ecfdf5',
+                'author_bg_dark' => '#065f46',
+            ],
+            'sunset' => [
+                'label' => 'Sunset Orange',
+                'primary_color' => '#ea580c',
+                'primary_color_dark' => '#fb923c',
+                'primary_color_hover' => '#c2410c',
+                'primary_color_hover_dark' => '#fdba74',
+                'category_bg' => '#fff7ed',
+                'category_bg_dark' => '#7c2d12',
+                'tag_bg' => '#fce7f3',
+                'tag_bg_dark' => '#831843',
+                'author_bg' => '#ffedd5',
+                'author_bg_dark' => '#9a3412',
+            ],
+            'slate' => [
+                'label' => 'Slate (minimal)',
+                'primary_color' => '#475569',
+                'primary_color_dark' => '#94a3b8',
+                'primary_color_hover' => '#334155',
+                'primary_color_hover_dark' => '#cbd5e1',
+                'category_bg' => '#f1f5f9',
+                'category_bg_dark' => '#1e293b',
+                'tag_bg' => '#e2e8f0',
+                'tag_bg_dark' => '#334155',
+                'author_bg' => '#f8fafc',
+                'author_bg_dark' => '#0f172a',
+            ],
+        ],
     ],
 
     /*
@@ -406,6 +450,7 @@ return [
     */
     'author_profile' => [
         'enabled' => true, // Enable/disable author profile pages
+        'use_slug' => true, // Use slug instead of ID in URLs (requires 'slug' field in users table)
     ],
 
     /*
@@ -429,6 +474,38 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Sitemap Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure the XML sitemap generation. The sitemap includes published
+    | blog posts, categories, tags, series, and CMS pages.
+    |
+    | Routes examples:
+    | - /sitemap.xml
+    | - /{locale}/sitemap.xml
+    |
+    */
+    'sitemap' => [
+        'enabled' => true, // Enable/disable XML sitemap
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Contact Form Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure the contact form submission. The contact form sends emails
+    | using Laravel's mail system. You must configure MAIL_MAILER in your
+    | .env file (e.g., mailgun, postmark, ses, brevo, smtp) for emails to
+    | be delivered reliably.
+    |
+    */
+    'contact' => [
+        'to_email' => '', // Recipient email address for contact form submissions
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | CMS Pages Configuration
     |--------------------------------------------------------------------------
     |
@@ -446,6 +523,7 @@ return [
     */
     'cms' => [
         'enabled' => true, // Enable/disable CMS pages feature
+        'prefix' => '', // URL prefix (backward compat, use route.prefix for new code)
 
         'route' => [
             'prefix' => '', // URL prefix for CMS pages (empty = no prefix like WordPress)

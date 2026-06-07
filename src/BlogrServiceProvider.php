@@ -32,6 +32,7 @@ use Happytodev\Blogr\Commands\BlogrListTutorialsCommand;
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Happytodev\Blogr\Http\Controllers\AuthorController;
 use Happytodev\Blogr\Http\Controllers\RssFeedController;
+use Happytodev\Blogr\Http\Controllers\SitemapController;
 use Happytodev\Blogr\Http\Controllers\CmsPageController;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Observers\BlogSeriesTranslationObserver;
@@ -400,6 +401,14 @@ class BlogrServiceProvider extends PackageServiceProvider
                         ->middleware(config('blogr.route.middleware', ['web']))
                         ->name('blog.feed.tag');
                 }
+                
+                // Sitemap routes with locale
+                if (config('blogr.sitemap.enabled', true)) {
+                    $this->app['router']->get('{locale}/sitemap.xml', [SitemapController::class, 'index'])
+                        ->where('locale', $localePattern)
+                        ->middleware(config('blogr.route.middleware', ['web']))
+                        ->name('blog.sitemap');
+                }
                     
                 $this->app['router']->get('{locale}/{slug}', [BlogController::class, 'show'])
                     ->where(['locale' => $localePattern, 'slug' => '.*']) // Allow any slug since specific routes are already defined
@@ -477,6 +486,14 @@ class BlogrServiceProvider extends PackageServiceProvider
                         ->middleware(config('blogr.route.middleware', ['web']))
                         ->name('blog.feed.tag');
                 }
+                
+                // Sitemap routes with locale and prefix
+                if (config('blogr.sitemap.enabled', true)) {
+                    $this->app['router']->get($fullPrefix . '/sitemap.xml', [SitemapController::class, 'index'])
+                        ->where('locale', $localePattern)
+                        ->middleware(config('blogr.route.middleware', ['web']))
+                        ->name('blog.sitemap');
+                }
                     
                 $this->app['router']->get($fullPrefix . '/{slug}', [BlogController::class, 'show'])
                     ->where(['locale' => $localePattern, 'slug' => '.*']) // Allow any slug since specific routes are already defined
@@ -509,6 +526,11 @@ class BlogrServiceProvider extends PackageServiceProvider
                             $this->app['router']->get('/feed/category/{categorySlug}', [RssFeedController::class, 'category'])->name('blog.feed.category');
                             $this->app['router']->get('/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])->name('blog.feed.tag');
                         }
+                        
+                        // Sitemap route (no locale)
+                        if (config('blogr.sitemap.enabled', true)) {
+                            $this->app['router']->get('/sitemap.xml', [SitemapController::class, 'index'])->name('blog.sitemap');
+                        }
                     });
             } else {
                 // Blog route with prefix
@@ -531,6 +553,11 @@ class BlogrServiceProvider extends PackageServiceProvider
                             $this->app['router']->get('/feed', [RssFeedController::class, 'index'])->name('blog.feed');
                             $this->app['router']->get('/feed/category/{categorySlug}', [RssFeedController::class, 'category'])->name('blog.feed.category');
                             $this->app['router']->get('/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])->name('blog.feed.tag');
+                        }
+                        
+                        // Sitemap route (no locale)
+                        if (config('blogr.sitemap.enabled', true)) {
+                            $this->app['router']->get('/sitemap.xml', [SitemapController::class, 'index'])->name('blog.sitemap');
                         }
                     });
             }

@@ -77,24 +77,11 @@ class BlogrSettings extends Page
     public ?string $reading_time_text_de = null;
     public ?bool $reading_time_enabled = null;
 
-    // SEO Settings - Translatable fields
-    // @todo dynamically generate these based on available locales
-    public ?string $seo_site_name_en = null;
-    public ?string $seo_site_name_fr = null;
-    public ?string $seo_site_name_es = null;
-    public ?string $seo_site_name_de = null;
-    public ?string $seo_default_title_en = null;
-    public ?string $seo_default_title_fr = null;
-    public ?string $seo_default_title_es = null;
-    public ?string $seo_default_title_de = null;
-    public ?string $seo_default_description_en = null;
-    public ?string $seo_default_description_fr = null;
-    public ?string $seo_default_description_es = null;
-    public ?string $seo_default_description_de = null;
-    public ?string $seo_default_keywords_en = null;
-    public ?string $seo_default_keywords_fr = null;
-    public ?string $seo_default_keywords_es = null;
-    public ?string $seo_default_keywords_de = null;
+    // SEO Settings - Translatable fields (keyed by locale, e.g. ['en' => '...', 'fr' => '...'])
+    public array $seo_site_names = [];
+    public array $seo_default_titles = [];
+    public array $seo_default_descriptions = [];
+    public array $seo_default_keywords = [];
 
     // SEO Settings - Legacy/non-translatable
     public ?string $seo_site_name = null;
@@ -195,6 +182,15 @@ class BlogrSettings extends Page
     public ?string $analytics_matomo_url = null;
     public ?string $analytics_matomo_site_id = null;
 
+    // Sitemap Settings
+    public ?bool $sitemap_enabled = null;
+
+    // Contact Settings
+    public ?string $contact_to_email = null;
+
+    // Theme Preset
+    public ?string $theme_preset = null;
+
     // Import/Export
     public array $import_file = [];
     public bool $overwrite_existing_data = false;
@@ -275,70 +271,29 @@ class BlogrSettings extends Page
 
         $this->reading_time_enabled = $config['reading_time']['enabled'] ?? true;
 
-        // Load SEO settings - translatable fields
+        // Load SEO settings - translatable fields (stored in arrays keyed by locale)
         $availableLocales = $config['locales']['available'] ?? ['en'];
 
-        // Site Name
-        $seoSiteName = $config['seo']['site_name'] ?? env('APP_NAME', 'My Blog');
-        if (is_array($seoSiteName)) {
-            foreach ($availableLocales as $locale) {
-                $property = "seo_site_name_{$locale}";
-                $this->$property = $seoSiteName[$locale] ?? env('APP_NAME', 'My Blog');
-            }
-        } else {
-            // Legacy string format - use for all locales
-            foreach ($availableLocales as $locale) {
-                $property = "seo_site_name_{$locale}";
-                $this->$property = $seoSiteName;
-            }
-        }
+        $this->seo_site_names = is_array($config['seo']['site_name'] ?? '')
+            ? $config['seo']['site_name']
+            : array_fill_keys($availableLocales, $config['seo']['site_name'] ?? env('APP_NAME', 'My Blog'));
 
-        // Default Title
-        $seoDefaultTitle = $config['seo']['default_title'] ?? 'Blog';
-        if (is_array($seoDefaultTitle)) {
-            foreach ($availableLocales as $locale) {
-                $property = "seo_default_title_{$locale}";
-                $this->$property = $seoDefaultTitle[$locale] ?? 'Blog';
-            }
-        } else {
-            foreach ($availableLocales as $locale) {
-                $property = "seo_default_title_{$locale}";
-                $this->$property = $seoDefaultTitle;
-            }
-        }
+        $this->seo_default_titles = is_array($config['seo']['default_title'] ?? '')
+            ? $config['seo']['default_title']
+            : array_fill_keys($availableLocales, $config['seo']['default_title'] ?? 'Blog');
 
-        // Default Description
-        $seoDefaultDescription = $config['seo']['default_description'] ?? 'Discover our latest articles and insights';
-        if (is_array($seoDefaultDescription)) {
-            foreach ($availableLocales as $locale) {
-                $property = "seo_default_description_{$locale}";
-                $this->$property = $seoDefaultDescription[$locale] ?? 'Discover our latest articles and insights';
-            }
-        } else {
-            foreach ($availableLocales as $locale) {
-                $property = "seo_default_description_{$locale}";
-                $this->$property = $seoDefaultDescription;
-            }
-        }
+        $this->seo_default_descriptions = is_array($config['seo']['default_description'] ?? '')
+            ? $config['seo']['default_description']
+            : array_fill_keys($availableLocales, $config['seo']['default_description'] ?? 'Discover our latest articles and insights');
 
-        // Default Keywords
-        $seoDefaultKeywords = $config['seo']['default_keywords'] ?? 'blog, articles, news, insights';
-        if (is_array($seoDefaultKeywords)) {
-            foreach ($availableLocales as $locale) {
-                $property = "seo_default_keywords_{$locale}";
-                $this->$property = $seoDefaultKeywords[$locale] ?? 'blog, articles, news, insights';
-            }
-        } else {
-            foreach ($availableLocales as $locale) {
-                $property = "seo_default_keywords_{$locale}";
-                $this->$property = $seoDefaultKeywords;
-            }
-        }
+        $this->seo_default_keywords = is_array($config['seo']['default_keywords'] ?? '')
+            ? $config['seo']['default_keywords']
+            : array_fill_keys($availableLocales, $config['seo']['default_keywords'] ?? 'blog, articles, news, insights');
 
         // Legacy non-translatable fields (for backward compatibility)
-        $this->seo_site_name = is_array($seoSiteName) ? ($seoSiteName['en'] ?? env('APP_NAME', 'My Blog')) : $seoSiteName;
-        $this->seo_default_title = is_array($seoDefaultTitle) ? ($seoDefaultTitle['en'] ?? 'Blog') : $seoDefaultTitle;
-        $this->seo_default_description = is_array($seoDefaultDescription) ? ($seoDefaultDescription['en'] ?? 'Discover our latest articles and insights') : $seoDefaultDescription;
+        $this->seo_site_name = $this->seo_site_names[$config['locales']['default'] ?? 'en'] ?? env('APP_NAME', 'My Blog');
+        $this->seo_default_title = $this->seo_default_titles[$config['locales']['default'] ?? 'en'] ?? 'Blog';
+        $this->seo_default_description = $this->seo_default_descriptions[$config['locales']['default'] ?? 'en'] ?? 'Discover our latest articles and insights';
         $this->seo_twitter_handle = $config['seo']['twitter_handle'] ?? '';
         $this->seo_facebook_app_id = $config['seo']['facebook_app_id'] ?? '';
         $this->seo_og_image = $config['seo']['og']['image'] ?? '';
@@ -436,6 +391,15 @@ class BlogrSettings extends Page
         // Matomo
         $this->analytics_matomo_url = $config['analytics']['matomo']['url'] ?? null;
         $this->analytics_matomo_site_id = $config['analytics']['matomo']['site_id'] ?? null;
+
+        // Load sitemap settings
+        $this->sitemap_enabled = $config['sitemap']['enabled'] ?? true;
+
+        // Load contact settings
+        $this->contact_to_email = $config['contact']['to_email'] ?? '';
+
+        // Load theme preset (no preset = custom)
+        $this->theme_preset = $config['ui']['theme']['preset'] ?? '';
     }
 
     public function getFormSchema(): array
@@ -502,6 +466,13 @@ class BlogrSettings extends Page
                                         ->placeholder('page or leave empty')
                                         ->helperText('URL prefix for CMS pages (e.g., /page/about or /about if empty). Not used if CMS is homepage.')
                                         ->visible(fn(Get $get) => $get('cms_enabled'))
+                                        ->columnSpan(1),
+
+                                    TextInput::make('contact_to_email')
+                                        ->label('Contact Form Recipient Email')
+                                        ->placeholder('hello@example.com')
+                                        ->helperText('Emails from the contact form will be sent to this address. Requires a mail provider (Mailgun, Brevo, SMTP, etc.) configured in .env')
+                                        ->email()
                                         ->columnSpan(1),
 
                                     Placeholder::make('cms_info')
@@ -665,6 +636,18 @@ class BlogrSettings extends Page
                                 ])
                                 ->columns(2),
 
+                            Section::make('Sitemap & RSS')
+                                ->description('Sitemap and RSS feed configuration')
+                                ->schema([
+                                    Toggle::make('sitemap_enabled')
+                                        ->label('Enable XML Sitemap')
+                                        ->helperText('Generate and serve /sitemap.xml for search engines')
+                                        ->default(true)
+                                        ->columnSpan(1),
+                                ])
+                                ->columns(2)
+                                ->collapsible(),
+
                             Section::make('About Blogr')
                                 ->description('Version information and resources')
                                 ->schema([
@@ -703,26 +686,26 @@ class BlogrSettings extends Page
                                     foreach ($availableLocales as $locale) {
                                         $localeName = $localeNames[$locale] ?? strtoupper($locale);
 
-                                        $fields[] = TextInput::make("seo_site_name_{$locale}")
+                                        $fields[] = TextInput::make("seo_site_names.{$locale}")
                                             ->label("Site Name ({$localeName})")
                                             ->placeholder('My Blog')
                                             ->helperText('The name of your website/brand (e.g., "My Blog"). Used in meta tags and browser title suffix.')
                                             ->required();
 
-                                        $fields[] = TextInput::make("seo_default_title_{$locale}")
+                                        $fields[] = TextInput::make("seo_default_titles.{$locale}")
                                             ->label("Default Title ({$localeName})")
                                             ->placeholder('Blog')
                                             ->helperText('The default title for blog pages without a specific title (e.g., "Blog", "Articles"). This appears as the main page title.')
                                             ->required();
 
-                                        $fields[] = Textarea::make("seo_default_description_{$locale}")
+                                        $fields[] = Textarea::make("seo_default_descriptions.{$locale}")
                                             ->label("Default Description ({$localeName})")
                                             ->placeholder('Discover our latest articles and insights')
                                             ->rows(2)
                                             ->required()
                                             ->columnSpan(2);
 
-                                        $fields[] = Textarea::make("seo_default_keywords_{$locale}")
+                                        $fields[] = Textarea::make("seo_default_keywords.{$locale}")
                                             ->label("Default Keywords ({$localeName})")
                                             ->placeholder('blog, articles, news, insights')
                                             ->rows(2)
@@ -781,6 +764,37 @@ class BlogrSettings extends Page
                                         ])
                                         ->default('light')
                                         ->helperText('Users can override this in their browser')
+                                        ->columnSpan(2),
+
+                                    Select::make('theme_preset')
+                                        ->label('Theme Preset')
+                                        ->options([
+                                            '' => 'Custom (manual colors)',
+                                            'magenta' => 'Magenta (default)',
+                                            'ocean' => 'Ocean Blue',
+                                            'emerald' => 'Emerald Green',
+                                            'sunset' => 'Sunset Orange',
+                                            'slate' => 'Slate (minimal)',
+                                        ])
+                                        ->default('')
+                                        ->helperText('Select a preset to auto-fill all theme colors. Choose "Custom" to set colors manually.')
+                                        ->live()
+                                        ->afterStateUpdated(function ($state, $set) {
+                                            $presets = config('blogr.ui.theme.presets', []);
+                                            if ($state && isset($presets[$state])) {
+                                                $colors = $presets[$state];
+                                                $set('theme_primary_color', $colors['primary_color'] ?? '#c20be5');
+                                                $set('theme_primary_color_dark', $colors['primary_color_dark'] ?? '#e166fa');
+                                                $set('theme_primary_color_hover', $colors['primary_color_hover'] ?? '#d946ef');
+                                                $set('theme_primary_color_hover_dark', $colors['primary_color_hover_dark'] ?? '#e49df2');
+                                                $set('theme_category_bg', $colors['category_bg'] ?? '#e0f2fe');
+                                                $set('theme_category_bg_dark', $colors['category_bg_dark'] ?? '#0c4a6e');
+                                                $set('theme_tag_bg', $colors['tag_bg'] ?? '#68fc12');
+                                                $set('theme_tag_bg_dark', $colors['tag_bg_dark'] ?? '#48b00d');
+                                                $set('theme_author_bg', $colors['author_bg'] ?? '#f2e2f9');
+                                                $set('theme_author_bg_dark', $colors['author_bg_dark'] ?? '#9b0ab8');
+                                            }
+                                        })
                                         ->columnSpan(2),
 
                                     // Primary Colors
@@ -1888,9 +1902,8 @@ class BlogrSettings extends Page
         $names = [];
 
         foreach ($availableLocales as $locale) {
-            $property = "seo_site_name_{$locale}";
-            if (property_exists($this, $property) && $this->$property) {
-                $names[$locale] = $this->$property;
+            if (!empty($this->seo_site_names[$locale])) {
+                $names[$locale] = $this->seo_site_names[$locale];
             }
         }
 
@@ -1903,9 +1916,8 @@ class BlogrSettings extends Page
         $titles = [];
 
         foreach ($availableLocales as $locale) {
-            $property = "seo_default_title_{$locale}";
-            if (property_exists($this, $property) && $this->$property) {
-                $titles[$locale] = $this->$property;
+            if (!empty($this->seo_default_titles[$locale])) {
+                $titles[$locale] = $this->seo_default_titles[$locale];
             }
         }
 
@@ -1918,9 +1930,8 @@ class BlogrSettings extends Page
         $descriptions = [];
 
         foreach ($availableLocales as $locale) {
-            $property = "seo_default_description_{$locale}";
-            if (property_exists($this, $property) && $this->$property) {
-                $descriptions[$locale] = $this->$property;
+            if (!empty($this->seo_default_descriptions[$locale])) {
+                $descriptions[$locale] = $this->seo_default_descriptions[$locale];
             }
         }
 
@@ -1933,9 +1944,8 @@ class BlogrSettings extends Page
         $keywords = [];
 
         foreach ($availableLocales as $locale) {
-            $property = "seo_default_keywords_{$locale}";
-            if (property_exists($this, $property) && $this->$property) {
-                $keywords[$locale] = $this->$property;
+            if (!empty($this->seo_default_keywords[$locale])) {
+                $keywords[$locale] = $this->seo_default_keywords[$locale];
             }
         }
 
@@ -2116,6 +2126,7 @@ class BlogrSettings extends Page
                     'tag_bg_dark' => $this->theme_tag_bg_dark,
                     'author_bg' => $this->theme_author_bg,
                     'author_bg_dark' => $this->theme_author_bg_dark,
+                    'preset' => $this->theme_preset ?? '',
                 ],
                 'appearance' => [
                     'blog_card_bg' => $this->appearance_blog_card_bg,
@@ -2128,6 +2139,12 @@ class BlogrSettings extends Page
                     'shape' => $this->back_to_top_shape,
                     'color' => $this->back_to_top_color,
                 ],
+            ],
+            'sitemap' => [
+                'enabled' => $this->sitemap_enabled ?? true,
+            ],
+            'contact' => [
+                'to_email' => $this->contact_to_email ?? '',
             ],
             'analytics' => [
                 'enabled' => $this->analytics_enabled,
