@@ -405,18 +405,18 @@ class BlogrSettings extends Page
     public function updated($name, $value): void
     {
         match ($name) {
-            'data.theme_preset' => $this->applyThemePreset($value),
-            'data.locales_auto_detect' => $this->autoDetectLocales($value),
+            'theme_preset' => $this->applyThemePreset($value),
+            'locales_auto_detect' => $this->autoDetectLocales($value),
             default => null,
         };
     }
 
-    public function updatedDataThemePreset(?string $value): void
+    public function updatedThemePreset(?string $value): void
     {
         $this->applyThemePreset($value);
     }
 
-    public function updatedDataLocalesAutoDetect(?string $value): void
+    public function updatedLocalesAutoDetect(?string $value): void
     {
         $this->autoDetectLocales($value);
     }
@@ -424,7 +424,7 @@ class BlogrSettings extends Page
     private function autoDetectLocales(?string $value): void
     {
         if ($value) {
-            $this->data['locales_available'] = null;
+            $this->locales_available = null;
         }
     }
 
@@ -436,16 +436,16 @@ class BlogrSettings extends Page
         }
 
         $colors = $presets[$value];
-        $this->data['theme_primary_color'] = $colors['primary_color'] ?? '#c20be5';
-        $this->data['theme_primary_color_dark'] = $colors['primary_color_dark'] ?? '#e166fa';
-        $this->data['theme_primary_color_hover'] = $colors['primary_color_hover'] ?? '#d946ef';
-        $this->data['theme_primary_color_hover_dark'] = $colors['primary_color_hover_dark'] ?? '#e49df2';
-        $this->data['theme_category_bg'] = $colors['category_bg'] ?? '#e0f2fe';
-        $this->data['theme_category_bg_dark'] = $colors['category_bg_dark'] ?? '#0c4a6e';
-        $this->data['theme_tag_bg'] = $colors['tag_bg'] ?? '#68fc12';
-        $this->data['theme_tag_bg_dark'] = $colors['tag_bg_dark'] ?? '#48b00d';
-        $this->data['theme_author_bg'] = $colors['author_bg'] ?? '#f2e2f9';
-        $this->data['theme_author_bg_dark'] = $colors['author_bg_dark'] ?? '#9b0ab8';
+        $this->theme_primary_color = $colors['primary_color'] ?? '#c20be5';
+        $this->theme_primary_color_dark = $colors['primary_color_dark'] ?? '#e166fa';
+        $this->theme_primary_color_hover = $colors['primary_color_hover'] ?? '#d946ef';
+        $this->theme_primary_color_hover_dark = $colors['primary_color_hover_dark'] ?? '#e49df2';
+        $this->theme_category_bg = $colors['category_bg'] ?? '#e0f2fe';
+        $this->theme_category_bg_dark = $colors['category_bg_dark'] ?? '#0c4a6e';
+        $this->theme_tag_bg = $colors['tag_bg'] ?? '#68fc12';
+        $this->theme_tag_bg_dark = $colors['tag_bg_dark'] ?? '#48b00d';
+        $this->theme_author_bg = $colors['author_bg'] ?? '#f2e2f9';
+        $this->theme_author_bg_dark = $colors['author_bg_dark'] ?? '#9b0ab8';
     }
 
     public function getFormSchema(): array
