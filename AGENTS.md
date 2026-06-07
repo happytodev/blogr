@@ -1,5 +1,9 @@
 # Blogr AGENTS.md
 
+## ⚠️ Commit policy — ZERO TOLERANCE
+
+**NEVER commit, amend, tag, or push unless the user explicitly loads the `release-manager` skill and requests a release.** This includes bug fixes, hotfixes, and any other changes. All commits must go through the `release-manager` workflow. Violating this rule is a process error.
+
 ## Project
 
 FilamentPHP v4 plugin package (`happytodev/blogr`) — a multilingual blog system for Laravel 12+.

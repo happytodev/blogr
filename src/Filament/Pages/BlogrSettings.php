@@ -31,6 +31,75 @@ class BlogrSettings extends Page
 {
     use InteractsWithForms;
     use WithFileUploads;
+
+    public const THEME_PRESETS = [
+        'magenta' => [
+            'label' => 'Magenta (default)',
+            'primary_color' => '#c20be5',
+            'primary_color_dark' => '#e166fa',
+            'primary_color_hover' => '#d946ef',
+            'primary_color_hover_dark' => '#e49df2',
+            'category_bg' => '#e0f2fe',
+            'category_bg_dark' => '#0c4a6e',
+            'tag_bg' => '#68fc12',
+            'tag_bg_dark' => '#48b00d',
+            'author_bg' => '#f2e2f9',
+            'author_bg_dark' => '#9b0ab8',
+        ],
+        'ocean' => [
+            'label' => 'Ocean Blue',
+            'primary_color' => '#2563eb',
+            'primary_color_dark' => '#60a5fa',
+            'primary_color_hover' => '#1d4ed8',
+            'primary_color_hover_dark' => '#93c5fd',
+            'category_bg' => '#dbeafe',
+            'category_bg_dark' => '#1e3a5f',
+            'tag_bg' => '#fde68a',
+            'tag_bg_dark' => '#92400e',
+            'author_bg' => '#e0f2fe',
+            'author_bg_dark' => '#075985',
+        ],
+        'emerald' => [
+            'label' => 'Emerald Green',
+            'primary_color' => '#059669',
+            'primary_color_dark' => '#34d399',
+            'primary_color_hover' => '#047857',
+            'primary_color_hover_dark' => '#6ee7b7',
+            'category_bg' => '#d1fae5',
+            'category_bg_dark' => '#064e3b',
+            'tag_bg' => '#fef3c7',
+            'tag_bg_dark' => '#78350f',
+            'author_bg' => '#ecfdf5',
+            'author_bg_dark' => '#065f46',
+        ],
+        'sunset' => [
+            'label' => 'Sunset Orange',
+            'primary_color' => '#ea580c',
+            'primary_color_dark' => '#fb923c',
+            'primary_color_hover' => '#c2410c',
+            'primary_color_hover_dark' => '#fdba74',
+            'category_bg' => '#fff7ed',
+            'category_bg_dark' => '#7c2d12',
+            'tag_bg' => '#fce7f3',
+            'tag_bg_dark' => '#831843',
+            'author_bg' => '#ffedd5',
+            'author_bg_dark' => '#9a3412',
+        ],
+        'slate' => [
+            'label' => 'Slate (minimal)',
+            'primary_color' => '#475569',
+            'primary_color_dark' => '#94a3b8',
+            'primary_color_hover' => '#334155',
+            'primary_color_hover_dark' => '#cbd5e1',
+            'category_bg' => '#f1f5f9',
+            'category_bg_dark' => '#1e293b',
+            'tag_bg' => '#e2e8f0',
+            'tag_bg_dark' => '#334155',
+            'author_bg' => '#f8fafc',
+            'author_bg_dark' => '#0f172a',
+        ],
+    ];
+
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static string | null $navigationLabel = 'Settings';
@@ -430,28 +499,28 @@ class BlogrSettings extends Page
 
     private function applyThemePreset(?string $value): void
     {
-        $presets = config('blogr.ui.theme.presets', []);
-        if (!$value || !isset($presets[$value])) {
+        if (!$value || !isset(self::THEME_PRESETS[$value])) {
             return;
         }
 
-        $colors = $presets[$value];
-        $this->theme_primary_color = $colors['primary_color'] ?? '#c20be5';
-        $this->theme_primary_color_dark = $colors['primary_color_dark'] ?? '#e166fa';
-        $this->theme_primary_color_hover = $colors['primary_color_hover'] ?? '#d946ef';
-        $this->theme_primary_color_hover_dark = $colors['primary_color_hover_dark'] ?? '#e49df2';
-        $this->theme_category_bg = $colors['category_bg'] ?? '#e0f2fe';
-        $this->theme_category_bg_dark = $colors['category_bg_dark'] ?? '#0c4a6e';
-        $this->theme_tag_bg = $colors['tag_bg'] ?? '#68fc12';
-        $this->theme_tag_bg_dark = $colors['tag_bg_dark'] ?? '#48b00d';
-        $this->theme_author_bg = $colors['author_bg'] ?? '#f2e2f9';
-        $this->theme_author_bg_dark = $colors['author_bg_dark'] ?? '#9b0ab8';
+        $colors = self::THEME_PRESETS[$value];
+        $this->theme_primary_color = $colors['primary_color'];
+        $this->theme_primary_color_dark = $colors['primary_color_dark'];
+        $this->theme_primary_color_hover = $colors['primary_color_hover'];
+        $this->theme_primary_color_hover_dark = $colors['primary_color_hover_dark'];
+        $this->theme_category_bg = $colors['category_bg'];
+        $this->theme_category_bg_dark = $colors['category_bg_dark'];
+        $this->theme_tag_bg = $colors['tag_bg'];
+        $this->theme_tag_bg_dark = $colors['tag_bg_dark'];
+        $this->theme_author_bg = $colors['author_bg'];
+        $this->theme_author_bg_dark = $colors['author_bg_dark'];
     }
 
     public function getFormSchema(): array
     {
         return [
             Tabs::make('Settings')
+                ->persistTabInQueryString('tab')
                 ->tabs([
                     // ========================================
                     // GENERAL TAB
@@ -1299,7 +1368,7 @@ class BlogrSettings extends Page
                                                             'category' => 'Category',
                                                         ])
                                                         ->default('external')
-                                                        ->live()
+                                        ->stateBindingModifiers(['defer'])
                                                         ->required()
                                                         ->columnSpan(1),
 
