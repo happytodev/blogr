@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.0.2](https://github.com/happytodev/blogr/compare/v1.0.1...v1.0.2) - 2026-06-07
+
+### 🐛 Bug Fixes
+
+- **Release skill**: Enforce formatted release notes display in `question` tool before user approval — prevents AI from skipping the review step.
+
 ## [v1.0.1](https://github.com/happytodev/blogr/compare/v1.0.0...v1.0.1) - 2026-06-07
 
 ### 🐛 Bug Fixes
