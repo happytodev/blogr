@@ -11,6 +11,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\CheckboxList;
@@ -593,9 +594,9 @@ class BlogrSettings extends Page
                                         ->default(false)
                                         ->helperText('When enabled, available locales are automatically detected from published content. When disabled, the manual list below is used.')
                                         ->live()
-                                        ->afterStateUpdated(function ($state, $livewire) {
+                                        ->afterStateUpdated(function (Set $set, ?string $state) {
                                             if ($state) {
-                                                $livewire->locales_available = null;
+                                                $set('locales_available', null);
                                             }
                                         }),
                                     Textarea::make('locales_available')
@@ -779,20 +780,20 @@ class BlogrSettings extends Page
                                         ->default('')
                                         ->helperText('Select a preset to auto-fill all theme colors. Choose "Custom" to set colors manually.')
                                         ->live()
-                                        ->afterStateUpdated(function ($state, $livewire) {
+                                        ->afterStateUpdated(function (Set $set, ?string $state) {
                                             $presets = config('blogr.ui.theme.presets', []);
                                             if ($state && isset($presets[$state])) {
                                                 $colors = $presets[$state];
-                                                $livewire->theme_primary_color = $colors['primary_color'] ?? '#c20be5';
-                                                $livewire->theme_primary_color_dark = $colors['primary_color_dark'] ?? '#e166fa';
-                                                $livewire->theme_primary_color_hover = $colors['primary_color_hover'] ?? '#d946ef';
-                                                $livewire->theme_primary_color_hover_dark = $colors['primary_color_hover_dark'] ?? '#e49df2';
-                                                $livewire->theme_category_bg = $colors['category_bg'] ?? '#e0f2fe';
-                                                $livewire->theme_category_bg_dark = $colors['category_bg_dark'] ?? '#0c4a6e';
-                                                $livewire->theme_tag_bg = $colors['tag_bg'] ?? '#68fc12';
-                                                $livewire->theme_tag_bg_dark = $colors['tag_bg_dark'] ?? '#48b00d';
-                                                $livewire->theme_author_bg = $colors['author_bg'] ?? '#f2e2f9';
-                                                $livewire->theme_author_bg_dark = $colors['author_bg_dark'] ?? '#9b0ab8';
+                                                $set('theme_primary_color', $colors['primary_color'] ?? '#c20be5');
+                                                $set('theme_primary_color_dark', $colors['primary_color_dark'] ?? '#e166fa');
+                                                $set('theme_primary_color_hover', $colors['primary_color_hover'] ?? '#d946ef');
+                                                $set('theme_primary_color_hover_dark', $colors['primary_color_hover_dark'] ?? '#e49df2');
+                                                $set('theme_category_bg', $colors['category_bg'] ?? '#e0f2fe');
+                                                $set('theme_category_bg_dark', $colors['category_bg_dark'] ?? '#0c4a6e');
+                                                $set('theme_tag_bg', $colors['tag_bg'] ?? '#68fc12');
+                                                $set('theme_tag_bg_dark', $colors['tag_bg_dark'] ?? '#48b00d');
+                                                $set('theme_author_bg', $colors['author_bg'] ?? '#f2e2f9');
+                                                $set('theme_author_bg_dark', $colors['author_bg_dark'] ?? '#9b0ab8');
                                             }
                                         })
                                         ->columnSpan(2),
