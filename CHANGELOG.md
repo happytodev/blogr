@@ -2,6 +2,32 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v0.22.0](https://github.com/happytodev/blogr/compare/v0.21.0...v0.22.0) - 2026-06-07
+
+### ✨ Features
+
+- **Locale auto-detection**: `LocaleService` auto-detects published locales from `BlogPostTranslation` and `CmsPageTranslation`, cached and invalidated on content changes
+- **Locale disable toggles**: New `locales_disabled` checkbox list in settings — disabled locales return 404 on the frontend
+- **Multilingual Settings UI redesign**: Auto-detect toggle + conditional manual textarea fallback, default locale now a `<select>` with human-readable names
+- **Flag emojis**: `localeFlag()` helper with 26-locale mapping added to navigation and language-switcher
+- **CMS content rendering**: `default.blade.php` renders `$content` and `$blocks`; fix for overriding published views resolved
+- **CLI import fix**: `detectCmsPageFormat()` delegates to `CmsPageImportExportService`
+- **Per-translation CMS page editing**: `EditCmsPageTranslation.php` with `CmsBlockBuilder`, eliminating combinatorial explosion
+- **Architecture redesign**: Single-form replaced with translation grid using `Repeater::make('translations')->relationship()`
+- **Install page translations**: Full JSON translation for 10 locales (7 blocks each, 4 content blocks translated)
+- **INSTALL.md**: Step-by-step guide from zero to running blog
+
+### 🐛 Bug Fixes
+
+- Fix `Livewire PropertyNotFoundException` by adding missing `locales_auto_detect` and `locales_disabled` properties to `BlogrSettings`
+- Fix CMS page content/blocks rendering: removed overriding published views and cleared view cache
+
+### ✅ Tests
+
+- 911 passing tests (56 skipped, ~2720 assertions)
+- New test files: `LocaleServiceTest`, `CmsPageDisabledLocaleTest`, `CmsPageTranslationEditTest`
+- 4 new disabled filtering tests, 2 new `availableLocales()` tests, 3 route-level disabled locale tests
+
 ## [v0.21.0](https://github.com/happytodev/blogr/compare/v0.20.0...v0.21.0) - 2026-06-07
 
 ### ✨ Features
