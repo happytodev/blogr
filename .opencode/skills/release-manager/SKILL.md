@@ -61,9 +61,13 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
 
 ### 4. Run tests (ZERO TOLERANCE)
 
-- Run: `vendor/bin/pest --parallel`
+- Run: `vendor/bin/pest --parallel` (takes 4-5s)
+- **Do NOT pipe through grep/tail/head — capture the raw output.** The last lines show the result:
+  ```
+  Tests:    56 skipped, 911 passed (2720 assertions)
+  ```
 - **If ANY test fails (even 1), abort immediately.** Do not proceed, do not commit, do not push.
-- Zero tolerance: "skipped" is OK, but "failed" or "error" means STOP.
+- Zero tolerance: "skipped" and "passed" are OK; "failed" or "ERROR" means STOP.
 - Report the failure count to the user and tell them what tests failed.
 
 ### 5. Update version files (atomic commit)
