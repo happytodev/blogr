@@ -2,6 +2,20 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.4.0](https://github.com/happytodev/blogr/compare/v1.3.0...v1.4.0) - 2026-06-08
+
+### ✨ Features
+
+- **RSS settings UI**: Enable/disable, items_limit, show_in_header, show_in_footer in admin Settings > Sitemap & RSS. Fields are conditionally shown/hidden when RSS is disabled.
+- **RSS auto-discovery**: `<link rel="alternate" type="application/rss+xml">` injected in `<head>` for blog listing, category, and tag pages — browsers and feed readers auto-detect the feed URL.
+- **RSS icons in header & footer**: Config-driven RSS icon in navigation bar and footer social links area. Orange RSS SVG icon with theme color hover effects.
+- **Feed directory page**: `/{locale}/feeds` lists all available feeds (main, per-category, per-tag) with post counts, localized names, copyable URLs, and theme-colored styling.
+- **Admin feed URLs**: RSS feed URL displayed with copy and open buttons in Category and Tag edit forms via `Placeholder` component with inline clipboard JS.
+- **Configurable `cache_duration`**: RSS feed `Cache-Control` header now reads from `config('blogr.rss.cache_duration')` instead of hardcoded 3600.
+- **Translations**: Feed-related strings (title, description, main_feed, categories, tags, posts) in all 4 locales (EN, FR, ES, DE).
+- **`SetLocale` middleware**: Applied to feeds directory route so locale-based rendering and translations work correctly.
+- **Theme color integration**: Feeds page respects user's preset/custom colors via CSS variables (`--color-primary`, `--color-primary-dark`, `--color-primary-hover`) instead of hardcoded orange.
+
 ## [v1.3.0](https://github.com/happytodev/blogr/compare/v1.2.1...v1.3.0) - 2026-06-08
 
 ### ✨ Features
