@@ -62,7 +62,7 @@ class BlogrServiceProvider extends PackageServiceProvider
         }
 
         if (file_exists($package->basePath('/../database/migrations'))) {
-            $package->hasMigrations($this->getMigrations());
+            $package->runsMigrations()->hasMigrations($this->getMigrations());
         }
 
         if (file_exists($package->basePath('/../resources/lang'))) {
@@ -828,7 +828,9 @@ class BlogrServiceProvider extends PackageServiceProvider
      */
     protected function getMigrations(): array
     {
-        $migrations = [];
+        $migrations = [
+            '2026_06_08_000001_create_blogr_extension_states_table',
+        ];
 
         // Add CMS migrations if CMS is enabled
         if (config('blogr.cms.enabled', false)) {

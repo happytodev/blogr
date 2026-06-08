@@ -432,6 +432,20 @@ After installation:
 
 ---
 
+## 🔒 GDPR Plugin
+
+Add full GDPR compliance to your Blogr site with the official [Blogr GDPR](https://github.com/happytodev/blogr-gdpr) plugin:
+
+[![blogr-gdpr](https://img.shields.io/packagist/v/happytodev/blogr-gdpr.svg?style=flat-square&label=blogr-gdpr)](https://packagist.org/packages/happytodev/blogr-gdpr) [![GDPR Tests](https://img.shields.io/github/actions/workflow/status/happytodev/blogr-gdpr/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/happytodev/blogr-gdpr/actions)
+
+Cookie consent, privacy policy, data export & erasure — install in one command:
+
+```bash
+composer require happytodev/blogr-gdpr
+```
+
+---
+
 ## 📚 Documentation
 
 ### Configuration

@@ -204,3 +204,130 @@ test('blogr core extension has an author', function () {
 
     expect($core->getAuthor())->not->toBeEmpty();
 });
+
+// ─── ENABLE / DISABLE ────────────────────────────────
+
+test('extension is enabled by default', function () {
+    $registry = app(ExtensionRegistry::class);
+
+    expect($registry->isEnabled('blogr-core'))->toBeTrue();
+});
+
+test('disabling an extension makes isEnabled return false', function () {
+    $registry = app(ExtensionRegistry::class);
+
+    $registry->disable('blogr-core');
+
+    expect($registry->isEnabled('blogr-core'))->toBeFalse();
+});
+
+test('re-enabling a disabled extension restores enabled state', function () {
+    $registry = app(ExtensionRegistry::class);
+
+    $registry->disable('blogr-core');
+    expect($registry->isEnabled('blogr-core'))->toBeFalse();
+
+    $registry->enable('blogr-core');
+    expect($registry->isEnabled('blogr-core'))->toBeTrue();
+});
+
+test('getEnabled excludes disabled extensions', function () {
+    $registry = app(ExtensionRegistry::class);
+
+    $registry->disable('blogr-core');
+
+    $enabled = $registry->getEnabled();
+
+    expect($enabled)->not->toHaveKey('blogr-core');
+});
+
+test('getDisabledIds returns disabled extension ids', function () {
+    $registry = app(ExtensionRegistry::class);
+
+    $registry->disable('blogr-core');
+
+    $disabledIds = $registry->getDisabledIds();
+
+    expect($disabledIds)->toContain('blogr-core');
+});
+
+test('getDisabledIds is empty when all extensions enabled', function () {
+    $registry = app(ExtensionRegistry::class);
+
+    expect($registry->getDisabledIds())->toBeEmpty();
+});
+
+test('registering extension auto-creates enabled state', function () {
+    $registry = app(ExtensionRegistry::class);
+
+    $ext = new class implements BlogrExtension {
+        public function getId(): string { return 'new-plugin'; }
+        public function getName(): string { return 'New Plugin'; }
+        public function getDescription(): string { return ''; }
+        public function getVersion(): string { return '1.0.0'; }
+        public function getAuthor(): string { return 'Dev'; }
+        public function getHomepage(): ?string { return null; }
+        public function getDependencies(): array { return []; }
+    };
+
+    $registry->register($ext);
+
+    expect($registry->isEnabled('new-plugin'))->toBeTrue();
+});
+
+test('toggleExtension in Plugins page toggles state for non-core extensions', function () {
+    $registry = app(ExtensionRegistry::class);
+
+    $ext = new class implements BlogrExtension {
+        public function getId(): string { return 'toggle-me'; }
+        public function getName(): string { return 'Toggle Me'; }
+        public function getDescription(): string { return ''; }
+        public function getVersion(): string { return '1.0.0'; }
+        public function getAuthor(): string { return 'Dev'; }
+        public function getHomepage(): ?string { return null; }
+        public function getDependencies(): array { return []; }
+    };
+
+    $registry->register($ext);
+    $page = new \Happytodev\Blogr\Filament\Pages\Plugins();
+
+    $page->toggleExtension('toggle-me');
+    expect($registry->isEnabled('toggle-me'))->toBeFalse();
+
+    $page->toggleExtension('toggle-me');
+    expect($registry->isEnabled('toggle-me'))->toBeTrue();
+});
+
+test('blogr-core cannot be toggled via toggleExtension', function () {
+    $registry = app(ExtensionRegistry::class);
+    $page = new \Happytodev\Blogr\Filament\Pages\Plugins();
+
+    expect($registry->isEnabled('blogr-core'))->toBeTrue();
+
+    $page->toggleExtension('blogr-core');
+
+    expect($registry->isEnabled('blogr-core'))->toBeTrue();
+});
+
+test('toggling non-core extension twice restores enabled', function () {
+    $registry = app(ExtensionRegistry::class);
+
+    $ext = new class implements BlogrExtension {
+        public function getId(): string { return 'ext-three'; }
+        public function getName(): string { return 'Extension Three'; }
+        public function getDescription(): string { return ''; }
+        public function getVersion(): string { return '1.0.0'; }
+        public function getAuthor(): string { return 'Dev'; }
+        public function getHomepage(): ?string { return null; }
+        public function getDependencies(): array { return []; }
+    };
+
+    $registry->register($ext);
+    $page = new \Happytodev\Blogr\Filament\Pages\Plugins();
+
+    $page->toggleExtension('ext-three');
+    expect($registry->isEnabled('ext-three'))->toBeFalse();
+
+    $page->toggleExtension('ext-three');
+    expect($registry->isEnabled('ext-three'))->toBeTrue();
+});
