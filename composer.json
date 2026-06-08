@@ -7,7 +7,7 @@
         "filamentphp",
         "blogr"
     ],
-    "version": "1.3.0",
+    "version": "1.4.0",
     "homepage": "https://github.com/happytodev/blogr",
     "support": {
         "issues": "https://github.com/happytodev/blogr/issues",
@@ -16,7 +16,7 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Frédéric Blanc",
+            "name": "Fr\u00e9d\u00e9ric Blanc",
             "email": "happytodev@gmail.com",
             "role": "Developer"
         }
