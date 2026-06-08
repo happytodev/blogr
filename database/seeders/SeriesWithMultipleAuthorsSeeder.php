@@ -1,17 +1,10 @@
-<?php<?php
+<?php
 
+namespace Happytodev\Blogr\Database\Seeders;
 
-
-namespace Happytodev\Blogr\Database\Seeders;namespace Happytodev\Blogr\Database\Seeders;
-
-
-
-use Illuminate\Database\Seeder;class SeriesWithMultipleAuthorsSeeder
-
-use Workbench\App\Models\User;{
-
-use Happytodev\Blogr\Models\BlogSeries;}
-
+use Illuminate\Database\Seeder;
+use Workbench\App\Models\User;
+use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;

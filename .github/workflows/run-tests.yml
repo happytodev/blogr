@@ -28,5 +28,13 @@ jobs:
       - name: Install dependencies
         run: composer update --no-interaction --${{ matrix.stability }} --prefer-dist
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
       - name: Execute tests
         run: vendor/bin/pest

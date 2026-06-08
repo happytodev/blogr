@@ -1,20 +1,11 @@
-<?php<?php
+<?php
+
 uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(RefreshDatabase::class);
 
-
-
-
-
-use Happytodev\Blogr\Models\BlogPost;namespace Happytodev\Blogr\Tests\Feature;
-
+use Happytodev\Blogr\Models\BlogPost;
+use Happytodev\Blogr\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
-use Happytodev\Blogr\Models\User;class TocBehaviorTestNew
-
-{
-
-uses(RefreshDatabase::class);}
-
 
 beforeEach(function () {
     $this->author = User::factory()->create([

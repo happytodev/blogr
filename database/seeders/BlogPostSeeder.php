@@ -10,14 +10,27 @@ use Happytodev\Blogr\Models\Tag;
 
 class BlogPostSeeder extends Seeder
 {
-    private \$user;
+    private $user;
 
     public function run(): void
     {
         // Get the first user or create one
-        \$this->user = \App\Models\User::first();
-        if (!\$this->user) {
+        $this->user = \App\Models\User::first();
+        if (!$this->user) {
+            $this->user = \App\Models\User::create([
+                'name' => 'Admin',
+                'email' => 'admin@blogr.test',
+                'password' => bcrypt('password'),
+            ]);
+        }
+
+        $categoryLaravel = Category::firstOrCreate(['slug' => 'laravel'], ['name' => 'Laravel']);
+        $categoryVue = Category::firstOrCreate(['slug' => 'vue'], ['name' => 'Vue.js']);
+        $categoryProductivity = Category::firstOrCreate(['slug' => 'productivity'], ['name' => 'Productivity']);
+
+        $tagBeginner = Tag::firstOrCreate(['slug' => 'beginner'], ['name' => 'Beginner']);
         $tagAdvanced = Tag::firstOrCreate(['slug' => 'advanced'], ['name' => 'Advanced']);
+        $tagTutorial = Tag::firstOrCreate(['slug' => 'tutorial'], ['name' => 'Tutorial']);
         $tagBestPractices = Tag::firstOrCreate(['slug' => 'best-practices'], ['name' => 'Best Practices']);
         $tagTips = Tag::firstOrCreate(['slug' => 'tips'], ['name' => 'Tips']);
         $tagPerformance = Tag::firstOrCreate(['slug' => 'performance'], ['name' => 'Performance']);
@@ -144,7 +157,7 @@ class BlogPostSeeder extends Seeder
         // Create translations
         foreach ($data['translations'] as $locale => $translation) {
             $readingTime = $this->calculateReadingTime($translation['content']);
-            
+
             BlogPostTranslation::create([
                 'blog_post_id' => $post->id,
                 'locale' => $locale,
@@ -289,7 +302,7 @@ class Post extends Model
     {
         return $query->where('published', true);
     }
-    
+
     public function scopeRecent($query)
     {
         return $query->orderBy('created_at', 'desc');
@@ -460,7 +473,7 @@ class Post extends Model
     {
         return $query->whereNotNull('published_at');
     }
-    
+
     public function scopePopular($query)
     {
         return $query->where('views', '>', 1000);
@@ -518,20 +531,20 @@ export default {
   setup() {
     // Reactive state
     const count = ref(0)
-    
+
     // Computed property
     const doubleCount = computed(() => count.value * 2)
-    
+
     // Method
     function increment() {
       count.value++
     }
-    
+
     // Lifecycle hook
     onMounted(() => {
       console.log('Component mounted')
     })
-    
+
     return {
       count,
       doubleCount,
@@ -564,15 +577,15 @@ Create reusable logic with composables:
 // useCounter.js
 export function useCounter(initialValue = 0) {
   const count = ref(initialValue)
-  
+
   function increment() {
     count.value++
   }
-  
+
   function decrement() {
     count.value--
   }
-  
+
   return {
     count,
     increment,
@@ -586,7 +599,7 @@ import { useCounter } from './useCounter'
 export default {
   setup() {
     const { count, increment, decrement } = useCounter(10)
-    
+
     return { count, increment, decrement }
   }
 }

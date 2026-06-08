@@ -25,4 +25,12 @@ jobs:
         run: composer update --no-interaction --prefer-dist
 
       - name: Run Pint
-        run: pint --test
+        run: pint
+
+      - name: Commit fixed files
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --staged --quiet || git commit -m "chore: fix code style [skip ci]"
+          git push origin main
