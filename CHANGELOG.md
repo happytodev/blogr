@@ -2,6 +2,18 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.2.0](https://github.com/happytodev/blogr/compare/v1.1.2...v1.2.0) - 2026-06-07
+
+### ✨ Features
+
+- **Email Configuration UI**: New "Email Configuration" section in Settings > General with provider selection (Brevo, .env), from address/name, and Brevo SMTP credentials. Writes API keys to `.env` (gitignored), not to `config/blogr.php`.
+- **Dynamic mail config**: `BlogrServiceProvider` applies Brevo SMTP settings at runtime when the provider is selected.
+
+### 🐛 Bug Fixes
+
+- **Contact form CSRF**: Added missing `meta[name="csrf-token"]` to the blog layout — contact form submissions were failing with "Network error" on sites without the meta tag.
+- **Contact form button text color**: Fixed submit button text visibility with Tailwind v4 `!important` prefix.
+
 ## [v1.1.2](https://github.com/happytodev/blogr/compare/v1.1.1...v1.1.2) - 2026-06-07
 
 ### 🐛 Bug Fixes
