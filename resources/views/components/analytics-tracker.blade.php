@@ -8,9 +8,12 @@
 @php
     $analyticsEnabled = config('blogr.analytics.enabled', false);
     $provider = config('blogr.analytics.provider');
+    $anonymizeIp = config('blogr.analytics.anonymize_ip', true);
 @endphp
 
 @if($analyticsEnabled && $provider)
+    @stack('analytics-consent')
+
     {{-- Google Analytics --}}
     @if($provider === 'google')
         @php
@@ -23,7 +26,7 @@
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', '{{ $measurementId }}');
+                gtag('config', '{{ $measurementId }}'@if($anonymizeIp), { 'anonymize_ip': true }@endif);
             </script>
         @endif
     @endif
@@ -64,6 +67,7 @@
                 var _paq = window._paq = window._paq || [];
                 _paq.push(['trackPageView']);
                 _paq.push(['enableLinkTracking']);
+                @if($anonymizeIp)_paq.push(['setAnonymizeIp', true]);@endif
                 (function() {
                     var u="{{ rtrim($matomoUrl, '/') }}/";
                     _paq.push(['setTrackerUrl', u+'matomo.php']);

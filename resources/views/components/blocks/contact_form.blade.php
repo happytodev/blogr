@@ -89,6 +89,8 @@
                     ></textarea>
                 </div>
 
+                @stack('contact-form-consent')
+
                 <div class="flex items-center justify-end">
                     <button
                         type="submit"

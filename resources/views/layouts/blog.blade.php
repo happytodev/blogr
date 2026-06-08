@@ -104,7 +104,9 @@
     @endif
 
     {{-- Analytics Tracking --}}
+    @stack('analytics-before')
     @include('blogr::components.analytics-tracker')
+    @stack('analytics-after')
 
     @stack('head')
     @stack('styles')
@@ -144,6 +146,7 @@
     </div>
 
     @stack('body-end')
+    @stack('cookie-consent')
     {{-- Back to top button (simple component) --}}
     <!-- DEBUG: BEFORE INCLUDE -->
     @include('blogr::components.back-to-top')

@@ -134,12 +134,13 @@ it('renders google analytics script correctly', function () {
         'blogr.analytics.enabled' => true,
         'blogr.analytics.provider' => 'google',
         'blogr.analytics.google.measurement_id' => 'G-ABCD123456',
+        'blogr.analytics.anonymize_ip' => true,
     ]);
 
     $view = view('blogr::components.analytics-tracker')->render();
 
     expect($view)->toContain('googletagmanager.com/gtag/js?id=G-ABCD123456')
-        ->and($view)->toContain("gtag('config', 'G-ABCD123456')");
+        ->and($view)->toContain("gtag('config', 'G-ABCD123456', { 'anonymize_ip': true })");
 });
 
 it('renders plausible analytics script with default src', function () {
@@ -294,4 +295,44 @@ it('has correct matomo config structure', function () {
     expect($config)->toBeArray()
         ->and($config)->toHaveKey('url')
         ->and($config)->toHaveKey('site_id');
+});
+
+it('property analytics_anonymize_ip exists in BlogrSettings', function () {
+    $settings = new BlogrSettings();
+
+    expect(property_exists($settings, 'analytics_anonymize_ip'))->toBeTrue();
+});
+
+it('renders google analytics with anonymize_ip when enabled', function () {
+    config([
+        'blogr.analytics.enabled' => true,
+        'blogr.analytics.provider' => 'google',
+        'blogr.analytics.google.measurement_id' => 'G-ABCD123456',
+        'blogr.analytics.anonymize_ip' => true,
+    ]);
+
+    $view = view('blogr::components.analytics-tracker')->render();
+
+    expect($view)->toContain("'anonymize_ip': true");
+});
+
+it('renders google analytics without anonymize_ip when disabled', function () {
+    config([
+        'blogr.analytics.enabled' => true,
+        'blogr.analytics.provider' => 'google',
+        'blogr.analytics.google.measurement_id' => 'G-ABCD123456',
+        'blogr.analytics.anonymize_ip' => false,
+    ]);
+
+    $view = view('blogr::components.analytics-tracker')->render();
+
+    expect($view)->not->toContain("'anonymize_ip':");
+});
+
+it('has anonymize_ip key in analytics config structure', function () {
+    config(['blogr.analytics.anonymize_ip' => true]);
+
+    $config = config('blogr.analytics');
+
+    expect($config)->toHaveKey('anonymize_ip');
 });

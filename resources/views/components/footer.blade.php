@@ -8,6 +8,7 @@
             </div>
 
             <!-- Social Links -->
+            @stack('footer-links')
             @if(config('blogr.ui.footer.show_social_links', true))
             <div class="flex items-center space-x-4">
                 @if($twitter = config('blogr.ui.footer.social_links.twitter'))

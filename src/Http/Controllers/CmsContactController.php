@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Happytodev\Blogr\Events\ContactFormSubmitted;
 
 class CmsContactController extends Controller
 {
@@ -38,18 +39,18 @@ class CmsContactController extends Controller
                 }
             );
 
+            ContactFormSubmitted::dispatch(
+                name: $emailData['name'],
+                email: $emailData['email'],
+                subject: $emailData['subject'],
+                message: $emailData['message_body'],
+            );
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             Log::error('Blogr contact form failed', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'mail_driver' => config('mail.default'),
-                'mail_host' => config('mail.mailers.smtp.host'),
-                'mail_port' => config('mail.mailers.smtp.port'),
-                'mail_username' => config('mail.mailers.smtp.username'),
-                'mail_encryption' => config('mail.mailers.smtp.encryption'),
-                'mail_from' => config('mail.from.address'),
-                'to_email' => $toEmail,
+                'error_type' => get_class($e),
+                'error_code' => $e->getCode(),
             ]);
 
             return response()->json([
