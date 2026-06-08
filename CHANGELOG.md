@@ -2,6 +2,20 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.3.0](https://github.com/happytodev/blogr/compare/v1.2.1...v1.3.0) - 2026-06-08
+
+### ✨ Features
+
+- **Plugin system**: New `ExtensionRegistry` singleton with `BlogrExtension` interface. Core blogr package registers itself as a built-in extension. Plugins page in Settings > Plugins shows installed extensions with metadata (version, author, dependencies, homepage).
+- **GDPR foundations**: Core events (`ContactFormSubmitted`, `AnalyticsScriptRendered`, `UserDataExported`, `UserAccountDeleted`) with `Dispatchable` trait. Blade stacks for plugin injection (`@stack('cookie-consent')`, `@stack('analytics-before')`, `@stack('analytics-after')`, `@stack('analytics-consent')`, `@stack('contact-form-consent')`, `@stack('footer-links')`). Analytics anonymize IP support for Google Analytics and Matomo.
+- **Mail settings improvements**: Brevo SMTP UI with clearer labels and helper text. Test email button with diagnostic error logging (no personal data in logs). Runtime mail config from `.env` via `applyMailConfig()`.
+
+### 🐛 Bug Fixes
+
+- **Contact form CSRF**: Added missing `meta[name="csrf-token"]` to blog layout.
+- **Contact form button text**: Fixed submit button text visibility with Tailwind v4 `!important` prefix.
+- **Log sanitization**: Removed personal data (emails, credentials) from error logs in `CmsContactController`.
+
 ## [v1.2.1](https://github.com/happytodev/blogr/compare/v1.2.0...v1.2.1) - 2026-06-07
 
 ### 🐛 Bug Fixes
