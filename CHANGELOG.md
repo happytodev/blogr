@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.1.1](https://github.com/happytodev/blogr/compare/v1.1.0...v1.1.1) - 2026-06-07
+
+### 🐛 Bug Fixes
+
+- **Blog posts block image**: Fixed broken image display in the `blog_posts` CMS block — was referencing `featured_image` (non-existent) instead of `photo` with fallback chain.
+
 ## [v1.1.0](https://github.com/happytodev/blogr/compare/v1.0.3...v1.1.0) - 2026-06-07
 
 ### ✨ Features
