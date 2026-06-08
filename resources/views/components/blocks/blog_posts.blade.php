@@ -33,11 +33,15 @@
                     @endphp
                     
                     @if($translation)
+                        @php
+                            $image = $translation->photo ?? $post->photo ?? null;
+                            $imageUrl = $image ? Storage::url($image) : null;
+                        @endphp
                         <article class="group">
-                            @if($translation->featured_image)
+                            @if($imageUrl)
                                 <a href="{{ route('blog.show', ['locale' => app()->getLocale(), 'slug' => $translation->slug]) }}" class="block mb-4 overflow-hidden rounded-lg">
                                     <img 
-                                        src="{{ Storage::url($translation->featured_image) }}" 
+                                        src="{{ $imageUrl }}" 
                                         alt="{{ $translation->title }}"
                                         class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
                                     >
