@@ -2,7 +2,7 @@
 
 use Happytodev\Blogr\Tests\CmsTestCase;
 
-uses(CmsTestCase::class);
+uses(\Happytodev\Blogr\Tests\CmsTestCase::class);
 
 function viewPath(string $relative): string
 {

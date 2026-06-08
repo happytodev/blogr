@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-uses(TestCase::class);
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 
 beforeEach(function () {
     // Use a temp directory for config writes to avoid polluting skeleton config

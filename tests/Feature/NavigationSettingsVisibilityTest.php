@@ -3,7 +3,7 @@
 use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(TestCase::class);
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 uses(RefreshDatabase::class);
 
 beforeEach(function () {

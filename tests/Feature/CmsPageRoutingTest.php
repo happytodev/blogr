@@ -6,7 +6,7 @@ use Happytodev\Blogr\Tests\CmsTestCase;
 
 use function Pest\Laravel\get;
 
-uses(CmsTestCase::class)->group('cms');
+uses(\Happytodev\Blogr\Tests\CmsTestCase::class)->group('cms');
 
 beforeEach(function () {
     // Configuration déjà faite dans CmsTestCase

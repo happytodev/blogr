@@ -5,7 +5,7 @@ use Happytodev\Blogr\Tests\LocalizedCmsTestCase;
 
 use function Pest\Laravel\get;
 
-uses(LocalizedCmsTestCase::class)->group('cms', 'issue174');
+uses(\Happytodev\Blogr\Tests\LocalizedCmsTestCase::class)->group('cms', 'issue174');
 
 /**
  * Test for Issue #174: Even if I choose CMS as home page during install, the blog is set as default

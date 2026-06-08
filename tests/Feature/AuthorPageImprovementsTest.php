@@ -1,6 +1,6 @@
 <?php
 
-uses(TestCase::class);
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 
 use Carbon\Carbon;
 use Happytodev\Blogr\Models\BlogPost;

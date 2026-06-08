@@ -3,7 +3,7 @@
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Tests\TestCase;
 
-uses(TestCase::class);
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 
 test('primary color can be configured via admin settings', function () {
     $settings = new BlogrSettings;

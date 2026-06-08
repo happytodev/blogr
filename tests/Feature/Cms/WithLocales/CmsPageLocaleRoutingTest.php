@@ -5,7 +5,7 @@ use Happytodev\Blogr\Tests\CmsWithLocalesTestCase;
 
 use function Pest\Laravel\get;
 
-uses(CmsWithLocalesTestCase::class);
+uses(\Happytodev\Blogr\Tests\CmsWithLocalesTestCase::class);
 uses()->group('cms', 'locales');
 
 test('CMS homepage is accessible at locale root', function () {

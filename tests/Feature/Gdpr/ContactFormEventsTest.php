@@ -5,7 +5,7 @@ use Happytodev\Blogr\Tests\CmsTestCase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 
-uses(CmsTestCase::class);
+uses(\Happytodev\Blogr\Tests\CmsTestCase::class);
 
 it('dispatches ContactFormSubmitted when contact form is submitted', function () {
     Event::fake();

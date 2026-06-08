@@ -8,7 +8,7 @@ use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Tests\CmsTestCase;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
-uses(CmsTestCase::class);
+uses(\Happytodev\Blogr\Tests\CmsTestCase::class);
 
 /**
  * Helper to get the project root path from tests/Feature/Cms/

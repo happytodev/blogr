@@ -3,7 +3,7 @@
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Tests\TestCase;
 
-uses(TestCase::class);
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 
 // ============================================
 // PHASE RED: Tests pour le nouveau système de couleurs

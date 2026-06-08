@@ -5,7 +5,7 @@ use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Tests\LocalizedTestCase;
 
-uses(LocalizedTestCase::class);
+uses(\Happytodev\Blogr\Tests\LocalizedTestCase::class);
 
 describe('LinkResolver', function () {
     it('resolves external URL link type', function () {

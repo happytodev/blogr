@@ -6,7 +6,7 @@ use Happytodev\Blogr\Services\CmsPageImportExportService;
 use Happytodev\Blogr\Tests\CmsTestCase;
 use Illuminate\Support\Facades\File;
 
-uses(CmsTestCase::class);
+uses(\Happytodev\Blogr\Tests\CmsTestCase::class);
 
 beforeEach(function () {
     $this->service = app(CmsPageImportExportService::class);

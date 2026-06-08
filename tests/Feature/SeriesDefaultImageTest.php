@@ -2,7 +2,7 @@
 
 use Happytodev\Blogr\Tests\TestCase;
 
-uses(TestCase::class);
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 
 it('has default series image configured', function () {
     $defaultImage = config('blogr.series.default_image');

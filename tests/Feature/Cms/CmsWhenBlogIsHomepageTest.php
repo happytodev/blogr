@@ -5,7 +5,7 @@ use Happytodev\Blogr\Tests\TestCase;
 
 use function Pest\Laravel\get;
 
-uses(TestCase::class);
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 
 beforeEach(function () {
     // Configure blog as homepage (NOT CMS)

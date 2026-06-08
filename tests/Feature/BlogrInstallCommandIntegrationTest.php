@@ -1,6 +1,6 @@
 <?php
 
-uses(TestCase::class);
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;

@@ -5,7 +5,7 @@ use Happytodev\Blogr\Tests\CmsWithPrefixTestCase;
 
 use function Pest\Laravel\get;
 
-uses(CmsWithPrefixTestCase::class);
+uses(\Happytodev\Blogr\Tests\CmsWithPrefixTestCase::class);
 uses()->group('cms', 'prefix');
 
 test('CMS page is accessible with prefix', function () {

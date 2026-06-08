@@ -1,0 +1,25 @@
+<?php
+
+// Force-load test case classes before Pest processes uses()
+class_exists(Happytodev\Blogr\Tests\LocalizedTestCase::class);
+class_exists(Happytodev\Blogr\Tests\TestCase::class);
+
+uses(Happytodev\Blogr\Tests\LocalizedTestCase::class)->in('Localized');
+uses(Happytodev\Blogr\Tests\TestCase::class)->in('Unit');
+uses(Happytodev\Blogr\Tests\TestCase::class)->in('Arch');
+uses(Happytodev\Blogr\Tests\TestCase::class)->in('Browser');
+
+// Feature tests: must declare uses() individually due to mix of TestCase and CmsTestCase
+// Pest does not support conditional/excluded patterns, so we cannot use in('Feature')
+// Each Feature test file declares its own uses() at the top
+
+/*
+|--------------------------------------------------------------------------
+| Browser Testing Configuration
+|--------------------------------------------------------------------------
+|
+| Configure PestPHP browser plugin for browser testing
+|
+*/
+
+uses()->group('browser')->in('Browser');

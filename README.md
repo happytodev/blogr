@@ -4,8 +4,11 @@
 
 [![Latest Version](https://img.shields.io/packagist/v/happytodev/blogr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr)
 [![Tests](https://img.shields.io/github/actions/workflow/status/happytodev/blogr/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/happytodev/blogr/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![Code Style](https://img.shields.io/github/actions/workflow/status/happytodev/blogr/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/happytodev/blogr/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
+[![Fix PHP code style](https://img.shields.io/github/actions/workflow/status/happytodev/blogr/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/happytodev/blogr/actions)
+[![PHP Version](https://img.shields.io/packagist/php-v/happytodev/blogr?style=flat-square)](https://packagist.org/packages/happytodev/blogr)
 [![Downloads](https://img.shields.io/packagist/dt/happytodev/blogr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr)
+[![GitHub Stars](https://img.shields.io/github/stars/happytodev/blogr?style=flat-square)](https://github.com/happytodev/blogr)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
 ![Blogr Banner](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/blogr.webp)
 

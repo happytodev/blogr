@@ -4,7 +4,7 @@ use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Tests\CmsTestCase;
 
-uses(CmsTestCase::class);
+uses(\Happytodev\Blogr\Tests\CmsTestCase::class);
 
 test('it can create a page with hero block in translation', function () {
     $page = CmsPage::create([

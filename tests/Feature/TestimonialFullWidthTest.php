@@ -1,6 +1,6 @@
 <?php
 
-uses(TestCase::class);
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 
 use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Tests\TestCase;

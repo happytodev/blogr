@@ -1,6 +1,6 @@
 <?php
 
-uses(TestCase::class);
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 
 use Happytodev\Blogr\Http\Controllers\RssFeedController;
 use Happytodev\Blogr\Models\BlogPost;

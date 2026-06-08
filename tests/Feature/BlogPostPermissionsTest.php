@@ -1,6 +1,6 @@
 <?php
 
-uses(TestCase::class);
+uses(\Happytodev\Blogr\Tests\TestCase::class);
 
 use Filament\Schemas\Schema;
 use Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm;

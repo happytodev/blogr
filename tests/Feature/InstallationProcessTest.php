@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-uses(TestCase::class)->in(__FILE__);
+uses(\Happytodev\Blogr\Tests\TestCase::class)->in(__FILE__);
 
 it('should create admin and writer roles', function () {
     // Run the role and permission seeder
