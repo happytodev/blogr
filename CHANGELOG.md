@@ -2,6 +2,19 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.5.0](https://github.com/happytodev/blogr/compare/v1.4.0...v1.5.0) - 2026-06-08
+
+### ✨ Features
+
+- **Plugin enable/disable system**: New `ExtensionRegistry::enable()`, `disable()`, `isEnabled()` methods backed by `blogr_extension_states` database table. State is lazily loaded and cached for 3600s. Plugins page shows a real CSS toggle switch (track + sliding knob) with toast notifications on enable/disable.
+- **Core plugin protection**: `blogr-core` cannot be disabled via the Plugins toggle; a warning toast is shown instead.
+- **Toggle UI redesign**: Replaced text pill buttons with accessible toggle switches (`role="switch"`, `aria-checked`, keyboard focus-visible styling).
+- **CI/CD pipelines**: GitHub Actions workflows for testing (PHP 8.3/8.4) and PHP code style fixes via Pint.
+
+### 📝 Documentation
+
+- **README**: Added blogr-gdpr plugin badge, install section, and plugin ecosystem overview.
+
 ## [v1.4.0](https://github.com/happytodev/blogr/compare/v1.3.0...v1.4.0) - 2026-06-08
 
 ### ✨ Features
