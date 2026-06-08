@@ -295,7 +295,7 @@ test('media collection extracts image paths from blocks', function () {
 test('import rejects unsupported file format', function () {
     $dir = storage_path('app/blogr-exports');
     File::ensureDirectoryExists($dir);
-    $fakePath = $dir . '/test.txt';
+    $fakePath = $dir.'/test.txt';
     File::put($fakePath, 'not a json file');
 
     $this->expectException(InvalidArgumentException::class);
