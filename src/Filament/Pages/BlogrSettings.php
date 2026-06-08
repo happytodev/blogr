@@ -257,6 +257,13 @@ class BlogrSettings extends Page
     // Contact Settings
     public ?string $contact_to_email = null;
 
+    // Mail Settings
+    public ?string $mail_provider = null;
+    public ?string $mail_from_address = null;
+    public ?string $mail_from_name = null;
+    public ?string $mail_brevo_username = null;
+    public ?string $mail_brevo_password = null;
+
     // Theme Preset
     public ?string $theme_preset = null;
 
@@ -467,6 +474,13 @@ class BlogrSettings extends Page
         // Load contact settings
         $this->contact_to_email = $config['contact']['to_email'] ?? '';
 
+        // Load mail settings
+        $this->mail_provider = $config['mail']['provider'] ?? '';
+        $this->mail_from_address = $config['mail']['from']['address'] ?? '';
+        $this->mail_from_name = $config['mail']['from']['name'] ?? '';
+        $this->mail_brevo_username = $config['mail']['brevo']['username'] ?? env('MAIL_USERNAME', '');
+        $this->mail_brevo_password = $config['mail']['brevo']['password'] ?? env('MAIL_PASSWORD', '');
+
         // Load theme preset (no preset = custom)
         $this->theme_preset = $config['ui']['theme']['preset'] ?? '';
     }
@@ -586,9 +600,52 @@ class BlogrSettings extends Page
                                     TextInput::make('contact_to_email')
                                         ->label('Contact Form Recipient Email')
                                         ->placeholder('hello@example.com')
-                                        ->helperText('Emails from the contact form will be sent to this address. Requires a mail provider (Mailgun, Brevo, SMTP, etc.) configured in .env')
+                                        ->helperText('Emails from the contact form will be sent to this address.')
                                         ->email()
                                         ->columnSpan(1),
+
+                                    Section::make('Email Configuration')
+                                        ->description('Configure your email provider for sending emails (contact form, notifications, etc.)')
+                                        ->collapsed()
+                                        ->schema([
+                                            Select::make('mail_provider')
+                                                ->label('Email Provider')
+                                                ->options([
+                                                    '' => 'Use .env configuration (default)',
+                                                    'brevo' => 'Brevo (Sendinblue)',
+                                                ])
+                                                ->default('')
+                                                ->live()
+                                                ->columnSpan(1),
+
+                                            TextInput::make('mail_from_address')
+                                                ->label('From Address')
+                                                ->placeholder('hello@example.com')
+                                                ->helperText('The email address that will appear as the sender.')
+                                                ->email()
+                                                ->columnSpan(1),
+
+                                            TextInput::make('mail_from_name')
+                                                ->label('From Name')
+                                                ->placeholder('My Blog')
+                                                ->columnSpan(1),
+
+                                            TextInput::make('mail_brevo_username')
+                                                ->label('Brevo Username / Email')
+                                                ->placeholder('hello@blogr.happyto.dev')
+                                                ->helperText('Your Brevo SMTP username (usually your email).')
+                                                ->visible(fn (Get $get) => $get('mail_provider') === 'brevo')
+                                                ->columnSpan(1),
+
+                                            TextInput::make('mail_brevo_password')
+                                                ->label('Brevo SMTP Key / Password')
+                                                ->placeholder('xsmtpsib-xxxxxxxx...')
+                                                ->helperText('Your Brevo SMTP key. Starts with xsmtpsib-')
+                                                ->password()
+                                                ->visible(fn (Get $get) => $get('mail_provider') === 'brevo')
+                                                ->columnSpan(1),
+                                        ])
+                                        ->columnSpanFull(),
 
                                     Placeholder::make('cms_info')
                                         ->content(fn(Get $get) => match($get('homepage_type')) {
@@ -2260,6 +2317,17 @@ class BlogrSettings extends Page
                     'site_id' => $this->analytics_matomo_site_id,
                 ],
             ],
+            'mail' => [
+                'provider' => $this->mail_provider ?? '',
+                'from' => [
+                    'address' => $this->mail_from_address ?? '',
+                    'name' => $this->mail_from_name ?? '',
+                ],
+                'brevo' => [
+                    'username' => $this->mail_brevo_username ?? '',
+                    'password' => $this->mail_brevo_password ?? '',
+                ],
+            ],
         ];
 
         // Log logo path for debugging
@@ -2273,6 +2341,20 @@ class BlogrSettings extends Page
 
         // Clear config cache
         Artisan::call('config:clear');
+
+        // Write mail credentials to .env if Brevo is configured
+        if ($this->mail_provider === 'brevo' && $this->mail_brevo_password) {
+            $this->updateEnvFile([
+                'MAIL_MAILER' => 'smtp',
+                'MAIL_HOST' => 'smtp-relay.brevo.com',
+                'MAIL_PORT' => '587',
+                'MAIL_USERNAME' => $this->mail_brevo_username ?? '',
+                'MAIL_PASSWORD' => $this->mail_brevo_password,
+                'MAIL_ENCRYPTION' => 'tls',
+                'MAIL_FROM_ADDRESS' => $this->mail_from_address ?? '',
+                'MAIL_FROM_NAME' => $this->mail_from_name ?? '',
+            ]);
+        }
 
         Notification::make()
             ->title('Settings saved successfully!')
@@ -2304,6 +2386,38 @@ class BlogrSettings extends Page
 
         // Write to file
         File::put($configPath, $content);
+    }
+
+    /**
+     * Update .env file with mail configuration values.
+     */
+    private function updateEnvFile(array $values): void
+    {
+        $envPath = app()->environmentFilePath();
+
+        if (!File::exists($envPath)) {
+            return;
+        }
+
+        $envContent = File::get($envPath);
+
+        foreach ($values as $key => $value) {
+            $escaped = str_replace(['\\', '"'], ['\\\\', '\\"'], $value);
+
+            if (preg_match("/^{$key}=/m", $envContent)) {
+                // Key exists — replace it
+                $envContent = preg_replace(
+                    "/^{$key}=.*$/m",
+                    "{$key}=\"{$escaped}\"",
+                    $envContent
+                );
+            } else {
+                // Key doesn't exist — append it
+                $envContent .= "\n{$key}=\"{$escaped}\"\n";
+            }
+        }
+
+        File::put($envPath, $envContent);
     }
 
     private function generateConfigContent(array $config): string

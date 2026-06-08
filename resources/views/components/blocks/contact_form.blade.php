@@ -93,7 +93,7 @@
                     <button
                         type="submit"
                         :disabled="loading"
-                        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white shadow-lg transition-all duration-200"
+                        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold !text-white shadow-lg transition-all duration-200"
                         :class="loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl active:scale-[0.98]'"
                     >
                         <svg x-show="loading" class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">

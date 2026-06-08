@@ -247,6 +247,9 @@ class BlogrServiceProvider extends PackageServiceProvider
             }
         });
 
+        // Apply mail configuration from blogr settings (if a custom provider is set)
+        $this->applyMailConfig();
+
         // Auto-repair stale published views that may contain old iframe/Google Maps patterns.
         // When users run `php artisan vendor:publish --tag=blogr-views`, the current views
         // are copied to resources/views/vendor/blogr/. These published views take precedence
@@ -292,6 +295,33 @@ class BlogrServiceProvider extends PackageServiceProvider
     protected function logRepair(string $file, string $trigger): void
     {
         logger()->warning("Blogr: repaired stale published view {$file} (triggered by pattern '{$trigger}'). Run `php artisan view:clear` to apply.");
+    }
+
+    /**
+     * Apply mail configuration from blogr settings.
+     * Reads the configured provider from blogr.mail and sets runtime mail config.
+     * Credentials are read from .env (written by BlogrSettings).
+     */
+    protected function applyMailConfig(): void
+    {
+        $provider = config('blogr.mail.provider');
+
+        if ($provider === 'brevo') {
+            $username = env('MAIL_USERNAME', config('blogr.mail.brevo.username'));
+            $password = env('MAIL_PASSWORD', config('blogr.mail.brevo.password'));
+
+            if ($password) {
+                config()->set('mail.mailers.smtp', [
+                    'transport' => 'smtp',
+                    'host' => env('MAIL_HOST', 'smtp-relay.brevo.com'),
+                    'port' => (int) env('MAIL_PORT', 587),
+                    'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+                    'username' => $username,
+                    'password' => $password,
+                    'timeout' => null,
+                ]);
+            }
+        }
     }
 
     protected function registerFrontendRoutes(): void
