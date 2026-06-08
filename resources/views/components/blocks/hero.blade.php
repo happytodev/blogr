@@ -51,7 +51,7 @@ $layoutClass = match($imagePosition) {
 };
 @endphp
 
-<x-blogr::background-wrapper :data="$data" class="text-white">
+<x-blogr::background-wrapper :data="$data">
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
         <div class="flex {{ $layoutClass }} gap-12">
             {{-- Image Section --}}
@@ -67,12 +67,12 @@ $layoutClass = match($imagePosition) {
 
             {{-- Text Content --}}
             <div class="{{ $imagePosition === 'top' ? 'w-full' : 'flex-1' }} flex flex-col {{ $alignmentClass }} justify-center space-y-8">
-                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight drop-shadow-lg">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-white dark:text-white drop-shadow-lg">
                     {{ $title }}
                 </h1>
                 
                 @if($subtitle)
-                    <p class="subtitle text-xl sm:text-2xl drop-shadow-md">
+                    <p class="subtitle text-xl sm:text-2xl text-white dark:text-white drop-shadow-md">
                         {{ $subtitle }}
                     </p>
                 @endif
