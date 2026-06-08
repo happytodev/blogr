@@ -34,7 +34,7 @@ jobs:
           node-version: 20
 
       - name: Install Playwright
-        run: npx playwright install --with-deps chromium
+        run: npm init -y && npm install playwright && npx playwright install --with-deps chromium
 
       - name: Execute tests
         run: vendor/bin/pest

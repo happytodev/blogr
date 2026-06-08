@@ -32,5 +32,8 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add -A
-          git diff --staged --quiet || git commit -m "chore: fix code style [skip ci]"
-          git push origin main
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: fix code style [skip ci]"
+            git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+            git push origin main
+          fi
