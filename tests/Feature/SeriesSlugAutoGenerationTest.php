@@ -1,11 +1,11 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Str;
 
 it('auto-generates slug from title when creating translation without slug', function () {

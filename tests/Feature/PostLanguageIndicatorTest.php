@@ -1,11 +1,11 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\BlogrServiceProvider;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\get;

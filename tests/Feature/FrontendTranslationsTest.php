@@ -1,10 +1,10 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\BlogrServiceProvider;
 use Happytodev\Blogr\Models\BlogPost;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

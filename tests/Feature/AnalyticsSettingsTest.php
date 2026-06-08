@@ -1,10 +1,10 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\TestCase;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {

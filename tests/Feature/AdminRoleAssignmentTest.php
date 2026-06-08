@@ -1,10 +1,10 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Console\OutputStyle;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\Console\Input\StringInput;

@@ -1,9 +1,9 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogSeries;
-use Happytodev\Blogr\Tests\TestCase;
 
 it('has series configuration in config file', function () {
     expect(config('blogr.series.enabled'))->toBeTrue();

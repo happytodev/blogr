@@ -1,11 +1,11 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;

@@ -1,9 +1,9 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
-use Happytodev\Blogr\Tests\TestCase;
 
 it('blogr settings page can be instantiated without type errors', function () {
     // Test that the page can be instantiated without TypeError

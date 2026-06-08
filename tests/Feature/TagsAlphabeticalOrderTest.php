@@ -1,5 +1,6 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
@@ -7,7 +8,6 @@ use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\TagTranslation;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

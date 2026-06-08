@@ -1,10 +1,10 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
-use Happytodev\Blogr\Tests\TestCase;
 
 it('can create translations for a blog post', function () {
     // Observer will create a default 'en' translation automatically

@@ -2,9 +2,9 @@
 
 namespace Happytodev\Blogr\Tests\Feature;
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 use Happytodev\Blogr\Models\BlogSeries;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;

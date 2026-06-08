@@ -1,5 +1,6 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Http\Controllers\SitemapController;
@@ -9,7 +10,6 @@ use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Http\Response;
 
 beforeEach(function () {

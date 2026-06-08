@@ -2,9 +2,9 @@
 
 namespace Happytodev\Blogr\Tests\Feature;
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
-use Happytodev\Blogr\Tests\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
 

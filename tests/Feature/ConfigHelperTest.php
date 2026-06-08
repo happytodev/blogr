@@ -1,9 +1,9 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Helpers\ConfigHelper;
-use Happytodev\Blogr\Tests\TestCase;
 
 test('config helper returns simple string values', function () {
     config(['test.value' => 'simple']);

@@ -1,12 +1,12 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\TestCase;
 
 test('blog index page includes correct SEO meta tags', function () {
 

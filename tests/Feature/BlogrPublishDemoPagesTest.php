@@ -1,11 +1,11 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Database\Seeders\CmsPageSeeder;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Services\CmsPageBackupService;
-use Happytodev\Blogr\Tests\TestCase;
 
 it('seeds demo cms pages successfully', function () {
     // Verify no pages exist initially

@@ -2,10 +2,10 @@
 
 namespace Happytodev\Blogr\Tests\Feature;
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 use Filament\Schemas\Components\Tabs;
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
-use Happytodev\Blogr\Tests\TestCase;
 
 class BlogrFilamentBackupTabTest extends TestCase
 {

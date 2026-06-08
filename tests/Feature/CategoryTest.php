@@ -1,10 +1,10 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Tests\Database\Factories\CategoryFactory;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

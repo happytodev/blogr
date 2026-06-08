@@ -1,8 +1,8 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 

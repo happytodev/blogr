@@ -1,9 +1,9 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogSeries;
-use Happytodev\Blogr\Tests\TestCase;
 
 test('series model has isPublished method that returns true for past dates', function () {
     $pastSeries = BlogSeries::factory()->create([

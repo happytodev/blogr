@@ -1,11 +1,11 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Services\BackupInstallationChecker;
 use Happytodev\Blogr\Services\BackupInstaller;
-use Happytodev\Blogr\Tests\TestCase;
 
 it('backup installation checker can be instantiated', function () {
     $checker = new BackupInstallationChecker;

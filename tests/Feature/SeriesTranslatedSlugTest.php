@@ -1,11 +1,11 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\TestCase;
 
 it('can create a series with translated slugs', function () {
     $user = User::factory()->create();

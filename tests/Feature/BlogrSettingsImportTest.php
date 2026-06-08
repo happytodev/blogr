@@ -1,5 +1,6 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
@@ -12,7 +13,6 @@ use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\TagTranslation;
 use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Services\BlogrImportService;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;

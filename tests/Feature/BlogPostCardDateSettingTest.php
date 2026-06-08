@@ -1,5 +1,6 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Carbon\Carbon;
@@ -7,7 +8,6 @@ use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
 
 it('displays publication date on blog cards when setting is enabled by default', function () {

@@ -1,12 +1,12 @@
 <?php
 
+use Happytodev\Blogr\Tests\CmsTestCase;
 uses(CmsTestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Notifications\PostSavedByWriter;
-use Happytodev\Blogr\Tests\CmsTestCase;
 use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {

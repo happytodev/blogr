@@ -1,12 +1,12 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

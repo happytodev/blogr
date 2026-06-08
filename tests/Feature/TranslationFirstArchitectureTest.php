@@ -1,12 +1,12 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\TestCase;
 
 beforeEach(function () {
     config(['blogr.locales.enabled' => true]);

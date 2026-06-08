@@ -1,8 +1,8 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
-use Happytodev\Blogr\Tests\TestCase;
 
 it('demonstrates the bug: second posts assignment overwrites first', function () {
     // Simulate what happens in the save method

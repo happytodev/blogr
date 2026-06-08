@@ -1,5 +1,6 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
@@ -9,7 +10,6 @@ use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\TestCase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 

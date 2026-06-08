@@ -1,10 +1,10 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CategoryTranslation;
-use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\get;

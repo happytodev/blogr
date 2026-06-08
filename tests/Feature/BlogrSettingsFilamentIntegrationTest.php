@@ -1,9 +1,9 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
-use Happytodev\Blogr\Tests\TestCase;
 
 it('blogr settings page loads with Filament form schema', function () {
     // Test that the page can be instantiated

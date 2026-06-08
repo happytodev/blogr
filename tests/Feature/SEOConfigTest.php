@@ -1,10 +1,10 @@
 <?php
 
+use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 use Happytodev\Blogr\Helpers\ConfigHelper;
 use Happytodev\Blogr\Helpers\SEOHelper;
-use Happytodev\Blogr\Tests\TestCase;
 
 test('SEO configuration is properly loaded', function () {
     // Test that config values are accessible or have defaults
