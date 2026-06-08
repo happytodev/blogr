@@ -42,7 +42,7 @@ class BlogReadingStats extends BaseWidget
         }
 
         return [
-            Stat::make('Average Reading Time', $averageReadingTime . ' min')
+            Stat::make('Average Reading Time', $averageReadingTime.' min')
                 ->description('Per blog post')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('primary'),

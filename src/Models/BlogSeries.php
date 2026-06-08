@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BlogSeries extends Model
 {
@@ -41,12 +42,12 @@ class BlogSeries extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         // Auto-generate slug if not provided
         static::creating(function ($series) {
             if (empty($series->slug)) {
                 // Generate a temporary slug using timestamp and random string
-                $series->slug = 'series-' . now()->timestamp . '-' . \Illuminate\Support\Str::random(8);
+                $series->slug = 'series-'.now()->timestamp.'-'.Str::random(8);
             }
         });
     }
@@ -78,7 +79,7 @@ class BlogSeries extends Model
     {
         // Get all posts with their authors
         $posts = $this->posts()->with('user')->get();
-        
+
         // Group by user and count posts
         $authorsWithCounts = $posts->groupBy('user_id')
             ->map(function ($userPosts) {
@@ -86,13 +87,14 @@ class BlogSeries extends Model
                 if ($user) {
                     $user->posts_count = $userPosts->count();
                 }
+
                 return $user;
             })
             ->filter() // Remove null users
             ->sortByDesc('posts_count') // Sort by post count
             ->values()
             ->toArray();
-        
+
         return $authorsWithCounts;
     }
 
@@ -105,7 +107,7 @@ class BlogSeries extends Model
         if ($this->relationLoaded('translations')) {
             return $this->translations->firstWhere('locale', $locale);
         }
-        
+
         return $this->translations()->where('locale', $locale)->first();
     }
 
@@ -115,16 +117,16 @@ class BlogSeries extends Model
     public function getDefaultTranslation(): ?BlogSeriesTranslation
     {
         $enTranslation = $this->translate('en');
-        
+
         if ($enTranslation) {
             return $enTranslation;
         }
-        
+
         // Use loaded translations if available
         if ($this->relationLoaded('translations')) {
             return $this->translations->first();
         }
-        
+
         return $this->translations()->first();
     }
 
@@ -135,12 +137,12 @@ class BlogSeries extends Model
     public function getTranslatedSlug(string $locale): string
     {
         $translation = $this->translate($locale);
-        
+
         // Return translated slug only if it exists and is not empty
-        if ($translation && !empty($translation->slug)) {
+        if ($translation && ! empty($translation->slug)) {
             return $translation->slug;
         }
-        
+
         return $this->slug;
     }
 
@@ -152,8 +154,9 @@ class BlogSeries extends Model
         if ($value) {
             return $value;
         }
-        
+
         $translation = $this->getDefaultTranslation();
+
         return $translation?->title;
     }
 
@@ -165,8 +168,9 @@ class BlogSeries extends Model
         if ($value) {
             return $value;
         }
-        
+
         $translation = $this->getDefaultTranslation();
+
         return $translation?->description;
     }
 
@@ -178,7 +182,7 @@ class BlogSeries extends Model
         if ($this->photo) {
             // Use the 'public' disk for series images
             $disk = Storage::disk('public');
-            
+
             try {
                 // Try to generate temporary URL (works for S3, etc.)
                 return $disk->temporaryUrl(
@@ -190,9 +194,10 @@ class BlogSeries extends Model
                 return $disk->url($this->photo);
             }
         }
-        
+
         // Return default series image from config
         $defaultImage = config('blogr.series.default_image', '/images/default-series.svg');
+
         return asset($defaultImage);
     }
 
@@ -202,7 +207,7 @@ class BlogSeries extends Model
     public function scopePublished($query)
     {
         return $query->whereNotNull('published_at')
-                     ->where('published_at', '<=', now());
+            ->where('published_at', '<=', now());
     }
 
     /**
@@ -223,7 +228,7 @@ class BlogSeries extends Model
         if ($this->published_at === null) {
             return true;
         }
-        
+
         // Otherwise, check if the published_at date is in the past
         return $this->published_at->isPast();
     }

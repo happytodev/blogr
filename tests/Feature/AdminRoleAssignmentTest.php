@@ -1,13 +1,14 @@
 <?php
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Models\User;
-use Spatie\Permission\Models\Role;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Console\OutputStyle;
-use Symfony\Component\Console\Output\BufferedOutput;
+use Spatie\Permission\Models\Role;
 use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 beforeEach(function () {
     // Clear all users and roles
@@ -15,13 +16,15 @@ beforeEach(function () {
     Role::query()->delete();
 });
 
-function createMockCommand(): BlogrInstallCommand {
-    $command = new BlogrInstallCommand();
+function createMockCommand(): BlogrInstallCommand
+{
+    $command = new BlogrInstallCommand;
     $output = new OutputStyle(
         new StringInput(''),
-        new BufferedOutput()
+        new BufferedOutput
     );
     $command->setOutput($output);
+
     return $command;
 }
 
@@ -37,8 +40,8 @@ it('assigns admin role to first user created before blogr install', function () 
 
     // Run the installation logic that assigns admin role
     $command = createMockCommand();
-    
-    $reflection = new \ReflectionMethod($command, 'assignAdminRoleToFirstUser');
+
+    $reflection = new ReflectionMethod($command, 'assignAdminRoleToFirstUser');
     $reflection->setAccessible(true);
     $reflection->invoke($command);
 
@@ -61,8 +64,8 @@ it('does not reassign admin role if user already has one', function () {
 
     // Run the assignment method
     $command = createMockCommand();
-    
-    $reflection = new \ReflectionMethod($command, 'assignAdminRoleToFirstUser');
+
+    $reflection = new ReflectionMethod($command, 'assignAdminRoleToFirstUser');
     $reflection->setAccessible(true);
     $reflection->invoke($command);
 
@@ -89,8 +92,8 @@ it('assigns admin role to non-test users only', function () {
 
     // Run the assignment
     $command = createMockCommand();
-    
-    $reflection = new \ReflectionMethod($command, 'assignAdminRoleToFirstUser');
+
+    $reflection = new ReflectionMethod($command, 'assignAdminRoleToFirstUser');
     $reflection->setAccessible(true);
     $reflection->invoke($command);
 
@@ -114,8 +117,8 @@ it('does nothing if no non-test users exist', function () {
 
     // Run the assignment
     $command = createMockCommand();
-    
-    $reflection = new \ReflectionMethod($command, 'assignAdminRoleToFirstUser');
+
+    $reflection = new ReflectionMethod($command, 'assignAdminRoleToFirstUser');
     $reflection->setAccessible(true);
     $reflection->invoke($command);
 
@@ -124,7 +127,8 @@ it('does nothing if no non-test users exist', function () {
     expect($user2->fresh()->hasRole('admin'))->toBeFalse();
 });
 
-function createRolesAndPermissions(): void {
+function createRolesAndPermissions(): void
+{
     $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
     $writer = Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
 }

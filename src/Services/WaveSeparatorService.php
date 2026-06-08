@@ -4,7 +4,7 @@ namespace Happytodev\Blogr\Services;
 
 /**
  * WaveSeparatorService - Intelligent wave configuration based on adjacent blocks
- * 
+ *
  * Generates clean SVG waves with auto-calculated colors based on the gradient colors
  * of blocks above and below the wave separator.
  */
@@ -12,12 +12,11 @@ class WaveSeparatorService
 {
     /**
      * Calculate wave configuration based on adjacent block colors
-     * 
-     * @param array|null $previousBlock Block data before wave separator (or null if first)
-     * @param array|null $nextBlock Block data after wave separator (or null if last)
-     * @param string $mode 'auto' or 'manual'
-     * @param array $manualConfig Manual configuration (used only in manual mode)
-     * 
+     *
+     * @param  array|null  $previousBlock  Block data before wave separator (or null if first)
+     * @param  array|null  $nextBlock  Block data after wave separator (or null if last)
+     * @param  string  $mode  'auto' or 'manual'
+     * @param  array  $manualConfig  Manual configuration (used only in manual mode)
      * @return array Configuration with wave colors and layers
      */
     public static function calculateWaveConfig(
@@ -26,7 +25,7 @@ class WaveSeparatorService
         string $mode = 'auto',
         array $manualConfig = []
     ): array {
-        if ($mode === 'manual' && !empty($manualConfig)) {
+        if ($mode === 'manual' && ! empty($manualConfig)) {
             return self::buildManualConfig($manualConfig);
         }
 
@@ -43,15 +42,14 @@ class WaveSeparatorService
 
     /**
      * Extract gradient color from block data
-     * 
-     * @param array|null $block Block data
-     * @param string $position 'start' (from) or 'end' (to)
-     * 
+     *
+     * @param  array|null  $block  Block data
+     * @param  string  $position  'start' (from) or 'end' (to)
      * @return string|null Color hex value or null
      */
     public static function extractGradientColor(?array $block, string $position = 'start'): ?string
     {
-        if (empty($block) || !is_array($block)) {
+        if (empty($block) || ! is_array($block)) {
             return null;
         }
 
@@ -72,18 +70,17 @@ class WaveSeparatorService
     /**
      * Extract the color at the edge of a block based on gradient direction or solid color
      * This intelligently selects the color that appears at the "touching point" of adjacent blocks
-     * 
+     *
      * For a transition AFTER a block, we want the color that appears at the bottom of that block
      * For a transition BEFORE a block, we want the color that appears at the top of that block
-     * 
-     * @param array|null $block Block data
-     * @param string $edge 'top' or 'bottom' - which edge of the block we're transitioning from
-     * 
+     *
+     * @param  array|null  $block  Block data
+     * @param  string  $edge  'top' or 'bottom' - which edge of the block we're transitioning from
      * @return string|null Color hex value or null
      */
     public static function extractEdgeColor(?array $block, string $edge = 'bottom'): ?string
     {
-        if (empty($block) || !is_array($block)) {
+        if (empty($block) || ! is_array($block)) {
             return null;
         }
 
@@ -134,12 +131,11 @@ class WaveSeparatorService
 
     /**
      * Build wave configuration for auto mode
-     * 
+     *
      * Creates a smooth transition between two colors
-     * 
-     * @param string $fromColor Start color (from previous block)
-     * @param string $toColor End color (from next block)
-     * 
+     *
+     * @param  string  $fromColor  Start color (from previous block)
+     * @param  string  $toColor  End color (from next block)
      * @return array Configuration
      */
     private static function buildAutoConfig(string $fromColor, string $toColor): array
@@ -163,9 +159,8 @@ class WaveSeparatorService
 
     /**
      * Build wave configuration for manual mode
-     * 
-     * @param array $config Manual configuration
-     * 
+     *
+     * @param  array  $config  Manual configuration
      * @return array Configuration
      */
     private static function buildManualConfig(array $config): array
@@ -186,11 +181,10 @@ class WaveSeparatorService
 
     /**
      * Blend two colors together
-     * 
-     * @param string $color1 First color hex (e.g., '#667eea')
-     * @param string $color2 Second color hex (e.g., '#f093fb')
-     * @param float $ratio Blend ratio 0-1 (0 = color1, 1 = color2)
-     * 
+     *
+     * @param  string  $color1  First color hex (e.g., '#667eea')
+     * @param  string  $color2  Second color hex (e.g., '#f093fb')
+     * @param  float  $ratio  Blend ratio 0-1 (0 = color1, 1 = color2)
      * @return string Blended color hex
      */
     public static function blendColors(string $color1, string $color2, float $ratio = 0.5): string
@@ -202,23 +196,22 @@ class WaveSeparatorService
         $rgb1 = self::hexToRgb($color1);
         $rgb2 = self::hexToRgb($color2);
 
-        if (!$rgb1 || !$rgb2) {
+        if (! $rgb1 || ! $rgb2) {
             return $color1; // Fallback to first color if conversion fails
         }
 
         // Blend each channel
-        $r = (int)(($rgb1['r'] * (1 - $ratio)) + ($rgb2['r'] * $ratio));
-        $g = (int)(($rgb1['g'] * (1 - $ratio)) + ($rgb2['g'] * $ratio));
-        $b = (int)(($rgb1['b'] * (1 - $ratio)) + ($rgb2['b'] * $ratio));
+        $r = (int) (($rgb1['r'] * (1 - $ratio)) + ($rgb2['r'] * $ratio));
+        $g = (int) (($rgb1['g'] * (1 - $ratio)) + ($rgb2['g'] * $ratio));
+        $b = (int) (($rgb1['b'] * (1 - $ratio)) + ($rgb2['b'] * $ratio));
 
         return self::rgbToHex($r, $g, $b);
     }
 
     /**
      * Convert hex color to RGB array
-     * 
-     * @param string $hex Color hex (e.g., '#667eea')
-     * 
+     *
+     * @param  string  $hex  Color hex (e.g., '#667eea')
      * @return array|null RGB array or null on failure
      */
     private static function hexToRgb(string $hex): ?array
@@ -239,23 +232,22 @@ class WaveSeparatorService
 
     /**
      * Convert RGB to hex color
-     * 
-     * @param int $r Red channel 0-255
-     * @param int $g Green channel 0-255
-     * @param int $b Blue channel 0-255
-     * 
+     *
+     * @param  int  $r  Red channel 0-255
+     * @param  int  $g  Green channel 0-255
+     * @param  int  $b  Blue channel 0-255
      * @return string Hex color
      */
     private static function rgbToHex(int $r, int $g, int $b): string
     {
-        return '#' . str_pad(dechex($r), 2, '0', STR_PAD_LEFT)
-               . str_pad(dechex($g), 2, '0', STR_PAD_LEFT)
-               . str_pad(dechex($b), 2, '0', STR_PAD_LEFT);
+        return '#'.str_pad(dechex($r), 2, '0', STR_PAD_LEFT)
+               .str_pad(dechex($g), 2, '0', STR_PAD_LEFT)
+               .str_pad(dechex($b), 2, '0', STR_PAD_LEFT);
     }
 
     /**
      * Get wave path definitions
-     * 
+     *
      * @return array Wave paths indexed by style
      */
     public static function getWavePaths(): array
@@ -270,10 +262,9 @@ class WaveSeparatorService
 
     /**
      * Adjust wave path based on amplitude
-     * 
-     * @param string $wavePath Original wave path
-     * @param string $amplitude 'high', 'medium', or 'low'
-     * 
+     *
+     * @param  string  $wavePath  Original wave path
+     * @param  string  $amplitude  'high', 'medium', or 'low'
      * @return string Adjusted wave path
      */
     public static function adjustWaveAmplitude(string $wavePath, string $amplitude = 'medium'): string

@@ -21,7 +21,7 @@ trait HasTranslatedBio
     public function getBioForLocale(string $locale): ?string
     {
         $translation = $this->bioTranslations()->where('locale', $locale)->first();
-        
+
         return $translation?->bio ?? $this->bio;
     }
 

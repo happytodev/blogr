@@ -1,20 +1,22 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
+
+use Happytodev\Blogr\Http\Controllers\SitemapController;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
-use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\CmsPage;
+use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Http\Controllers\SitemapController;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Http\Response;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
     $this->category = Category::create(['name' => 'Tech', 'slug' => 'tech']);
     $this->tag = Tag::create(['name' => 'Laravel', 'slug' => 'laravel']);
-    $this->controller = new SitemapController();
+    $this->controller = new SitemapController;
 });
 
 it('returns valid XML sitemap response', function () {

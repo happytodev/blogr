@@ -16,7 +16,7 @@ class InstallUserManagementCommand extends Command
         $this->info('🚀 Installing User Management for Blogr...');
         $this->newLine();
 
-        if (!$this->checkPrerequisites()) {
+        if (! $this->checkPrerequisites()) {
             return self::FAILURE;
         }
 
@@ -32,7 +32,7 @@ class InstallUserManagementCommand extends Command
         $this->newLine();
         $this->info('✅ User Management installed successfully!');
         $this->newLine();
-        
+
         $this->displayNextSteps();
 
         return self::SUCCESS;
@@ -40,16 +40,18 @@ class InstallUserManagementCommand extends Command
 
     protected function checkPrerequisites(): bool
     {
-        if (!class_exists('Spatie\Permission\PermissionServiceProvider')) {
+        if (! class_exists('Spatie\Permission\PermissionServiceProvider')) {
             $this->error('❌ Spatie Laravel Permission is not installed!');
             $this->newLine();
             $this->line('Please install it first:');
             $this->line('composer require spatie/laravel-permission');
             $this->newLine();
+
             return false;
         }
 
         $this->line('✓ Spatie Laravel Permission is installed');
+
         return true;
     }
 
@@ -57,26 +59,27 @@ class InstallUserManagementCommand extends Command
     {
         $this->info('🚀 Publishing UserResource files...');
 
-        $stubsPath = __DIR__ . '/../../stubs/user-management';
+        $stubsPath = __DIR__.'/../../stubs/user-management';
         $appPath = app_path('Filament/Resources');
 
         $files = [
-            'UserResource.php' => $appPath . '/UserResource.php',
-            'Users/Pages/ListUsers.php' => $appPath . '/Users/Pages/ListUsers.php',
-            'Users/Pages/CreateUser.php' => $appPath . '/Users/Pages/CreateUser.php',
-            'Users/Pages/EditUser.php' => $appPath . '/Users/Pages/EditUser.php',
-            'Users/Schemas/UserForm.php' => $appPath . '/Users/Schemas/UserForm.php',
-            'Users/Tables/UsersTable.php' => $appPath . '/Users/Tables/UsersTable.php',
+            'UserResource.php' => $appPath.'/UserResource.php',
+            'Users/Pages/ListUsers.php' => $appPath.'/Users/Pages/ListUsers.php',
+            'Users/Pages/CreateUser.php' => $appPath.'/Users/Pages/CreateUser.php',
+            'Users/Pages/EditUser.php' => $appPath.'/Users/Pages/EditUser.php',
+            'Users/Schemas/UserForm.php' => $appPath.'/Users/Schemas/UserForm.php',
+            'Users/Tables/UsersTable.php' => $appPath.'/Users/Tables/UsersTable.php',
         ];
 
         foreach ($files as $stub => $destination) {
-            if (File::exists($destination) && !$this->option('force')) {
+            if (File::exists($destination) && ! $this->option('force')) {
                 $this->warn("   ⚠ Skipped: {$destination} (already exists)");
+
                 continue;
             }
 
-            $this->copyStub($stubsPath . '/' . $stub, $destination);
-            $this->line("   ✓ Created: " . str_replace(base_path() . '/', '', $destination));
+            $this->copyStub($stubsPath.'/'.$stub, $destination);
+            $this->line('   ✓ Created: '.str_replace(base_path().'/', '', $destination));
         }
     }
 
@@ -84,16 +87,17 @@ class InstallUserManagementCommand extends Command
     {
         $this->info('🚀 Publishing UserPolicy...');
 
-        $stubPath = __DIR__ . '/../../stubs/user-management/UserPolicy.php';
+        $stubPath = __DIR__.'/../../stubs/user-management/UserPolicy.php';
         $destination = app_path('Policies/UserPolicy.php');
 
-        if (File::exists($destination) && !$this->option('force')) {
+        if (File::exists($destination) && ! $this->option('force')) {
             $this->warn("   ⚠ Skipped: {$destination} (already exists)");
+
             return;
         }
 
         $this->copyStub($stubPath, $destination);
-        $this->line("   ✓ Created: " . str_replace(base_path() . '/', '', $destination));
+        $this->line('   ✓ Created: '.str_replace(base_path().'/', '', $destination));
     }
 
     protected function publishSeeders(): void
@@ -101,25 +105,25 @@ class InstallUserManagementCommand extends Command
         $this->info('🚀Publishing Seeders...');
 
         // Publish RoleSeeder
-        $roleStubPath = __DIR__ . '/../../stubs/user-management/RoleSeeder.php';
+        $roleStubPath = __DIR__.'/../../stubs/user-management/RoleSeeder.php';
         $roleDestination = database_path('seeders/RoleSeeder.php');
 
-        if (File::exists($roleDestination) && !$this->option('force')) {
+        if (File::exists($roleDestination) && ! $this->option('force')) {
             $this->warn("   ⚠ Skipped: {$roleDestination} (already exists)");
         } else {
             $this->copyStub($roleStubPath, $roleDestination);
-            $this->line("   ✓ Created: RoleSeeder");
+            $this->line('   ✓ Created: RoleSeeder');
         }
 
         // Publish PermissionSeeder
-        $permissionStubPath = __DIR__ . '/../../stubs/user-management/PermissionSeeder.php';
+        $permissionStubPath = __DIR__.'/../../stubs/user-management/PermissionSeeder.php';
         $permissionDestination = database_path('seeders/PermissionSeeder.php');
 
-        if (File::exists($permissionDestination) && !$this->option('force')) {
+        if (File::exists($permissionDestination) && ! $this->option('force')) {
             $this->warn("   ⚠ Skipped: {$permissionDestination} (already exists)");
         } else {
             $this->copyStub($permissionStubPath, $permissionDestination);
-            $this->line("   ✓ Created: PermissionSeeder");
+            $this->line('   ✓ Created: PermissionSeeder');
         }
     }
 
@@ -135,9 +139,10 @@ class InstallUserManagementCommand extends Command
         $this->newLine();
 
         $userModelPath = app_path('Models/User.php');
-        
-        if (!File::exists($userModelPath)) {
+
+        if (! File::exists($userModelPath)) {
             $this->error('   ❌ User model not found!');
+
             return;
         }
 
@@ -146,17 +151,19 @@ class InstallUserManagementCommand extends Command
         // Check if HasRoles trait is already present
         if (str_contains($content, 'use HasRoles')) {
             $this->line('   ✓ HasRoles trait already present in User model');
+
             return;
         }
 
         // Ask for confirmation
-        if (!$this->confirm('    Add HasRoles trait to User model?', true)) {
+        if (! $this->confirm('    Add HasRoles trait to User model?', true)) {
             $this->warn('   ⚠ Skipped: User model update');
+
             return;
         }
 
         // Add use statement for HasRoles trait
-        if (!str_contains($content, "use Spatie\Permission\Traits\HasRoles;")) {
+        if (! str_contains($content, "use Spatie\Permission\Traits\HasRoles;")) {
             $content = preg_replace(
                 '/(use Illuminate\\\\Notifications\\\\Notifiable;)/',
                 "use Spatie\Permission\Traits\HasRoles;\n$1",
@@ -181,9 +188,10 @@ class InstallUserManagementCommand extends Command
         $this->newLine();
 
         $seederPath = database_path('seeders/DatabaseSeeder.php');
-        
-        if (!File::exists($seederPath)) {
+
+        if (! File::exists($seederPath)) {
             $this->error('   ❌ DatabaseSeeder not found!');
+
             return;
         }
 
@@ -196,14 +204,14 @@ class InstallUserManagementCommand extends Command
             // Ask for confirmation to add seeders call
             if ($this->confirm('    Add RoleSeeder and PermissionSeeder to DatabaseSeeder?', true)) {
                 // Add the seeders call
-                $seedersSnippet = "
+                $seedersSnippet = '
         // Seed roles and permissions
-        \$this->call([
+        $this->call([
             RoleSeeder::class,
             PermissionSeeder::class,
         ]);
-";
-                
+';
+
                 // Find the run() method and add the call
                 $content = preg_replace(
                     '/(public function run\(\): void\s*\{)/',
@@ -221,9 +229,9 @@ class InstallUserManagementCommand extends Command
 
         // Ask if user wants to add test users
         if ($this->option('with-test-users') || $this->confirm('    Add test users (admin and writer) to DatabaseSeeder?', true)) {
-            if (!str_contains($content, 'admin@example.com')) {
-                $testUsersSnippet = File::get(__DIR__ . '/../../stubs/user-management/DatabaseSeederSnippet.php');
-                
+            if (! str_contains($content, 'admin@example.com')) {
+                $testUsersSnippet = File::get(__DIR__.'/../../stubs/user-management/DatabaseSeederSnippet.php');
+
                 // Add test users after the seeders call
                 $content = preg_replace(
                     '/(RoleSeeder::class,\s*PermissionSeeder::class,\s*\]\);)/',
@@ -256,23 +264,25 @@ class InstallUserManagementCommand extends Command
     {
         try {
             $userModel = config('auth.providers.users.model');
-            
+
             // Get the first user in the database
             $firstUser = $userModel::first();
 
-            if (!$firstUser) {
+            if (! $firstUser) {
                 $this->line('   ℹ️  No users found in database yet.');
+
                 return;
             }
 
             // Check if user has HasRoles trait
-            if (!method_exists($firstUser, 'assignRole')) {
+            if (! method_exists($firstUser, 'assignRole')) {
                 $this->line('   ⚠️  User model does not have HasRoles trait yet.');
+
                 return;
             }
 
             // Only assign if the user doesn't already have admin or writer role
-            if (!$firstUser->hasAnyRole(['admin', 'writer'])) {
+            if (! $firstUser->hasAnyRole(['admin', 'writer'])) {
                 $firstUser->assignRole('admin');
                 $this->line("   ✓ Assigned admin role to first user ({$firstUser->email})");
             } else {

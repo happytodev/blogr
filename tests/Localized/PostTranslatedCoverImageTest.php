@@ -11,18 +11,18 @@ use Illuminate\Support\Facades\Storage;
 
 it('uses translation-specific cover image when available', function () {
     Storage::fake('public');
-    
+
     $user = User::factory()->create();
     $category = Category::factory()->create(['slug' => 'tech']);
-    
+
     // Create main post with a main cover image
     $mainCover = UploadedFile::fake()->image('main-cover.jpg', 1200, 630);
     $mainCoverPath = $mainCover->store('post-covers', 'public');
-    
+
     // Create translation-specific cover image
     $frCover = UploadedFile::fake()->image('fr-cover.jpg', 1200, 630);
     $frCoverPath = $frCover->store('post-covers', 'public');
-    
+
     $post = BlogPost::create([
         'user_id' => $user->id,
         'category_id' => $category->id,
@@ -31,7 +31,7 @@ it('uses translation-specific cover image when available', function () {
         'photo' => $mainCoverPath,
         'default_locale' => 'en',
     ]);
-    
+
     // Create French translation with its own cover image
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
@@ -42,7 +42,7 @@ it('uses translation-specific cover image when available', function () {
         'content' => 'Contenu en français',
         'photo' => $frCoverPath, // Translation-specific cover
     ]);
-    
+
     // Create English translation without cover (should use main cover)
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
@@ -53,13 +53,13 @@ it('uses translation-specific cover image when available', function () {
         'content' => 'English content',
         'photo' => null, // No cover - should fallback to main
     ]);
-    
+
     // Test French route - should use FR-specific cover
     $response = $this->get(route('blog.show', ['locale' => 'fr', 'slug' => 'article-francais']));
     $response->assertStatus(200);
     $response->assertSee(basename($frCoverPath), false);
     $response->assertDontSee(basename($mainCoverPath), false);
-    
+
     // Test English route - should use main cover (fallback)
     $response = $this->get(route('blog.show', ['locale' => 'en', 'slug' => 'article-english']));
     $response->assertStatus(200);
@@ -68,13 +68,13 @@ it('uses translation-specific cover image when available', function () {
 
 it('falls back to main post cover when translation has no cover image', function () {
     Storage::fake('public');
-    
+
     $user = User::factory()->create();
     $category = Category::factory()->create(['slug' => 'tech']);
-    
+
     $mainCover = UploadedFile::fake()->image('main-cover.jpg', 1200, 630);
     $mainCoverPath = $mainCover->store('post-covers', 'public');
-    
+
     $post = BlogPost::create([
         'user_id' => $user->id,
         'category_id' => $category->id,
@@ -83,7 +83,7 @@ it('falls back to main post cover when translation has no cover image', function
         'photo' => $mainCoverPath, // Main cover image
         'default_locale' => 'en',
     ]);
-    
+
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'fr',
@@ -93,9 +93,9 @@ it('falls back to main post cover when translation has no cover image', function
         'content' => 'Contenu',
         'photo' => null, // No translation cover
     ]);
-    
+
     $response = $this->get(route('blog.show', ['locale' => 'fr', 'slug' => 'article-sans-cover']));
-    
+
     $response->assertStatus(200);
     // Should use main cover as fallback
     $response->assertSee('post-covers/', false);
@@ -104,10 +104,10 @@ it('falls back to main post cover when translation has no cover image', function
 
 it('uses default cover when neither translation nor main post have cover', function () {
     Storage::fake('public');
-    
+
     $user = User::factory()->create();
     $category = Category::factory()->create(['slug' => 'tech']);
-    
+
     $post = BlogPost::create([
         'user_id' => $user->id,
         'category_id' => $category->id,
@@ -116,7 +116,7 @@ it('uses default cover when neither translation nor main post have cover', funct
         'photo' => null, // No main cover
         'default_locale' => 'en',
     ]);
-    
+
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'fr',
@@ -126,9 +126,9 @@ it('uses default cover when neither translation nor main post have cover', funct
         'content' => 'Contenu',
         'photo' => null, // No translation cover
     ]);
-    
+
     $response = $this->get(route('blog.show', ['locale' => 'fr', 'slug' => 'article-sans-images']));
-    
+
     $response->assertStatus(200);
     // Should use default cover from config
     $defaultCover = config('blogr.posts.default_cover_image');
@@ -139,16 +139,16 @@ it('uses default cover when neither translation nor main post have cover', funct
 
 it('displays correct cover image on post cards in index page', function () {
     Storage::fake('public');
-    
+
     $user = User::factory()->create();
     $category = Category::factory()->create(['slug' => 'tech']);
-    
+
     $mainCover = UploadedFile::fake()->image('main-cover.jpg', 1200, 630);
     $mainCoverPath = $mainCover->store('post-covers', 'public');
-    
+
     $frCover = UploadedFile::fake()->image('fr-cover.jpg', 1200, 630);
     $frCoverPath = $frCover->store('post-covers', 'public');
-    
+
     $post = BlogPost::create([
         'user_id' => $user->id,
         'category_id' => $category->id,
@@ -157,7 +157,7 @@ it('displays correct cover image on post cards in index page', function () {
         'photo' => $mainCoverPath,
         'default_locale' => 'en',
     ]);
-    
+
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'fr',
@@ -167,7 +167,7 @@ it('displays correct cover image on post cards in index page', function () {
         'content' => 'Contenu français',
         'photo' => $frCoverPath,
     ]);
-    
+
     // Visit French index page
     $response = $this->get(route('blog.index', ['locale' => 'fr']));
     $response->assertStatus(200);

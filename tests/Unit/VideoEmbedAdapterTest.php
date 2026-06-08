@@ -7,7 +7,7 @@ use League\CommonMark\Extension\Embed\Embed;
 // ─── VideoEmbedAdapter unit tests ────────────────────────────────────────────
 
 it('generates a YouTube embed from a standard watch URL', function () {
-    $adapter = new VideoEmbedAdapter();
+    $adapter = new VideoEmbedAdapter;
     $embed = new Embed('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 
     $adapter->updateEmbeds([$embed]);
@@ -20,7 +20,7 @@ it('generates a YouTube embed from a standard watch URL', function () {
 });
 
 it('generates a YouTube embed from a short youtu.be URL', function () {
-    $adapter = new VideoEmbedAdapter();
+    $adapter = new VideoEmbedAdapter;
     $embed = new Embed('https://youtu.be/dQw4w9WgXcQ');
 
     $adapter->updateEmbeds([$embed]);
@@ -30,7 +30,7 @@ it('generates a YouTube embed from a short youtu.be URL', function () {
 });
 
 it('generates a Vimeo embed', function () {
-    $adapter = new VideoEmbedAdapter();
+    $adapter = new VideoEmbedAdapter;
     $embed = new Embed('https://vimeo.com/123456789');
 
     $adapter->updateEmbeds([$embed]);
@@ -42,7 +42,7 @@ it('generates a Vimeo embed', function () {
 });
 
 it('generates a Dailymotion embed', function () {
-    $adapter = new VideoEmbedAdapter();
+    $adapter = new VideoEmbedAdapter;
     $embed = new Embed('https://www.dailymotion.com/video/x7tgd2g');
 
     $adapter->updateEmbeds([$embed]);
@@ -53,7 +53,7 @@ it('generates a Dailymotion embed', function () {
 });
 
 it('does not set embed code for non-video URLs', function () {
-    $adapter = new VideoEmbedAdapter();
+    $adapter = new VideoEmbedAdapter;
     $embed = new Embed('https://example.com/some-page');
 
     $adapter->updateEmbeds([$embed]);
@@ -75,7 +75,7 @@ it('converts a standalone YouTube URL in markdown to an iframe embed', function 
 });
 
 it('converts a standalone Vimeo URL in markdown to an iframe embed', function () {
-    $markdown = "https://vimeo.com/123456789";
+    $markdown = 'https://vimeo.com/123456789';
 
     $html = MarkdownHelper::toHtml($markdown);
 
@@ -86,7 +86,7 @@ it('converts a standalone Vimeo URL in markdown to an iframe embed', function ()
 
 it('does not convert a YouTube URL that is inline in a paragraph', function () {
     // URL is not alone on its own line – should remain as text/link, not embed
-    $markdown = "Check out this video: https://www.youtube.com/watch?v=dQw4w9WgXcQ and more text.";
+    $markdown = 'Check out this video: https://www.youtube.com/watch?v=dQw4w9WgXcQ and more text.';
 
     $html = MarkdownHelper::toHtml($markdown);
 

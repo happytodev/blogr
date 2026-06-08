@@ -1,11 +1,12 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CategoryTranslation;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
+
 use function Pest\Laravel\get;
 
 beforeEach(function () {
@@ -15,7 +16,7 @@ beforeEach(function () {
 
 test('navigation renders with empty menu items', function () {
     $response = get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200);
 });
 
@@ -28,9 +29,9 @@ test('navigation renders external link correctly', function () {
             'target' => '_blank',
         ],
     ]);
-    
+
     $response = get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200)
         ->assertSee('GitHub')
         ->assertSee('https://github.com');
@@ -44,9 +45,9 @@ test('navigation renders blog home link correctly', function () {
             'target' => '_self',
         ],
     ]);
-    
+
     $response = get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200)
         ->assertSee('Blog Home');
 });
@@ -59,7 +60,7 @@ test('navigation renders category link with correct route parameters', function 
         'name' => 'Tutorials',
         'slug' => 'tutorials',
     ]);
-    
+
     Config::set('blogr.ui.navigation.menu_items', [
         [
             'type' => 'category',
@@ -68,12 +69,12 @@ test('navigation renders category link with correct route parameters', function 
             'target' => '_self',
         ],
     ]);
-    
+
     $response = get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200)
         ->assertSee('Tutorials');
-    
+
     // Verify the URL uses categorySlug parameter (not slug)
     $expectedUrl = route('blog.category', ['locale' => 'en', 'categorySlug' => 'tutorials']);
     $response->assertSee($expectedUrl, false);
@@ -81,7 +82,7 @@ test('navigation renders category link with correct route parameters', function 
 
 test('navigation handles category without translation gracefully', function () {
     $category = Category::factory()->create();
-    
+
     Config::set('blogr.ui.navigation.menu_items', [
         [
             'type' => 'category',
@@ -90,9 +91,9 @@ test('navigation handles category without translation gracefully', function () {
             'target' => '_self',
         ],
     ]);
-    
+
     $response = get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200)
         ->assertSee('Category Without Translation');
 });
@@ -106,9 +107,9 @@ test('navigation handles non-existent category gracefully', function () {
             'target' => '_self',
         ],
     ]);
-    
+
     $response = get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200)
         ->assertSee('Non Existent Category');
 });
@@ -121,7 +122,7 @@ test('navigation supports multiple menu items', function () {
         'name' => 'News',
         'slug' => 'news',
     ]);
-    
+
     Config::set('blogr.ui.navigation.menu_items', [
         [
             'type' => 'blog',
@@ -141,9 +142,9 @@ test('navigation supports multiple menu items', function () {
             'target' => '_blank',
         ],
     ]);
-    
+
     $response = get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200)
         ->assertSee('Home')
         ->assertSee('News')
@@ -159,11 +160,11 @@ test('navigation renders mobile menu with same items', function () {
             'target' => '_blank',
         ],
     ]);
-    
+
     $response = get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200);
-    
+
     // Check that GitHub appears multiple times (desktop + mobile)
     $content = $response->getContent();
     expect(substr_count($content, 'GitHub'))->toBeGreaterThanOrEqual(2);

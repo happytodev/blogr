@@ -24,7 +24,7 @@ return new class extends Migration
 
             // Unique constraint: one translation per locale per post
             $table->unique(['blog_post_id', 'locale']);
-            
+
             // Unique constraint: slug must be unique globally (across all locales)
             $table->unique('slug');
         });

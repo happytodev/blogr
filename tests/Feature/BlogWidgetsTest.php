@@ -1,17 +1,17 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
+use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
+use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
 use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
 use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;
 use Happytodev\Blogr\Filament\Widgets\ScheduledPosts;
-use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
-use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -25,11 +25,11 @@ it('can instantiate all blog widgets', function () {
     expect(class_exists(BlogReadingStats::class))->toBeTrue();
 
     // Test widget instantiation
-    $statsWidget = new BlogStatsOverview();
-    $recentWidget = new RecentBlogPosts();
-    $scheduledWidget = new ScheduledPosts();
-    $chartWidget = new BlogPostsChart();
-    $readingWidget = new BlogReadingStats();
+    $statsWidget = new BlogStatsOverview;
+    $recentWidget = new RecentBlogPosts;
+    $scheduledWidget = new ScheduledPosts;
+    $chartWidget = new BlogPostsChart;
+    $readingWidget = new BlogReadingStats;
 
     expect($statsWidget)->toBeInstanceOf(BlogStatsOverview::class);
     expect($recentWidget)->toBeInstanceOf(RecentBlogPosts::class);
@@ -39,9 +39,9 @@ it('can instantiate all blog widgets', function () {
 });
 
 it('blog widgets have required methods', function () {
-    $statsWidget = new BlogStatsOverview();
-    $recentWidget = new RecentBlogPosts();
-    $chartWidget = new BlogPostsChart();
+    $statsWidget = new BlogStatsOverview;
+    $recentWidget = new RecentBlogPosts;
+    $chartWidget = new BlogPostsChart;
 
     // Test that widgets have expected methods
     expect(method_exists($statsWidget, 'getStats'))->toBeTrue();
@@ -108,7 +108,7 @@ it('blog posts chart returns correct data structure', function () {
         'created_at' => $lastMonth,
     ]);
 
-    $chartWidget = new BlogPostsChart();
+    $chartWidget = new BlogPostsChart;
 
     // Test that widget has the expected properties and methods
     expect($chartWidget)->toBeInstanceOf('Filament\Widgets\ChartWidget');
@@ -165,7 +165,7 @@ it('blog stats overview calculates correct statistics', function () {
         'published_at' => now()->addDay(),
     ]);
 
-    $widget = new BlogStatsOverview();
+    $widget = new BlogStatsOverview;
 
     // Test that widget has the expected methods
     expect(method_exists($widget, 'getStats'))->toBeTrue();
@@ -208,7 +208,7 @@ it('recent blog posts widget queries correctly', function () {
         ]);
     }
 
-    $widget = new RecentBlogPosts();
+    $widget = new RecentBlogPosts;
 
     // Test that the widget can be instantiated
     expect($widget)->toBeInstanceOf(RecentBlogPosts::class);
@@ -260,7 +260,7 @@ it('scheduled posts widget shows future posts only', function () {
         'published_at' => now()->addDay(),
     ]);
 
-    $widget = new ScheduledPosts();
+    $widget = new ScheduledPosts;
 
     // Test widget instantiation
     expect($widget)->toBeInstanceOf(ScheduledPosts::class);
@@ -310,7 +310,7 @@ it('blog reading stats calculates reading times correctly', function () {
         'category_id' => $category->id,
     ]);
 
-    $widget = new BlogReadingStats();
+    $widget = new BlogReadingStats;
 
     // Test that widget has the expected methods
     expect(method_exists($widget, 'getStats'))->toBeTrue();
@@ -340,7 +340,7 @@ it('blog reading stats calculates reading times correctly', function () {
 
 it('blog posts chart handles empty data', function () {
     // Test with no posts
-    $chartWidget = new BlogPostsChart();
+    $chartWidget = new BlogPostsChart;
 
     // Test that widget has the expected methods
     expect(method_exists($chartWidget, 'getData'))->toBeTrue();
@@ -365,7 +365,7 @@ it('blog posts chart handles empty data', function () {
 
 it('blog stats overview handles empty data', function () {
     // Test with no data
-    $widget = new BlogStatsOverview();
+    $widget = new BlogStatsOverview;
 
     // Test that widget has the expected methods
     expect(method_exists($widget, 'getStats'))->toBeTrue();
@@ -387,7 +387,7 @@ it('blog stats overview handles empty data', function () {
 
 it('blog reading stats handles empty data', function () {
     // Test with no published posts
-    $widget = new BlogReadingStats();
+    $widget = new BlogReadingStats;
 
     // Test that widget has the expected methods
     expect(method_exists($widget, 'getStats'))->toBeTrue();

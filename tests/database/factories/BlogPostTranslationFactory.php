@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Happytodev\Blogr\Models\BlogPostTranslation>
+ * @extends Factory<BlogPostTranslation>
  */
 class BlogPostTranslationFactory extends Factory
 {

@@ -2,22 +2,22 @@
 
 namespace Happytodev\Blogr\Filament\Resources;
 
-use Filament\Tables\Table;
-use Filament\Schemas\Schema;
+use BackedEnum;
 use Filament\Resources\Resource;
-use Happytodev\Blogr\Models\BlogSeries;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
 use Happytodev\Blogr\Filament\Resources\BlogSeries\BlogSeriesForm;
 use Happytodev\Blogr\Filament\Resources\BlogSeries\BlogSeriesTable;
-use Happytodev\Blogr\Filament\Resources\BlogSeriesResource\Pages\ListBlogSeries;
 use Happytodev\Blogr\Filament\Resources\BlogSeriesResource\Pages\CreateBlogSeries;
 use Happytodev\Blogr\Filament\Resources\BlogSeriesResource\Pages\EditBlogSeries;
-use BackedEnum;
+use Happytodev\Blogr\Filament\Resources\BlogSeriesResource\Pages\ListBlogSeries;
+use Happytodev\Blogr\Models\BlogSeries;
 
 class BlogSeriesResource extends Resource
 {
     protected static ?string $model = BlogSeries::class;
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-queue-list';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-queue-list';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Blogr';
 

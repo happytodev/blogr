@@ -1,12 +1,13 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
-use Illuminate\Support\Facades\Hash;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Support\Facades\Hash;
+
 use function Pest\Laravel\get;
 
 beforeEach(function () {
@@ -41,9 +42,9 @@ test('author page is accessible with slug when locales are disabled', function (
     config(['blogr.author_profile.enabled' => true]);
     config(['blogr.locales.enabled' => false]);
     config(['blogr.route.prefix' => 'blog']);
-    
+
     $response = get('/blog/author/john-doe');
-    
+
     $response->assertStatus(200);
     $response->assertSee('John Doe');
     $response->assertSee('This is John Doe biography');
@@ -52,9 +53,9 @@ test('author page is accessible with slug when locales are disabled', function (
 test('author page displays author posts', function () {
     config(['blogr.author_profile.enabled' => true]);
     config(['blogr.locales.enabled' => false]);
-    
+
     $response = get('/blog/author/john-doe');
-    
+
     $response->assertStatus(200);
     $response->assertSee('Test Post 1');
     $response->assertSee('Test Post 2');
@@ -64,25 +65,25 @@ test('author page displays author posts', function () {
 test('author page returns 404 for non-existent author', function () {
     config(['blogr.author_profile.enabled' => true]);
     config(['blogr.locales.enabled' => false]);
-    
+
     $response = get('/blog/author/non-existent-author');
-    
+
     $response->assertStatus(404);
 });
 
 test('author page returns 404 when author profile feature is disabled', function () {
     config(['blogr.author_profile.enabled' => false]);
     config(['blogr.locales.enabled' => false]);
-    
+
     $response = get('/blog/author/john-doe');
-    
+
     $response->assertStatus(404);
 });
 
 test('author page only shows published posts', function () {
     config(['blogr.author_profile.enabled' => true]);
     config(['blogr.locales.enabled' => false]);
-    
+
     BlogPost::create([
         'title' => 'Unpublished Post',
         'slug' => 'unpublished-post',
@@ -92,9 +93,9 @@ test('author page only shows published posts', function () {
         'is_published' => false,
         'published_at' => null,
     ]);
-    
+
     $response = get('/blog/author/john-doe');
-    
+
     $response->assertStatus(200);
     $response->assertDontSee('Unpublished Post');
 });

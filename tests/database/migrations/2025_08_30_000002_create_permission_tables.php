@@ -22,11 +22,12 @@ return new class extends Migration
 
         // Skip if tables already exist (prevents conflicts in testing environments)
         if (Schema::hasTable($tableNames['permissions'])) {
-            \Log::info('BLOGR MIGRATION: permissions table already exists, skipping creation');
+            Log::info('BLOGR MIGRATION: permissions table already exists, skipping creation');
+
             return;
         }
 
-        \Log::info('BLOGR MIGRATION: Creating permissions table');
+        Log::info('BLOGR MIGRATION: Creating permissions table');
         Schema::create($tableNames['permissions'], static function (Blueprint $table) {
             // $table->engine('InnoDB');
             $table->bigIncrements('id'); // permission id
@@ -131,7 +132,7 @@ return new class extends Migration
         $tableNames = config('permission.table_names');
 
         if (empty($tableNames)) {
-            throw new \Exception('Error: config/permission.php not found and defaults could not be merged. Please publish the package configuration before proceeding, or drop the tables manually.');
+            throw new Exception('Error: config/permission.php not found and defaults could not be merged. Please publish the package configuration before proceeding, or drop the tables manually.');
         }
 
         Schema::drop($tableNames['role_has_permissions']);

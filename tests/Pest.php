@@ -1,7 +1,7 @@
 <?php
 
-use Happytodev\Blogr\Tests\TestCase;
 use Happytodev\Blogr\Tests\LocalizedTestCase;
+use Happytodev\Blogr\Tests\TestCase;
 
 // LocalizedTestCase for tests that need locales enabled BEFORE boot
 uses(LocalizedTestCase::class)->in('Localized');

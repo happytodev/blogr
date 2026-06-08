@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Storage;
 
 it('can find series by translated slug in controller', function () {
     $user = User::factory()->create();
-    
+
     $series = BlogSeries::factory()->create([
         'published_at' => now()->subDay(),
     ]);
-    
+
     BlogSeriesTranslation::create([
         'blog_series_id' => $series->id,
         'locale' => 'en',
@@ -22,7 +22,7 @@ it('can find series by translated slug in controller', function () {
         'slug' => 'english-slug',
         'description' => 'English description',
     ]);
-    
+
     BlogSeriesTranslation::create([
         'blog_series_id' => $series->id,
         'locale' => 'fr',
@@ -30,9 +30,9 @@ it('can find series by translated slug in controller', function () {
         'slug' => 'slug-francais',
         'description' => 'Description française',
     ]);
-    
+
     $series->refresh();
-    
+
     // Verify translations were created
     expect($series->translations)->toHaveCount(2);
     $enTrans = $series->translations->where('locale', 'en')->first();
@@ -41,28 +41,28 @@ it('can find series by translated slug in controller', function () {
     expect($frTrans)->not->toBeNull();
     expect($enTrans->slug)->toBe('english-slug');
     expect($frTrans->slug)->toBe('slug-francais');
-    
+
     // Test English route
     $response = $this->get(route('blog.series', ['locale' => 'en', 'seriesSlug' => 'english-slug']));
     $response->assertStatus(200);
-    
-    // Test French route  
+
+    // Test French route
     $response = $this->get(route('blog.series', ['locale' => 'fr', 'seriesSlug' => 'slug-francais']));
     $response->assertStatus(200);
 });
 
 it('falls back to main series photo when translation has no photo', function () {
     Storage::fake('public');
-    
+
     $mainPhoto = UploadedFile::fake()->image('main-series.jpg', 1200, 675);
     $mainPhotoPath = $mainPhoto->store('series-images', 'public');
-    
+
     $series = BlogSeries::factory()->create([
         'slug' => 'test-series',
         'photo' => $mainPhotoPath,
         'published_at' => now()->subDay(),
     ]);
-    
+
     BlogSeriesTranslation::create([
         'blog_series_id' => $series->id,
         'locale' => 'fr',
@@ -71,9 +71,9 @@ it('falls back to main series photo when translation has no photo', function () 
         'description' => 'Description française',
         'photo' => null,
     ]);
-    
+
     $response = $this->get(route('blog.series', ['locale' => 'fr', 'seriesSlug' => 'serie-test-fr']));
-    
+
     $response->assertStatus(200);
     // The view should use the main photo since translation has no photo
     $response->assertSee('series-images/', false);
@@ -81,19 +81,19 @@ it('falls back to main series photo when translation has no photo', function () 
 
 it('uses translation-specific photo when available', function () {
     Storage::fake('public');
-    
+
     $mainPhoto = UploadedFile::fake()->image('main-series.jpg', 1200, 675);
     $mainPhotoPath = $mainPhoto->store('series-images', 'public');
-    
+
     $enPhoto = UploadedFile::fake()->image('en-series.jpg', 1200, 675);
     $enPhotoPath = $enPhoto->store('series-images', 'public');
-    
+
     $series = BlogSeries::factory()->create([
         'slug' => 'test-series',
         'photo' => $mainPhotoPath,
         'published_at' => now()->subDay(),
     ]);
-    
+
     BlogSeriesTranslation::create([
         'blog_series_id' => $series->id,
         'locale' => 'en',
@@ -102,9 +102,9 @@ it('uses translation-specific photo when available', function () {
         'description' => 'English description',
         'photo' => $enPhotoPath,
     ]);
-    
+
     $response = $this->get(route('blog.series', ['locale' => 'en', 'seriesSlug' => 'english-series']));
-    
+
     $response->assertStatus(200);
     // Should use EN-specific photo, not the main photo
     $response->assertSee(basename($enPhotoPath), false);

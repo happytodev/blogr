@@ -1,6 +1,7 @@
 <?php
 
 use Happytodev\Blogr\Contracts\BlogrExtension;
+use Happytodev\Blogr\Filament\Pages\Plugins;
 use Happytodev\Blogr\Services\ExtensionRegistry;
 
 // ─── BlogrExtension INTERFACE ─────────────────────────
@@ -26,16 +27,44 @@ test('BlogrExtension interface has required methods', function () {
 // ─── EXTENSION REGISTRY ───────────────────────────────
 
 test('ExtensionRegistry can register and retrieve extensions', function () {
-    $registry = new ExtensionRegistry();
+    $registry = new ExtensionRegistry;
 
-    $extension = new class implements BlogrExtension {
-        public function getId(): string { return 'test-plugin'; }
-        public function getName(): string { return 'Test Plugin'; }
-        public function getDescription(): string { return 'A test plugin.'; }
-        public function getVersion(): string { return '1.0.0'; }
-        public function getAuthor(): string { return 'Tester'; }
-        public function getHomepage(): ?string { return 'https://example.com'; }
-        public function getDependencies(): array { return []; }
+    $extension = new class implements BlogrExtension
+    {
+        public function getId(): string
+        {
+            return 'test-plugin';
+        }
+
+        public function getName(): string
+        {
+            return 'Test Plugin';
+        }
+
+        public function getDescription(): string
+        {
+            return 'A test plugin.';
+        }
+
+        public function getVersion(): string
+        {
+            return '1.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'Tester';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return 'https://example.com';
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
     };
 
     $registry->register($extension);
@@ -46,33 +75,89 @@ test('ExtensionRegistry can register and retrieve extensions', function () {
 });
 
 test('ExtensionRegistry returns null for unknown extensions', function () {
-    $registry = new ExtensionRegistry();
+    $registry = new ExtensionRegistry;
 
     expect($registry->get('non-existent'))->toBeNull();
     expect($registry->has('non-existent'))->toBeFalse();
 });
 
 test('ExtensionRegistry can list all extensions', function () {
-    $registry = new ExtensionRegistry();
+    $registry = new ExtensionRegistry;
 
-    $ext1 = new class implements BlogrExtension {
-        public function getId(): string { return 'ext-one'; }
-        public function getName(): string { return 'Extension One'; }
-        public function getDescription(): string { return 'First extension.'; }
-        public function getVersion(): string { return '1.0.0'; }
-        public function getAuthor(): string { return 'Author'; }
-        public function getHomepage(): ?string { return null; }
-        public function getDependencies(): array { return []; }
+    $ext1 = new class implements BlogrExtension
+    {
+        public function getId(): string
+        {
+            return 'ext-one';
+        }
+
+        public function getName(): string
+        {
+            return 'Extension One';
+        }
+
+        public function getDescription(): string
+        {
+            return 'First extension.';
+        }
+
+        public function getVersion(): string
+        {
+            return '1.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'Author';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
     };
 
-    $ext2 = new class implements BlogrExtension {
-        public function getId(): string { return 'ext-two'; }
-        public function getName(): string { return 'Extension Two'; }
-        public function getDescription(): string { return 'Second extension.'; }
-        public function getVersion(): string { return '2.0.0'; }
-        public function getAuthor(): string { return 'Author'; }
-        public function getHomepage(): ?string { return null; }
-        public function getDependencies(): array { return ['ext-one']; }
+    $ext2 = new class implements BlogrExtension
+    {
+        public function getId(): string
+        {
+            return 'ext-two';
+        }
+
+        public function getName(): string
+        {
+            return 'Extension Two';
+        }
+
+        public function getDescription(): string
+        {
+            return 'Second extension.';
+        }
+
+        public function getVersion(): string
+        {
+            return '2.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'Author';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return ['ext-one'];
+        }
     };
 
     $registry->register($ext1);
@@ -86,18 +171,46 @@ test('ExtensionRegistry can list all extensions', function () {
 });
 
 test('ExtensionRegistry can count extensions', function () {
-    $registry = new ExtensionRegistry();
+    $registry = new ExtensionRegistry;
 
     expect($registry->count())->toBe(0);
 
-    $ext = new class implements BlogrExtension {
-        public function getId(): string { return 'only-one'; }
-        public function getName(): string { return 'Only One'; }
-        public function getDescription(): string { return ''; }
-        public function getVersion(): string { return '0.1.0'; }
-        public function getAuthor(): string { return 'Dev'; }
-        public function getHomepage(): ?string { return null; }
-        public function getDependencies(): array { return []; }
+    $ext = new class implements BlogrExtension
+    {
+        public function getId(): string
+        {
+            return 'only-one';
+        }
+
+        public function getName(): string
+        {
+            return 'Only One';
+        }
+
+        public function getDescription(): string
+        {
+            return '';
+        }
+
+        public function getVersion(): string
+        {
+            return '0.1.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'Dev';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
     };
 
     $registry->register($ext);
@@ -105,26 +218,82 @@ test('ExtensionRegistry can count extensions', function () {
 });
 
 test('registering extension with same id overwrites previous', function () {
-    $registry = new ExtensionRegistry();
+    $registry = new ExtensionRegistry;
 
-    $ext1 = new class implements BlogrExtension {
-        public function getId(): string { return 'same-id'; }
-        public function getName(): string { return 'Original'; }
-        public function getDescription(): string { return ''; }
-        public function getVersion(): string { return '1.0.0'; }
-        public function getAuthor(): string { return 'A'; }
-        public function getHomepage(): ?string { return null; }
-        public function getDependencies(): array { return []; }
+    $ext1 = new class implements BlogrExtension
+    {
+        public function getId(): string
+        {
+            return 'same-id';
+        }
+
+        public function getName(): string
+        {
+            return 'Original';
+        }
+
+        public function getDescription(): string
+        {
+            return '';
+        }
+
+        public function getVersion(): string
+        {
+            return '1.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'A';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
     };
 
-    $ext2 = new class implements BlogrExtension {
-        public function getId(): string { return 'same-id'; }
-        public function getName(): string { return 'Overwritten'; }
-        public function getDescription(): string { return ''; }
-        public function getVersion(): string { return '2.0.0'; }
-        public function getAuthor(): string { return 'B'; }
-        public function getHomepage(): ?string { return null; }
-        public function getDependencies(): array { return []; }
+    $ext2 = new class implements BlogrExtension
+    {
+        public function getId(): string
+        {
+            return 'same-id';
+        }
+
+        public function getName(): string
+        {
+            return 'Overwritten';
+        }
+
+        public function getDescription(): string
+        {
+            return '';
+        }
+
+        public function getVersion(): string
+        {
+            return '2.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'B';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
     };
 
     $registry->register($ext1);
@@ -135,28 +304,84 @@ test('registering extension with same id overwrites previous', function () {
 });
 
 test('extension can have dependencies', function () {
-    $ext = new class implements BlogrExtension {
-        public function getId(): string { return 'dependent'; }
-        public function getName(): string { return 'Dependent'; }
-        public function getDescription(): string { return ''; }
-        public function getVersion(): string { return '1.0.0'; }
-        public function getAuthor(): string { return ''; }
-        public function getHomepage(): ?string { return null; }
-        public function getDependencies(): array { return ['blogr-core', 'blogr-gdpr']; }
+    $ext = new class implements BlogrExtension
+    {
+        public function getId(): string
+        {
+            return 'dependent';
+        }
+
+        public function getName(): string
+        {
+            return 'Dependent';
+        }
+
+        public function getDescription(): string
+        {
+            return '';
+        }
+
+        public function getVersion(): string
+        {
+            return '1.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return '';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return ['blogr-core', 'blogr-gdpr'];
+        }
     };
 
     expect($ext->getDependencies())->toBe(['blogr-core', 'blogr-gdpr']);
 });
 
 test('extension can have null homepage', function () {
-    $ext = new class implements BlogrExtension {
-        public function getId(): string { return 'no-homepage'; }
-        public function getName(): string { return 'No Homepage'; }
-        public function getDescription(): string { return ''; }
-        public function getVersion(): string { return '1.0.0'; }
-        public function getAuthor(): string { return ''; }
-        public function getHomepage(): ?string { return null; }
-        public function getDependencies(): array { return []; }
+    $ext = new class implements BlogrExtension
+    {
+        public function getId(): string
+        {
+            return 'no-homepage';
+        }
+
+        public function getName(): string
+        {
+            return 'No Homepage';
+        }
+
+        public function getDescription(): string
+        {
+            return '';
+        }
+
+        public function getVersion(): string
+        {
+            return '1.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return '';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
     };
 
     expect($ext->getHomepage())->toBeNull();
@@ -260,14 +485,42 @@ test('getDisabledIds is empty when all extensions enabled', function () {
 test('registering extension auto-creates enabled state', function () {
     $registry = app(ExtensionRegistry::class);
 
-    $ext = new class implements BlogrExtension {
-        public function getId(): string { return 'new-plugin'; }
-        public function getName(): string { return 'New Plugin'; }
-        public function getDescription(): string { return ''; }
-        public function getVersion(): string { return '1.0.0'; }
-        public function getAuthor(): string { return 'Dev'; }
-        public function getHomepage(): ?string { return null; }
-        public function getDependencies(): array { return []; }
+    $ext = new class implements BlogrExtension
+    {
+        public function getId(): string
+        {
+            return 'new-plugin';
+        }
+
+        public function getName(): string
+        {
+            return 'New Plugin';
+        }
+
+        public function getDescription(): string
+        {
+            return '';
+        }
+
+        public function getVersion(): string
+        {
+            return '1.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'Dev';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
     };
 
     $registry->register($ext);
@@ -278,18 +531,46 @@ test('registering extension auto-creates enabled state', function () {
 test('toggleExtension in Plugins page toggles state for non-core extensions', function () {
     $registry = app(ExtensionRegistry::class);
 
-    $ext = new class implements BlogrExtension {
-        public function getId(): string { return 'toggle-me'; }
-        public function getName(): string { return 'Toggle Me'; }
-        public function getDescription(): string { return ''; }
-        public function getVersion(): string { return '1.0.0'; }
-        public function getAuthor(): string { return 'Dev'; }
-        public function getHomepage(): ?string { return null; }
-        public function getDependencies(): array { return []; }
+    $ext = new class implements BlogrExtension
+    {
+        public function getId(): string
+        {
+            return 'toggle-me';
+        }
+
+        public function getName(): string
+        {
+            return 'Toggle Me';
+        }
+
+        public function getDescription(): string
+        {
+            return '';
+        }
+
+        public function getVersion(): string
+        {
+            return '1.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'Dev';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
     };
 
     $registry->register($ext);
-    $page = new \Happytodev\Blogr\Filament\Pages\Plugins();
+    $page = new Plugins;
 
     $page->toggleExtension('toggle-me');
     expect($registry->isEnabled('toggle-me'))->toBeFalse();
@@ -300,7 +581,7 @@ test('toggleExtension in Plugins page toggles state for non-core extensions', fu
 
 test('blogr-core cannot be toggled via toggleExtension', function () {
     $registry = app(ExtensionRegistry::class);
-    $page = new \Happytodev\Blogr\Filament\Pages\Plugins();
+    $page = new Plugins;
 
     expect($registry->isEnabled('blogr-core'))->toBeTrue();
 
@@ -312,18 +593,46 @@ test('blogr-core cannot be toggled via toggleExtension', function () {
 test('toggling non-core extension twice restores enabled', function () {
     $registry = app(ExtensionRegistry::class);
 
-    $ext = new class implements BlogrExtension {
-        public function getId(): string { return 'ext-three'; }
-        public function getName(): string { return 'Extension Three'; }
-        public function getDescription(): string { return ''; }
-        public function getVersion(): string { return '1.0.0'; }
-        public function getAuthor(): string { return 'Dev'; }
-        public function getHomepage(): ?string { return null; }
-        public function getDependencies(): array { return []; }
+    $ext = new class implements BlogrExtension
+    {
+        public function getId(): string
+        {
+            return 'ext-three';
+        }
+
+        public function getName(): string
+        {
+            return 'Extension Three';
+        }
+
+        public function getDescription(): string
+        {
+            return '';
+        }
+
+        public function getVersion(): string
+        {
+            return '1.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'Dev';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
     };
 
     $registry->register($ext);
-    $page = new \Happytodev\Blogr\Filament\Pages\Plugins();
+    $page = new Plugins;
 
     $page->toggleExtension('ext-three');
     expect($registry->isEnabled('ext-three'))->toBeFalse();

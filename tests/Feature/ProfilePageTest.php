@@ -1,12 +1,12 @@
 <?php
 
-
 use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;
+use Happytodev\Blogr\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\ViewErrorBag;
 use Livewire\Livewire;
-use Happytodev\Blogr\Models\User;
 
 // Tests for Filament EditProfile page
 uses()->group('filament-ui');
@@ -17,7 +17,7 @@ beforeEach(function () {
     // Uses BindingResolutionException when accessing Filament::auth()
     // This is a test infrastructure issue, not a code bug - works in production
     $this->markTestSkipped('Filament Panel context not available in test environment');
-    
+
     $this->user = User::create([
         'name' => 'John Doe',
         'email' => 'john@example.com',
@@ -25,11 +25,11 @@ beforeEach(function () {
         'avatar' => null,
         'bio' => null,
     ]);
-    
+
     $this->actingAs($this->user);
-    
+
     // Initialize ViewErrorBag in session to prevent Livewire validation errors
-    $this->session(['errors' => new \Illuminate\Support\ViewErrorBag()]);
+    $this->session(['errors' => new ViewErrorBag]);
 });
 
 test('profile page loads successfully', function () {
@@ -44,7 +44,7 @@ test('can update bio', function () {
         ])
         ->call('save')
         ->assertHasNoErrors();
-    
+
     $this->user->refresh();
     expect($this->user->bio)->toBeArray();
     expect($this->user->bio['en'])->toBe('This is my new bio');
@@ -52,16 +52,16 @@ test('can update bio', function () {
 
 test('can update avatar', function () {
     Storage::fake('public');
-    
+
     $file = UploadedFile::fake()->image('avatar.jpg');
-    
+
     Livewire::test(EditProfile::class)
         ->fillForm([
             'avatar' => $file,
         ])
         ->call('save')
         ->assertHasNoErrors();
-    
+
     $this->user->refresh();
     expect($this->user->avatar)->not->toBeNull();
     Storage::disk('public')->assertExists($this->user->avatar);
@@ -75,7 +75,7 @@ test('can update name and email from base form', function () {
         ])
         ->call('save')
         ->assertHasNoErrors();
-    
+
     $this->user->refresh();
     expect($this->user->name)->toBe('Jane Smith');
     expect($this->user->email)->toBe('jane@example.com');
@@ -83,14 +83,14 @@ test('can update name and email from base form', function () {
 
 test('bio field accepts null', function () {
     $this->user->update(['bio' => ['en' => 'Original bio']]);
-    
+
     Livewire::test(EditProfile::class)
         ->fillForm([
             'bio.en' => null,
         ])
         ->call('save')
         ->assertHasNoErrors();
-    
+
     $this->user->refresh();
     expect($this->user->bio)->toBeArray();
     expect($this->user->bio['en'])->toBeNull();
@@ -98,33 +98,33 @@ test('bio field accepts null', function () {
 
 test('name is required', function () {
     $originalName = $this->user->name;
-    
+
     Livewire::test(EditProfile::class)
         ->fillForm([
             'name' => '',
         ])
         ->call('save');
-    
+
     $this->user->refresh();
     expect($this->user->name)->toBe($originalName);
 });
 
 test('email is required', function () {
     $originalEmail = $this->user->email;
-    
+
     Livewire::test(EditProfile::class)
         ->fillForm([
             'email' => '',
         ])
         ->call('save');
-    
+
     $this->user->refresh();
     expect($this->user->email)->toBe($originalEmail);
 });
 
 test('existing bio is loaded in form', function () {
     $this->user->update(['bio' => ['en' => 'Existing bio text']]);
-    
+
     Livewire::test(EditProfile::class)
         ->assertFormSet([
             'bio.en' => 'Existing bio text',
@@ -133,15 +133,15 @@ test('existing bio is loaded in form', function () {
 
 test('existing avatar is loaded in form', function () {
     Storage::fake('public');
-    
+
     // Create actual file so it exists
     $file = UploadedFile::fake()->image('test-avatar.jpg');
     Storage::disk('public')->put('avatars/test-avatar.jpg', $file->getContent());
-    
+
     $this->user->update(['avatar' => 'avatars/test-avatar.jpg']);
-    
+
     $component = Livewire::test(EditProfile::class);
-    
+
     // Check that the avatar value is set in the form
     // FileUpload stores files as array with UUID keys
     $formData = $component->get('data');

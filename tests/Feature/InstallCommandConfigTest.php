@@ -1,11 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\File;
+use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Console\OutputStyle;
-use Symfony\Component\Console\Output\BufferedOutput;
+use Illuminate\Support\Facades\File;
 use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 uses(TestCase::class);
 
@@ -14,7 +14,7 @@ beforeEach(function () {
     $this->originalConfigPath = app()->configPath();
     $this->testConfigDir = storage_path('blogr-test-config');
 
-    if (!is_dir($this->testConfigDir)) {
+    if (! is_dir($this->testConfigDir)) {
         mkdir($this->testConfigDir, 0755, true);
     }
 
@@ -42,7 +42,7 @@ PHP;
 
 afterEach(function () {
     // Clean up test config file BEFORE restoring path
-    $testConfigPath = $this->testConfigDir . '/blogr.php';
+    $testConfigPath = $this->testConfigDir.'/blogr.php';
 
     if (file_exists($testConfigPath)) {
         unlink($testConfigPath);
@@ -56,13 +56,15 @@ afterEach(function () {
     app()->useConfigPath($this->originalConfigPath);
 });
 
-function createMockConfigCommand(): \Happytodev\Blogr\Commands\BlogrInstallCommand {
-    $command = new \Happytodev\Blogr\Commands\BlogrInstallCommand();
+function createMockConfigCommand(): BlogrInstallCommand
+{
+    $command = new BlogrInstallCommand;
     $output = new OutputStyle(
         new StringInput(''),
-        new BufferedOutput()
+        new BufferedOutput
     );
     $command->setOutput($output);
+
     return $command;
 }
 
@@ -71,7 +73,7 @@ it('updates config file with CMS enabled and blog homepage', function () {
 
     // Run the updateConfigFile method
     $command = createMockConfigCommand();
-    $reflectionMethod = new \ReflectionMethod($command, 'updateConfigFile');
+    $reflectionMethod = new ReflectionMethod($command, 'updateConfigFile');
     $reflectionMethod->setAccessible(true);
 
     // Update config with CMS enabled and blog homepage
@@ -91,7 +93,7 @@ it('updates config file with CMS enabled and cms homepage', function () {
 
     // Run the updateConfigFile method
     $command = createMockConfigCommand();
-    $reflectionMethod = new \ReflectionMethod($command, 'updateConfigFile');
+    $reflectionMethod = new ReflectionMethod($command, 'updateConfigFile');
     $reflectionMethod->setAccessible(true);
 
     // Update config with CMS enabled and cms homepage
@@ -126,7 +128,7 @@ PHP;
 
     // Run the updateConfigFile method to disable
     $command = createMockConfigCommand();
-    $reflectionMethod = new \ReflectionMethod($command, 'updateConfigFile');
+    $reflectionMethod = new ReflectionMethod($command, 'updateConfigFile');
     $reflectionMethod->setAccessible(true);
 
     // Update config with CMS disabled
@@ -148,14 +150,14 @@ it('does not fail if config file does not exist yet', function () {
 
     // Run the updateConfigFile method
     $command = createMockConfigCommand();
-    $reflectionMethod = new \ReflectionMethod($command, 'updateConfigFile');
+    $reflectionMethod = new ReflectionMethod($command, 'updateConfigFile');
     $reflectionMethod->setAccessible(true);
 
     // Should not throw exception
-    expect(fn() => $reflectionMethod->invoke($command, [
+    expect(fn () => $reflectionMethod->invoke($command, [
         'cms.enabled' => true,
         'homepage.type' => 'blog',
-    ]))->not->toThrow(\Exception::class);
+    ]))->not->toThrow(Exception::class);
 })->group('installation', 'config');
 
 it('handles multiple config updates in single call', function () {
@@ -179,7 +181,7 @@ PHP;
 
     // Run the updateConfigFile method with multiple updates
     $command = createMockConfigCommand();
-    $reflectionMethod = new \ReflectionMethod($command, 'updateConfigFile');
+    $reflectionMethod = new ReflectionMethod($command, 'updateConfigFile');
     $reflectionMethod->setAccessible(true);
 
     $reflectionMethod->invoke($command, [
@@ -221,7 +223,7 @@ PHP;
 
     // Run the updateConfigFile method
     $command = createMockConfigCommand();
-    $reflectionMethod = new \ReflectionMethod($command, 'updateConfigFile');
+    $reflectionMethod = new ReflectionMethod($command, 'updateConfigFile');
     $reflectionMethod->setAccessible(true);
 
     $reflectionMethod->invoke($command, [

@@ -1,12 +1,12 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
@@ -23,7 +23,7 @@ beforeEach(function () {
 
     $this->post = BlogPost::create([
         'title' => 'TOC Article',
-        'slug' => 'toc-article-' . uniqid(),
+        'slug' => 'toc-article-'.uniqid(),
         'content' => 'Test content',
         'user_id' => $this->author->id,
         'category_id' => $this->category->id,
@@ -36,7 +36,7 @@ beforeEach(function () {
         'locale' => 'en',
     ], [
         'title' => 'TOC Article',
-        'slug' => 'toc-article-' . uniqid(),
+        'slug' => 'toc-article-'.uniqid(),
         'content' => "---\ndisable_toc: true\n---\n\n# Intro\n\nContent",
     ]);
 
@@ -61,7 +61,7 @@ it('respects global setting when strict_mode is true', function () {
 it('allows post override when strict_mode is false and disable_toc absent', function () {
     $post2 = BlogPost::create([
         'title' => 'TOC Article 2',
-        'slug' => 'toc-article-2-' . uniqid(),
+        'slug' => 'toc-article-2-'.uniqid(),
         'content' => 'Test content',
         'user_id' => $this->author->id,
         'category_id' => $this->category->id,
@@ -73,7 +73,7 @@ it('allows post override when strict_mode is false and disable_toc absent', func
         'locale' => 'en',
     ], [
         'title' => 'TOC Article 2',
-        'slug' => 'toc-article-2-' . uniqid(),
+        'slug' => 'toc-article-2-'.uniqid(),
         'content' => "# Intro\n\nContent",
     ]);
 

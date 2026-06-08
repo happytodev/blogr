@@ -2,6 +2,7 @@
 
 namespace Happytodev\Blogr\Tests;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 abstract class CmsTestCase extends TestCase
@@ -11,22 +12,21 @@ abstract class CmsTestCase extends TestCase
     /**
      * Get environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app
-     * @return void
+     * @param  Application  $app
      */
     public function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
-        
+
         // Enable CMS by default for all CMS tests
         $app['config']->set('blogr.cms.enabled', true);
-        
+
         // Set CMS as homepage by default for CMS tests
         $app['config']->set('blogr.homepage.type', 'cms');
-        
+
         // Configure CMS routes
         $app['config']->set('blogr.cms.prefix', '');
-        
+
         // Load reserved slugs configuration for tests
         $app['config']->set('blogr.cms.reserved_slugs', [
             // Blog routes
@@ -37,7 +37,7 @@ abstract class CmsTestCase extends TestCase
             'tag',
             'series',
             'rss',
-            
+
             // Authentication routes
             'admin',
             'login',
@@ -45,7 +45,7 @@ abstract class CmsTestCase extends TestCase
             'register',
             'password',
             'dashboard',
-            
+
             // Common system routes
             'api',
             'storage',

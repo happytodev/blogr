@@ -1,10 +1,10 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 
 beforeEach(function () {
@@ -56,7 +56,7 @@ it('navigation loads logo configuration correctly', function () {
     expect($logoDisplay)->toBe('both');
 });
 
-// Test CMS homepage redirect to default locale  
+// Test CMS homepage redirect to default locale
 it('CMS homepage redirects to default locale when locales enabled', function () {
     Config::set('blogr.locales.enabled', true);
     Config::set('blogr.locales.default', 'fr');

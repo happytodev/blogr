@@ -38,7 +38,7 @@ return [
         'visit_blog' => 'Open in new tab',
         'view_website' => 'View Website',
     ],
-    
+
     // Series
     'series' => [
         'authors' => 'Authors',

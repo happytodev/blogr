@@ -1,15 +1,13 @@
 <?php
 
-
-
 namespace Happytodev\Blogr\Tests\Feature;
 
-
-uses(\Happytodev\Blogr\Tests\TestCase::class);
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
+uses(TestCase::class);
+use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSchemaIntegrityTest extends TestCase
 {
@@ -50,7 +48,7 @@ class DatabaseSchemaIntegrityTest extends TestCase
     public function test_blog_series_slug_column_is_unique(): void
     {
         $indexes = DB::select('PRAGMA index_list(blog_series)');
-        
+
         $hasUniqueSlug = false;
         foreach ($indexes as $index) {
             if ($index->unique == 1) {
@@ -72,7 +70,7 @@ class DatabaseSchemaIntegrityTest extends TestCase
 
     public function test_blog_series_can_be_created_with_all_columns(): void
     {
-        $series = \Happytodev\Blogr\Models\BlogSeries::create([
+        $series = BlogSeries::create([
             'slug' => 'complete-test',
             'photo' => 'photo.jpg',
             'position' => 1,
@@ -90,13 +88,13 @@ class DatabaseSchemaIntegrityTest extends TestCase
 
     public function test_blog_series_defaults_are_correct(): void
     {
-        $series = \Happytodev\Blogr\Models\BlogSeries::create([
+        $series = BlogSeries::create([
             'slug' => 'defaults-test',
         ]);
 
         $this->assertEquals(0, $series->position);
-        
-        $this->assertEquals(false, $series->is_featured, "is_featured devrait être false par défaut");
+
+        $this->assertEquals(false, $series->is_featured, 'is_featured devrait être false par défaut');
         $this->assertNull($series->photo);
         $this->assertNull($series->published_at);
     }

@@ -1,13 +1,14 @@
 <?php
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
-use Happytodev\Blogr\Models\User;
-use Spatie\Permission\Models\Role;
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Console\OutputStyle;
-use Symfony\Component\Console\Output\BufferedOutput;
+use Spatie\Permission\Models\Role;
 use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 beforeEach(function () {
     // Clear all users and roles
@@ -15,13 +16,15 @@ beforeEach(function () {
     Role::query()->delete();
 });
 
-function createMockInstallCommand(): BlogrInstallCommand {
-    $command = new BlogrInstallCommand();
+function createMockInstallCommand(): BlogrInstallCommand
+{
+    $command = new BlogrInstallCommand;
     $output = new OutputStyle(
         new StringInput(''),
-        new BufferedOutput()
+        new BufferedOutput
     );
     $command->setOutput($output);
+
     return $command;
 }
 
@@ -42,7 +45,7 @@ it('user created before blogr install gets admin role during install', function 
 
     // Simulate the part of blogr:install that assigns admin role
     $command = createMockInstallCommand();
-    $reflection = new \ReflectionMethod($command, 'assignAdminRoleToFirstUser');
+    $reflection = new ReflectionMethod($command, 'assignAdminRoleToFirstUser');
     $reflection->setAccessible(true);
     $reflection->invoke($command);
 

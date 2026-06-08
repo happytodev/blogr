@@ -7,6 +7,7 @@ use Happytodev\Blogr\Models\CmsPageTranslation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\App;
+use Illuminate\View\View;
 
 class CmsPageController extends Controller
 {
@@ -16,56 +17,57 @@ class CmsPageController extends Controller
     protected function isLocaleDisabled(string $locale): bool
     {
         $disabled = config('blogr.locales.disabled', []);
+
         return in_array($locale, $disabled, true);
     }
 
     /**
      * Display the homepage CMS page
      *
-     * @param string|null $locale The locale (optional if locales disabled)
-     * @return \Illuminate\View\View
+     * @param  string|null  $locale  The locale (optional if locales disabled)
+     * @return View
      */
     public function showHomepage(Request $request, ?string $locale = null)
     {
         $localesEnabled = config('blogr.locales.enabled', false);
         $defaultLocale = config('blogr.locales.default', 'en');
-        
+
         // Determine the locale to use
         $currentLocale = $locale ?? $defaultLocale;
-        
+
         // 404 if the locale is explicitly disabled
         if ($localesEnabled && $this->isLocaleDisabled($currentLocale)) {
             abort(404);
         }
-        
+
         // Set application locale
         if ($localesEnabled) {
             App::setLocale($currentLocale);
         }
-        
+
         // Find the homepage page
         $page = CmsPage::homepage()->published()->first();
-        
-        if (!$page) {
+
+        if (! $page) {
             abort(404, 'Homepage not found or not published');
         }
-        
+
         // Get translation for current locale or fallback to default
         $translation = $page->translations()
             ->where('locale', $currentLocale)
             ->first();
-        
+
         // Fallback to default locale if not found
-        if (!$translation && $localesEnabled && $currentLocale !== $defaultLocale) {
+        if (! $translation && $localesEnabled && $currentLocale !== $defaultLocale) {
             $translation = $page->translations()
                 ->where('locale', $defaultLocale)
                 ->first();
         }
-        
-        if (!$translation) {
+
+        if (! $translation) {
             abort(404, 'Homepage translation not found');
         }
-        
+
         // Prepare view data
         $viewData = [
             'page' => $page,
@@ -79,7 +81,7 @@ class CmsPageController extends Controller
             'currentLocale' => $currentLocale,
             'availableLocales' => $page->availableLocales(),
         ];
-        
+
         // DEBUG: Uncomment to debug blocks
         // dd([
         //     'translation_blocks' => $translation->blocks,
@@ -87,7 +89,7 @@ class CmsPageController extends Controller
         //     'is_empty' => empty($viewData['blocks']),
         //     'count' => count($viewData['blocks'] ?? []),
         // ]);
-        
+
         // Return view based on template
         return view($this->getViewForTemplate($page->template->value), $viewData);
     }
@@ -95,15 +97,15 @@ class CmsPageController extends Controller
     /**
      * Display a CMS page by slug and locale
      *
-     * @param string|null $localeOrSlug First route parameter (locale if locales enabled, slug otherwise)
-     * @param string|null $slug Second route parameter (slug if locales enabled, null otherwise)
-     * @return \Illuminate\View\View
+     * @param  string|null  $localeOrSlug  First route parameter (locale if locales enabled, slug otherwise)
+     * @param  string|null  $slug  Second route parameter (slug if locales enabled, null otherwise)
+     * @return View
      */
     public function show(Request $request, ?string $localeOrSlug = null, ?string $slug = null)
     {
         $localesEnabled = config('blogr.locales.enabled', false);
         $defaultLocale = config('blogr.locales.default', 'en');
-        
+
         // Determine locale and slug based on whether locales are enabled
         if ($localesEnabled && $slug !== null) {
             // Route is /{locale}/{slug}
@@ -114,68 +116,68 @@ class CmsPageController extends Controller
             $currentLocale = $defaultLocale;
             $actualSlug = $localeOrSlug;
         }
-        
+
         // 404 if the locale is explicitly disabled
         if ($localesEnabled && $this->isLocaleDisabled($currentLocale)) {
             abort(404);
         }
-        
+
         // Set application locale
         if ($localesEnabled) {
             App::setLocale($currentLocale);
         }
-        
+
         // Find the translation by slug and locale
         $translation = CmsPageTranslation::where('slug', $actualSlug)
             ->where('locale', $currentLocale)
             ->first();
-        
+
         // If no translation found, try fallback to default locale
-        if (!$translation && $localesEnabled && $currentLocale !== $defaultLocale) {
+        if (! $translation && $localesEnabled && $currentLocale !== $defaultLocale) {
             $translation = CmsPageTranslation::where('slug', $actualSlug)
                 ->where('locale', $defaultLocale)
                 ->first();
         }
-        
+
         // If still no translation, try to find by main page slug (for backward compatibility)
-        if (!$translation) {
+        if (! $translation) {
             $page = CmsPage::where('slug', $actualSlug)->first();
-            
+
             if ($page) {
                 // Get translation for current locale
                 $translation = $page->translations()
                     ->where('locale', $currentLocale)
                     ->first();
-                
+
                 // Fallback to default locale
-                if (!$translation && $localesEnabled) {
+                if (! $translation && $localesEnabled) {
                     $translation = $page->translations()
                         ->where('locale', $defaultLocale)
                         ->first();
                 }
             }
         }
-        
+
         // 404 if no translation found
-        if (!$translation) {
+        if (! $translation) {
             abort(404, 'Page not found');
         }
-        
+
         $page = $translation->page;
-        
+
         // Check if page is published
-        if (!$page->is_published) {
+        if (! $page->is_published) {
             abort(404, 'Page not published');
         }
-        
+
         // Check if publish date is in the future
         if ($page->published_at && $page->published_at->isFuture()) {
             abort(404, 'Page not yet published');
         }
-        
+
         // Determine the view based on template
         $viewName = $this->getViewForTemplate($page->template->value);
-        
+
         // Return view with page and translation data
         return view($viewName, [
             'page' => $page,
@@ -192,12 +194,9 @@ class CmsPageController extends Controller
             'seoKeywords' => $translation->seo_keywords,
         ]);
     }
-    
+
     /**
      * Get the view name based on template
-     *
-     * @param string $template
-     * @return string
      */
     protected function getViewForTemplate(string $template): string
     {
@@ -210,7 +209,7 @@ class CmsPageController extends Controller
             'faq' => 'blogr::cms.pages.faq',
             'custom' => 'blogr::cms.pages.custom',
         ];
-        
+
         return $templateViews[strtolower($template)] ?? 'blogr::cms.pages.default';
     }
 }

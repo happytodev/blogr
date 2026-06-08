@@ -3,14 +3,14 @@
 namespace Happytodev\Blogr\Filament\Resources\Categories\RelationManagers;
 
 use BackedEnum;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Happytodev\Blogr\Services\LocaleService;
@@ -19,8 +19,10 @@ use Illuminate\Database\Eloquent\Model;
 class TranslationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'translations';
+
     protected static ?string $title = 'Translations';
-    protected static string | BackedEnum | null $icon = 'heroicon-o-language';
+
+    protected static string|BackedEnum|null $icon = 'heroicon-o-language';
 
     public function form(Schema $schema): Schema
     {
@@ -36,20 +38,20 @@ class TranslationsRelationManager extends RelationManager
                 ->disabled(fn (?Model $record) => $record !== null)
                 ->helperText('Select the language for this translation')
                 ->columnSpan(2),
-            
+
             Forms\Components\TextInput::make('name')
                 ->label('Name')
                 ->required()
                 ->maxLength(255)
                 ->columnSpan(2),
-            
+
             Forms\Components\TextInput::make('slug')
                 ->label('Slug')
                 ->required()
                 ->maxLength(255)
                 ->helperText('URL-friendly version of the name')
                 ->columnSpan(2),
-            
+
             Forms\Components\Textarea::make('description')
                 ->label('Description')
                 ->rows(3)
@@ -75,24 +77,24 @@ class TranslationsRelationManager extends RelationManager
                         default => 'info',
                     })
                     ->sortable(),
-                
+
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
                     ->sortable()
                     ->limit(50),
-                
+
                 Tables\Columns\TextColumn::make('slug')
                     ->label('Slug')
                     ->searchable()
                     ->limit(40)
                     ->copyable()
                     ->copyMessage('Slug copied'),
-                
+
                 Tables\Columns\IconColumn::make('has_description')
                     ->label('Description')
                     ->boolean()
-                    ->getStateUsing(fn (Model $record) => !empty($record->description))
+                    ->getStateUsing(fn (Model $record) => ! empty($record->description))
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
@@ -116,10 +118,10 @@ class TranslationsRelationManager extends RelationManager
             ])
             ->actions([
                 EditAction::make()
-                    ->modalHeading(fn (Model $record) => "Edit Translation (" . strtoupper($record->locale) . ")")
+                    ->modalHeading(fn (Model $record) => 'Edit Translation ('.strtoupper($record->locale).')')
                     ->modalWidth('3xl')
                     ->successNotificationTitle('Translation updated successfully'),
-                
+
                 DeleteAction::make()
                     ->requiresConfirmation()
                     ->successNotificationTitle('Translation deleted successfully'),
@@ -148,7 +150,7 @@ class TranslationsRelationManager extends RelationManager
             ->translations()
             ->pluck('locale')
             ->toArray();
-        
+
         return count($availableLocales) > count($existingLocales);
     }
 }

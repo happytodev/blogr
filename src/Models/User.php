@@ -3,6 +3,8 @@
 namespace Happytodev\Blogr\Models;
 
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use Happytodev\Blogr\Tests\Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,7 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     use HasFactory, HasRoles;
-    
+
     protected $fillable = [
         'name',
         'email',
@@ -33,7 +35,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
      */
     protected static function newFactory()
     {
-        return \Happytodev\Blogr\Tests\Database\Factories\UserFactory::new();
+        return UserFactory::new();
     }
 
     public function blogPosts()
@@ -46,7 +48,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return 'web';
     }
 
-    public function canAccessPanel(\Filament\Panel $panel): bool
+    public function canAccessPanel(Panel $panel): bool
     {
         // For dev only, full access
         return true;

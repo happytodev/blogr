@@ -1,15 +1,16 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
     // Prepare roles
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
-    
+    Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
+
     // Create admin user
     $this->admin = User::factory()->create();
     $this->admin->assignRole('admin');
@@ -28,9 +29,9 @@ it('testimonial template handles ratings from 0 to 5', function () {
             ['name' => 'Zero Stars', 'quote' => 'Bad', 'rating' => '0'],
         ],
     ];
-    
+
     $html = view('blogr::components.blocks.testimonials', ['data' => $data])->render();
-    
+
     // Should contain all testimonials
     expect($html)->toContain('Five Stars')
         ->and($html)->toContain('Four Stars')
@@ -38,7 +39,7 @@ it('testimonial template handles ratings from 0 to 5', function () {
         ->and($html)->toContain('Two Stars')
         ->and($html)->toContain('One Star')
         ->and($html)->toContain('Zero Stars');
-    
+
     // Should contain star icons (text-yellow-400 is the class for stars)
     expect($html)->toContain('text-yellow-400');
 });
@@ -51,14 +52,14 @@ it('testimonial template hides rating section when rating is 0 or empty', functi
             ['name' => 'No Rating Null', 'quote' => 'Quote'],
         ],
     ];
-    
+
     $html = view('blogr::components.blocks.testimonials', ['data' => $data])->render();
-    
+
     // Should contain testimonials
     expect($html)->toContain('No Rating Zero')
         ->and($html)->toContain('No Rating Empty')
         ->and($html)->toContain('No Rating Null');
-    
+
     // Count star SVG elements - should be 0
     $starCount = substr_count($html, 'text-yellow-400');
     expect($starCount)->toBe(0);
@@ -72,20 +73,19 @@ it('testimonial template displays correct number of stars', function () {
             ['name' => 'Test 1', 'quote' => 'Quote', 'rating' => '1'],
         ],
     ];
-    
+
     $html = view('blogr::components.blocks.testimonials', ['data' => $data])->render();
-    
+
     // Should display stars (5 + 3 + 1 = 9 stars total)
     $starCount = substr_count($html, '<path d="M9.049 2.927c.3-.921');
     expect($starCount)->toBe(9);
 });
 
-
 it('rating field configuration includes all options from 0 to 5', function () {
     // Read the CmsBlockBuilder source code
-    $filePath = __DIR__ . '/../../src/Filament/Resources/CmsPages/CmsBlockBuilder.php';
+    $filePath = __DIR__.'/../../src/Filament/Resources/CmsPages/CmsBlockBuilder.php';
     $source = file_get_contents($filePath);
-    
+
     // Check that all rating options are present in the code
     expect($source)->toContain("'0' =>")
         ->and($source)->toContain("'1' =>")

@@ -2,8 +2,8 @@
 
 namespace Happytodev\Blogr\Filament\Resources\Tags\Pages;
 
-use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 use Filament\Resources\Pages\CreateRecord;
+use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 
 class CreateTag extends CreateRecord
 {

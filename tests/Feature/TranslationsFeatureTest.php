@@ -1,19 +1,19 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
+use Happytodev\Blogr\Tests\TestCase;
 
 it('can create translations for a blog post', function () {
     // Observer will create a default 'en' translation automatically
     $post = BlogPost::factory()->create();
-    
+
     // Verify the default translation was created
     expect($post->translations()->count())->toBe(1);
     expect($post->translations()->first()->locale)->toBe('en');
-    
+
     // Create an additional French translation
     $translation = BlogPostTranslation::create([
         'blog_post_id' => $post->id,
@@ -23,7 +23,7 @@ it('can create translations for a blog post', function () {
         'content' => 'Contenu en francais',
         'reading_time' => 1,
     ]);
-    
+
     expect($translation)->not->toBeNull();
     expect($translation->locale)->toBe('fr');
     expect($post->translations()->count())->toBe(2);
@@ -36,10 +36,10 @@ it('can get translation for specific locale', function () {
         'slug' => 'my-post',
         'content' => 'English content',
     ]);
-    
+
     // The translation should already exist from the Observer
     $translation = $post->getTranslation('en');
-    
+
     expect($translation)->not->toBeNull();
     expect($translation->title)->toBe('My Post');
 });
@@ -47,7 +47,7 @@ it('can get translation for specific locale', function () {
 it('can have multiple translations', function () {
     // Observer will create a default 'en' translation automatically
     $post = BlogPost::factory()->create();
-    
+
     // We already have 'en' from the Observer, add 'fr' and 'es'
     foreach (['fr', 'es'] as $locale) {
         BlogPostTranslation::create([
@@ -59,7 +59,7 @@ it('can have multiple translations', function () {
             'reading_time' => 1,
         ]);
     }
-    
+
     // Should have 3 translations total (en + fr + es)
     expect($post->translations()->count())->toBe(3);
 });

@@ -1,9 +1,9 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -19,7 +19,7 @@ it('can render blogr settings page without errors', function () {
     try {
         $page->mount();
         $mounted = true;
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         $mounted = false;
     }
 
@@ -51,7 +51,7 @@ it('can mount blogr settings page', function () {
     try {
         $page->mount();
         $mounted = true;
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         $mounted = false;
     }
 
@@ -95,7 +95,7 @@ it('loads config data on mount', function () {
     try {
         $page->mount();
         $mounted = true;
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         $mounted = false;
     }
 
@@ -112,11 +112,11 @@ it('can save TOC settings', function () {
     // Test that TOC properties exist and are accessible
     expect(property_exists($page, 'toc_enabled'))->toBe(true);
     expect(property_exists($page, 'toc_strict_mode'))->toBe(true);
-    
+
     // Test that they can be set
     $page->toc_enabled = false;
     $page->toc_strict_mode = true;
-    
+
     expect($page->toc_enabled)->toBe(false);
     expect($page->toc_strict_mode)->toBe(true);
 });
@@ -148,15 +148,15 @@ it('can load and save display settings', function () {
     // Test that display properties exist and are loaded
     expect(property_exists($page, 'display_show_author_pseudo'))->toBe(true);
     expect(property_exists($page, 'display_show_author_avatar'))->toBe(true);
-    
+
     // Test default values
     expect($page->display_show_author_pseudo)->toBe(true);
     expect($page->display_show_author_avatar)->toBe(true);
-    
+
     // Test that they can be modified
     $page->display_show_author_pseudo = false;
     $page->display_show_author_avatar = false;
-    
+
     expect($page->display_show_author_pseudo)->toBe(false);
     expect($page->display_show_author_avatar)->toBe(false);
 });

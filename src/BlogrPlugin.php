@@ -87,16 +87,20 @@ class BlogrPlugin implements Plugin
                 // Blog is the homepage
                 if ($localesEnabled) {
                     $defaultLocale = config('blogr.locales.default', config('app.locale', 'en'));
+
                     return route('home', ['locale' => $defaultLocale]);
                 }
+
                 return route('home');
             }
 
             // CMS is the homepage
             if ($localesEnabled) {
                 $defaultLocale = config('blogr.locales.default', config('app.locale', 'en'));
+
                 return route('home', ['locale' => $defaultLocale]);
             }
+
             return route('home');
         } catch (\Exception $e) {
             return config('app.url', '/');

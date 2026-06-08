@@ -22,14 +22,14 @@ class MarkdownHelper
                 'html_input' => 'escape',  // Escape HTML to prevent XSS
                 'allow_unsafe_links' => false,
                 'embed' => [
-                    'adapter' => new VideoEmbedAdapter(),
+                    'adapter' => new VideoEmbedAdapter,
                     'allowed_domains' => [],
                     'fallback' => 'link',
                 ],
             ]);
 
-            $environment->addExtension(new CommonMarkCoreExtension());
-            $environment->addExtension(new EmbedExtension());
+            $environment->addExtension(new CommonMarkCoreExtension);
+            $environment->addExtension(new EmbedExtension);
 
             static::$converter = new MarkdownConverter($environment);
         }
@@ -39,9 +39,6 @@ class MarkdownHelper
 
     /**
      * Convert markdown to HTML
-     *
-     * @param string|null $markdown
-     * @return string
      */
     public static function toHtml(?string $markdown): string
     {

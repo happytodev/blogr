@@ -1,15 +1,17 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-use Livewire\Livewire;
-use Happytodev\Blogr\Models\User;
+uses(TestCase::class);
+
+use Happytodev\Blogr\Filament\Resources\BlogPostResource;
+use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\ListBlogPosts;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
-use Happytodev\Blogr\Filament\Resources\BlogPostResource;
-use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\ListBlogPosts;
 
 beforeEach(function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);

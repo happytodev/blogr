@@ -2,8 +2,8 @@
 
 namespace Happytodev\Blogr\Filament\Resources\Categories\Pages;
 
-use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
 use Filament\Resources\Pages\CreateRecord;
+use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
 
 class CreateCategory extends CreateRecord
 {

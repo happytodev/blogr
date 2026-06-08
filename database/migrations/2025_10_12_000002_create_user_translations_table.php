@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('locale', 5);
             $table->text('bio')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['user_id', 'locale']);
         });
     }

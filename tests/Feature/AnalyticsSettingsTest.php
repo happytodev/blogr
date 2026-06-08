@@ -1,9 +1,10 @@
 <?php
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
@@ -18,7 +19,7 @@ beforeEach(function () {
 // ============================================
 
 it('has analytics properties defined in BlogrSettings', function () {
-    $settings = new BlogrSettings();
+    $settings = new BlogrSettings;
 
     expect(property_exists($settings, 'analytics_enabled'))->toBeTrue()
         ->and(property_exists($settings, 'analytics_provider'))->toBeTrue()
@@ -38,7 +39,7 @@ it('loads google analytics settings from config', function () {
         'blogr.analytics.google.measurement_id' => 'G-TEST123',
     ]);
 
-    $settings = new BlogrSettings();
+    $settings = new BlogrSettings;
     $settings->mount();
 
     expect($settings->analytics_enabled)->toBeTrue()
@@ -54,7 +55,7 @@ it('loads plausible analytics settings from config', function () {
         'blogr.analytics.plausible.src' => 'https://plausible.mysite.com/js/script.js',
     ]);
 
-    $settings = new BlogrSettings();
+    $settings = new BlogrSettings;
     $settings->mount();
 
     expect($settings->analytics_enabled)->toBeTrue()
@@ -71,7 +72,7 @@ it('loads umami analytics settings from config', function () {
         'blogr.analytics.umami.src' => 'https://cloud.umami.is/script.js',
     ]);
 
-    $settings = new BlogrSettings();
+    $settings = new BlogrSettings;
     $settings->mount();
 
     expect($settings->analytics_enabled)->toBeTrue()
@@ -88,7 +89,7 @@ it('loads matomo analytics settings from config', function () {
         'blogr.analytics.matomo.site_id' => '42',
     ]);
 
-    $settings = new BlogrSettings();
+    $settings = new BlogrSettings;
     $settings->mount();
 
     expect($settings->analytics_enabled)->toBeTrue()
@@ -100,7 +101,7 @@ it('loads matomo analytics settings from config', function () {
 it('defaults analytics to disabled when not configured', function () {
     config(['blogr.analytics.enabled' => null]);
 
-    $settings = new BlogrSettings();
+    $settings = new BlogrSettings;
     $settings->mount();
 
     expect($settings->analytics_enabled)->toBeFalse();
@@ -298,7 +299,7 @@ it('has correct matomo config structure', function () {
 });
 
 it('property analytics_anonymize_ip exists in BlogrSettings', function () {
-    $settings = new BlogrSettings();
+    $settings = new BlogrSettings;
 
     expect(property_exists($settings, 'analytics_anonymize_ip'))->toBeTrue();
 });

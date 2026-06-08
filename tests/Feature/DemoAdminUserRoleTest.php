@@ -1,8 +1,9 @@
 <?php
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
@@ -84,7 +85,7 @@ it('admin demo user can access all admin menus', function () {
 
     // Admin user should have the admin role
     expect($adminUser->hasRole('admin'))->toBeTrue();
-    
+
     // In Filament, the user can access the panel if they have admin role
     // This simulates the authorization check in UserResource::canViewAny()
     expect($adminUser->hasRole('admin'))->toBeTrue();

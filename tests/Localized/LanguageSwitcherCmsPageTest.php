@@ -59,7 +59,7 @@ it('should keep same slug when switching to same language on cms page', function
     expect($response->status())->toBe(200);
 
     $content = $response->getContent();
-    
+
     // Should have a link to /fr/nous-contacter (same page)
     expect($content)->toContain('/fr/nous-contacter');
 });
@@ -87,7 +87,7 @@ it('should work for cms pages with same slug in all languages', function () {
     expect($response->status())->toBe(200);
 
     $content = $response->getContent();
-    
+
     // Should have links to both /en/about and /fr/about
     expect($content)->toContain('/en/about');
     expect($content)->toContain('/fr/about');

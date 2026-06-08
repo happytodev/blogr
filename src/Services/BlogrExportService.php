@@ -8,11 +8,11 @@ use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CategoryTranslation;
+use Happytodev\Blogr\Models\CmsPage;
+use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\TagTranslation;
 use Happytodev\Blogr\Models\UserTranslation;
-use Happytodev\Blogr\Models\CmsPage;
-use Happytodev\Blogr\Models\CmsPageTranslation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -48,13 +48,13 @@ class BlogrExportService
 
         return $data;
     }
-    
+
     private function exportUsers(): array
     {
         // Try to get users from the appropriate model
         $userClass = class_exists('App\\Models\\User') ? 'App\\Models\\User' : 'Happytodev\\Blogr\\Models\\User';
         $users = call_user_func([$userClass, 'all']);
-        
+
         return $users->map(function ($user) {
             return [
                 'id' => $user->id,
@@ -67,27 +67,28 @@ class BlogrExportService
             ];
         })->toArray();
     }
-    
+
     public function exportToFile(?string $path = null, array $options = []): string
     {
         $data = $this->export($options);
         $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
         $dir = storage_path('app/blogr-exports');
-        if (!File::exists($dir)) {
+        if (! File::exists($dir)) {
             File::makeDirectory($dir, 0755, true);
         }
 
         // Create ZIP file if media files are included
-        if (isset($data['media_files']) && !empty($data['media_files'])) {
+        if (isset($data['media_files']) && ! empty($data['media_files'])) {
             return $this->createZipExport($data, $json, $path);
         }
 
         // Regular JSON export
-        if (!$path) {
-            $path = $dir . '/blogr-backup-' . now()->format('Ymd_His') . '.json';
+        if (! $path) {
+            $path = $dir.'/blogr-backup-'.now()->format('Ymd_His').'.json';
         }
         File::put($path, $json);
+
         return $path;
     }
 
@@ -97,7 +98,7 @@ class BlogrExportService
 
         // Collect post photos from main table
         foreach ($data['posts'] as $post) {
-            if (!empty($post['photo'])) {
+            if (! empty($post['photo'])) {
                 $mediaFiles[] = $post['photo'];
             }
         }
@@ -105,7 +106,7 @@ class BlogrExportService
         // Collect post photos from translations
         if (isset($data['post_translations'])) {
             foreach ($data['post_translations'] as $translation) {
-                if (!empty($translation['photo'])) {
+                if (! empty($translation['photo'])) {
                     $mediaFiles[] = $translation['photo'];
                 }
             }
@@ -113,7 +114,7 @@ class BlogrExportService
 
         // Collect series photos from main table
         foreach ($data['series'] as $series) {
-            if (!empty($series['photo'])) {
+            if (! empty($series['photo'])) {
                 $mediaFiles[] = $series['photo'];
             }
         }
@@ -121,7 +122,7 @@ class BlogrExportService
         // Collect series photos from translations
         if (isset($data['series_translations'])) {
             foreach ($data['series_translations'] as $translation) {
-                if (!empty($translation['photo'])) {
+                if (! empty($translation['photo'])) {
                     $mediaFiles[] = $translation['photo'];
                 }
             }
@@ -134,11 +135,11 @@ class BlogrExportService
     private function createZipExport(array $data, string $json, ?string $path = null): string
     {
         $dir = storage_path('app/blogr-exports');
-        if (!$path) {
-            $path = $dir . '/blogr-backup-' . now()->format('Ymd_His') . '.zip';
+        if (! $path) {
+            $path = $dir.'/blogr-backup-'.now()->format('Ymd_His').'.zip';
         }
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         if ($zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
             throw new \Exception('Cannot create ZIP file');
         }
@@ -150,11 +151,12 @@ class BlogrExportService
         foreach ($data['media_files'] as $mediaPath) {
             $fullPath = Storage::disk('public')->path($mediaPath);
             if (File::exists($fullPath)) {
-                $zip->addFile($fullPath, 'media/' . basename($mediaPath));
+                $zip->addFile($fullPath, 'media/'.basename($mediaPath));
             }
         }
 
         $zip->close();
+
         return $path;
     }
 }

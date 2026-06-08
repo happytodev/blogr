@@ -1,9 +1,10 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+use Happytodev\Blogr\Tests\TestCase;
 
+uses(TestCase::class);
 
-test("homepage configuration logic works correctly", function () {
+test('homepage configuration logic works correctly', function () {
     // Test that homepage overrides prefix
     config(['blogr.route.homepage' => true]);
     config(['blogr.route.prefix' => 'blog']);
@@ -16,7 +17,7 @@ test("homepage configuration logic works correctly", function () {
     // This is tested implicitly by the fact that routes work in the demo app
 });
 
-test("homepage routes are registered correctly in service provider", function () {
+test('homepage routes are registered correctly in service provider', function () {
     // This test verifies that the service provider registers routes correctly
     // when homepage is enabled
 
@@ -32,7 +33,7 @@ test("homepage routes are registered correctly in service provider", function ()
     expect(config('blogr.locales.enabled'))->toBe(false);
 });
 
-test("homepage with locales redirects correctly", function () {
+test('homepage with locales redirects correctly', function () {
     config(['blogr.route.homepage' => true]);
     config(['blogr.locales.enabled' => true]);
     config(['blogr.locales.default' => 'en']);

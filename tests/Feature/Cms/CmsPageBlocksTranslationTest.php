@@ -1,8 +1,8 @@
 <?php
 
+use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
-use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Tests\CmsTestCase;
 
 uses(CmsTestCase::class);
@@ -25,7 +25,7 @@ test('blocks are stored in translation not in page', function () {
 
     // Blocks should be in translation
     expect($translation->blocks)->toBeJson();
-    
+
     // Blocks should NOT be in page (or should be null)
     expect($page->blocks ?? null)->toBeNull();
 });
@@ -68,7 +68,7 @@ test('each translation can have different blocks', function () {
 
 test('translation blocks can be null', function () {
     $page = CmsPage::factory()->create();
-    
+
     $translation = $page->translations()->create([
         'locale' => 'en',
         'title' => 'Page Without Blocks',
@@ -82,7 +82,7 @@ test('translation blocks can be null', function () {
 
 test('translation blocks can be empty array', function () {
     $page = CmsPage::factory()->create();
-    
+
     $translation = $page->translations()->create([
         'locale' => 'en',
         'title' => 'Page With Empty Blocks',
@@ -98,7 +98,7 @@ test('translation blocks can be empty array', function () {
 
 test('can update translation blocks independently', function () {
     $page = CmsPage::factory()->create();
-    
+
     $enTranslation = $page->translations()->create([
         'locale' => 'en',
         'title' => 'English',
@@ -138,7 +138,7 @@ test('can update translation blocks independently', function () {
 
 test('blocks json structure is valid in translation', function () {
     $page = CmsPage::factory()->create();
-    
+
     $translation = $page->translations()->create([
         'locale' => 'en',
         'title' => 'Test',
@@ -158,7 +158,7 @@ test('blocks json structure is valid in translation', function () {
     ]);
 
     $blocks = json_decode($translation->blocks, true);
-    
+
     expect($blocks)->toBeArray();
     expect($blocks[0])->toHaveKey('type');
     expect($blocks[0])->toHaveKey('data');
@@ -167,7 +167,7 @@ test('blocks json structure is valid in translation', function () {
 
 test('can delete translation with blocks', function () {
     $page = CmsPage::factory()->create();
-    
+
     $translation = $page->translations()->create([
         'locale' => 'en',
         'title' => 'Test',
@@ -186,7 +186,7 @@ test('can delete translation with blocks', function () {
 
 test('blocks are preserved when updating other translation fields', function () {
     $page = CmsPage::factory()->create();
-    
+
     $translation = $page->translations()->create([
         'locale' => 'en',
         'title' => 'Original Title',
@@ -212,7 +212,7 @@ test('blocks are preserved when updating other translation fields', function () 
 
 test('can create multiple blocks in translation', function () {
     $page = CmsPage::factory()->create();
-    
+
     $blocks = [
         ['type' => 'hero', 'data' => ['title' => 'Welcome']],
         ['type' => 'features', 'data' => ['title' => 'Features', 'items' => []]],
@@ -231,7 +231,7 @@ test('can create multiple blocks in translation', function () {
     ]);
 
     $decodedBlocks = json_decode($translation->blocks, true);
-    
+
     expect($decodedBlocks)->toHaveCount(6);
     expect($decodedBlocks[0]['type'])->toBe('hero');
     expect($decodedBlocks[5]['type'])->toBe('content');

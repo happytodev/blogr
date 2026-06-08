@@ -1,10 +1,11 @@
 <?php
 
+use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
-use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Tests\CmsWithLocalesTestCase;
 use Illuminate\Support\Facades\Config;
+
 use function Pest\Laravel\get;
 
 uses(CmsWithLocalesTestCase::class);

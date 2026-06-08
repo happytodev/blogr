@@ -2,9 +2,9 @@
 
 namespace Happytodev\Blogr\Filament\Resources\Tags\Pages;
 
-use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 
 class ListTags extends ListRecords
 {

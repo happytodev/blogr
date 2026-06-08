@@ -11,13 +11,13 @@ return new class extends Migration
         Schema::table('blog_posts', function (Blueprint $table) {
             // Add columns without foreign key constraint initially (SQLite compatibility)
             // Foreign key will be added via another migration if needed
-            if (!Schema::hasColumn('blog_posts', 'blog_series_id')) {
+            if (! Schema::hasColumn('blog_posts', 'blog_series_id')) {
                 $table->unsignedBigInteger('blog_series_id')->nullable()->after('id');
             }
-            if (!Schema::hasColumn('blog_posts', 'series_position')) {
+            if (! Schema::hasColumn('blog_posts', 'series_position')) {
                 $table->integer('series_position')->nullable()->after('blog_series_id');
             }
-            if (!Schema::hasColumn('blog_posts', 'default_locale')) {
+            if (! Schema::hasColumn('blog_posts', 'default_locale')) {
                 $table->string('default_locale', 10)->default('en')->after('series_position');
             }
         });
@@ -27,7 +27,7 @@ return new class extends Migration
             try {
                 Schema::table('blog_posts', function (Blueprint $table) {
                     // Check if foreign key doesn't already exist before adding
-                    if (!Schema::connection(null)->getConnection()->selectOne(
+                    if (! Schema::connection(null)->getConnection()->selectOne(
                         "SELECT 1 FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_NAME='blog_posts' AND COLUMN_NAME='blog_series_id' AND REFERENCED_TABLE_NAME='blog_series' LIMIT 1"
                     )) {
                         $table->foreign('blog_series_id')
@@ -36,7 +36,7 @@ return new class extends Migration
                             ->onDelete('set null');
                     }
                 });
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Foreign key addition failed (likely SQLite) - that's ok, columns are added
             }
         }
@@ -48,10 +48,10 @@ return new class extends Migration
             // Try to drop foreign key if it exists (will fail silently on SQLite if it doesn't exist)
             try {
                 $table->dropForeign(['blog_series_id']);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Foreign key doesn't exist, continue
             }
-            
+
             $table->dropColumn(['blog_series_id', 'series_position', 'default_locale']);
         });
     }

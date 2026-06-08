@@ -1,8 +1,8 @@
 <?php
 
 use Happytodev\Blogr\Models\BlogPost;
-use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\BlogPostTranslation;
+use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Services\LocaleService;
 

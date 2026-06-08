@@ -7,7 +7,7 @@ return [
         'navigation_label' => 'Utilisateurs',
         'plural_model_label' => 'Utilisateurs',
     ],
-    
+
     // Blog UI
     'ui' => [
         'about_the_author' => 'À propos de l\'auteur',
@@ -38,7 +38,7 @@ return [
         'visit_blog' => 'Ouvrir dans un nouvel onglet',
         'view_website' => 'Voir le site',
     ],
-    
+
     // Series
     'series' => [
         'all_posts_in_series' => 'Tous les articles de cette série',
@@ -57,7 +57,7 @@ return [
         'view_all_series' => 'Voir toutes les séries',
         'view_serie' => 'Voir la série',
     ],
-    
+
     // Dates
     'date' => [
         'draft' => 'Brouillon',

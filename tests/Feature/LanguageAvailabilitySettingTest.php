@@ -1,7 +1,10 @@
 <?php
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(TestCase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     config(['blogr.ui.posts.show_language_switcher' => true]);
@@ -11,13 +14,13 @@ beforeEach(function () {
 
 it('respects show_language_switcher setting when true', function () {
     config(['blogr.ui.posts.show_language_switcher' => true]);
-    
+
     expect(config('blogr.ui.posts.show_language_switcher'))->toBeTrue();
 });
 
 it('respects show_language_switcher setting when false', function () {
     config(['blogr.ui.posts.show_language_switcher' => false]);
-    
+
     expect(config('blogr.ui.posts.show_language_switcher'))->toBeFalse();
 });
 

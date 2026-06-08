@@ -2,8 +2,8 @@
 
 namespace Happytodev\Blogr\Database\Factories;
 
-use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
+use Happytodev\Blogr\Models\CmsPage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CmsPageFactory extends Factory

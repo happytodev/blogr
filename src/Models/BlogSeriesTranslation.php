@@ -33,14 +33,14 @@ class BlogSeriesTranslation extends Model
 
         // Auto-generate slug from title if not provided
         static::creating(function ($translation) {
-            if (empty($translation->slug) && !empty($translation->title)) {
+            if (empty($translation->slug) && ! empty($translation->title)) {
                 $translation->slug = Str::slug($translation->title);
             }
         });
 
         // Update slug if title changes and slug is empty
         static::updating(function ($translation) {
-            if (empty($translation->slug) && !empty($translation->title)) {
+            if (empty($translation->slug) && ! empty($translation->title)) {
                 $translation->slug = Str::slug($translation->title);
             }
         });

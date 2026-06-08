@@ -2,23 +2,30 @@
 
 namespace Happytodev\Blogr\Commands;
 
+use App\Models\User;
+use Happytodev\Blogr\Database\Seeders\RoleAndPermissionSeeder;
+use Happytodev\Blogr\Database\Seeders\TestUsersSeeder;
+use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
+use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
+use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
+use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;
+use Happytodev\Blogr\Filament\Widgets\ScheduledPosts;
+use Happytodev\Blogr\Services\BackupInstallationChecker;
+use Happytodev\Blogr\Services\BackupInstaller;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
-use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
-use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;
-use Happytodev\Blogr\Filament\Widgets\ScheduledPosts;
-use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
-use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
+use Spatie\Permission\Models\Role;
 
 class BlogrInstallCommand extends Command
 {
     public $signature = 'blogr:install {--skip-npm : Skip npm dependencies installation} {--skip-tutorials : Skip tutorial content installation} {--skip-series : Skip series content installation} {--skip-frontend : Skip frontend configuration (Alpine.js and Tailwind CSS)} {--skip-build : Skip npm run build at the end} {--force : Non-interactive mode - answer yes to all prompts}';
 
     public $description = 'Install and configure Blogr with all necessary steps';
-    
+
     protected bool $demoPagesRequested = false;
+
     protected ?array $cmsPreferences = null;
 
     /**
@@ -31,9 +38,10 @@ class BlogrInstallCommand extends Command
             // In force mode, show what would be asked and use the default
             $answer = $default ? 'yes' : 'no';
             $this->line("<fg=gray>  {$question} [{$answer}]</>");
+
             return $default;
         }
-        
+
         return $this->confirm($question, $default);
     }
 
@@ -53,7 +61,7 @@ class BlogrInstallCommand extends Command
 
         // Step 1: Publish configuration and migrations
         $this->publishFiles();
-        
+
         // Step 1.5: Apply CMS preferences after config file is published
         if ($this->cmsPreferences) {
             $this->updateConfigFile($this->cmsPreferences);
@@ -90,12 +98,12 @@ class BlogrInstallCommand extends Command
         $this->installUserResource();
 
         // Step 3: Install tutorial content (unless skipped)
-        if (!$this->option('skip-tutorials')) {
+        if (! $this->option('skip-tutorials')) {
             $this->installTutorials();
         }
 
         // Step 3.5: Install series content (unless skipped)
-        if (!$this->option('skip-series')) {
+        if (! $this->option('skip-series')) {
             $this->installSeries();
         }
 
@@ -106,7 +114,7 @@ class BlogrInstallCommand extends Command
         $this->setupBackupSystem();
 
         // Step 5: Configure frontend (Alpine.js and Tailwind CSS)
-        if (!$this->option('skip-frontend')) {
+        if (! $this->option('skip-frontend')) {
             $this->configureFrontend();
         }
 
@@ -118,12 +126,12 @@ class BlogrInstallCommand extends Command
         }
 
         // Step 7: Handle npm dependencies (unless skipped)
-        if (!$this->option('skip-npm')) {
+        if (! $this->option('skip-npm')) {
             $this->handleNpmDependencies();
         }
 
         // Step 8: Build assets (unless skipped)
-        if (!$this->option('skip-build') && !$this->option('skip-npm')) {
+        if (! $this->option('skip-build') && ! $this->option('skip-npm')) {
             $this->buildAssets();
         }
 
@@ -153,14 +161,14 @@ class BlogrInstallCommand extends Command
         // Publish Blogr config, views, and migrations
         $this->call('vendor:publish', [
             '--provider' => 'Happytodev\Blogr\BlogrServiceProvider',
-            '--force' => true
+            '--force' => true,
         ]);
 
         // Publish Blogr assets (images) to public/vendor/blogr/images
         $this->info('📦 Publishing Blogr assets (default images)...');
         $this->call('vendor:publish', [
             '--tag' => 'blogr-assets',
-            '--force' => true
+            '--force' => true,
         ]);
 
         // Manual fallback: Copy images directly if vendor:publish didn't work (symlink issue)
@@ -170,14 +178,14 @@ class BlogrInstallCommand extends Command
         $this->info('📦 Publishing Spatie Permission migrations...');
         $this->call('vendor:publish', [
             '--provider' => 'Spatie\Permission\PermissionServiceProvider',
-            '--tag' => 'permission-migrations'
+            '--tag' => 'permission-migrations',
         ]);
 
         // Optionally publish Spatie Permission config
         if ($this->forceableConfirm('Would you like to publish Spatie Permission configuration file?', true)) {
             $this->call('vendor:publish', [
                 '--provider' => 'Spatie\Permission\PermissionServiceProvider',
-                '--tag' => 'permission-config'
+                '--tag' => 'permission-config',
             ]);
             $this->info('✅ Spatie Permission configuration published.');
         }
@@ -194,10 +202,11 @@ class BlogrInstallCommand extends Command
 
         if (empty($pendingMigrations)) {
             $this->info('✅ No pending migrations found. Database is already up to date.');
+
             return;
         }
 
-        $this->info('Found ' . count($pendingMigrations) . ' pending migration(s).');
+        $this->info('Found '.count($pendingMigrations).' pending migration(s).');
 
         // Try to run migrations with better error handling
         $result = Process::run(['php', 'artisan', 'migrate', '--force']);
@@ -210,8 +219,9 @@ class BlogrInstallCommand extends Command
             $this->line('ℹ️ This might happen if migrations are already run or if you need to run them manually.');
             $this->line('ℹ️ You can try running: php artisan migrate');
 
-            if (!$this->forceableConfirm('Would you like to continue with the installation anyway?', true)) {
+            if (! $this->forceableConfirm('Would you like to continue with the installation anyway?', true)) {
                 $this->error('Installation cancelled.');
+
                 return;
             }
             $this->info('⏭️ Continuing with installation...');
@@ -224,17 +234,18 @@ class BlogrInstallCommand extends Command
 
         // Check if link already exists
         $publicStoragePath = public_path('storage');
-        
+
         if (File::exists($publicStoragePath)) {
             // Check if it's a valid symlink
             if (is_link($publicStoragePath) && readlink($publicStoragePath) === storage_path('app/public')) {
                 $this->info('✅ Storage link already exists and is valid.');
+
                 return;
             }
-            
+
             // Invalid link or regular directory exists
             $this->warn('⚠️ A file or directory already exists at public/storage');
-            
+
             if ($this->forceableConfirm('Would you like to remove it and create the symbolic link?', false)) {
                 if (is_link($publicStoragePath)) {
                     unlink($publicStoragePath);
@@ -246,6 +257,7 @@ class BlogrInstallCommand extends Command
             } else {
                 $this->warn('⏭️ Skipping storage link creation. Avatar uploads may not work properly.');
                 $this->line('ℹ️ Run manually: php artisan storage:link');
+
                 return;
             }
         }
@@ -295,12 +307,12 @@ class BlogrInstallCommand extends Command
             try {
                 // Run the BlogSeriesSeeder
                 $this->call('db:seed', [
-                    '--class' => 'Happytodev\\Blogr\\Database\\Seeders\\BlogSeriesSeeder'
+                    '--class' => 'Happytodev\\Blogr\\Database\\Seeders\\BlogSeriesSeeder',
                 ]);
                 $this->info('✅ Series content installed successfully.');
                 $this->line('ℹ️ Check out your blog to see the series feature in action!');
             } catch (\Exception $e) {
-                $this->error('❌ Failed to install series content: ' . $e->getMessage());
+                $this->error('❌ Failed to install series content: '.$e->getMessage());
                 $this->line('ℹ️ You can install it later manually.');
             }
         } else {
@@ -326,17 +338,19 @@ class BlogrInstallCommand extends Command
 
         $appJsPath = resource_path('js/app.js');
 
-        if (!File::exists($appJsPath)) {
-            $this->warn('⚠️ app.js not found at: ' . $appJsPath);
+        if (! File::exists($appJsPath)) {
+            $this->warn('⚠️ app.js not found at: '.$appJsPath);
             $this->line('ℹ️ You need to manually configure Alpine.js. See documentation.');
+
             return;
         }
 
         $appJsContent = File::get($appJsPath);
 
         // Check if Alpine is already configured
-        if (str_contains($appJsContent, 'import Alpine from') || str_contains($appJsContent, "import Alpine from")) {
+        if (str_contains($appJsContent, 'import Alpine from') || str_contains($appJsContent, 'import Alpine from')) {
             $this->info('✅ Alpine.js is already configured in app.js.');
+
             return;
         }
 
@@ -350,11 +364,11 @@ class BlogrInstallCommand extends Command
     protected function updateAppJs(string $content, string $path): void
     {
         // Read the stub file
-        $stubPath = __DIR__ . '/../../stubs/app.js.stub';
-        
+        $stubPath = __DIR__.'/../../stubs/app.js.stub';
+
         if (File::exists($stubPath)) {
             $stubContent = File::get($stubPath);
-            
+
             // Check if app.js only has import './bootstrap';
             if (trim($content) === "import './bootstrap';") {
                 // Replace entirely with stub
@@ -362,20 +376,20 @@ class BlogrInstallCommand extends Command
                 $this->info('✅ Alpine.js configuration added to app.js.');
             } else {
                 // Append Alpine configuration after imports
-                $alpineConfig = "\n" . $this->getAlpineConfigSnippet();
-                
+                $alpineConfig = "\n".$this->getAlpineConfigSnippet();
+
                 // Find a good place to insert (after imports)
                 if (preg_match('/^(import\s+.*;\s*)+/m', $content, $matches)) {
                     $content = preg_replace(
                         '/^(import\s+.*;\s*)+/m',
-                        "$0\n" . $alpineConfig,
+                        "$0\n".$alpineConfig,
                         $content,
                         1
                     );
                 } else {
-                    $content .= "\n" . $alpineConfig;
+                    $content .= "\n".$alpineConfig;
                 }
-                
+
                 File::put($path, $content);
                 $this->info('✅ Alpine.js configuration added to app.js.');
             }
@@ -435,9 +449,10 @@ JS;
 
         $cssPath = resource_path('css/app.css');
 
-        if (!File::exists($cssPath)) {
-            $this->warn('⚠️ app.css not found at: ' . $cssPath);
+        if (! File::exists($cssPath)) {
+            $this->warn('⚠️ app.css not found at: '.$cssPath);
             $this->line('ℹ️ You need to manually configure Tailwind CSS v4. See documentation.');
+
             return;
         }
 
@@ -446,6 +461,7 @@ JS;
         // Check if dark variant is already configured
         if (str_contains($cssContent, '@variant dark')) {
             $this->info('✅ Tailwind CSS v4 dark mode is already configured.');
+
             return;
         }
 
@@ -466,19 +482,19 @@ JS;
         ];
 
         foreach ($blogrSources as $source) {
-            if (!str_contains($content, $source)) {
+            if (! str_contains($content, $source)) {
                 // Add after other @source directives or after @plugin
                 if (preg_match('/@source\s+.*?;/s', $content)) {
                     $content = preg_replace(
                         '/(@source\s+.*?;\s*)/s',
-                        "$0\n" . $source . "\n",
+                        "$0\n".$source."\n",
                         $content,
                         1
                     );
                 } elseif (preg_match('/@plugin\s+.*?;/s', $content)) {
                     $content = preg_replace(
                         '/(@plugin\s+.*?;\s*)/s',
-                        "$0\n\n" . $source . "\n",
+                        "$0\n\n".$source."\n",
                         $content,
                         1
                     );
@@ -487,7 +503,7 @@ JS;
         }
 
         // Add dark variant at the end if not present
-        if (!str_contains($content, '@variant dark')) {
+        if (! str_contains($content, '@variant dark')) {
             $darkVariant = "\n/* REQUIRED: Dark mode variant for Blogr theme switcher */\n@variant dark (.dark &);\n";
             $content .= $darkVariant;
         }
@@ -502,14 +518,15 @@ JS;
         $this->info('🏗️ Building frontend assets...');
         $this->newLine();
 
-        if (!File::exists(base_path('package.json'))) {
+        if (! File::exists(base_path('package.json'))) {
             $this->warn('⚠️ No package.json found. Skipping build.');
+
             return;
         }
 
         if ($this->forceableConfirm('Would you like to build your assets now? (npm run build)', true)) {
             $this->line('⏳ Building assets... This may take a moment.');
-            
+
             try {
                 $result = Process::timeout(300)->run(['npm', 'run', 'build']);
 
@@ -522,7 +539,7 @@ JS;
                     $this->line('ℹ️ You can build manually later: npm run build');
                 }
             } catch (\Exception $e) {
-                $this->error('❌ Error building assets: ' . $e->getMessage());
+                $this->error('❌ Error building assets: '.$e->getMessage());
                 $this->line('ℹ️ You can build manually later: npm run build');
             }
         } else {
@@ -560,8 +577,9 @@ JS;
     {
         try {
             // Check if widget class exists
-            if (!class_exists($widgetClass)) {
+            if (! class_exists($widgetClass)) {
                 $this->warn("⚠️ Widget class {$widgetClass} not found. Skipping.");
+
                 return false;
             }
 
@@ -573,10 +591,12 @@ JS;
             // or enable it in the admin panel settings
 
             $this->line("📊 Widget '{$widgetName}' is ready to use.");
+
             return true;
 
         } catch (\Exception $e) {
-            $this->warn("⚠️ Failed to install widget {$widgetClass}: " . $e->getMessage());
+            $this->warn("⚠️ Failed to install widget {$widgetClass}: ".$e->getMessage());
+
             return false;
         }
     }
@@ -585,13 +605,13 @@ JS;
     {
         $this->info('💾 Setting up Blogr backup system...');
 
-        $checker = new \Happytodev\Blogr\Services\BackupInstallationChecker();
-        $installer = new \Happytodev\Blogr\Services\BackupInstaller();
+        $checker = new BackupInstallationChecker;
+        $installer = new BackupInstaller;
 
         if ($checker->isInstalled()) {
             $this->info('✅ Spatie Laravel Backup is already installed.');
 
-            if (!$checker->isConfigPublished()) {
+            if (! $checker->isConfigPublished()) {
                 $this->line('📋 Publishing backup configuration...');
                 if ($installer->publishConfig()) {
                     $this->info('✅ Backup configuration published successfully.');
@@ -631,17 +651,18 @@ JS;
         $this->info('📦 Checking npm dependencies...');
 
         // Check if package.json exists
-        if (!File::exists(base_path('package.json'))) {
+        if (! File::exists(base_path('package.json'))) {
             $this->warn('⚠️ No package.json found. Skipping npm dependencies installation.');
             $this->line('ℹ️ You need to install: npm install alpinejs @tailwindcss/typography -D');
+
             return;
         }
 
         $packageJson = json_decode(File::get(base_path('package.json')), true);
-        
+
         // Check Alpine.js
         $hasAlpine = isset($packageJson['dependencies']['alpinejs']) || isset($packageJson['devDependencies']['alpinejs']);
-        
+
         // Check @tailwindcss/typography
         $hasTypography = isset($packageJson['devDependencies']['@tailwindcss/typography']);
 
@@ -649,19 +670,19 @@ JS;
             $this->info('✅ All required npm packages are already installed.');
         } else {
             $packagesToInstall = [];
-            
-            if (!$hasAlpine) {
+
+            if (! $hasAlpine) {
                 $packagesToInstall[] = 'alpinejs';
             }
-            
-            if (!$hasTypography) {
+
+            if (! $hasTypography) {
                 $packagesToInstall[] = '@tailwindcss/typography';
             }
-            
-            if ($this->forceableConfirm('Would you like to install the missing packages: ' . implode(', ', $packagesToInstall) . '?', true)) {
+
+            if ($this->forceableConfirm('Would you like to install the missing packages: '.implode(', ', $packagesToInstall).'?', true)) {
                 $this->installNpmPackages($packagesToInstall);
             } else {
-                $this->line('ℹ️ You can install them later: npm install ' . implode(' ', $packagesToInstall));
+                $this->line('ℹ️ You can install them later: npm install '.implode(' ', $packagesToInstall));
             }
         }
 
@@ -671,22 +692,22 @@ JS;
 
     protected function installNpmPackages(array $packages): void
     {
-        $this->info('📦 Installing npm packages: ' . implode(', ', $packages) . '...');
+        $this->info('📦 Installing npm packages: '.implode(', ', $packages).'...');
 
         try {
             $packageList = implode(' ', $packages);
             $command = ['npm', 'install'];
-            
+
             // Add packages
             foreach ($packages as $package) {
                 $command[] = $package;
             }
-            
+
             // Alpine.js should be a regular dependency, typography as dev dependency
             if (in_array('@tailwindcss/typography', $packages)) {
                 $command[] = '-D';
             }
-            
+
             $result = Process::timeout(300)->run($command);
 
             if ($result->successful()) {
@@ -694,11 +715,11 @@ JS;
             } else {
                 $this->error('❌ Failed to install npm packages:');
                 $this->line($result->errorOutput());
-                $this->line('ℹ️ You can install them manually: npm install ' . $packageList);
+                $this->line('ℹ️ You can install them manually: npm install '.$packageList);
             }
         } catch (\Exception $e) {
-            $this->error('❌ Error installing npm packages: ' . $e->getMessage());
-            $this->line('ℹ️ You can install them manually: npm install ' . implode(' ', $packages));
+            $this->error('❌ Error installing npm packages: '.$e->getMessage());
+            $this->line('ℹ️ You can install them manually: npm install '.implode(' ', $packages));
         }
     }
 
@@ -706,9 +727,10 @@ JS;
     {
         $cssPath = resource_path('css/app.css');
 
-        if (!File::exists($cssPath)) {
-            $this->warn('⚠️ CSS file not found at: ' . $cssPath);
+        if (! File::exists($cssPath)) {
+            $this->warn('⚠️ CSS file not found at: '.$cssPath);
             $this->line('ℹ️ You need to manually add @plugin "@tailwindcss/typography"; to your CSS file.');
+
             return;
         }
 
@@ -717,6 +739,7 @@ JS;
         // Check if typography plugin is already added
         if (str_contains($cssContent, '@tailwindcss/typography')) {
             $this->info('✅ Typography plugin is already configured in your CSS file.');
+
             return;
         }
 
@@ -756,10 +779,11 @@ JS;
 
         $adminPanelPath = app_path('Providers/Filament/AdminPanelProvider.php');
 
-        if (!File::exists($adminPanelPath)) {
-            $this->warn('⚠️ AdminPanelProvider not found at: ' . $adminPanelPath);
+        if (! File::exists($adminPanelPath)) {
+            $this->warn('⚠️ AdminPanelProvider not found at: '.$adminPanelPath);
             $this->line('ℹ️ You need to manually add BlogrPlugin and EditProfile to your AdminPanelProvider.');
             $this->displayAdminPanelInstructions();
+
             return;
         }
 
@@ -768,30 +792,31 @@ JS;
 
         // Check if BlogrPlugin is already added
         $hasPlugin = str_contains($content, 'BlogrPlugin::make()');
-        
+
         // Check if EditProfile is already configured
-        $hasProfile = str_contains($content, '->profile(EditProfile::class)') || 
+        $hasProfile = str_contains($content, '->profile(EditProfile::class)') ||
                       str_contains($content, '->profile(\Happytodev\Blogr\Filament\Pages\Auth\EditProfile::class)');
 
         if ($hasPlugin && $hasProfile) {
             $this->info('✅ BlogrPlugin and EditProfile are already configured in AdminPanelProvider.');
+
             return;
         }
 
         // Determine what needs to be added
         $updateMessage = [];
-        if (!$hasPlugin) {
+        if (! $hasPlugin) {
             $updateMessage[] = 'BlogrPlugin';
         }
-        if (!$hasProfile) {
+        if (! $hasProfile) {
             $updateMessage[] = 'EditProfile page';
         }
 
         // Automatically add missing configurations
-        if ($this->forceableConfirm('Would you like to automatically add ' . implode(' and ', $updateMessage) . ' to your AdminPanelProvider?', true)) {
-            $this->updateAdminPanelProvider($content, $adminPanelPath, !$hasPlugin, !$hasProfile);
+        if ($this->forceableConfirm('Would you like to automatically add '.implode(' and ', $updateMessage).' to your AdminPanelProvider?', true)) {
+            $this->updateAdminPanelProvider($content, $adminPanelPath, ! $hasPlugin, ! $hasProfile);
         } else {
-            $this->displayAdminPanelInstructions(!$hasPlugin, !$hasProfile);
+            $this->displayAdminPanelInstructions(! $hasPlugin, ! $hasProfile);
         }
     }
 
@@ -800,7 +825,7 @@ JS;
         $modified = false;
 
         // Add BlogrPlugin import if needed and not present
-        if ($addPlugin && !str_contains($content, 'use Happytodev\Blogr\BlogrPlugin;')) {
+        if ($addPlugin && ! str_contains($content, 'use Happytodev\Blogr\BlogrPlugin;')) {
             $content = preg_replace(
                 '/(use [^;]+;)\n+(?=\s*class)/s',
                 "$1\nuse Happytodev\\Blogr\\BlogrPlugin;\n",
@@ -811,7 +836,7 @@ JS;
         }
 
         // Add EditProfile import if needed and not present
-        if ($addProfile && !str_contains($content, 'use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;')) {
+        if ($addProfile && ! str_contains($content, 'use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;')) {
             $content = preg_replace(
                 '/(use [^;]+;)\n+(?=\s*class)/s',
                 "$1\nuse Happytodev\\Blogr\\Filament\\Pages\\Auth\\EditProfile;\n",
@@ -881,7 +906,7 @@ JS;
     {
         $this->newLine();
         $this->warn('📝 Manual step required:');
-        
+
         if ($showPlugin) {
             $this->line('1. Add BlogrPlugin to your AdminPanelProvider plugins array:');
             $this->line('   ->plugins([');
@@ -893,7 +918,7 @@ JS;
         }
 
         if ($showProfile) {
-            $this->line(($showPlugin ? '2' : '1') . '. Add EditProfile page to enable user bio and avatar editing:');
+            $this->line(($showPlugin ? '2' : '1').'. Add EditProfile page to enable user bio and avatar editing:');
             $this->line('   ->login()');
             $this->line('   ->profile(EditProfile::class)');
             $this->newLine();
@@ -932,15 +957,15 @@ JS;
         // Get the configured APP_URL or fallback to localhost
         $appUrl = config('app.url', 'http://localhost');
         $blogPrefix = config('blogr.route.prefix', 'blog');
-        $blogUrl = rtrim($appUrl, '/') . ($blogPrefix ? '/' . $blogPrefix : '');
-        
+        $blogUrl = rtrim($appUrl, '/').($blogPrefix ? '/'.$blogPrefix : '');
+
         $this->info('🎯 Next steps:');
-        $this->line('1. Access your Filament admin panel at: ' . rtrim($appUrl, '/') . '/admin');
+        $this->line('1. Access your Filament admin panel at: '.rtrim($appUrl, '/').'/admin');
         $this->line('2. Update your profile (bio and avatar) via the user menu → Edit Profile');
         $this->line('3. Go to "Blog Posts" to create your first post');
         $this->line('4. Check out the tutorial posts and series (if installed)');
         $this->line('5. Configure settings in the "Blogr Settings" section');
-        $this->line('6. Visit your blog at: ' . $blogUrl);
+        $this->line('6. Visit your blog at: '.$blogUrl);
         $this->newLine();
 
         if ($this->option('skip-build') || $this->option('skip-npm')) {
@@ -960,7 +985,7 @@ JS;
         $this->line('📖 Documentation: https://github.com/happytodev/blogr');
         $this->line('🐛 Issues: https://github.com/happytodev/blogr/issues');
         $this->newLine();
-        
+
         $this->info('💡 Tip: Check out the THEME_SWITCHER.md file for troubleshooting the light/dark/auto mode feature.');
     }
 
@@ -970,8 +995,9 @@ JS;
 
         $userModelPath = app_path('Models/User.php');
 
-        if (!File::exists($userModelPath)) {
-            $this->warn('❌ User model not found at ' . $userModelPath);
+        if (! File::exists($userModelPath)) {
+            $this->warn('❌ User model not found at '.$userModelPath);
+
             return;
         }
 
@@ -983,8 +1009,8 @@ JS;
         } else {
             // Add the import after the Notifiable import
             $pattern = '/(use Illuminate\\\\Notifications\\\\Notifiable;)/';
-            $replacement = '$1' . PHP_EOL . 'use Spatie\Permission\Traits\HasRoles;';
-            
+            $replacement = '$1'.PHP_EOL.'use Spatie\Permission\Traits\HasRoles;';
+
             $content = preg_replace($pattern, $replacement, $content);
             $this->line('✅ Added HasRoles trait import');
         }
@@ -994,21 +1020,22 @@ JS;
         $lines = explode("\n", $content);
         $inClass = false;
         $hasRolesInTraits = false;
-        
+
         foreach ($lines as $line) {
             if (preg_match('/^class\s+\w+/', $line)) {
                 $inClass = true;
+
                 continue;
             }
-            
-            if ($inClass && preg_match('/^\s+use\s+\w/', $line) && !preg_match('/^\s*\/\*/', $line)) {
+
+            if ($inClass && preg_match('/^\s+use\s+\w/', $line) && ! preg_match('/^\s*\/\*/', $line)) {
                 if (str_contains($line, 'HasRoles')) {
                     $hasRolesInTraits = true;
                 }
                 break;
             }
         }
-        
+
         if ($hasRolesInTraits) {
             $this->line('✅ HasRoles trait already used in User model');
         } else {
@@ -1023,13 +1050,14 @@ JS;
                 // Detect when we enter the class
                 if (preg_match('/^class\s+\w+/', $line)) {
                     $inClass = true;
+
                     continue;
                 }
-                
+
                 // If we're in the class and find a line with traits (starting with spaces + use)
                 // Exclude comment lines
-                if ($inClass && preg_match('/^\s+use\s+\w/', $line) && !preg_match('/^\s*\/\*/', $line)) {
-                    if (!str_contains($line, 'HasRoles') && str_contains($line, 'HasFactory')) {
+                if ($inClass && preg_match('/^\s+use\s+\w/', $line) && ! preg_match('/^\s*\/\*/', $line)) {
+                    if (! str_contains($line, 'HasRoles') && str_contains($line, 'HasFactory')) {
                         // Add HasRoles after HasFactory
                         $lines[$index] = str_replace('HasFactory,', 'HasFactory, HasRoles,', $line);
                         $modified = true;
@@ -1047,12 +1075,12 @@ JS;
         }
 
         // Add slug, avatar and bio to $fillable array
-        if (!str_contains($content, "'slug'") && !str_contains($content, '"slug"')) {
+        if (! str_contains($content, "'slug'") && ! str_contains($content, '"slug"')) {
             // Find the $fillable array - match opening bracket to closing bracket
             $pattern = '/(\$fillable\s*=\s*\[\s*[^\]]+?)(,\s*)(\];)/s';
             if (preg_match($pattern, $content, $matches)) {
                 // Add slug, avatar and bio before the closing bracket
-                $replacement = $matches[1] . $matches[2] . "\n        'slug',\n        'avatar',\n        'bio'," . "\n    " . $matches[3];
+                $replacement = $matches[1].$matches[2]."\n        'slug',\n        'avatar',\n        'bio',"."\n    ".$matches[3];
                 $content = preg_replace($pattern, $replacement, $content, 1);
                 $this->line('✅ Added slug, avatar and bio to User model $fillable');
             } else {
@@ -1064,28 +1092,28 @@ JS;
         }
 
         // Add 'bio' => 'array' cast to ensure JSON is properly decoded
-        if (!str_contains($content, "'bio' => 'array'") && !str_contains($content, '"bio" => "array"')) {
+        if (! str_contains($content, "'bio' => 'array'") && ! str_contains($content, '"bio" => "array"')) {
             // Strategy 1: Try to find the casts() method (Laravel 11+ style)
             if (preg_match('/(protected function casts\(\)\s*:\s*array\s*\{[^}]*return\s*\[)([^\]]*?)(\];)/s', $content, $matches)) {
                 $before = $matches[1];
                 $castsContent = $matches[2];
                 $after = $matches[3];
-                
+
                 // Check if there's already content in the array
                 if (trim($castsContent) !== '') {
                     // Remove trailing commas and whitespace, then add bio cast
                     $cleanContent = rtrim($castsContent);
                     // Remove trailing comma if present
                     $cleanContent = rtrim($cleanContent, ',');
-                    $newCastsContent = $cleanContent . ",\n            'bio' => 'array',\n        ";
+                    $newCastsContent = $cleanContent.",\n            'bio' => 'array',\n        ";
                 } else {
                     // Empty array, add bio cast as first entry
                     $newCastsContent = "\n            'bio' => 'array',\n        ";
                 }
-                
+
                 $content = str_replace(
                     $matches[0],
-                    $before . $newCastsContent . $after,
+                    $before.$newCastsContent.$after,
                     $content
                 );
                 $this->line('✅ Added bio array cast to User model casts() method');
@@ -1095,22 +1123,22 @@ JS;
                 $before = $matches[1];
                 $castsContent = $matches[2];
                 $after = $matches[3];
-                
+
                 // Check if there's already content in the array
                 if (trim($castsContent) !== '') {
                     // Remove trailing commas and whitespace, then add bio cast
                     $cleanContent = rtrim($castsContent);
                     // Remove trailing comma if present
                     $cleanContent = rtrim($cleanContent, ',');
-                    $newCastsContent = $cleanContent . ",\n        'bio' => 'array',\n    ";
+                    $newCastsContent = $cleanContent.",\n        'bio' => 'array',\n    ";
                 } else {
                     // Empty array, add bio cast as first entry
                     $newCastsContent = "\n        'bio' => 'array',\n    ";
                 }
-                
+
                 $content = str_replace(
                     $matches[0],
-                    $before . $newCastsContent . $after,
+                    $before.$newCastsContent.$after,
                     $content
                 );
                 $this->line('✅ Added bio array cast to User model $casts property');
@@ -1132,7 +1160,7 @@ JS;
      */
     protected function configureUserModelForFilament(string $userModelPath): void
     {
-        if (!File::exists($userModelPath)) {
+        if (! File::exists($userModelPath)) {
             return;
         }
 
@@ -1147,8 +1175,8 @@ JS;
         $pattern = '/(use Illuminate\\\\[^;]+;(?:\s*use Illuminate\\\\[^;]+;)*)/';
         if (preg_match($pattern, $content, $matches)) {
             $lastIlluminateImport = $matches[1];
-            $replacement = $lastIlluminateImport . "\n" . 
-                          'use Filament\Models\Contracts\FilamentUser;' . "\n" .
+            $replacement = $lastIlluminateImport."\n".
+                          'use Filament\Models\Contracts\FilamentUser;'."\n".
                           'use Filament\Panel;';
             $content = str_replace($lastIlluminateImport, $replacement, $content);
         }
@@ -1157,17 +1185,17 @@ JS;
         if (preg_match('/(class\s+User\s+extends\s+Authenticatable)(\s+implements\s+([^{]+))?/', $content, $matches)) {
             $classDeclaration = $matches[1];
             $implementsPart = $matches[2] ?? '';
-            
+
             if ($implementsPart) {
                 // Already has implements - add FilamentUser
                 $interfaces = $matches[3];
-                $newImplements = ' implements ' . trim($interfaces) . ', FilamentUser';
+                $newImplements = ' implements '.trim($interfaces).', FilamentUser';
             } else {
                 // No implements yet - add it
                 $newImplements = ' implements FilamentUser';
             }
-            
-            $newClassDeclaration = $classDeclaration . $newImplements;
+
+            $newClassDeclaration = $classDeclaration.$newImplements;
             $content = str_replace($matches[0], $newClassDeclaration, $content);
         }
 
@@ -1188,7 +1216,7 @@ METHOD;
         // Find the last closing brace (end of class)
         $lastBracePos = strrpos($content, '}');
         if ($lastBracePos !== false) {
-            $content = substr_replace($content, $method . "\n}", $lastBracePos, 1);
+            $content = substr_replace($content, $method."\n}", $lastBracePos, 1);
         }
 
         File::put($userModelPath, $content);
@@ -1197,17 +1225,18 @@ METHOD;
     protected function ensureImagesArePublished(): void
     {
         $targetPath = public_path('vendor/blogr/images');
-        
+
         // Check if images are already published
         if (File::exists($targetPath) && count(File::files($targetPath)) >= 3) {
             $this->line('✅ Blogr images already published');
+
             return;
         }
 
         // Try to find the source images directory
         $possiblePaths = [
             base_path('vendor/happytodev/blogr/resources/images'),
-            __DIR__ . '/../../resources/images',
+            __DIR__.'/../../resources/images',
         ];
 
         $sourcePath = null;
@@ -1218,14 +1247,15 @@ METHOD;
             }
         }
 
-        if (!$sourcePath) {
+        if (! $sourcePath) {
             $this->warn('⚠️  Could not find Blogr images source directory');
             $this->line('ℹ️  Images should be at: vendor/happytodev/blogr/resources/images/');
+
             return;
         }
 
         // Create target directory if it doesn't exist
-        if (!File::exists($targetPath)) {
+        if (! File::exists($targetPath)) {
             File::makeDirectory($targetPath, 0755, true);
         }
 
@@ -1235,7 +1265,7 @@ METHOD;
             $copiedCount = 0;
 
             foreach ($imageFiles as $file) {
-                $targetFile = $targetPath . '/' . $file->getFilename();
+                $targetFile = $targetPath.'/'.$file->getFilename();
                 File::copy($file->getPathname(), $targetFile);
                 $copiedCount++;
             }
@@ -1244,7 +1274,7 @@ METHOD;
                 $this->line("✅ Manually copied {$copiedCount} image(s) to public/vendor/blogr/images");
             }
         } catch (\Exception $e) {
-            $this->warn('⚠️  Error copying images: ' . $e->getMessage());
+            $this->warn('⚠️  Error copying images: '.$e->getMessage());
             $this->line('ℹ️  You may need to manually copy images from vendor/happytodev/blogr/resources/images/');
         }
     }
@@ -1255,11 +1285,11 @@ METHOD;
 
         try {
             // Run the RoleAndPermissionSeeder
-            $seeder = new \Happytodev\Blogr\Database\Seeders\RoleAndPermissionSeeder();
+            $seeder = new RoleAndPermissionSeeder;
             $seeder->setCommand($this);
             $seeder->run();
         } catch (\Exception $e) {
-            $this->warn('⚠️  Error creating roles and permissions: ' . $e->getMessage());
+            $this->warn('⚠️  Error creating roles and permissions: '.$e->getMessage());
             $this->line('ℹ️  You may need to create roles manually.');
         }
     }
@@ -1272,12 +1302,12 @@ METHOD;
         $this->info('� Creating test users...');
 
         try {
-            $seederClass = \Happytodev\Blogr\Database\Seeders\TestUsersSeeder::class;
-            $seeder = new $seederClass();
+            $seederClass = TestUsersSeeder::class;
+            $seeder = new $seederClass;
             $seeder->setCommand($this);
             $seeder->run();
         } catch (\Exception $e) {
-            $this->warn('⚠️  Error creating test users: ' . $e->getMessage());
+            $this->warn('⚠️  Error creating test users: '.$e->getMessage());
             $this->line('ℹ️  You may need to create users manually.');
         }
     }
@@ -1285,33 +1315,35 @@ METHOD;
     /**
      * Assign admin role to the first user if one exists
      * This ensures immediate access to all Blogr features after installation
-     * 
+     *
      * Uses direct database insertion to bypass the HasRoles trait requirement,
      * since the trait may have been just added but not yet loaded in memory.
      */
     protected function assignAdminRoleToFirstUser(): void
     {
         try {
-            $userModel = config('auth.providers.users.model', \App\Models\User::class);
-            
+            $userModel = config('auth.providers.users.model', User::class);
+
             // Get the very first user created (lowest ID), excluding demo users
             $firstUser = $userModel::whereNotIn('email', [
                 'admin@demo.com',
                 'writer@demo.com',
             ])->orderBy('id', 'asc')->first();
 
-            if (!$firstUser) {
+            if (! $firstUser) {
                 $this->line('ℹ️  No existing users found to assign admin role.');
+
                 return;
             }
 
             // Get the admin role
-            $adminRole = \Spatie\Permission\Models\Role::where('name', 'admin')
+            $adminRole = Role::where('name', 'admin')
                 ->where('guard_name', 'web')
                 ->first();
 
-            if (!$adminRole) {
+            if (! $adminRole) {
                 $this->warn('⚠️  Admin role not found in database.');
+
                 return;
             }
 
@@ -1324,6 +1356,7 @@ METHOD;
 
             if ($hasRole) {
                 $this->line("✅ User '{$firstUser->name}' already has admin role.");
+
                 return;
             }
 
@@ -1334,12 +1367,12 @@ METHOD;
                 'model_type' => get_class($firstUser),
                 'model_id' => $firstUser->id,
             ]);
-            
+
             $this->info("✅ Admin role assigned to user: {$firstUser->name} ({$firstUser->email})");
             $this->line('🎉 This user now has full access to all Blogr features!');
-            
+
         } catch (\Exception $e) {
-            $this->warn('⚠️  Error assigning admin role: ' . $e->getMessage());
+            $this->warn('⚠️  Error assigning admin role: '.$e->getMessage());
             $this->line('ℹ️  You can manually assign roles later if needed.');
         }
     }
@@ -1352,49 +1385,50 @@ METHOD;
         $this->info('📋 Installing UserResource for user management...');
 
         // Define the paths
-        $stubsPath = __DIR__ . '/../../stubs';
+        $stubsPath = __DIR__.'/../../stubs';
         $appPath = app_path();
 
         $files = [
-            'UserResource.stub' => $appPath . '/Filament/Resources/UserResource.php',
-            'UserForm.stub' => $appPath . '/Filament/Resources/Users/Schemas/UserForm.php',
-            'UsersTable.stub' => $appPath . '/Filament/Resources/Users/Tables/UsersTable.php',
-            'ListUsers.stub' => $appPath . '/Filament/Resources/Users/Pages/ListUsers.php',
-            'CreateUser.stub' => $appPath . '/Filament/Resources/Users/Pages/CreateUser.php',
-            'EditUser.stub' => $appPath . '/Filament/Resources/Users/Pages/EditUser.php',
+            'UserResource.stub' => $appPath.'/Filament/Resources/UserResource.php',
+            'UserForm.stub' => $appPath.'/Filament/Resources/Users/Schemas/UserForm.php',
+            'UsersTable.stub' => $appPath.'/Filament/Resources/Users/Tables/UsersTable.php',
+            'ListUsers.stub' => $appPath.'/Filament/Resources/Users/Pages/ListUsers.php',
+            'CreateUser.stub' => $appPath.'/Filament/Resources/Users/Pages/CreateUser.php',
+            'EditUser.stub' => $appPath.'/Filament/Resources/Users/Pages/EditUser.php',
         ];
 
         $copiedCount = 0;
         foreach ($files as $stub => $destination) {
-            $source = $stubsPath . '/' . $stub;
-            
+            $source = $stubsPath.'/'.$stub;
+
             // Check if the file already exists
             if (file_exists($destination)) {
-                $this->line("   • " . basename($destination) . " already exists, skipping...");
+                $this->line('   • '.basename($destination).' already exists, skipping...');
+
                 continue;
             }
 
             // Create the directory if it doesn't exist
             $directory = dirname($destination);
-            if (!is_dir($directory)) {
+            if (! is_dir($directory)) {
                 mkdir($directory, 0755, true);
             }
 
             // Copy the file
             if (file_exists($source)) {
                 copy($source, $destination);
-                $this->line("   • Copied " . basename($destination));
+                $this->line('   • Copied '.basename($destination));
                 $copiedCount++;
             } else {
-                $this->warn("   ⚠️  Stub file not found: " . basename($stub));
+                $this->warn('   ⚠️  Stub file not found: '.basename($stub));
             }
         }
 
         if ($copiedCount > 0) {
             $this->info("✅ UserResource installed successfully! ({$copiedCount} files)");
-            $this->line("   You can now manage users in the admin panel.");
+            $this->line('   You can now manage users in the admin panel.');
         } else {
-            $this->line("ℹ️  UserResource files already exist.");
+            $this->line('ℹ️  UserResource files already exist.');
         }
     }
 
@@ -1421,7 +1455,7 @@ METHOD;
 
             $homepageType = 'blog'; // default
 
-            if (!$this->option('force')) {
+            if (! $this->option('force')) {
                 $choice = $this->choice(
                     'Homepage type',
                     ['blog', 'cms'],
@@ -1431,17 +1465,17 @@ METHOD;
             }
 
             $this->line("✅ Homepage type set to: {$homepageType}");
-            
+
             // Store preferences to apply after config file is published
             $this->cmsPreferences = [
                 'cms.enabled' => true,
                 'homepage.type' => $homepageType,
             ];
-            
+
             // Ask if user wants to install demo CMS pages
             $this->newLine();
             $installDemoPages = $this->forceableConfirm('Would you like to install demo CMS pages? (About, Contact, etc.)', true);
-            
+
             if ($installDemoPages) {
                 $this->line('✅ Demo CMS pages will be installed.');
                 // Store this choice to execute after migrations
@@ -1452,7 +1486,7 @@ METHOD;
             }
         } else {
             $this->line('✅ CMS functionality will be disabled (blog only).');
-            
+
             // Store preferences to apply after config file is published
             $this->cmsPreferences = [
                 'cms.enabled' => false,
@@ -1468,8 +1502,9 @@ METHOD;
     {
         $configPath = config_path('blogr.php');
 
-        if (!file_exists($configPath)) {
+        if (! file_exists($configPath)) {
             $this->warn('⚠️ Config file not found. Will be published during installation.');
+
             return;
         }
 
@@ -1478,24 +1513,24 @@ METHOD;
         foreach ($updates as $key => $value) {
             $keys = explode('.', $key);
             $pattern = '';
-            
+
             if (count($keys) === 2) {
                 // Handle nested config like 'cms.enabled'
                 $section = $keys[0];
                 $option = $keys[1];
-                
+
                 $valueStr = is_bool($value) ? ($value ? 'true' : 'false') : "'{$value}'";
-                
+
                 // Match: 'enabled' => false,
                 $pattern = "/'{$option}'\s*=>\s*(?:true|false|'[^']*'),/";
                 $replacement = "'{$option}' => {$valueStr},";
-                
+
                 $content = preg_replace($pattern, $replacement, $content);
             }
         }
 
         file_put_contents($configPath, $content);
-        $this->line("   ✓ Configuration updated");
+        $this->line('   ✓ Configuration updated');
     }
 
     /**
@@ -1522,7 +1557,7 @@ METHOD;
             $this->line("Current APP_URL: {$currentUrl}");
             $this->line("Suggested APP_URL: {$suggestedUrl}");
 
-            if ($this->forceableConfirm("Would you like to use the suggested URL?", true)) {
+            if ($this->forceableConfirm('Would you like to use the suggested URL?', true)) {
                 $this->updateEnvUrl($suggestedUrl);
                 $this->line("   ✓ App URL set to: {$suggestedUrl}");
             }
@@ -1542,6 +1577,7 @@ METHOD;
             $folderName = basename(base_path());
             // Convert folder name to a valid domain (lowercase, replace spaces with hyphens)
             $domainName = strtolower(str_replace([' ', '_'], '-', $folderName));
+
             return "http://{$domainName}.test";
         }
 
@@ -1579,36 +1615,38 @@ METHOD;
 
         $webRoutesPath = base_path('routes/web.php');
 
-        if (!file_exists($webRoutesPath)) {
+        if (! file_exists($webRoutesPath)) {
             $this->warn('⚠️ routes/web.php not found. Skipping...');
+
             return;
         }
 
         $content = file_get_contents($webRoutesPath);
 
         // Check if the default route exists and is not already commented
-        if (str_contains($content, "Route::get('/', function ()") && 
-            !str_contains($content, "// Route::get('/', function ()")) {
-            
+        if (str_contains($content, "Route::get('/', function ()") &&
+            ! str_contains($content, "// Route::get('/', function ()")) {
+
             // Comment out the default route - match each line separately
             $lines = explode("\n", $content);
             $newLines = [];
             $inRoute = false;
             $routeStarted = false;
-            
+
             foreach ($lines as $line) {
                 // Detect start of the route
-                if (!$routeStarted && preg_match("/Route::get\('\/'\s*,\s*function\s*\(\)/", $line)) {
+                if (! $routeStarted && preg_match("/Route::get\('\/'\s*,\s*function\s*\(\)/", $line)) {
                     $routeStarted = true;
                     $inRoute = true;
-                    $newLines[] = "// Commented out by Blogr installation";
-                    $newLines[] = "// " . $line;
+                    $newLines[] = '// Commented out by Blogr installation';
+                    $newLines[] = '// '.$line;
+
                     continue;
                 }
-                
+
                 // If we're inside the route, comment out the line
                 if ($inRoute) {
-                    $newLines[] = "// " . $line;
+                    $newLines[] = '// '.$line;
                     // Check if this is the closing line (ends with });)
                     if (preg_match("/\}\);\s*$/", $line)) {
                         $inRoute = false;
@@ -1617,9 +1655,9 @@ METHOD;
                     $newLines[] = $line;
                 }
             }
-            
+
             $newContent = implode("\n", $newLines);
-            
+
             if ($newContent !== $content) {
                 file_put_contents($webRoutesPath, $newContent);
                 $this->info('✅ Default welcome route commented out successfully.');

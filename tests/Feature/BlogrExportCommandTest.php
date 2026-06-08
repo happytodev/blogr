@@ -1,14 +1,18 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\Tag;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Services\BlogrExportService;
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
     // Clean up any existing export files
@@ -19,7 +23,7 @@ it('can export all blogr data to json', function () {
     // Create test data
     $category = Category::create(['name' => 'Test Category', 'slug' => 'test-category', 'is_default' => true]);
     $tag = Tag::create(['name' => 'Test Tag', 'slug' => 'test-tag']);
-    
+
     $post = BlogPost::create([
         'title' => 'Test Post',
         'slug' => 'test-post',
@@ -28,31 +32,31 @@ it('can export all blogr data to json', function () {
         'user_id' => 1,
         'category_id' => $category->id,
     ]);
-    
+
     // Run export command
     $this->artisan('blogr:export')
         ->expectsOutput('✅ Blogr data exported successfully')
         ->assertExitCode(0);
-    
+
     // Check export file was created
     $exportPath = storage_path('app/blogr-exports');
     expect(File::exists($exportPath))->toBeTrue();
-    
+
     $files = File::files($exportPath);
     expect(count($files))->toBeGreaterThan(0);
 });
 
 it('export includes version and timestamp', function () {
     $this->artisan('blogr:export');
-    
+
     $exportPath = storage_path('app/blogr-exports');
     $files = File::files($exportPath);
-    
+
     if (count($files) > 0) {
         $latestFile = collect($files)->sortByDesc(fn ($file) => $file->getMTime())->first();
         $content = File::get($latestFile->getPathname());
         $data = json_decode($content, true);
-        
+
         expect($data)->toHaveKeys(['version', 'exported_at', 'posts', 'series', 'categories', 'tags']);
         expect($data['version'])->toBeString();
         expect($data['exported_at'])->toBeString();
@@ -61,10 +65,10 @@ it('export includes version and timestamp', function () {
 
 it('can export to custom path', function () {
     $customPath = storage_path('app/custom-backup.json');
-    
+
     $this->artisan('blogr:export', ['--output' => $customPath])
         ->assertExitCode(0);
-    
+
     if (File::exists($customPath)) {
         expect(File::exists($customPath))->toBeTrue();
         File::delete($customPath);
@@ -75,7 +79,7 @@ it('export includes relationships data', function () {
     // Create post with relationships
     $category = Category::create(['name' => 'Test', 'slug' => 'test', 'is_default' => true]);
     $tag = Tag::create(['name' => 'Tag', 'slug' => 'tag']);
-    
+
     $post = BlogPost::create([
         'title' => 'Post with Relations',
         'slug' => 'post-relations',
@@ -84,17 +88,17 @@ it('export includes relationships data', function () {
         'user_id' => 1,
         'category_id' => $category->id,
     ]);
-    
+
     $this->artisan('blogr:export');
-    
+
     $exportPath = storage_path('app/blogr-exports');
     $files = File::files($exportPath);
-    
+
     if (count($files) > 0) {
         $latestFile = collect($files)->sortByDesc(fn ($file) => $file->getMTime())->first();
         $content = File::get($latestFile->getPathname());
         $data = json_decode($content, true);
-        
+
         expect($data['categories'])->toBeArray();
         expect($data['tags'])->toBeArray();
     }
@@ -105,7 +109,7 @@ it('export includes all translation data', function () {
     $category = Category::create(['name' => 'Test Category', 'slug' => 'test-category', 'is_default' => true]);
     $tag = Tag::create(['name' => 'Test Tag', 'slug' => 'test-tag']);
     $series = BlogSeries::create(['name' => 'Test Series', 'slug' => 'test-series']);
-    
+
     $post = BlogPost::create([
         'title' => 'Test Post',
         'slug' => 'test-post',
@@ -114,20 +118,20 @@ it('export includes all translation data', function () {
         'user_id' => 1,
         'category_id' => $category->id,
     ]);
-    
+
     // Run export command
     $this->artisan('blogr:export')
-         ->expectsOutputToContain('Blogr data exported successfully')
-         ->assertSuccessful();
-    
+        ->expectsOutputToContain('Blogr data exported successfully')
+        ->assertSuccessful();
+
     // Get the latest export file
     $files = File::files(storage_path('app/blogr-exports'));
     expect(count($files))->toBeGreaterThan(0);
-    
+
     $latestFile = collect($files)->sortByDesc(fn ($file) => $file->getMTime())->first();
     $content = File::get($latestFile->getPathname());
     $data = json_decode($content, true);
-    
+
     // Verify all translation sections are present
     expect($data)->toHaveKey('post_translations');
     expect($data)->toHaveKey('series_translations');
@@ -136,7 +140,7 @@ it('export includes all translation data', function () {
     expect($data)->toHaveKey('user_translations');
     expect($data)->toHaveKey('post_translation_categories');
     expect($data)->toHaveKey('post_translation_tags');
-    
+
     // Verify they are arrays
     expect($data['post_translations'])->toBeArray();
     expect($data['series_translations'])->toBeArray();
@@ -152,7 +156,7 @@ it('can export and import all data including translations', function () {
     $category = Category::create(['name' => 'Test Category', 'slug' => 'test-category', 'is_default' => true]);
     $tag = Tag::create(['name' => 'Test Tag', 'slug' => 'test-tag']);
     $series = BlogSeries::create(['name' => 'Test Series', 'slug' => 'test-series']);
-    
+
     $post = BlogPost::create([
         'title' => 'Test Post',
         'slug' => 'test-post',
@@ -161,23 +165,23 @@ it('can export and import all data including translations', function () {
         'user_id' => 1,
         'category_id' => $category->id,
     ]);
-    
+
     // Run export command
     $this->artisan('blogr:export')
-         ->expectsOutputToContain('Blogr data exported successfully')
-         ->assertSuccessful();
-    
+        ->expectsOutputToContain('Blogr data exported successfully')
+        ->assertSuccessful();
+
     // Get the latest export file
     $files = File::files(storage_path('app/blogr-exports'));
     expect(count($files))->toBeGreaterThan(0);
-    
+
     $latestFile = collect($files)->sortByDesc(fn ($file) => $file->getMTime())->first();
     $exportPath = $latestFile->getPathname();
-    
+
     // Verify the export file contains all expected sections
     $content = File::get($exportPath);
     $data = json_decode($content, true);
-    
+
     // Verify all translation sections are present and contain data
     expect($data)->toHaveKey('post_translations');
     expect($data)->toHaveKey('series_translations');
@@ -186,7 +190,7 @@ it('can export and import all data including translations', function () {
     expect($data)->toHaveKey('user_translations');
     expect($data)->toHaveKey('post_translation_categories');
     expect($data)->toHaveKey('post_translation_tags');
-    
+
     // Verify they are arrays
     expect($data['post_translations'])->toBeArray();
     expect($data['series_translations'])->toBeArray();
@@ -200,8 +204,8 @@ it('can export and import all data including translations', function () {
 it('export includes translation photos in media files', function () {
     // Create category first
     $category = Category::create(['name' => 'Test', 'slug' => 'test', 'is_default' => true]);
-    
-    // Create post 
+
+    // Create post
     $post = BlogPost::create([
         'slug' => 'test-post',
         'published_at' => now(),
@@ -212,7 +216,7 @@ it('export includes translation photos in media files', function () {
         'content' => 'Test content',
         'photo' => 'blog-photos/main-photo.jpg',
     ]);
-    
+
     // Add a French translation with photo
     $post->translations()->create([
         'locale' => 'fr',
@@ -221,21 +225,21 @@ it('export includes translation photos in media files', function () {
         'content' => 'Contenu FR',
         'photo' => 'blog-photos/translation-photo.jpg',
     ]);
-    
+
     // Create series
     $series = BlogSeries::create([
         'slug' => 'test-series',
         'published_at' => now(),
         'photo' => 'blog-photos/main-series-photo.jpg',
     ]);
-    
+
     $series->translations()->create([
         'locale' => 'en',
         'title' => 'Test Series EN',
         'slug' => 'test-series-en',
         'description' => 'Description EN',
     ]);
-    
+
     $series->translations()->create([
         'locale' => 'fr',
         'title' => 'Test Series FR',
@@ -243,11 +247,11 @@ it('export includes translation photos in media files', function () {
         'description' => 'Description FR',
         'photo' => 'blog-photos/series-translation-photo.jpg',
     ]);
-    
+
     // Export
-    $exportService = app(\Happytodev\Blogr\Services\BlogrExportService::class);
+    $exportService = app(BlogrExportService::class);
     $data = $exportService->export(['include_media' => true]);
-    
+
     // Verify media files include all photos (main + translations)
     expect($data)->toHaveKey('media_files');
     expect($data['media_files'])->toContain('blog-photos/main-photo.jpg');
@@ -258,37 +262,37 @@ it('export includes translation photos in media files', function () {
 
 it('export includes users with their roles', function () {
     // Setup roles
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
-    
+    Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
+
     // Create users with roles
-    $admin = \Happytodev\Blogr\Models\User::factory()->create(['email' => 'admin@test.com']);
+    $admin = User::factory()->create(['email' => 'admin@test.com']);
     $admin->syncRoles('admin');
-    
-    $writer = \Happytodev\Blogr\Models\User::factory()->create(['email' => 'writer@test.com']);
+
+    $writer = User::factory()->create(['email' => 'writer@test.com']);
     $writer->syncRoles('writer');
-    
+
     // Export
     $this->artisan('blogr:export')->assertExitCode(0);
-    
+
     // Get the exported JSON
     $exportPath = storage_path('app/blogr-exports');
-    $files = \Illuminate\Support\Facades\File::files($exportPath);
-    
+    $files = File::files($exportPath);
+
     if (count($files) > 0) {
         $latestFile = collect($files)->sortByDesc(fn ($file) => $file->getMTime())->first();
-        $content = \Illuminate\Support\Facades\File::get($latestFile->getPathname());
+        $content = File::get($latestFile->getPathname());
         $data = json_decode($content, true);
-        
+
         // Verify users are exported
         expect($data)->toHaveKey('users');
         expect($data['users'])->toBeArray();
-        
+
         // Verify admin user is in export with correct role
         $adminUser = collect($data['users'])->firstWhere('email', 'admin@test.com');
         expect($adminUser)->not->toBeNull();
         expect($adminUser['roles'])->toContain('admin');
-        
+
         // Verify writer user is in export with correct role
         $writerUser = collect($data['users'])->firstWhere('email', 'writer@test.com');
         expect($writerUser)->not->toBeNull();
@@ -298,17 +302,17 @@ it('export includes users with their roles', function () {
 
 it('export preserves user roles in export format', function () {
     // Setup roles
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
-    
+    Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
+
     // Create user with multiple roles (if applicable)
-    $user = \Happytodev\Blogr\Models\User::factory()->create(['email' => 'multi@test.com']);
+    $user = User::factory()->create(['email' => 'multi@test.com']);
     $user->syncRoles(['admin', 'writer']);
-    
+
     // Export via service
-    $exportService = app(\Happytodev\Blogr\Services\BlogrExportService::class);
+    $exportService = app(BlogrExportService::class);
     $data = $exportService->export();
-    
+
     // Verify users structure includes roles
     expect($data)->toHaveKey('users');
     $multiUser = collect($data['users'])->firstWhere('email', 'multi@test.com');
@@ -319,7 +323,7 @@ it('export preserves user roles in export format', function () {
 
 it('export includes cms pages with their translations and blocks', function () {
     // Create a CMS page with translations
-    $page = \Happytodev\Blogr\Models\CmsPage::create([
+    $page = CmsPage::create([
         'slug' => 'test-page',
         'template' => 'default',
         'is_published' => true,
@@ -329,7 +333,7 @@ it('export includes cms pages with their translations and blocks', function () {
             ['id' => 'features', 'type' => 'features', 'items' => []],
         ],
     ]);
-    
+
     // Add English translation
     $page->translations()->create([
         'locale' => 'en',
@@ -338,7 +342,7 @@ it('export includes cms pages with their translations and blocks', function () {
         'meta_description' => 'A test page',
         'content' => 'Page content',
     ]);
-    
+
     // Add French translation
     $page->translations()->create([
         'locale' => 'fr',
@@ -347,35 +351,35 @@ it('export includes cms pages with their translations and blocks', function () {
         'meta_description' => 'Une page de test',
         'content' => 'Contenu de la page',
     ]);
-    
+
     // Export
     $this->artisan('blogr:export')->assertExitCode(0);
-    
+
     // Verify export includes CMS pages
     $exportPath = storage_path('app/blogr-exports');
-    $files = \Illuminate\Support\Facades\File::files($exportPath);
-    
+    $files = File::files($exportPath);
+
     if (count($files) > 0) {
         $latestFile = collect($files)->sortByDesc(fn ($file) => $file->getMTime())->first();
-        $content = \Illuminate\Support\Facades\File::get($latestFile->getPathname());
+        $content = File::get($latestFile->getPathname());
         $data = json_decode($content, true);
-        
+
         // Verify cms_pages are exported
         expect($data)->toHaveKey('cms_pages');
         expect($data['cms_pages'])->toBeArray();
-        
+
         // Find our test page
         $exportedPage = collect($data['cms_pages'])->firstWhere('slug', 'test-page');
         expect($exportedPage)->not->toBeNull();
         expect($exportedPage['blocks'])->toBeArray();
         expect(count($exportedPage['blocks']))->toBe(2);
-        
+
         // Verify translations are exported
         expect($data)->toHaveKey('cms_page_translations');
         $enTranslation = collect($data['cms_page_translations'])->firstWhere('locale', 'en');
         expect($enTranslation)->not->toBeNull();
         expect($enTranslation['title'])->toBe('Test Page');
-        
+
         $frTranslation = collect($data['cms_page_translations'])->firstWhere('locale', 'fr');
         expect($frTranslation)->not->toBeNull();
         expect($frTranslation['title'])->toBe('Page de Test');

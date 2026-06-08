@@ -17,7 +17,7 @@ enum CmsPageTemplate: string
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DEFAULT => 'Simple Page',
             self::LANDING => 'Landing Page',
             self::CONTACT => 'Contact Page',
@@ -33,7 +33,7 @@ enum CmsPageTemplate: string
      */
     public function description(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DEFAULT => 'Simple page with markdown content',
             self::LANDING => 'Landing page with block builder (hero, features, CTA, etc.)',
             self::CONTACT => 'Contact form with map integration',
@@ -49,7 +49,7 @@ enum CmsPageTemplate: string
      */
     public function availableBlocks(): array
     {
-        return match($this) {
+        return match ($this) {
             self::DEFAULT => ['markdown'],
             self::LANDING => ['hero', 'features', 'cta', 'testimonials', 'pricing', 'statistics'],
             self::CONTACT => ['hero', 'cta', 'features', 'stats', 'map', 'contact_form', 'faq', 'markdown'],
@@ -75,7 +75,7 @@ enum CmsPageTemplate: string
      */
     public function defaultBlocks(): array
     {
-        return match($this) {
+        return match ($this) {
             self::DEFAULT => [],
             self::CUSTOM => [],
             self::LANDING => $this->landingDefaultBlocks(),
@@ -712,7 +712,7 @@ enum CmsPageTemplate: string
             [
                 'type' => 'contact_form',
                 'data' => [
-                    'heading' => "Still Have Questions?",
+                    'heading' => 'Still Have Questions?',
                     'subtitle' => "We're here to help. Send us a message and we'll get back to you.",
                     'submit_text' => 'Send Message',
                     'success_message' => 'Thank you! We will get back to you shortly.',
@@ -748,6 +748,7 @@ enum CmsPageTemplate: string
         foreach (self::cases() as $case) {
             $options[$case->value] = $case->label();
         }
+
         return $options;
     }
 }

@@ -2,16 +2,16 @@
 
 namespace Happytodev\Blogr\Filament\Resources\BlogSeries;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
-use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Illuminate\Support\HtmlString;
 
 class BlogSeriesForm
 {
@@ -31,14 +31,14 @@ class BlogSeriesForm
                             ->placeholder('my-series-slug')
                             ->columnSpan(1)
                             ->hidden(),
-                        
+
                         TextInput::make('position')
                             ->label('Display Order')
                             ->numeric()
                             ->default(0)
                             ->helperText('Order position for displaying series (lower numbers appear first)')
                             ->columnSpan(1),
-                        
+
                         FileUpload::make('photo')
                             ->label('Series Image')
                             ->image()
@@ -51,13 +51,13 @@ class BlogSeriesForm
                             ->imageResizeTargetHeight('675')
                             ->helperText('Recommended size: 1200x675px (16:9 ratio). Leave empty to use default.')
                             ->columnSpan(2),
-                        
+
                         Toggle::make('is_featured')
                             ->label('Featured Series')
                             ->helperText('Featured series will be highlighted on the blog')
                             ->default(false)
                             ->columnSpan(1),
-                        
+
                         DateTimePicker::make('published_at')
                             ->label('Publish Date')
                             ->helperText('Leave empty to keep as draft. Set to publish the series.')
@@ -82,25 +82,25 @@ class BlogSeriesForm
                                     ])
                                     ->required()
                                     ->columnSpan(2),
-                                
+
                                 TextInput::make('title')
                                     ->label('Title')
                                     ->required()
                                     ->maxLength(255)
                                     ->columnSpan(2),
-                                
+
                                 TextInput::make('slug')
                                     ->label('Translated Slug')
                                     ->maxLength(255)
                                     ->helperText('Optional: Localized URL slug for this language (e.g., "apprendre-laravel" for FR, "learn-laravel" for EN). Falls back to main slug if empty.')
                                     ->placeholder('translated-slug')
                                     ->columnSpan(2),
-                                
+
                                 Textarea::make('description')
                                     ->label('Description')
                                     ->rows(3)
                                     ->columnSpan(2),
-                                
+
                                 FileUpload::make('photo')
                                     ->label('Translation Image')
                                     ->image()
@@ -113,13 +113,13 @@ class BlogSeriesForm
                                     ->imageResizeTargetHeight('675')
                                     ->helperText('Optional: Translation-specific image. Falls back to main series image if empty.')
                                     ->columnSpan(2),
-                                
+
                                 TextInput::make('seo_title')
                                     ->label('SEO Title')
                                     ->maxLength(255)
                                     ->helperText('Optimized title for search engines')
                                     ->columnSpan(2),
-                                
+
                                 Textarea::make('seo_description')
                                     ->label('SEO Description')
                                     ->rows(2)
@@ -132,7 +132,7 @@ class BlogSeriesForm
                             ->itemLabel(function (array $state): HtmlString {
                                 $locale = $state['locale'] ?? 'new';
                                 $title = $state['title'] ?? '';
-                                
+
                                 // Map of locale to flag emoji
                                 $flags = [
                                     'en' => '🇬🇧',
@@ -148,16 +148,16 @@ class BlogSeriesForm
                                     'zh' => '🇨🇳',
                                     'ar' => '🇸🇦',
                                 ];
-                                
+
                                 $flag = $flags[$locale] ?? '🌐';
                                 $localeUpper = strtoupper($locale === 'new' ? 'NEW' : $locale);
-                                
+
                                 $label = "<span style='font-size: 1.1rem; font-weight: 600; color: #6366f1;'>{$flag} {$localeUpper}</span>";
-                                
+
                                 if ($title) {
                                     $label .= "<span style='color: #374151; margin-left: 0.5rem;'>- {$title}</span>";
                                 }
-                                
+
                                 return new HtmlString($label);
                             })
                             ->addActionLabel('Add Translation')

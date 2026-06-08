@@ -1,6 +1,5 @@
 <?php
 
-
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class extends SettingsMigration
@@ -14,7 +13,7 @@ return new class extends SettingsMigration
         $this->migrator->add('blogr_ui.navigation_show_theme_switcher', true);
 
         $this->migrator->add('blogr_ui.footer_enabled', true);
-        $this->migrator->add('blogr_ui.footer_text', '© ' . date('Y') . ' My Blog. All rights reserved.');
+        $this->migrator->add('blogr_ui.footer_text', '© '.date('Y').' My Blog. All rights reserved.');
         $this->migrator->add('blogr_ui.footer_show_social_links', false);
         $this->migrator->add('blogr_ui.footer_twitter', null);
         $this->migrator->add('blogr_ui.footer_github', null);

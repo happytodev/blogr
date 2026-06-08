@@ -73,7 +73,7 @@ class ExtensionRegistry
     {
         $this->loadStatesIfNeeded();
 
-        return !isset($this->disabledIds[$id]);
+        return ! isset($this->disabledIds[$id]);
     }
 
     /** @return array<string, BlogrExtension> */
@@ -81,7 +81,7 @@ class ExtensionRegistry
     {
         return array_filter(
             $this->extensions,
-            fn(BlogrExtension $ext) => $this->isEnabled($ext->getId())
+            fn (BlogrExtension $ext) => $this->isEnabled($ext->getId())
         );
     }
 
@@ -101,7 +101,7 @@ class ExtensionRegistry
 
         $this->loadedFromDb = true;
 
-        if (!$this->hasDbTable()) {
+        if (! $this->hasDbTable()) {
             return;
         }
 
@@ -110,7 +110,7 @@ class ExtensionRegistry
                 ->whereNotNull('disabled_at')
                 ->pluck('extension_id')
                 ->flip()
-                ->map(fn() => true)
+                ->map(fn () => true)
                 ->toArray();
         });
     }
@@ -126,7 +126,7 @@ class ExtensionRegistry
 
     protected function ensureStateInDb(string $id): void
     {
-        if (!$this->hasDbTable()) {
+        if (! $this->hasDbTable()) {
             return;
         }
 

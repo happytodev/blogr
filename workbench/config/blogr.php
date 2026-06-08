@@ -18,13 +18,13 @@ return [
             'colors' => [
                 // Background color with dark mode support (use empty string to remove)
                 'background' => 'bg-white dark:bg-gray-800',
-            ]
-        ]
+            ],
+        ],
     ],
     'colors' => [
-        'primary' => '#2dfaa1'
+        'primary' => '#2dfaa1',
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Author Profile Configuration
@@ -39,7 +39,7 @@ return [
         'enabled' => true, // Enable author profile pages
         'use_slug' => true, // Use slug instead of ID in URLs (requires 'slug' field in users table)
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Reading Speed Configuration
@@ -65,7 +65,7 @@ return [
     |
     | Configure how reading time is displayed on blog posts.
     | You can enable/disable the display and customize the text format.
-    | 
+    |
     | For multilingual sites, you can define translations for each locale:
     | 'text_format' => [
     |     'en' => 'Reading time: {time}',
@@ -205,7 +205,7 @@ return [
             'organization' => [
                 'name' => env('APP_NAME', 'My Blog'),
                 'url' => env('APP_URL', 'https://yourwebsite.com'),
-                'logo' => env('APP_URL', 'https://yourwebsite.com') . '/images/logo.png',
+                'logo' => env('APP_URL', 'https://yourwebsite.com').'/images/logo.png',
             ],
         ],
     ],

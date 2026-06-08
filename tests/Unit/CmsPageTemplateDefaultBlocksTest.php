@@ -1,5 +1,6 @@
 <?php
 
+use Happytodev\Blogr\Enums\CmsBlockType;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
 
 // ─── LANDING ───────────────────────────────────────────────
@@ -255,7 +256,7 @@ test('all template default blocks have valid structure', function () {
     foreach ($templates as $template) {
         $blocks = $template->defaultBlocks();
 
-        expect($blocks)->toBeArray('Template ' . $template->value . ' must return an array');
+        expect($blocks)->toBeArray('Template '.$template->value.' must return an array');
 
         foreach ($blocks as $i => $block) {
             expect($block)->toHaveKey('type');
@@ -267,7 +268,7 @@ test('all template default blocks have valid structure', function () {
 });
 
 test('every default block type references a valid CmsBlockType', function () {
-    $validTypes = collect(\Happytodev\Blogr\Enums\CmsBlockType::cases())
+    $validTypes = collect(CmsBlockType::cases())
         ->map(fn ($case) => $case->value)
         ->toArray();
 
@@ -290,7 +291,7 @@ test('all default blocks have background colors for both light and dark mode', f
         $blocks = $template->defaultBlocks();
 
         foreach ($blocks as $block) {
-            if (!isset($block['data']['background_type'])) {
+            if (! isset($block['data']['background_type'])) {
                 continue; // skip blocks without background (e.g. blog_posts might not have one)
             }
 

@@ -2,11 +2,11 @@
 
 namespace Happytodev\Blogr\Filament\Resources\Tags\Pages;
 
-use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
+use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 
 class EditTag extends EditRecord
 {

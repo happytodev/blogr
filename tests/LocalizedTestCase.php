@@ -2,29 +2,31 @@
 
 namespace Happytodev\Blogr\Tests;
 
-use Filament\Panel;
-use Filament\PanelProvider;
-use Mockery\MockInterface;
-use Illuminate\Foundation\Vite;
-use Illuminate\Support\HtmlString;
-use Filament\FilamentServiceProvider;
-use Livewire\LivewireServiceProvider;
-use Filament\Forms\FormsServiceProvider;
-use Filament\Schemas\SchemasServiceProvider;
-use Filament\Tables\TablesServiceProvider;
-use Happytodev\Blogr\BlogrServiceProvider;
+use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
-use Filament\Support\SupportServiceProvider;
-use Filament\Widgets\WidgetsServiceProvider;
-use Orchestra\Testbench\TestCase as Orchestra;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Filament\FilamentServiceProvider;
+use Filament\Forms\FormsServiceProvider;
 use Filament\Infolists\InfolistsServiceProvider;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
+use Filament\Schemas\SchemasServiceProvider;
+use Filament\Support\SupportServiceProvider;
+use Filament\Tables\TablesServiceProvider;
+use Filament\Widgets\WidgetsServiceProvider;
+use Happytodev\Blogr\BlogrServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Vite;
+use Illuminate\Support\HtmlString;
+use Livewire\LivewireServiceProvider;
+use Livewire\Mechanisms\DataStore;
+use Mockery\MockInterface;
+use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionServiceProvider;
+use Workbench\App\Models\User;
 
 /**
  * TestCase for multilingual/localized tests
@@ -33,13 +35,13 @@ use Spatie\Permission\PermissionServiceProvider;
 class LocalizedTestCase extends Orchestra
 {
     use RefreshDatabase;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn(string $modelName) => 'Happytodev\\Blogr\\Tests\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'Happytodev\\Blogr\\Tests\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
 
         // Add the Vite mock here
@@ -48,8 +50,8 @@ class LocalizedTestCase extends Orchestra
         });
 
         // Fix Livewire DataStore non-singleton bug (see TestCase for details)
-        $ds = app(\Livewire\Mechanisms\DataStore::class);
-        app()->instance(\Livewire\Mechanisms\DataStore::class, $ds);
+        $ds = app(DataStore::class);
+        app()->instance(DataStore::class, $ds);
     }
 
     protected function getPackageProviders($app)
@@ -77,9 +79,9 @@ class LocalizedTestCase extends Orchestra
     {
         // Set application encryption key
         $app['config']->set('app.key', 'base64:'.base64_encode(str_repeat('a', 32)));
-        
+
         // Set auth provider to use test User model
-        $app['config']->set('auth.providers.users.model', \Workbench\App\Models\User::class);
+        $app['config']->set('auth.providers.users.model', User::class);
 
         $app['config']->set('database.default', 'testing');
 
@@ -100,8 +102,8 @@ class LocalizedTestCase extends Orchestra
         // Configure Spatie Permission
         $app['config']->set('permission', [
             'models' => [
-                'permission' => \Spatie\Permission\Models\Permission::class,
-                'role' => \Spatie\Permission\Models\Role::class,
+                'permission' => Permission::class,
+                'role' => Role::class,
             ],
             'table_names' => [
                 'roles' => 'roles',
@@ -133,11 +135,11 @@ class LocalizedTestCase extends Orchestra
     {
         // Load Laravel migrations (sans users car custom)
         $this->loadLaravelMigrations();
-        
+
         // Load test-specific migrations (including users table for testing)
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-        
+        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
+
         // Load package migrations (blog + CMS)
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 }

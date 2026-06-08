@@ -1,13 +1,13 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Helpers\SEOHelper;
 use Happytodev\Blogr\Models\BlogPost;
-use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 
 test('SEOHelper generates correct metadata for listing pages', function () {
     // Test index page
@@ -64,11 +64,11 @@ test('SEOHelper generates correct metadata for blog posts', function () {
         'published_at' => now(),
         'title' => 'Test Blog Post',
         'content' => 'Test content',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'meta_title' => 'Custom Meta Title',
         'meta_description' => 'Custom meta description',
     ]);
-    
+
     // Reload to get translations
     $post->load('translations');
 

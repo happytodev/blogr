@@ -2,12 +2,13 @@
 
 namespace Happytodev\Blogr\Models;
 
+use Happytodev\Blogr\Traits\ClearsLocaleCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CmsPageTranslation extends Model
 {
-    use \Happytodev\Blogr\Traits\ClearsLocaleCache;
+    use ClearsLocaleCache;
 
     protected $fillable = [
         'cms_page_id',
@@ -40,7 +41,7 @@ class CmsPageTranslation extends Model
     {
         $cmsPrefix = config('blogr.cms.prefix', '');
         $baseUrl = rtrim(config('app.url'), '/');
-        
+
         // Build URL parts
         $parts = array_filter([
             $baseUrl,
@@ -48,7 +49,7 @@ class CmsPageTranslation extends Model
             $this->locale !== config('blogr.locales.default') ? $this->locale : null,
             $this->slug,
         ]);
-        
+
         return implode('/', $parts);
     }
 
@@ -73,7 +74,7 @@ class CmsPageTranslation extends Model
      */
     public function seoKeywords(): array
     {
-        if (!$this->meta_keywords) {
+        if (! $this->meta_keywords) {
             return [];
         }
 

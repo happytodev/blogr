@@ -1,11 +1,12 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+
 use function Pest\Laravel\get;
 
 beforeEach(function () {
@@ -15,7 +16,7 @@ beforeEach(function () {
 
 it('includes collapsible TOC CSS classes for entire TOC', function () {
     config(['blogr.toc.collapsible' => true]);
-    
+
     $post = BlogPost::factory()->create([
         'user_id' => $this->user->id,
         'category_id' => $this->category->id,
@@ -26,7 +27,7 @@ it('includes collapsible TOC CSS classes for entire TOC', function () {
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     // Check for new CSS classes for entire TOC collapsing
     $response->assertSee('.toc-wrapper-collapsible', false);
     $response->assertSee('.toc-toggle-icon', false);
@@ -35,7 +36,7 @@ it('includes collapsible TOC CSS classes for entire TOC', function () {
 
 it('includes collapsible TOC JavaScript function when enabled', function () {
     config(['blogr.toc.collapsible' => true]);
-    
+
     $post = BlogPost::factory()->create([
         'user_id' => $this->user->id,
         'category_id' => $this->category->id,
@@ -46,7 +47,7 @@ it('includes collapsible TOC JavaScript function when enabled', function () {
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     $response->assertSee('initCollapsibleToc', false);
     $response->assertSee('toc-toggle-icon', false);
     $response->assertSee('toc-wrapper-collapsible', false);
@@ -54,7 +55,7 @@ it('includes collapsible TOC JavaScript function when enabled', function () {
 
 it('does not include collapsible JavaScript when disabled in config', function () {
     config(['blogr.toc.collapsible' => false]);
-    
+
     $post = BlogPost::factory()->create([
         'user_id' => $this->user->id,
         'category_id' => $this->category->id,
@@ -65,7 +66,7 @@ it('does not include collapsible JavaScript when disabled in config', function (
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     // Should not see the collapsible initialization function
     $html = $response->getContent();
     expect(str_contains($html, 'initCollapsibleToc'))->toBe(false, 'initCollapsibleToc should not be present when collapsible is disabled');
@@ -73,7 +74,7 @@ it('does not include collapsible JavaScript when disabled in config', function (
 
 it('includes localStorage support for TOC collapsed state', function () {
     config(['blogr.toc.collapsible' => true]);
-    
+
     $post = BlogPost::factory()->create([
         'user_id' => $this->user->id,
         'category_id' => $this->category->id,
@@ -84,7 +85,7 @@ it('includes localStorage support for TOC collapsed state', function () {
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     $response->assertSee('blogr-toc-collapsed-state', false);
     $response->assertSee('localStorage.getItem', false);
     $response->assertSee('localStorage.setItem', false);
@@ -92,7 +93,7 @@ it('includes localStorage support for TOC collapsed state', function () {
 
 it('shows TOC title in sidebar when position is left or right', function () {
     config(['blogr.toc.position' => 'left']);
-    
+
     $post = BlogPost::factory()->create([
         'user_id' => $this->user->id,
         'category_id' => $this->category->id,
@@ -103,14 +104,13 @@ it('shows TOC title in sidebar when position is left or right', function () {
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     // TOC title should be visible
     $response->assertSee('Table of Contents');
     $response->assertSee('toc-sidebar-wrapper', false);
-    
+
     // Test with right position
     config(['blogr.toc.position' => 'right']);
     $response2 = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
     $response2->assertSee('Table of Contents');
 });
-

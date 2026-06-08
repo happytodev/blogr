@@ -34,8 +34,9 @@ class SendPostNotificationJob implements ShouldQueue
             // Get the post with all its translations
             $post = BlogPost::with('translations')->find($this->postId);
 
-            if (!$post) {
+            if (! $post) {
                 Log::warning('SendPostNotificationJob: Post not found', ['post_id' => $this->postId]);
+
                 return;
             }
 
@@ -45,18 +46,20 @@ class SendPostNotificationJob implements ShouldQueue
                 'translations_count' => $post->translations->count(),
             ]);
 
-            if (!$post->user_id || $post->translations->isEmpty()) {
+            if (! $post->user_id || $post->translations->isEmpty()) {
                 Log::info('SendPostNotificationJob: Skipping - no user_id or no translations', [
                     'post_id' => $post->id,
                 ]);
+
                 return;
             }
 
             // Get the author
             $userModel = config('auth.providers.users.model');
             $author = $userModel::find($post->user_id);
-            if (!$author) {
+            if (! $author) {
                 Log::warning('SendPostNotificationJob: Author not found', ['author_id' => $post->user_id]);
+
                 return;
             }
 
@@ -66,8 +69,9 @@ class SendPostNotificationJob implements ShouldQueue
             ]);
 
             // Check if author is a writer (but not an admin)
-            if (!method_exists($author, 'hasRole') || !$author->hasRole('writer') || $author->hasRole('admin')) {
+            if (! method_exists($author, 'hasRole') || ! $author->hasRole('writer') || $author->hasRole('admin')) {
                 Log::info('SendPostNotificationJob: Author is not a writer or is admin, skipping');
+
                 return;
             }
 
@@ -86,6 +90,7 @@ class SendPostNotificationJob implements ShouldQueue
 
             if ($adminUsers->isEmpty()) {
                 Log::warning('SendPostNotificationJob: No admin users found');
+
                 return;
             }
 

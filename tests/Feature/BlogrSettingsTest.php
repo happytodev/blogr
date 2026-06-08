@@ -1,8 +1,8 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 
@@ -18,11 +18,11 @@ it('can update config array structure', function () {
     $formData = [
         'posts_per_page' => 15,
         'colors' => [
-            'primary' => '#FF0000'
+            'primary' => '#FF0000',
         ],
         'seo' => [
-            'site_name' => 'Test Blog'
-        ]
+            'site_name' => 'Test Blog',
+        ],
     ];
 
     $currentConfig = config('blogr', []);
@@ -33,7 +33,7 @@ it('can update config array structure', function () {
         if (count($keys) === 0) {
             $array[$key] = $value;
         } else {
-            if (!isset($array[$key]) || !is_array($array[$key])) {
+            if (! isset($array[$key]) || ! is_array($array[$key])) {
                 $array[$key] = [];
             }
             $setNestedValue($array[$key], $keys, $value);
@@ -66,8 +66,8 @@ it('can generate valid PHP config file content', function () {
     $config = [
         'posts_per_page' => 10,
         'colors' => [
-            'primary' => '#FA2C36'
-        ]
+            'primary' => '#FA2C36',
+        ],
     ];
 
     $content = "<?php\n\n";
@@ -82,12 +82,12 @@ it('can generate valid PHP config file content', function () {
             $result .= $indentStr;
 
             if (is_int($key)) {
-                $result .= is_array($value) ? "[\n" . $arrayToString($value, $indent + 1) . str_repeat('    ', $indent) . ']' :
+                $result .= is_array($value) ? "[\n".$arrayToString($value, $indent + 1).str_repeat('    ', $indent).']' :
                            (is_bool($value) ? ($value ? 'true' : 'false') :
                            (is_null($value) ? 'null' : "'{$value}'"));
             } else {
                 $result .= "'{$key}' => ";
-                $result .= is_array($value) ? "[\n" . $arrayToString($value, $indent + 1) . str_repeat('    ', $indent) . ']' :
+                $result .= is_array($value) ? "[\n".$arrayToString($value, $indent + 1).str_repeat('    ', $indent).']' :
                            (is_bool($value) ? ($value ? 'true' : 'false') :
                            (is_null($value) ? 'null' : "'{$value}'"));
             }

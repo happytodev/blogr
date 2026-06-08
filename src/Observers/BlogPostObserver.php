@@ -3,7 +3,6 @@
 namespace Happytodev\Blogr\Observers;
 
 use Happytodev\Blogr\Models\BlogPost;
-use Happytodev\Blogr\Jobs\SendPostNotificationJob;
 use Illuminate\Support\Facades\Log;
 
 class BlogPostObserver

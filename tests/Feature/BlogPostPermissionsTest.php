@@ -1,11 +1,13 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
+use Filament\Schemas\Schema;
+use Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 
@@ -130,14 +132,14 @@ it('writer cannot publish posts directly', function () {
     expect($draftPost->is_published)->toBeFalse();
 
     // Writer should NOT be able to create published posts
-    expect(fn() => BlogPost::create([
+    expect(fn () => BlogPost::create([
         'title' => 'Published Post',
         'content' => 'Published content',
         'slug' => 'published-post',
         'is_published' => true, // This should fail
         'user_id' => $writer->id,
         'category_id' => $category->id,
-    ]))->toThrow(\Exception::class, 'Writers cannot publish posts. Only admins can publish.');
+    ]))->toThrow(Exception::class, 'Writers cannot publish posts. Only admins can publish.');
 });
 
 it('admin can view all posts', function () {
@@ -259,14 +261,14 @@ it('can edit blog post without errors', function () {
     ]);
 
     // Test that BlogPostForm::configure can be called without errors
-    $schema = \Filament\Schemas\Schema::make();
+    $schema = Schema::make();
 
-    expect(fn() => \Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm::configure($schema))
-        ->not->toThrow(\TypeError::class);
+    expect(fn () => BlogPostForm::configure($schema))
+        ->not->toThrow(TypeError::class);
 
     // Verify the configured schema has the expected components
-    $configuredSchema = \Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm::configure($schema);
-    expect($configuredSchema)->toBeInstanceOf(\Filament\Schemas\Schema::class);
+    $configuredSchema = BlogPostForm::configure($schema);
+    expect($configuredSchema)->toBeInstanceOf(Schema::class);
 });
 
 it('writer can edit their own blog post', function () {
@@ -289,14 +291,14 @@ it('writer can edit their own blog post', function () {
     ]);
 
     // Test that BlogPostForm::configure can be called without errors for writer
-    $schema = \Filament\Schemas\Schema::make();
+    $schema = Schema::make();
 
-    expect(fn() => \Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm::configure($schema))
-        ->not->toThrow(\TypeError::class);
+    expect(fn () => BlogPostForm::configure($schema))
+        ->not->toThrow(TypeError::class);
 
     // Verify the configured schema has the expected components
-    $configuredSchema = \Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm::configure($schema);
-    expect($configuredSchema)->toBeInstanceOf(\Filament\Schemas\Schema::class);
+    $configuredSchema = BlogPostForm::configure($schema);
+    expect($configuredSchema)->toBeInstanceOf(Schema::class);
 
     // Verify the writer owns the post
     expect($post->user_id)->toBe($writer->id);

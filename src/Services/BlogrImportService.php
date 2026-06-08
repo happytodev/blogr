@@ -14,10 +14,10 @@ use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\TagTranslation;
 use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Models\UserTranslation;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
 class BlogrImportService
@@ -25,64 +25,64 @@ class BlogrImportService
     public function validateImportData(array $data): array
     {
         $errors = [];
-        
-        if (!isset($data['version'])) {
+
+        if (! isset($data['version'])) {
             $errors[] = 'Missing version field';
         }
-        
-        if (!isset($data['exported_at'])) {
+
+        if (! isset($data['exported_at'])) {
             $errors[] = 'Missing exported_at field';
         }
-        
+
         // Required sections (legacy compatibility)
         $requiredSections = ['posts', 'series', 'categories', 'tags'];
         foreach ($requiredSections as $section) {
-            if (!isset($data[$section]) || !is_array($data[$section])) {
+            if (! isset($data[$section]) || ! is_array($data[$section])) {
                 $errors[] = "Missing or invalid {$section} section";
             }
         }
-        
+
         // Optional sections (for newer exports with translations)
         $optionalSections = [
             'post_translations', 'series_translations', 'category_translations',
             'tag_translations', 'user_translations', 'post_translation_categories', 'post_translation_tags',
-            'users', 'cms_pages', 'cms_page_translations'
+            'users', 'cms_pages', 'cms_page_translations',
         ];
         foreach ($optionalSections as $section) {
-            if (isset($data[$section]) && !is_array($data[$section])) {
+            if (isset($data[$section]) && ! is_array($data[$section])) {
                 $errors[] = "Invalid {$section} section (must be array)";
             }
         }
-        
+
         return $errors;
     }
-    
+
     public function import(array $data, array $options = []): array
     {
         $errors = $this->validateImportData($data);
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             return ['success' => false, 'errors' => $errors];
         }
-        
+
         DB::beginTransaction();
-        
+
         try {
             $skipExisting = $options['skip_existing'] ?? false;
             $overwrite = $options['overwrite'] ?? false;
-            
+
             // If overwrite is enabled, delete all blog data (except users)
             if ($overwrite) {
                 Log::info('BlogrImportService: Overwrite mode enabled, deleting all blog data except users');
                 $this->deleteAllBlogData();
             }
-            
+
             // Extract media files if present
-            if (isset($data['media_files']) && !empty($data['media_files'])) {
+            if (isset($data['media_files']) && ! empty($data['media_files'])) {
                 $this->restoreMediaFiles($data['media_files'], $options);
             }
-            
+
             $defaultAuthorId = $options['default_author_id'] ?? null;
-            
+
             $results = [
                 'users' => isset($data['users']) ? $this->importUsers($data['users'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'categories' => $this->importCategories($data['categories'], $skipExisting),
@@ -99,18 +99,19 @@ class BlogrImportService
                 'post_translation_categories' => isset($data['post_translation_categories']) ? $this->importPostTranslationCategories($data['post_translation_categories'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'post_translation_tags' => isset($data['post_translation_tags']) ? $this->importPostTranslationTags($data['post_translation_tags'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
             ];
-            
+
             DB::commit();
-            
+
             return [
                 'success' => true,
                 'results' => $results,
                 'version' => $data['version'],
-                'exported_at' => $data['exported_at']
+                'exported_at' => $data['exported_at'],
             ];
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
+
             return ['success' => false, 'errors' => [$e->getMessage()]];
         }
     }
@@ -122,18 +123,19 @@ class BlogrImportService
             'fileExists' => File::exists($filePath),
             'options' => $options,
         ]);
-        
-        if (!File::exists($filePath)) {
+
+        if (! File::exists($filePath)) {
             Log::error('BlogrImportService: File does not exist', [
                 'filePath' => $filePath,
                 'cwd' => getcwd(),
                 'storage_path' => storage_path('app'),
             ]);
+
             return ['success' => false, 'errors' => ['File does not exist']];
         }
 
         $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-        
+
         Log::info('BlogrImportService: File extension detected', [
             'extension' => $extension,
             'filePath' => $filePath,
@@ -144,25 +146,27 @@ class BlogrImportService
         } elseif ($extension === 'json') {
             $json = File::get($filePath);
             $data = json_decode($json, true);
-            
+
             if (json_last_error() !== JSON_ERROR_NONE) {
                 Log::error('BlogrImportService: Invalid JSON file', [
                     'filePath' => $filePath,
                     'json_error' => json_last_error_msg(),
                 ]);
-                return ['success' => false, 'errors' => ['Invalid JSON file: ' . json_last_error_msg()]];
+
+                return ['success' => false, 'errors' => ['Invalid JSON file: '.json_last_error_msg()]];
             }
-            
+
             Log::info('BlogrImportService: JSON parsed successfully', [
                 'dataKeys' => array_keys($data),
             ]);
-            
+
             return $this->import($data, $options);
         } else {
             Log::error('BlogrImportService: Unsupported file format', [
                 'extension' => $extension,
                 'filePath' => $filePath,
             ]);
+
             return ['success' => false, 'errors' => ['Unsupported file format. Use .json or .zip files']];
         }
     }
@@ -173,23 +177,25 @@ class BlogrImportService
             'zipPath' => $zipPath,
             'fileSize' => File::size($zipPath),
         ]);
-        
-        $zip = new ZipArchive();
+
+        $zip = new ZipArchive;
         if ($zip->open($zipPath) !== true) {
             Log::error('BlogrImportService: Cannot open ZIP file', [
                 'zipPath' => $zipPath,
             ]);
+
             return ['success' => false, 'errors' => ['Cannot open ZIP file']];
         }
 
         // Extract data.json
         $jsonContent = $zip->getFromName('data.json');
-        if (!$jsonContent) {
+        if (! $jsonContent) {
             $zip->close();
             Log::error('BlogrImportService: data.json not found in ZIP', [
                 'zipPath' => $zipPath,
                 'numFiles' => $zip->numFiles,
             ]);
+
             return ['success' => false, 'errors' => ['data.json not found in ZIP file']];
         }
 
@@ -200,7 +206,8 @@ class BlogrImportService
                 'zipPath' => $zipPath,
                 'json_error' => json_last_error_msg(),
             ]);
-            return ['success' => false, 'errors' => ['Invalid data.json in ZIP file: ' . json_last_error_msg()]];
+
+            return ['success' => false, 'errors' => ['Invalid data.json in ZIP file: '.json_last_error_msg()]];
         }
 
         Log::info('BlogrImportService: ZIP data.json parsed successfully', [
@@ -209,8 +216,8 @@ class BlogrImportService
         ]);
 
         // Extract media files to temp directory
-        $tempDir = storage_path('app/temp/blogr-import-' . now()->timestamp);
-        if (!File::exists($tempDir)) {
+        $tempDir = storage_path('app/temp/blogr-import-'.now()->timestamp);
+        if (! File::exists($tempDir)) {
             File::makeDirectory($tempDir, 0755, true);
         }
 
@@ -218,7 +225,7 @@ class BlogrImportService
             $filename = $zip->getNameIndex($i);
             if (str_starts_with($filename, 'media/')) {
                 $fileContent = $zip->getFromIndex($i);
-                $localPath = $tempDir . '/' . basename($filename);
+                $localPath = $tempDir.'/'.basename($filename);
                 File::put($localPath, $fileContent);
             }
         }
@@ -232,6 +239,7 @@ class BlogrImportService
             $result = $this->import($data, $options);
             // Clean up temp directory
             File::deleteDirectory($tempDir);
+
             return $result;
         } catch (\Exception $e) {
             File::deleteDirectory($tempDir);
@@ -244,13 +252,13 @@ class BlogrImportService
         $tempDir = $options['temp_media_dir'] ?? null;
 
         foreach ($mediaFiles as $mediaPath) {
-            if ($tempDir && File::exists($tempDir . '/' . basename($mediaPath))) {
+            if ($tempDir && File::exists($tempDir.'/'.basename($mediaPath))) {
                 // Copy from temp directory
-                $sourcePath = $tempDir . '/' . basename($mediaPath);
+                $sourcePath = $tempDir.'/'.basename($mediaPath);
                 $targetPath = Storage::disk('public')->path($mediaPath);
                 $targetDir = dirname($targetPath);
 
-                if (!File::exists($targetDir)) {
+                if (! File::exists($targetDir)) {
                     File::makeDirectory($targetDir, 0755, true);
                 }
 
@@ -264,23 +272,23 @@ class BlogrImportService
             }
         }
     }
-    
+
     private function importCategories(array $categories, bool $skipExisting = false): array
     {
         $imported = 0;
         $skipped = 0;
         $updated = 0;
-        
+
         foreach ($categories as $categoryData) {
             // Check by ID first if provided, then by slug
             $existing = null;
             if (isset($categoryData['id'])) {
                 $existing = Category::where('id', $categoryData['id'])->first();
             }
-            if (!$existing) {
+            if (! $existing) {
                 $existing = Category::where('slug', $categoryData['slug'])->first();
             }
-            
+
             if ($existing) {
                 if ($skipExisting) {
                     $skipped++;
@@ -288,6 +296,7 @@ class BlogrImportService
                         'id' => $categoryData['id'] ?? 'N/A',
                         'slug' => $categoryData['slug'],
                     ]);
+
                     continue;
                 } else {
                     // Update existing category
@@ -297,10 +306,11 @@ class BlogrImportService
                         'id' => $existing->id,
                         'slug' => $categoryData['slug'],
                     ]);
+
                     continue;
                 }
             }
-            
+
             // Create with original ID if provided
             if (isset($categoryData['id'])) {
                 // Use insert to preserve original ID
@@ -310,33 +320,33 @@ class BlogrImportService
             } else {
                 Category::create($categoryData);
             }
-            
+
             $imported++;
             Log::info('BlogrImportService: Category created', [
                 'id' => $categoryData['id'] ?? 'auto',
                 'slug' => $categoryData['slug'],
             ]);
         }
-        
+
         return ['imported' => $imported, 'skipped' => $skipped, 'updated' => $updated];
     }
-    
+
     private function importTags(array $tags, bool $skipExisting = false): array
     {
         $imported = 0;
         $skipped = 0;
         $updated = 0;
-        
+
         foreach ($tags as $tagData) {
             // Check by ID first if provided, then by slug
             $existing = null;
             if (isset($tagData['id'])) {
                 $existing = Tag::where('id', $tagData['id'])->first();
             }
-            if (!$existing) {
+            if (! $existing) {
                 $existing = Tag::where('slug', $tagData['slug'])->first();
             }
-            
+
             if ($existing) {
                 if ($skipExisting) {
                     $skipped++;
@@ -344,6 +354,7 @@ class BlogrImportService
                         'id' => $tagData['id'] ?? 'N/A',
                         'slug' => $tagData['slug'],
                     ]);
+
                     continue;
                 } else {
                     // Update existing tag
@@ -353,10 +364,11 @@ class BlogrImportService
                         'id' => $existing->id,
                         'slug' => $tagData['slug'],
                     ]);
+
                     continue;
                 }
             }
-            
+
             // Use insert to preserve original ID
             if (isset($tagData['id'])) {
                 $tagData['created_at'] = $tagData['created_at'] ?? now();
@@ -365,32 +377,33 @@ class BlogrImportService
             } else {
                 Tag::create($tagData);
             }
-            
+
             $imported++;
             Log::info('BlogrImportService: Tag created', [
                 'id' => $tagData['id'] ?? 'auto',
                 'slug' => $tagData['slug'],
             ]);
         }
-        
+
         return ['imported' => $imported, 'skipped' => $skipped, 'updated' => $updated];
     }
-    
+
     private function importSeries(array $series, bool $skipExisting = false): array
     {
         $imported = 0;
         $skipped = 0;
         $updated = 0;
-        
+
         foreach ($series as $seriesData) {
             $existing = BlogSeries::where('id', $seriesData['id'])->first();
-            
+
             if ($existing) {
                 if ($skipExisting) {
                     $skipped++;
                     Log::info('BlogrImportService: Series skipped (already exists)', [
                         'id' => $seriesData['id'],
                     ]);
+
                     continue;
                 } else {
                     // Update existing series
@@ -399,10 +412,11 @@ class BlogrImportService
                     Log::info('BlogrImportService: Series updated', [
                         'id' => $seriesData['id'],
                     ]);
+
                     continue;
                 }
             }
-            
+
             // Use insert to preserve original ID
             if (isset($seriesData['id'])) {
                 $seriesData['created_at'] = $seriesData['created_at'] ?? now();
@@ -411,13 +425,13 @@ class BlogrImportService
             } else {
                 BlogSeries::create($seriesData);
             }
-            
+
             $imported++;
             Log::info('BlogrImportService: Series created', [
                 'id' => $seriesData['id'] ?? 'auto',
             ]);
         }
-        
+
         return ['imported' => $imported, 'skipped' => $skipped, 'updated' => $updated];
     }
 
@@ -434,8 +448,8 @@ class BlogrImportService
         foreach ($translations as $translationData) {
             // Check uniqueness based on locale + slug (as per database constraint)
             $exists = CategoryTranslation::where('locale', $translationData['locale'])
-                                         ->where('slug', $translationData['slug'])
-                                         ->exists();
+                ->where('slug', $translationData['slug'])
+                ->exists();
 
             if ($exists) {
                 Log::info('BlogrImportService: Category translation already exists, skipping', [
@@ -443,17 +457,19 @@ class BlogrImportService
                     'slug' => $translationData['slug'],
                 ]);
                 $skipped++;
+
                 continue;
             }
 
             // Find the target category by slug
             $targetCategory = Category::where('slug', $translationData['slug'])->first();
-            
-            if (!$targetCategory) {
+
+            if (! $targetCategory) {
                 Log::warning('BlogrImportService: Target category not found for translation', [
                     'slug' => $translationData['slug'],
                 ]);
                 $skipped++;
+
                 continue;
             }
 
@@ -465,13 +481,13 @@ class BlogrImportService
                 'slug' => $translationData['slug'],
                 'description' => $translationData['description'] ?? null,
             ]);
-            
+
             Log::info('BlogrImportService: Category translation imported', [
                 'category_id' => $targetCategory->id,
                 'locale' => $translationData['locale'],
                 'slug' => $translationData['slug'],
             ]);
-            
+
             $imported++;
         }
 
@@ -496,8 +512,8 @@ class BlogrImportService
         foreach ($translations as $translationData) {
             // Check uniqueness based on locale + slug (as per database constraint)
             $exists = TagTranslation::where('locale', $translationData['locale'])
-                                    ->where('slug', $translationData['slug'])
-                                    ->exists();
+                ->where('slug', $translationData['slug'])
+                ->exists();
 
             if ($exists) {
                 Log::info('BlogrImportService: Tag translation already exists, skipping', [
@@ -505,17 +521,19 @@ class BlogrImportService
                     'slug' => $translationData['slug'],
                 ]);
                 $skipped++;
+
                 continue;
             }
 
             // Find the target tag by slug
             $targetTag = Tag::where('slug', $translationData['slug'])->first();
-            
-            if (!$targetTag) {
+
+            if (! $targetTag) {
                 Log::warning('BlogrImportService: Target tag not found for translation', [
                     'slug' => $translationData['slug'],
                 ]);
                 $skipped++;
+
                 continue;
             }
 
@@ -527,13 +545,13 @@ class BlogrImportService
                 'slug' => $translationData['slug'],
                 'description' => $translationData['description'] ?? null,
             ]);
-            
+
             Log::info('BlogrImportService: Tag translation imported', [
                 'tag_id' => $targetTag->id,
                 'locale' => $translationData['locale'],
                 'slug' => $translationData['slug'],
             ]);
-            
+
             $imported++;
         }
 
@@ -552,8 +570,9 @@ class BlogrImportService
 
         foreach ($translations as $translationData) {
             if ($skipExisting && UserTranslation::where('user_id', $translationData['user_id'])
-                                               ->where('locale', $translationData['locale'])->exists()) {
+                ->where('locale', $translationData['locale'])->exists()) {
                 $skipped++;
+
                 continue;
             }
 
@@ -572,8 +591,8 @@ class BlogrImportService
         foreach ($translations as $translationData) {
             // ALWAYS check uniqueness by locale + slug to avoid constraint violation
             $existing = BlogSeriesTranslation::where('locale', $translationData['locale'])
-                                            ->where('slug', $translationData['slug'])->first();
-            
+                ->where('slug', $translationData['slug'])->first();
+
             if ($existing) {
                 if ($skipExisting) {
                     $skipped++;
@@ -581,6 +600,7 @@ class BlogrImportService
                         'locale' => $translationData['locale'],
                         'slug' => $translationData['slug'],
                     ]);
+
                     continue;
                 } else {
                     // Update existing translation
@@ -590,6 +610,7 @@ class BlogrImportService
                         'slug' => $translationData['slug'],
                     ]);
                     $skipped++; // Count as skipped since not newly imported
+
                     continue;
                 }
             }
@@ -624,8 +645,8 @@ class BlogrImportService
         foreach ($translations as $translationData) {
             // ALWAYS check uniqueness by locale + slug to avoid constraint violation
             $existing = BlogPostTranslation::where('locale', $translationData['locale'])
-                                          ->where('slug', $translationData['slug'])->first();
-            
+                ->where('slug', $translationData['slug'])->first();
+
             if ($existing) {
                 if ($skipExisting) {
                     $skipped++;
@@ -633,6 +654,7 @@ class BlogrImportService
                         'locale' => $translationData['locale'],
                         'slug' => $translationData['slug'],
                     ]);
+
                     continue;
                 } else {
                     // Update existing translation
@@ -642,6 +664,7 @@ class BlogrImportService
                         'slug' => $translationData['slug'],
                     ]);
                     $skipped++; // Count as skipped since not newly imported
+
                     continue;
                 }
             }
@@ -675,9 +698,10 @@ class BlogrImportService
 
         foreach ($relations as $relationData) {
             if ($skipExisting && DB::table('blog_post_translation_category')
-                                  ->where('blog_post_translation_id', $relationData['blog_post_translation_id'])
-                                  ->where('category_id', $relationData['category_id'])->exists()) {
+                ->where('blog_post_translation_id', $relationData['blog_post_translation_id'])
+                ->where('category_id', $relationData['category_id'])->exists()) {
                 $skipped++;
+
                 continue;
             }
 
@@ -695,9 +719,10 @@ class BlogrImportService
 
         foreach ($relations as $relationData) {
             if ($skipExisting && DB::table('blog_post_translation_tag')
-                                  ->where('blog_post_translation_id', $relationData['blog_post_translation_id'])
-                                  ->where('tag_id', $relationData['tag_id'])->exists()) {
+                ->where('blog_post_translation_id', $relationData['blog_post_translation_id'])
+                ->where('tag_id', $relationData['tag_id'])->exists()) {
                 $skipped++;
+
                 continue;
             }
 
@@ -707,19 +732,19 @@ class BlogrImportService
 
         return ['imported' => $imported, 'skipped' => $skipped];
     }
-    
+
     private function importPosts(array $posts, bool $skipExisting = false, ?int $defaultAuthorId = null): array
     {
         $imported = 0;
         $skipped = 0;
         $updated = 0;
-        
+
         foreach ($posts as $postData) {
             // Check if user exists, if not use default author or skip
             if (isset($postData['user_id'])) {
                 $userExists = User::where('id', $postData['user_id'])->exists();
-                
-                if (!$userExists) {
+
+                if (! $userExists) {
                     if ($defaultAuthorId) {
                         Log::info('BlogrImportService: Post author not found, using default author', [
                             'original_user_id' => $postData['user_id'],
@@ -733,13 +758,14 @@ class BlogrImportService
                             'post_slug' => $postData['slug'] ?? 'N/A',
                         ]);
                         $skipped++;
+
                         continue;
                     }
                 }
             }
-            
+
             $existing = BlogPost::where('id', $postData['id'])->first();
-            
+
             if ($existing) {
                 if ($skipExisting) {
                     $skipped++;
@@ -747,6 +773,7 @@ class BlogrImportService
                         'id' => $postData['id'],
                         'slug' => $postData['slug'] ?? 'N/A',
                     ]);
+
                     continue;
                 } else {
                     // Update existing post
@@ -756,15 +783,16 @@ class BlogrImportService
                         'id' => $postData['id'],
                         'slug' => $postData['slug'] ?? 'N/A',
                     ]);
+
                     continue;
                 }
             }
-            
+
             // Check if blog_series_id exists in the database
             if (isset($postData['blog_series_id']) && $postData['blog_series_id']) {
                 $seriesExists = BlogSeries::where('id', $postData['blog_series_id'])->exists();
-                
-                if (!$seriesExists) {
+
+                if (! $seriesExists) {
                     Log::warning('BlogrImportService: Post series not found, setting to null', [
                         'blog_series_id' => $postData['blog_series_id'],
                         'post_slug' => $postData['slug'] ?? 'N/A',
@@ -772,12 +800,12 @@ class BlogrImportService
                     $postData['blog_series_id'] = null;
                 }
             }
-            
+
             // Check if category_id exists in the database
             if (isset($postData['category_id']) && $postData['category_id']) {
                 $categoryExists = Category::where('id', $postData['category_id'])->exists();
-                
-                if (!$categoryExists) {
+
+                if (! $categoryExists) {
                     Log::warning('BlogrImportService: Post category not found, setting to null', [
                         'category_id' => $postData['category_id'],
                         'post_slug' => $postData['slug'] ?? 'N/A',
@@ -785,7 +813,7 @@ class BlogrImportService
                     $postData['category_id'] = null;
                 }
             }
-            
+
             // Use insert to preserve original ID
             if (isset($postData['id'])) {
                 $postData['created_at'] = $postData['created_at'] ?? now();
@@ -794,14 +822,14 @@ class BlogrImportService
             } else {
                 BlogPost::create($postData);
             }
-            
+
             $imported++;
             Log::info('BlogrImportService: Post created', [
                 'id' => $postData['id'] ?? 'auto',
                 'slug' => $postData['slug'] ?? 'N/A',
             ]);
         }
-        
+
         return ['imported' => $imported, 'skipped' => $skipped, 'updated' => $updated];
     }
 
@@ -817,41 +845,42 @@ class BlogrImportService
         // 1. Delete pivot tables first
         DB::table('blog_post_translation_category')->delete();
         DB::table('blog_post_translation_tag')->delete();
-        
+
         // 2. Delete translations
         BlogPostTranslation::query()->delete();
         BlogSeriesTranslation::query()->delete();
         CategoryTranslation::query()->delete();
         TagTranslation::query()->delete();
         UserTranslation::query()->delete();
-        
+
         // 3. Delete main records (cascade will handle related records)
         BlogPost::query()->delete();
         BlogSeries::query()->delete();
         Category::query()->delete();
         Tag::query()->delete();
-        
+
         Log::info('BlogrImportService: All blog data deleted successfully');
     }
-    
+
     private function importUsers(array $users, bool $skipExisting = false): array
     {
         $imported = 0;
         $skipped = 0;
-        
+
         // Get the appropriate User model class
         $userClass = class_exists('App\\Models\\User') ? 'App\\Models\\User' : User::class;
-        
+
         foreach ($users as $userData) {
             try {
                 // Check if user already exists
                 $existingUser = call_user_func([$userClass, 'find'], $userData['id']);
-                
+
                 if ($existingUser && $skipExisting) {
                     $skipped++;
+
                     continue;
                 }
-                
+
                 if ($existingUser) {
                     // Update existing user
                     $existingUser->update([
@@ -869,46 +898,47 @@ class BlogrImportService
                         'password' => $userData['password'] ?? bcrypt('password'),
                     ]);
                 }
-                
+
                 // Sync roles if provided
-                if (isset($userData['roles']) && is_array($userData['roles']) && !empty($userData['roles'])) {
+                if (isset($userData['roles']) && is_array($userData['roles']) && ! empty($userData['roles'])) {
                     try {
                         $user->syncRoles($userData['roles']);
-                        Log::info("BlogrImportService: User '{$user->email}' roles synced: " . implode(', ', $userData['roles']));
+                        Log::info("BlogrImportService: User '{$user->email}' roles synced: ".implode(', ', $userData['roles']));
                     } catch (\Exception $e) {
-                        Log::warning("BlogrImportService: Failed to sync roles for user '{$user->email}': " . $e->getMessage());
+                        Log::warning("BlogrImportService: Failed to sync roles for user '{$user->email}': ".$e->getMessage());
                         // Continue without roles rather than failing
                     }
                 }
-                
+
                 $imported++;
-                
+
             } catch (\Exception $e) {
-                Log::error("BlogrImportService: Error importing user: " . $e->getMessage());
+                Log::error('BlogrImportService: Error importing user: '.$e->getMessage());
                 // Continue with next user
             }
         }
-        
+
         Log::info("BlogrImportService: Imported {$imported} users, skipped {$skipped}");
-        
+
         return ['imported' => $imported, 'skipped' => $skipped];
     }
-    
+
     private function importCmsPages(array $pages, bool $skipExisting = false): array
     {
         $imported = 0;
         $skipped = 0;
-        
+
         foreach ($pages as $pageData) {
             try {
                 // Check if page already exists
                 $existingPage = CmsPage::find($pageData['id'] ?? null);
-                
+
                 if ($existingPage && $skipExisting) {
                     $skipped++;
+
                     continue;
                 }
-                
+
                 if ($existingPage) {
                     // Update existing page
                     $existingPage->update($pageData);
@@ -917,35 +947,36 @@ class BlogrImportService
                     // Create new page
                     $page = CmsPage::create($pageData);
                 }
-                
+
                 $imported++;
-                
+
             } catch (\Exception $e) {
-                Log::error("BlogrImportService: Error importing CMS page: " . $e->getMessage());
+                Log::error('BlogrImportService: Error importing CMS page: '.$e->getMessage());
                 // Continue with next page
             }
         }
-        
+
         Log::info("BlogrImportService: Imported {$imported} CMS pages, skipped {$skipped}");
-        
+
         return ['imported' => $imported, 'skipped' => $skipped];
     }
-    
+
     private function importCmsPageTranslations(array $translations, bool $skipExisting = false): array
     {
         $imported = 0;
         $skipped = 0;
-        
+
         foreach ($translations as $transData) {
             try {
                 // Check if translation already exists
                 $existingTrans = CmsPageTranslation::find($transData['id'] ?? null);
-                
+
                 if ($existingTrans && $skipExisting) {
                     $skipped++;
+
                     continue;
                 }
-                
+
                 if ($existingTrans) {
                     // Update existing translation
                     $existingTrans->update($transData);
@@ -953,17 +984,17 @@ class BlogrImportService
                     // Create new translation
                     CmsPageTranslation::create($transData);
                 }
-                
+
                 $imported++;
-                
+
             } catch (\Exception $e) {
-                Log::error("BlogrImportService: Error importing CMS page translation: " . $e->getMessage());
+                Log::error('BlogrImportService: Error importing CMS page translation: '.$e->getMessage());
                 // Continue with next translation
             }
         }
-        
+
         Log::info("BlogrImportService: Imported {$imported} CMS page translations, skipped {$skipped}");
-        
+
         return ['imported' => $imported, 'skipped' => $skipped];
     }
 }

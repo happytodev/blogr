@@ -4,13 +4,13 @@ namespace Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages;
 
 use BackedEnum;
 use Filament\Forms;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Schemas\Schema;
-use Tables\Actions\CreateAction;
-use Happytodev\Blogr\Models\BlogPostTranslation;
-use Filament\Resources\Pages\ManageRelatedRecords;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
+use Happytodev\Blogr\Models\BlogPostTranslation;
+use Tables\Actions\CreateAction;
 
 class ManageBlogPostTranslations extends ManageRelatedRecords
 {
@@ -18,7 +18,7 @@ class ManageBlogPostTranslations extends ManageRelatedRecords
 
     protected static string $relationship = 'translations';
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-language';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-language';
 
     public static function getNavigationLabel(): string
     {
@@ -147,18 +147,20 @@ class ManageBlogPostTranslations extends ManageRelatedRecords
             ->headerActions([
                 CreateAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
-                        if (empty($data['reading_time']) && !empty($data['content'])) {
+                        if (empty($data['reading_time']) && ! empty($data['content'])) {
                             $data['reading_time'] = $this->calculateReadingTime($data['content']);
                         }
+
                         return $data;
                     }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->mutateFormDataUsing(function (array $data): array {
-                        if (!empty($data['content'])) {
+                        if (! empty($data['content'])) {
                             $data['reading_time'] = $this->calculateReadingTime($data['content']);
                         }
+
                         return $data;
                     }),
                 Tables\Actions\DeleteAction::make(),
@@ -180,6 +182,7 @@ class ManageBlogPostTranslations extends ManageRelatedRecords
         }
 
         $wordCount = str_word_count(strip_tags($content));
+
         return max(1, (int) ceil($wordCount / 200));
     }
 }

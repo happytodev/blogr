@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 class FilamentPublishCommand extends Command
 {
     protected $signature = 'filament:publish';
+
     protected $description = 'Publish Filament views and assets for Workbench testing';
 
     public function handle()
@@ -15,14 +16,14 @@ class FilamentPublishCommand extends Command
         $this->info('Publishing Filament views and assets...');
 
         // Publish Filament views
-        \Illuminate\Support\Facades\Artisan::call('vendor:publish', [
+        Artisan::call('vendor:publish', [
             '--tag' => 'filament-views',
-            '--force' => true
+            '--force' => true,
         ]);
 
-        \Illuminate\Support\Facades\Artisan::call('vendor:publish', [
+        Artisan::call('vendor:publish', [
             '--tag' => 'blogr-views',
-            '--force' => true
+            '--force' => true,
         ]);
 
         $this->info('Filament views and assets published successfully!');

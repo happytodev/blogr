@@ -2,19 +2,20 @@
 
 namespace Happytodev\Blogr\Tests\Feature;
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Happytodev\Blogr\Models\User;
 
 class AuthorBioSettingsTest extends TestCase
 {
     use RefreshDatabase;
 
     protected User $author;
+
     protected BlogPost $post;
 
     /**
@@ -138,13 +139,13 @@ class AuthorBioSettingsTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('About the author');
-        
+
         // Check that bio appears BEFORE the main article prose div
         $bioPosition = strpos($content, 'About the author');
         // Look for the prose div that wraps the main content
         $proseDiv = 'class="prose prose-lg dark:prose-invert';
         $contentPosition = strpos($content, $proseDiv);
-        
+
         $this->assertNotFalse($bioPosition, 'Author bio should be present');
         $this->assertNotFalse($contentPosition, 'Prose content div should be present');
         $this->assertLessThan($contentPosition, $bioPosition, 'Bio should appear before prose content div');
@@ -161,11 +162,11 @@ class AuthorBioSettingsTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('About the author');
-        
+
         // Check that bio appears AFTER the article content
         $bioPosition = strpos($content, 'About the author');
         $contentPosition = strpos($content, 'This is test content');
-        
+
         $this->assertNotFalse($bioPosition, 'Author bio should be present');
         $this->assertNotFalse($contentPosition, 'Content should be present');
         $this->assertGreaterThan($contentPosition, $bioPosition, 'Bio should appear after content');
@@ -181,7 +182,7 @@ class AuthorBioSettingsTest extends TestCase
         $content = $response->getContent();
 
         $response->assertStatus(200);
-        
+
         // Count occurrences of "About the author" - should appear twice
         $occurrences = substr_count($content, 'About the author');
         $this->assertEquals(2, $occurrences, 'Bio should appear twice (top and bottom)');
@@ -198,13 +199,13 @@ class AuthorBioSettingsTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Written by');
-        
+
         // Check that compact bio appears BEFORE the main article prose div
         $bioPosition = strpos($content, 'Written by');
         // Look for the prose div that wraps the main content
         $proseDiv = 'class="prose prose-lg dark:prose-invert';
         $contentPosition = strpos($content, $proseDiv);
-        
+
         $this->assertNotFalse($bioPosition, 'Compact bio should be present');
         $this->assertNotFalse($contentPosition, 'Prose content div should be present');
         $this->assertLessThan($contentPosition, $bioPosition, 'Compact bio should appear before prose content div');
@@ -221,11 +222,11 @@ class AuthorBioSettingsTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Written by');
-        
+
         // Check that compact bio appears AFTER the article content
         $bioPosition = strpos($content, 'Written by');
         $contentPosition = strpos($content, 'This is test content');
-        
+
         $this->assertNotFalse($bioPosition, 'Compact bio should be present');
         $this->assertNotFalse($contentPosition, 'Content should be present');
         $this->assertGreaterThan($contentPosition, $bioPosition, 'Compact bio should appear after content');
@@ -241,7 +242,7 @@ class AuthorBioSettingsTest extends TestCase
         $content = $response->getContent();
 
         $response->assertStatus(200);
-        
+
         // Count occurrences of "Written by" - should appear twice
         $occurrences = substr_count($content, 'Written by');
         $this->assertEquals(2, $occurrences, 'Compact bio should appear twice (top and bottom)');

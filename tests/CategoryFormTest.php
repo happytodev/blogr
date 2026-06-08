@@ -1,7 +1,7 @@
 <?php
 
-use Happytodev\Blogr\Filament\Resources\Categories\Schemas\CategoryForm;
 use Filament\Schemas\Schema;
+use Happytodev\Blogr\Filament\Resources\Categories\Schemas\CategoryForm;
 
 it('configures category form schema with correct components', function () {
     $schema = Schema::make();

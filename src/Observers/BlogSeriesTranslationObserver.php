@@ -2,6 +2,7 @@
 
 namespace Happytodev\Blogr\Observers;
 
+use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Illuminate\Support\Str;
 
@@ -14,25 +15,25 @@ class BlogSeriesTranslationObserver
     public function created(BlogSeriesTranslation $translation): void
     {
         $series = $translation->series;
-        
+
         if ($series) {
             // Check if slug looks auto-generated (starts with 'series-' and has timestamp)
             if (Str::startsWith($series->slug, 'series-') && Str::contains($series->slug, '-')) {
                 // Check if this is the first translation
                 $translationCount = $series->translations()->count();
-                
-                if ($translationCount === 1 && !empty($translation->title)) {
+
+                if ($translationCount === 1 && ! empty($translation->title)) {
                     // Update slug from first translation title
                     $baseSlug = Str::slug($translation->title);
                     $slug = $baseSlug;
                     $counter = 1;
-                    
+
                     // Ensure uniqueness
-                    while (\Happytodev\Blogr\Models\BlogSeries::where('slug', $slug)->where('id', '!=', $series->id)->exists()) {
-                        $slug = $baseSlug . '-' . $counter;
+                    while (BlogSeries::where('slug', $slug)->where('id', '!=', $series->id)->exists()) {
+                        $slug = $baseSlug.'-'.$counter;
                         $counter++;
                     }
-                    
+
                     $series->slug = $slug;
                     $series->save();
                 }

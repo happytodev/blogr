@@ -13,7 +13,7 @@ class CreateUser extends CreateRecord
     {
         $user = $this->record;
         $role = $this->data['role'] ?? null;
-        
+
         if ($role) {
             $user->syncRoles([$role]);
         }

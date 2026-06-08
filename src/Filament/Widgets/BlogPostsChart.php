@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 class BlogPostsChart extends ChartWidget
 {
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected function getData(): array
     {

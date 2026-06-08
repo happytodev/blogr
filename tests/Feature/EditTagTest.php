@@ -1,11 +1,9 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
-use Happytodev\Blogr\Models\Tag;
-use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 use Happytodev\Blogr\Filament\Resources\Tags\Pages\EditTag;
+use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -34,9 +32,9 @@ it('validates slug uniqueness', function () {
         $tag->update(['name' => 'Test Tag', 'slug' => 'existing-tag']);
         // If we get here, the update succeeded (which shouldn't happen with proper validation)
         expect(false)->toBeTrue('Slug uniqueness validation failed');
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         // This is expected - validation should prevent duplicate slugs
-        expect($e)->toBeInstanceOf(\Exception::class);
+        expect($e)->toBeInstanceOf(Exception::class);
     }
 });
 
@@ -152,7 +150,7 @@ it('edit tag page inherits from EditRecord', function () {
 
     // Test that EditTag extends EditRecord
     $pageClass = EditTag::class;
-    $reflection = new \ReflectionClass($pageClass);
+    $reflection = new ReflectionClass($pageClass);
 
     expect($reflection->getParentClass()->getName())->toBe('Filament\Resources\Pages\EditRecord');
 });
@@ -162,7 +160,7 @@ it('edit tag page can be instantiated', function () {
 
     // Test that the page can be instantiated
     $pageClass = EditTag::class;
-    $page = new $pageClass();
+    $page = new $pageClass;
 
     expect($page)->toBeInstanceOf($pageClass);
     expect($page)->toBeInstanceOf('Filament\Resources\Pages\EditRecord');

@@ -2,22 +2,23 @@
 
 namespace Happytodev\Blogr\Models;
 
-use Happytodev\Blogr\Models\Tag;
-use Happytodev\Blogr\Models\Category;
-use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Helpers\ConfigHelper;
-use Illuminate\Database\Eloquent\Model;
+use Happytodev\Blogr\Tests\Database\Factories\BlogPostFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Spatie\YamlFrontMatter\YamlFrontMatter;
+use Symfony\Component\Yaml\Yaml;
 
 class BlogPost extends Model
 {
     use HasFactory;
-    
+
     /**
      * Temporary storage for translatable fields during creation
      */
     protected $pendingTranslationData = [];
-    
+
     protected $fillable = [
         'photo',
         'user_id',
@@ -49,7 +50,7 @@ class BlogPost extends Model
      */
     protected static function newFactory()
     {
-        return \Happytodev\Blogr\Tests\Database\Factories\BlogPostFactory::new();
+        return BlogPostFactory::new();
     }
 
     protected static function boot()
@@ -60,16 +61,16 @@ class BlogPost extends Model
             // Prevent writers from publishing posts
             if ($post->is_published && $post->user_id) {
                 $user = User::find($post->user_id);
-                if ($user && $user->hasRole('writer') && !$user->hasRole('admin')) {
+                if ($user && $user->hasRole('writer') && ! $user->hasRole('admin')) {
                     throw new \Exception('Writers cannot publish posts. Only admins can publish.');
                 }
             }
 
             // If post is published but no published_at date is set, set it to now
-            if ($post->is_published && !$post->published_at) {
+            if ($post->is_published && ! $post->published_at) {
                 $post->published_at = now();
             }
-            
+
             // Store translatable fields BEFORE they're removed
             $translatableFields = ['title', 'slug', 'content', 'tldr', 'meta_title', 'meta_description', 'meta_keywords'];
             foreach ($translatableFields as $field) {
@@ -84,17 +85,17 @@ class BlogPost extends Model
             // Prevent writers from publishing posts
             if ($post->is_published && $post->user_id) {
                 $user = User::find($post->user_id);
-                if ($user && $user->hasRole('writer') && !$user->hasRole('admin')) {
+                if ($user && $user->hasRole('writer') && ! $user->hasRole('admin')) {
                     throw new \Exception('Writers cannot publish posts. Only admins can publish.');
                 }
             }
 
             // If post is being published but no published_at date is set, set it to now
-            if ($post->is_published && !$post->published_at) {
+            if ($post->is_published && ! $post->published_at) {
                 $post->published_at = now();
             }
         });
-        
+
         // Auto-calculate series position when assigned to a series without explicit position
         static::saving(function ($post) {
             if ($post->blog_series_id && is_null($post->series_position)) {
@@ -107,35 +108,35 @@ class BlogPost extends Model
         // After creating a post, create translation from pending data
         static::created(function ($post) {
             // If we have pending translatable data, create a translation
-            if (!empty($post->pendingTranslationData)) {
+            if (! empty($post->pendingTranslationData)) {
                 $locale = $post->default_locale ?? config('app.locale', 'en');
-                
+
                 // Map old field names to new ones
                 $fieldMapping = [
                     'meta_title' => 'seo_title',
                     'meta_description' => 'seo_description',
                     'meta_keywords' => 'seo_keywords',
                 ];
-                
+
                 $translationData = [];
                 foreach ($post->pendingTranslationData as $key => $value) {
                     // Map old field name to new one if needed
                     $newKey = $fieldMapping[$key] ?? $key;
                     $translationData[$newKey] = $value;
                 }
-                
+
                 $post->translations()->create(array_merge([
                     'locale' => $locale,
                 ], $translationData));
-                
+
                 // Clear pending data
                 $post->pendingTranslationData = [];
-                
+
                 // Reload translations to make them available in accessors
                 $post->load('translations');
             }
         });
-        
+
         // Before deleting a post, ensure translations are deleted (for SQLite compatibility)
         static::deleting(function ($post) {
             $post->translations()->delete();
@@ -144,7 +145,7 @@ class BlogPost extends Model
 
     public function getTable()
     {
-        return config('blogr.tables.prefix', '') . 'blog_posts';
+        return config('blogr.tables.prefix', '').'blog_posts';
     }
 
     // Check if the post is scheduled for future publication
@@ -156,7 +157,7 @@ class BlogPost extends Model
     // Check if the post is currently published (either immediate or scheduled time reached)
     public function isCurrentlyPublished()
     {
-        return $this->is_published && (!$this->published_at || $this->published_at->isPast());
+        return $this->is_published && (! $this->published_at || $this->published_at->isPast());
     }
 
     // Scope: published posts only
@@ -171,7 +172,7 @@ class BlogPost extends Model
     // Get the publication status text
     public function getPublicationStatus()
     {
-        if (!$this->is_published) {
+        if (! $this->is_published) {
             return 'draft';
         }
 
@@ -185,7 +186,7 @@ class BlogPost extends Model
     // Get the publication status color
     public function getPublicationStatusColor()
     {
-        return match($this->getPublicationStatus()) {
+        return match ($this->getPublicationStatus()) {
             'draft' => 'gray',
             'scheduled' => 'warning',
             'published' => 'success',
@@ -215,7 +216,7 @@ class BlogPost extends Model
     // Many-to-many relationship with Tag model
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, config('blogr.tables.prefix', '') . 'blog_post_tag');
+        return $this->belongsToMany(Tag::class, config('blogr.tables.prefix', '').'blog_post_tag');
     }
 
     /**
@@ -226,7 +227,7 @@ class BlogPost extends Model
     {
         $locale = app()->getLocale();
 
-        if (!$this->relationLoaded('tags')) {
+        if (! $this->relationLoaded('tags')) {
             $this->load('tags.translations');
         } else {
             $this->loadMissing('tags.translations');
@@ -234,8 +235,9 @@ class BlogPost extends Model
 
         $tags = $this->getRelationValue('tags');
 
-        return $tags->sortBy(function($tag) use ($locale) {
+        return $tags->sortBy(function ($tag) use ($locale) {
             $translation = $tag->translate($locale);
+
             return strtolower($translation ? $translation->name : $tag->name);
         })->values();
     }
@@ -265,7 +267,7 @@ class BlogPost extends Model
         if ($this->relationLoaded('translations')) {
             return $this->translations->where('locale', $locale)->first();
         }
-        
+
         // Otherwise, query the database
         return $this->translations()->where('locale', $locale)->first();
     }
@@ -284,6 +286,7 @@ class BlogPost extends Model
     public function getDefaultTranslation(): ?BlogPostTranslation
     {
         $locale = $this->default_locale ?? config('app.locale', 'en');
+
         return $this->translate($locale) ?? $this->translations()->first();
     }
 
@@ -296,9 +299,10 @@ class BlogPost extends Model
         if ($value) {
             return $value;
         }
-        
+
         // Sinon, récupérer depuis la traduction
         $translation = $this->getDefaultTranslation();
+
         return $translation?->title;
     }
 
@@ -306,12 +310,13 @@ class BlogPost extends Model
      * Get the slug for the default locale
      */
     public function getSlugAttribute($value): ?string
-{
+    {
         if ($value) {
             return $value;
         }
-        
+
         $translation = $this->getDefaultTranslation();
+
         return $translation?->slug;
     }
 
@@ -323,8 +328,9 @@ class BlogPost extends Model
         if ($value) {
             return $value;
         }
-        
+
         $translation = $this->getDefaultTranslation();
+
         return $translation?->tldr;
     }
 
@@ -336,8 +342,9 @@ class BlogPost extends Model
         if ($value) {
             return $value;
         }
-        
+
         $translation = $this->getDefaultTranslation();
+
         return $translation?->reading_time;
     }
 
@@ -349,8 +356,9 @@ class BlogPost extends Model
         if ($value) {
             return $value;
         }
-        
+
         $translation = $this->getDefaultTranslation();
+
         return $translation?->seo_title;
     }
 
@@ -362,8 +370,9 @@ class BlogPost extends Model
         if ($value) {
             return $value;
         }
-        
+
         $translation = $this->getDefaultTranslation();
+
         return $translation?->seo_description;
     }
 
@@ -375,8 +384,9 @@ class BlogPost extends Model
         if ($value) {
             return $value;
         }
-        
+
         $translation = $this->getDefaultTranslation();
+
         return $translation?->seo_keywords;
     }
 
@@ -387,8 +397,8 @@ class BlogPost extends Model
     {
         if ($this->photo) {
             // Use the 'public' disk for post images
-            $disk = \Illuminate\Support\Facades\Storage::disk('public');
-            
+            $disk = Storage::disk('public');
+
             try {
                 // Try to generate temporary URL (works for S3, etc.)
                 return $disk->temporaryUrl(
@@ -400,7 +410,7 @@ class BlogPost extends Model
                 return $disk->url($this->photo);
             }
         }
-        
+
         // Return default post image from config. Prefer the new posts.default_image
         // but keep backward compatibility with legacy 'blogr.default_cover_image'.
         $defaultImage = config('blogr.posts.default_image')
@@ -415,7 +425,7 @@ class BlogPost extends Model
      */
     public function nextInSeries(): ?BlogPost
     {
-        if (!$this->blog_series_id || !$this->series_position) {
+        if (! $this->blog_series_id || ! $this->series_position) {
             return null;
         }
 
@@ -431,7 +441,7 @@ class BlogPost extends Model
      */
     public function previousInSeries(): ?BlogPost
     {
-        if (!$this->blog_series_id || !$this->series_position) {
+        if (! $this->blog_series_id || ! $this->series_position) {
             return null;
         }
 
@@ -447,7 +457,7 @@ class BlogPost extends Model
      */
     public function getSeriesNavigation(): ?array
     {
-        if (!$this->blog_series_id) {
+        if (! $this->blog_series_id) {
             return null;
         }
 
@@ -464,8 +474,6 @@ class BlogPost extends Model
 
     /**
      * Get estimated reading time in minutes (raw number)
-     *
-     * @return int
      */
     public function getEstimatedReadingTimeMinutes(): int
     {
@@ -473,20 +481,20 @@ class BlogPost extends Model
 
         // Try to use current translation's content if available
         $text = '';
-        
+
         // Check if we have a loaded translation with content
         if ($this->relationLoaded('translations')) {
             $currentLocale = app()->getLocale();
             $translation = $this->translations->firstWhere('locale', $currentLocale);
-            
+
             if ($translation && $translation->content) {
-                $text = ($translation->title ?? '') . ' ' . $translation->content;
+                $text = ($translation->title ?? '').' '.$translation->content;
             }
         }
-        
+
         // Fallback to main table content if no translation content found
         if (empty($text)) {
-            $text = $this->title . ' ' . $this->getOriginal('content');
+            $text = $this->title.' '.$this->getOriginal('content');
         }
 
         // Remove HTML tags and count words
@@ -497,7 +505,7 @@ class BlogPost extends Model
         $minutes = floor($wordCount / $readingSpeed);
 
         // Minimum 1 minute if has content
-        return $wordCount > 0 ? max(1, (int)$minutes) : 0;
+        return $wordCount > 0 ? max(1, (int) $minutes) : 0;
     }
 
     /**
@@ -518,7 +526,7 @@ class BlogPost extends Model
         }
 
         // Return formatted time
-        return $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+        return $minutes.' minute'.($minutes > 1 ? 's' : '');
     }
 
     /**
@@ -529,6 +537,7 @@ class BlogPost extends Model
     public function getReadingTimeWithIcon()
     {
         $time = $this->getEstimatedReadingTime();
+
         return $time;
     }
 
@@ -541,14 +550,14 @@ class BlogPost extends Model
      */
     public function getFormattedReadingTime()
     {
-        if (!config('blogr.reading_time.enabled', true)) {
+        if (! config('blogr.reading_time.enabled', true)) {
             return '';
         }
 
         // Use the reading_time attribute (set by accessors or controllers)
         // This allows translations to provide their own reading time
         $minutes = $this->reading_time ?? $this->getEstimatedReadingTimeMinutes();
-        
+
         return ConfigHelper::getReadingTimeText($minutes);
     }
 
@@ -575,7 +584,7 @@ class BlogPost extends Model
         ];
 
         // Only set disable_toc default if it doesn't exist in existing frontmatter
-        if (!isset($existingFrontmatter['disable_toc'])) {
+        if (! isset($existingFrontmatter['disable_toc'])) {
             $defaults['disable_toc'] = false;
         }
 
@@ -589,12 +598,13 @@ class BlogPost extends Model
      */
     protected function extractFrontmatter()
     {
-        if (!$this->content) {
+        if (! $this->content) {
             return [];
         }
 
         try {
-            $document = \Spatie\YamlFrontMatter\YamlFrontMatter::parse($this->content);
+            $document = YamlFrontMatter::parse($this->content);
+
             return $document->matter();
         } catch (\Exception $e) {
             return [];
@@ -614,7 +624,7 @@ class BlogPost extends Model
             app()->bound('request') &&
             request()->is('admin/*') &&
             class_exists('\Filament\FilamentManager') &&
-            !isset($this->attributes['__content_accessor_called'])) {
+            ! isset($this->attributes['__content_accessor_called'])) {
 
             // Prevent recursion by setting a flag
             $this->attributes['__content_accessor_called'] = true;
@@ -622,16 +632,19 @@ class BlogPost extends Model
             try {
                 $result = $this->getContentWithoutFrontmatter();
                 unset($this->attributes['__content_accessor_called']);
+
                 return $result;
             } catch (\Exception $e) {
                 unset($this->attributes['__content_accessor_called']);
+
                 return $value;
             }
         }
 
         // For frontend: if no value in DB, check translations
-        if (!$value) {
+        if (! $value) {
             $translation = $this->getDefaultTranslation();
+
             return $translation?->content;
         }
 
@@ -647,18 +660,18 @@ class BlogPost extends Model
     {
         // Get content from DB or translations
         $content = $this->attributes['content'] ?? null;
-        
-        if (!$content) {
+
+        if (! $content) {
             $translation = $this->getDefaultTranslation();
             $content = $translation?->content;
         }
-        
-        if (!$content) {
+
+        if (! $content) {
             return '';
         }
 
         try {
-            $document = \Spatie\YamlFrontMatter\YamlFrontMatter::parse($content);
+            $document = YamlFrontMatter::parse($content);
             $body = $document->body();
 
             // Clean up leading whitespace that might be left after frontmatter extraction
@@ -689,7 +702,7 @@ class BlogPost extends Model
     /**
      * Set TOC disabled status
      *
-     * @param bool $disabled
+     * @param  bool  $disabled
      * @return void
      */
     public function setTocDisabled($disabled = true)
@@ -703,7 +716,6 @@ class BlogPost extends Model
     /**
      * Update content with new frontmatter
      *
-     * @param array $frontmatter
      * @return void
      */
     protected function updateContentWithFrontmatter(array $frontmatter)
@@ -711,8 +723,8 @@ class BlogPost extends Model
         $contentWithoutFrontmatter = $this->getContentWithoutFrontmatter();
 
         try {
-            $yaml = \Symfony\Component\Yaml\Yaml::dump($frontmatter, 2, 2);
-            $this->content = "---\n" . $yaml . "---\n\n" . $contentWithoutFrontmatter;
+            $yaml = Yaml::dump($frontmatter, 2, 2);
+            $this->content = "---\n".$yaml."---\n\n".$contentWithoutFrontmatter;
         } catch (\Exception $e) {
             // If YAML generation fails, keep original content
         }
@@ -729,8 +741,9 @@ class BlogPost extends Model
         $contentWithoutFrontmatter = $this->getContentWithoutFrontmatter();
 
         try {
-            $yaml = \Symfony\Component\Yaml\Yaml::dump($frontmatter, 2, 2);
-            return "---\n" . $yaml . "---\n\n" . $contentWithoutFrontmatter;
+            $yaml = Yaml::dump($frontmatter, 2, 2);
+
+            return "---\n".$yaml."---\n\n".$contentWithoutFrontmatter;
         } catch (\Exception $e) {
             return $this->getOriginal('content');
         }
@@ -760,7 +773,7 @@ class BlogPost extends Model
         // Third check: legacy frontmatter support
         $frontmatter = $this->extractFrontmatter();
         if (isset($frontmatter['disable_toc'])) {
-            return !$frontmatter['disable_toc'];
+            return ! $frontmatter['disable_toc'];
         }
 
         // Fourth check: global setting
@@ -775,7 +788,7 @@ class BlogPost extends Model
      */
     public function isTocToggleEditable()
     {
-        return !config('blogr.toc.strict_mode', false);
+        return ! config('blogr.toc.strict_mode', false);
     }
 
     /**
@@ -787,7 +800,8 @@ class BlogPost extends Model
     public static function getDefaultTocDisabled()
     {
         $globalEnabled = config('blogr.toc.enabled', true);
-        return !$globalEnabled; // If global is enabled, TOC should be enabled (disabled = false)
+
+        return ! $globalEnabled; // If global is enabled, TOC should be enabled (disabled = false)
     }
 
     /**
@@ -798,6 +812,6 @@ class BlogPost extends Model
      */
     public static function isTocToggleEditableStatic()
     {
-        return !config('blogr.toc.strict_mode', false);
+        return ! config('blogr.toc.strict_mode', false);
     }
 }

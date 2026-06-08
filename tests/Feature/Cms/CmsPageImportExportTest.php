@@ -1,7 +1,7 @@
 <?php
 
-use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
+use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Services\CmsPageImportExportService;
 use Happytodev\Blogr\Tests\CmsTestCase;
 use Illuminate\Support\Facades\File;
@@ -201,7 +201,7 @@ test('import throws exception on conflict when strategy is skip', function () {
     $this->service->importFromArray($this->sampleExport);
 
     // Second import with skip
-    $this->expectException(\RuntimeException::class);
+    $this->expectException(RuntimeException::class);
     $this->expectExceptionMessage('already exists');
     $this->service->importFromArray($this->sampleExport, 'skip');
 });
@@ -215,13 +215,13 @@ test('import validates required slug field', function () {
         ],
     ];
 
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(InvalidArgumentException::class);
     $this->expectExceptionMessage('slug');
     $this->service->importFromArray($invalidData);
 });
 
 test('import from invalid file path throws exception', function () {
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(InvalidArgumentException::class);
     $this->expectExceptionMessage('File not found');
     $this->service->importFromFile('/nonexistent/file.json');
 });
@@ -296,7 +296,7 @@ test('import rejects unsupported file format', function () {
     $fakePath = storage_path('app/blogr-exports/test.txt');
     File::put($fakePath, 'not a json file');
 
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(InvalidArgumentException::class);
     $this->expectExceptionMessage('Unsupported file format');
     $this->service->importFromFile($fakePath);
 

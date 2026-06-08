@@ -21,12 +21,12 @@ class LocaleHelper
     {
         $locale = $locale ?? self::currentLocale();
         $defaultLocale = config('blogr.locales.default', 'en');
-        
+
         // Add locale to parameters
         $parameters = array_merge(['locale' => $locale], $parameters);
-        
+
         $url = route($name, $parameters);
-        
+
         return $url;
     }
 
@@ -44,11 +44,11 @@ class LocaleHelper
     public static function alternateUrls(string $routeName, array $parameters = []): array
     {
         $urls = [];
-        
+
         foreach (self::availableLocales() as $locale) {
             $urls[$locale] = self::route($routeName, $parameters, $locale);
         }
-        
+
         return $urls;
     }
 
@@ -59,15 +59,15 @@ class LocaleHelper
     {
         $tags = [];
         $alternates = self::alternateUrls($routeName, $parameters);
-        
+
         foreach ($alternates as $locale => $url) {
             $tags[] = sprintf('<link rel="alternate" hreflang="%s" href="%s" />', $locale, $url);
         }
-        
+
         // Add x-default
         $defaultLocale = config('blogr.locales.default', 'en');
         $tags[] = sprintf('<link rel="alternate" hreflang="x-default" href="%s" />', $alternates[$defaultLocale]);
-        
+
         return implode("\n    ", $tags);
     }
 }

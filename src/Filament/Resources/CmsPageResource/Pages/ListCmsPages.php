@@ -10,6 +10,7 @@ use Filament\Resources\Pages\ListRecords;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource;
 use Happytodev\Blogr\Services\CmsPageImportExportService;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 class ListCmsPages extends ListRecords
@@ -58,6 +59,7 @@ class ListCmsPages extends ListRecords
                             ->body('Please select a file to import.')
                             ->danger()
                             ->send();
+
                         return;
                     }
 
@@ -67,18 +69,19 @@ class ListCmsPages extends ListRecords
                         $file = reset($file);
                     }
 
-                    if ($file instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+                    if ($file instanceof TemporaryUploadedFile) {
                         $filePath = $file->getRealPath();
                     } elseif (is_string($file)) {
                         $filePath = Storage::disk('local')->path($file);
                     }
 
-                    if (!$filePath || !file_exists($filePath)) {
+                    if (! $filePath || ! file_exists($filePath)) {
                         Notification::make()
                             ->title('Import failed')
                             ->body('Could not read the uploaded file.')
                             ->danger()
                             ->send();
+
                         return;
                     }
 
@@ -110,7 +113,7 @@ class ListCmsPages extends ListRecords
                     } catch (\Exception $e) {
                         Notification::make()
                             ->title('Import failed')
-                            ->body('An unexpected error occurred: ' . $e->getMessage())
+                            ->body('An unexpected error occurred: '.$e->getMessage())
                             ->danger()
                             ->send();
                     }

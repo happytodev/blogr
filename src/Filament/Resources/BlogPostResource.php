@@ -2,29 +2,25 @@
 
 namespace Happytodev\Blogr\Filament\Resources;
 
-use Filament\Tables\Table;
-use Filament\Schemas\Schema;
-use Filament\Resources\Resource;
-use Forms\Components\FileUpload;
-use Forms\Components\MarkdownEditor;
-use Happytodev\Blogr\Models\BlogPost;
-use Filament\Forms\Components\TextInput;
-use Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm;
-use Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostTable;
-use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
-use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\ListBlogPosts;
-use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\CreateBlogPost;
-use Happytodev\Blogr\Filament\Resources\BlogPostResource\RelationManagers;
-use Illuminate\Database\Eloquent\Builder;
-
 use BackedEnum;
 use Filament\Facades\Filament;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\CreateBlogPost;
+use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
+use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\ListBlogPosts;
+use Happytodev\Blogr\Filament\Resources\BlogPostResource\RelationManagers;
+use Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm;
+use Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostTable;
+use Happytodev\Blogr\Models\BlogPost;
+use Illuminate\Database\Eloquent\Builder;
 
 class BlogPostResource extends Resource
 {
     protected static ?string $model = BlogPost::class;
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Blogr';
 
@@ -54,6 +50,7 @@ class BlogPostResource extends Resource
         if ($user->hasRole('writer')) {
             return $record->user_id === $user->id;
         }
+
         return false;
     }
 
@@ -66,6 +63,7 @@ class BlogPostResource extends Resource
         if ($user->hasRole('writer')) {
             return $record->user_id === $user->id;
         }
+
         return false;
     }
 
@@ -83,6 +81,7 @@ class BlogPostResource extends Resource
     public static function getGlobalSearchResultTitle($record): string
     {
         $translation = $record->translations->first();
+
         return $translation ? $translation->title : "Post #{$record->id}";
     }
 

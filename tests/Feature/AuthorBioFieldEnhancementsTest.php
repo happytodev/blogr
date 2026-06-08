@@ -1,12 +1,12 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
-use Happytodev\Blogr\Models\User;
 
 beforeEach(function () {
     $this->user = User::create([
@@ -22,7 +22,7 @@ beforeEach(function () {
 
 test('bio field accepts extended length up to 2000 characters', function () {
     $longBio = str_repeat('Lorem ipsum dolor sit amet, consectetur adipiscing elit. ', 35); // ~1960 chars
-    
+
     expect(strlen($longBio))->toBeGreaterThan(1500)
         ->and(strlen($longBio))->toBeLessThanOrEqual(2000);
 
@@ -39,33 +39,33 @@ test('bio field accepts extended length up to 2000 characters', function () {
 
 test('bio field uses MarkdownEditor component instead of Textarea', function () {
     // Test by checking the source code uses MarkdownEditor
-    $filePath = __DIR__ . '/../../src/Filament/Pages/Auth/EditProfile.php';
+    $filePath = __DIR__.'/../../src/Filament/Pages/Auth/EditProfile.php';
     $content = file_get_contents($filePath);
-    
+
     expect($content)->toContain('MarkdownEditor::make')
         ->and($content)->not->toContain('Textarea::make("bio.');
 });
 
 test('bio field with multilingual support uses MarkdownEditor for each locale', function () {
     // This test verifies the implementation uses MarkdownEditor in the loop
-    $filePath = __DIR__ . '/../../src/Filament/Pages/Auth/EditProfile.php';
+    $filePath = __DIR__.'/../../src/Filament/Pages/Auth/EditProfile.php';
     $content = file_get_contents($filePath);
-    
+
     expect($content)->toContain('MarkdownEditor::make("bio.')
         ->and($content)->toContain('use Filament\Forms\Components\MarkdownEditor;');
 });
 
 test('profile edit page has wider max-width on large screens', function () {
     // Test by checking if the class implements a wider max width using Width enum
-    $filePath = __DIR__ . '/../../src/Filament/Pages/Auth/EditProfile.php';
+    $filePath = __DIR__.'/../../src/Filament/Pages/Auth/EditProfile.php';
     $content = file_get_contents($filePath);
-    
+
     // Should define a wider max width (5xl, 6xl, 7xl, or full)
     $hasWideMaxWidth = str_contains($content, 'Width::FiveExtraLarge') ||
                        str_contains($content, 'Width::SixExtraLarge') ||
                        str_contains($content, 'Width::SevenExtraLarge') ||
                        str_contains($content, 'Width::Full');
-    
+
     expect($hasWideMaxWidth)->toBeTrue();
 });
 

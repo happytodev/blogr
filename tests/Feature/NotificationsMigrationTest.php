@@ -1,9 +1,11 @@
 <?php
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
-use Illuminate\Support\Facades\Schema;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 it('notifications table migration is published and executes', function () {
     // The table should exist after migration
@@ -27,10 +29,10 @@ it('notifications table has correct structure', function () {
 it('notifications id column exists and is primary key', function () {
     // Simply check that the id column exists and we can insert data
     expect(Schema::hasColumn('notifications', 'id'))->toBeTrue();
-    
+
     // Insert a record to verify the ID is primary key (would fail if not)
     DB::table('notifications')->insert([
-        'id' => (string) \Illuminate\Support\Str::uuid(),
+        'id' => (string) Str::uuid(),
         'type' => 'TestPrimary',
         'notifiable_type' => 'User',
         'notifiable_id' => 999,
@@ -38,7 +40,7 @@ it('notifications id column exists and is primary key', function () {
         'created_at' => now(),
         'updated_at' => now(),
     ]);
-    
+
     // Verify insertion worked (implies primary key is working)
     expect(DB::table('notifications')->where('type', 'TestPrimary')->count())->toBe(1);
 });
@@ -46,7 +48,7 @@ it('notifications id column exists and is primary key', function () {
 it('notifications table stores notification data correctly', function () {
     // Create a test notification record
     DB::table('notifications')->insert([
-        'id' => (string) \Illuminate\Support\Str::uuid(),
+        'id' => (string) Str::uuid(),
         'type' => 'TestNotification',
         'notifiable_type' => 'User',
         'notifiable_id' => 1,
@@ -54,7 +56,7 @@ it('notifications table stores notification data correctly', function () {
         'created_at' => now(),
         'updated_at' => now(),
     ]);
-    
+
     $notification = DB::table('notifications')->first();
     expect($notification)->not->toBeNull();
     expect($notification->type)->toBe('TestNotification');

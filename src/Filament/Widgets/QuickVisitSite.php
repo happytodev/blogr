@@ -8,8 +8,8 @@ use Illuminate\Contracts\View\View;
 class QuickVisitSite extends Widget
 {
     protected static ?int $sort = -1;
-    
-    protected int | string | array $columnSpan = 'full';
+
+    protected int|string|array $columnSpan = 'full';
 
     protected string $view = 'blogr::filament.widgets.quick-visit-site';
 
@@ -25,10 +25,11 @@ class QuickVisitSite extends Widget
     {
         try {
             $localesEnabled = config('blogr.locales.enabled', false);
-            
+
             // Always return the homepage (whether blog or cms is configured as homepage)
             if ($localesEnabled) {
                 $defaultLocale = config('blogr.locales.default', config('app.locale', 'en'));
+
                 return route('home', ['locale' => $defaultLocale]);
             }
 
@@ -43,4 +44,3 @@ class QuickVisitSite extends Widget
         return __('blogr::ui.view_website');
     }
 }
-

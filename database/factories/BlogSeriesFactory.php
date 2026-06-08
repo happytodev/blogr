@@ -44,7 +44,7 @@ class BlogSeriesFactory extends Factory
     public function withPhoto(): static
     {
         return $this->state(fn (array $attributes) => [
-            'photo' => 'series-images/' . $this->faker->uuid() . '.jpg',
+            'photo' => 'series-images/'.$this->faker->uuid().'.jpg',
         ]);
     }
 }

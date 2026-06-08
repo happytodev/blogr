@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Happytodev\Blogr\Models\BlogPost>
+ * @extends Factory<BlogPost>
  */
 class BlogPostFactory extends Factory
 {
@@ -22,7 +22,7 @@ class BlogPostFactory extends Factory
     public function definition(): array
     {
         $title = fake()->sentence();
-        
+
         return [
             'photo' => null,
             'user_id' => 1, // Default user ID, will be overridden in tests
@@ -33,7 +33,7 @@ class BlogPostFactory extends Factory
             'display_toc' => false,
             // Translatable fields (will be auto-moved to translations by model hook)
             'title' => $title,
-            'slug' => Str::slug($title) . '-' . Str::random(6), // Add random suffix for global uniqueness
+            'slug' => Str::slug($title).'-'.Str::random(6), // Add random suffix for global uniqueness
             'content' => fake()->paragraphs(3, true),
             'tldr' => fake()->sentence(),
             'meta_title' => $title,

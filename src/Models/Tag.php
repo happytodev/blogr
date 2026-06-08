@@ -2,14 +2,15 @@
 
 namespace Happytodev\Blogr\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Happytodev\Blogr\Tests\Database\Factories\TagFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class Tag extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = ['name', 'slug'];
 
     /**
@@ -17,17 +18,17 @@ class Tag extends Model
      */
     protected static function newFactory()
     {
-        return \Happytodev\Blogr\Tests\Database\Factories\TagFactory::new();
+        return TagFactory::new();
     }
 
     public function getTable()
     {
-        return config('blogr.tables.prefix', '') . 'tags';
+        return config('blogr.tables.prefix', '').'tags';
     }
 
     public function posts()
     {
-        return $this->belongsToMany(BlogPost::class, config('blogr.tables.prefix', '') . 'blog_post_tag');
+        return $this->belongsToMany(BlogPost::class, config('blogr.tables.prefix', '').'blog_post_tag');
     }
 
     public function translations()
@@ -41,7 +42,7 @@ class Tag extends Model
         if ($this->relationLoaded('translations')) {
             return $this->translations->firstWhere('locale', $locale);
         }
-        
+
         // Otherwise, query the database
         return $this->translations()->where('locale', $locale)->first();
     }
@@ -81,8 +82,8 @@ class Tag extends Model
         $originalSlug = $slug;
         $counter = 1;
 
-        while (static::where('slug', $slug)->when($excludeId, fn($q) => $q->where('id', '!=', $excludeId))->exists()) {
-            $slug = $originalSlug . '-' . $counter;
+        while (static::where('slug', $slug)->when($excludeId, fn ($q) => $q->where('id', '!=', $excludeId))->exists()) {
+            $slug = $originalSlug.'-'.$counter;
             $counter++;
         }
 

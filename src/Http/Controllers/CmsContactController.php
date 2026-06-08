@@ -2,11 +2,11 @@
 
 namespace Happytodev\Blogr\Http\Controllers;
 
+use Happytodev\Blogr\Events\ContactFormSubmitted;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Happytodev\Blogr\Events\ContactFormSubmitted;
 
 class CmsContactController extends Controller
 {
@@ -21,7 +21,7 @@ class CmsContactController extends Controller
         ]);
 
         try {
-            $toEmail = !empty($data['to_email']) ? $data['to_email'] : config('mail.from.address', 'hello@example.com');
+            $toEmail = ! empty($data['to_email']) ? $data['to_email'] : config('mail.from.address', 'hello@example.com');
 
             $emailData = [
                 'name' => $data['name'],

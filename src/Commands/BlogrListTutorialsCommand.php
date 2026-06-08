@@ -15,8 +15,9 @@ class BlogrListTutorialsCommand extends Command
     public function handle(): int
     {
         $category = Category::where('slug', 'blogr-tutorial')->first();
-        if (!$category) {
+        if (! $category) {
             $this->warn('No tutorial category found.');
+
             return self::SUCCESS;
         }
 
@@ -26,6 +27,7 @@ class BlogrListTutorialsCommand extends Command
 
         if ($posts->isEmpty()) {
             $this->warn('No tutorial posts found.');
+
             return self::SUCCESS;
         }
 
@@ -39,7 +41,7 @@ class BlogrListTutorialsCommand extends Command
 
         $this->line('');
         $this->info("Total: {$posts->count()} posts");
-        
+
         return self::SUCCESS;
     }
 }

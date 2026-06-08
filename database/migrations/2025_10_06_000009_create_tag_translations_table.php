@@ -19,7 +19,7 @@ return new class extends Migration
 
             // Unique constraint: one translation per locale per tag
             $table->unique(['tag_id', 'locale']);
-            
+
             // Unique constraint: slug must be unique per locale
             $table->unique(['locale', 'slug']);
         });

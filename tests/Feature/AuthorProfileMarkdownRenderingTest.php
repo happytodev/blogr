@@ -1,11 +1,11 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Helpers\MarkdownHelper;
-use Illuminate\Support\Facades\Hash;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Support\Facades\Hash;
 
 beforeEach(function () {
     $this->author = User::create([
@@ -44,11 +44,11 @@ MD,
 test('author profile page renders markdown bio as HTML', function () {
     config(['blogr.locales.enabled' => false]);
     config(['blogr.route.prefix' => 'blog']);
-    
+
     $response = $this->get(route('blog.author', ['userSlug' => $this->author->slug]));
-    
+
     $response->assertStatus(200);
-    
+
     // Should contain HTML rendered from markdown
     $response->assertSee('<h1>About Me</h1>', false);
     $response->assertSee('<strong>passionate</strong>', false);
@@ -60,11 +60,11 @@ test('author profile page renders markdown bio as HTML', function () {
 test('author profile page does not show raw markdown syntax', function () {
     config(['blogr.locales.enabled' => false]);
     config(['blogr.route.prefix' => 'blog']);
-    
+
     $response = $this->get(route('blog.author', ['userSlug' => $this->author->slug]));
-    
+
     $response->assertStatus(200);
-    
+
     // Should NOT contain raw markdown syntax
     $response->assertDontSee('# About Me');
     $response->assertDontSee('**passionate**');
@@ -77,11 +77,11 @@ test('author profile page renders markdown in correct locale', function () {
     config(['blogr.locales.default' => 'fr']);
     config(['blogr.route.prefix' => 'blog']);
     app()->setLocale('fr');
-    
+
     $response = $this->get(route('blog.author', ['locale' => 'fr', 'userSlug' => $this->author->slug]));
-    
+
     $response->assertStatus(200);
-    
+
     // Should contain French HTML
     $response->assertSee('<h1>À propos de moi</h1>', false);
     $response->assertSee('développeur <strong>passionné</strong>', false);
@@ -107,7 +107,7 @@ echo "code block";
 MD;
 
     $html = MarkdownHelper::toHtml($markdown);
-    
+
     expect($html)->toContain('<h1>Heading 1</h1>')
         ->and($html)->toContain('<h2>Heading 2</h2>')
         ->and($html)->toContain('<strong>Bold text</strong>')
@@ -120,9 +120,9 @@ MD;
 
 test('MarkdownHelper escapes potentially dangerous HTML', function () {
     $markdown = '<script>alert("XSS")</script> Safe text';
-    
+
     $html = MarkdownHelper::toHtml($markdown);
-    
+
     // Should escape the script tag
     expect($html)->not->toContain('<script>')
         ->and($html)->toContain('&lt;script&gt;')
@@ -132,7 +132,7 @@ test('MarkdownHelper escapes potentially dangerous HTML', function () {
 test('author profile with empty bio does not break', function () {
     config(['blogr.locales.enabled' => false]);
     config(['blogr.route.prefix' => 'blog']);
-    
+
     $authorWithoutBio = User::create([
         'name' => 'No Bio Author',
         'email' => 'nobio@example.com',
@@ -140,8 +140,8 @@ test('author profile with empty bio does not break', function () {
         'slug' => 'no-bio-author',
         'bio' => ['en' => '', 'fr' => ''],
     ]);
-    
+
     $response = $this->get(route('blog.author', ['userSlug' => $authorWithoutBio->slug]));
-    
+
     $response->assertStatus(200);
 });

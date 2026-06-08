@@ -1,11 +1,12 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+
 use function Pest\Laravel\get;
 
 beforeEach(function () {
@@ -24,7 +25,7 @@ it('displays TOC when enabled on post', function () {
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     $response->assertSee('Table of Contents');
     $response->assertSee('First Section');
     $response->assertSee('Second Section');
@@ -41,7 +42,7 @@ it('does not display TOC when disabled on post', function () {
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     // TOC should not be in the article content
     $html = $response->getContent();
     expect(str_contains($html, '<nav') && str_contains($html, 'class="toc'))->toBe(false, 'TOC nav element should not exist');
@@ -58,7 +59,7 @@ it('TOC includes proper CSS classes', function () {
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     // Should have TOC base class
     $response->assertSee('class="toc', false);
     // Should have position class (center is default)
@@ -76,7 +77,7 @@ it('TOC view has required CSS styling', function () {
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     // Check CSS definitions exist
     $response->assertSee('.toc {', false);
     $response->assertSee('.blogr-toc-center', false);
@@ -94,7 +95,7 @@ it('TOC contains all section headings', function () {
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     $response->assertSee('Alpha');
     $response->assertSee('Beta');
     $response->assertSee('Gamma');
@@ -104,7 +105,7 @@ it('TOC contains all section headings', function () {
 it('shows TOC title in sidebar when position is left or right', function () {
     // Test with left sidebar
     config(['blogr.toc.position' => 'left']);
-    
+
     $post = BlogPost::factory()->create([
         'user_id' => $this->user->id,
         'category_id' => $this->category->id,
@@ -115,12 +116,12 @@ it('shows TOC title in sidebar when position is left or right', function () {
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     // TOC title should be visible in sidebar
     $response->assertSee('Table of Contents');
     $response->assertSee('First Section');
     $response->assertSee('toc-sidebar-wrapper', false);
-    
+
     // Test with right sidebar
     config(['blogr.toc.position' => 'right']);
     $response2 = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
@@ -131,7 +132,7 @@ it('shows TOC title in sidebar when position is left or right', function () {
 it('shows TOC title when position is center (inline)', function () {
     // Set TOC position to center (default inline behavior)
     config(['blogr.toc.position' => 'center']);
-    
+
     $post = BlogPost::factory()->create([
         'user_id' => $this->user->id,
         'category_id' => $this->category->id,
@@ -142,7 +143,7 @@ it('shows TOC title when position is center (inline)', function () {
     ]);
 
     $response = get(route('blog.show', ['locale' => 'en', 'slug' => $post->slug]));
-    
+
     // When centered, the TOC title should be visible in the content
     $response->assertSee('Table of Contents');
     $response->assertSee('Section One');

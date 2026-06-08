@@ -15,7 +15,7 @@ class LocaleService
         $autoDetect = config('blogr.locales.auto_detect', false);
         $disabled = config('blogr.locales.disabled', []);
 
-        if (!$autoDetect) {
+        if (! $autoDetect) {
             $locales = config('blogr.locales.available', ['en']);
 
             return array_values(array_diff($locales, $disabled));
@@ -41,11 +41,11 @@ class LocaleService
 
             $restrict = config('blogr.locales.restrict', []);
 
-            if (!empty($restrict)) {
+            if (! empty($restrict)) {
                 $locales = array_values(array_intersect($locales, $restrict));
             }
 
-            return !empty($locales) ? $locales : [config('blogr.locales.default', 'en')];
+            return ! empty($locales) ? $locales : [config('blogr.locales.default', 'en')];
         });
     }
 

@@ -2,19 +2,19 @@
 
 namespace Happytodev\Blogr\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Schemas\Schema;
-use Filament\Tables\Table;
+use Filament\Actions\EditAction;
+use Filament\Forms;
 use Filament\Resources\Resource;
-use Happytodev\Blogr\Models\CmsPage;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables;
+use Filament\Tables\Table;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages;
-use Filament\Schemas\Components\Section;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages\EditCmsPageTranslation;
+use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Services\LocaleService;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -23,12 +23,12 @@ class CmsPageResource extends Resource
     protected static ?string $model = CmsPage::class;
 
     protected static ?int $navigationSort = 1;
-    
+
     public static function getNavigationIcon(): ?string
     {
         return 'heroicon-o-document-text';
     }
-    
+
     public static function getNavigationGroup(): ?string
     {
         return __('CMS');
@@ -77,6 +77,7 @@ class CmsPageResource extends Resource
                             ->options(function () {
                                 $localeService = app(LocaleService::class);
                                 $locales = $localeService->getAvailable();
+
                                 return collect($locales)->mapWithKeys(fn ($locale) => [$locale => $localeService->localeLabel($locale)]);
                             })
                             ->default(config('blogr.locales.default', 'fr'))
@@ -123,6 +124,7 @@ class CmsPageResource extends Resource
                     ->getStateUsing(function (CmsPage $record) {
                         $locale = app()->getLocale();
                         $translation = $record->translations()->where('locale', $locale)->first();
+
                         return $translation?->title ?? $record->translations()->first()?->title ?? '-';
                     }),
 
@@ -194,6 +196,7 @@ class CmsPageResource extends Resource
     {
         $translation = $record->translations->first();
         $title = $translation ? $translation->title : $record->slug;
+
         return "{$title} ({$record->slug})";
     }
 

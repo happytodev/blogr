@@ -1,11 +1,8 @@
 <?php
 
-
-
 namespace Happytodev\Blogr\Tests\Feature;
 
-
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Tests\TestCase;
@@ -18,7 +15,7 @@ class AuthorPageLayoutTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Configure blogr for tests
         config(['blogr.author_profile.enabled' => true]);
         config(['blogr.locales.enabled' => true]);
@@ -31,9 +28,9 @@ class AuthorPageLayoutTest extends TestCase
     public function author_page_uses_same_container_width_as_homepage()
     {
         $user = $this->createUser(['slug' => 'john-doe']);
-        
+
         $response = $this->get('/en/author/john-doe');
-        
+
         $response->assertStatus(200);
         // Should use max-w-7xl like homepage, not max-w-6xl
         $response->assertSee('max-w-7xl', false);
@@ -47,7 +44,7 @@ class AuthorPageLayoutTest extends TestCase
             'name' => 'John Doe',
             'bio' => 'Expert developer and writer',
         ]);
-        
+
         $category = Category::factory()->create();
         BlogPost::factory()->create([
             'user_id' => $user->id,
@@ -55,9 +52,9 @@ class AuthorPageLayoutTest extends TestCase
             'is_published' => true,
             'published_at' => now(),
         ]);
-        
+
         $response = $this->get('/en/author/john-doe');
-        
+
         $response->assertStatus(200);
         $response->assertSeeInOrder([
             'John Doe',
@@ -71,14 +68,14 @@ class AuthorPageLayoutTest extends TestCase
     {
         $user = $this->createUser(['slug' => 'john-doe']);
         $category = Category::factory()->create();
-        
+
         $post = BlogPost::factory()->create([
             'user_id' => $user->id,
             'category_id' => $category->id,
             'is_published' => true,
             'published_at' => now(),
         ]);
-        
+
         // Create translation with content to calculate reading time
         $post->translations()->create([
             'locale' => 'en',
@@ -87,9 +84,9 @@ class AuthorPageLayoutTest extends TestCase
             'content' => str_repeat('word ', 1000), // ~1000 words = 5 min at 200 wpm
             'tldr' => 'Test TLDR',
         ]);
-        
+
         $response = $this->get('/en/author/john-doe');
-        
+
         $response->assertStatus(200);
         // Should display reading time badge calculated from translation content
         $response->assertSee('min', false); // Reading time should be present
@@ -100,16 +97,16 @@ class AuthorPageLayoutTest extends TestCase
     {
         $user = $this->createUser(['slug' => 'john-doe']);
         $category = Category::factory()->create(['name' => 'Technology']);
-        
+
         $post = BlogPost::factory()->create([
             'user_id' => $user->id,
             'category_id' => $category->id,
             'is_published' => true,
             'published_at' => now(),
         ]);
-        
+
         $response = $this->get('/en/author/john-doe');
-        
+
         $response->assertStatus(200);
         // Category should be in badge format, not inline link
         $response->assertSee('Technology', false);
@@ -121,7 +118,7 @@ class AuthorPageLayoutTest extends TestCase
     {
         $user = $this->createUser(['slug' => 'john-doe']);
         $category = Category::factory()->create();
-        
+
         $post = BlogPost::factory()->create([
             'user_id' => $user->id,
             'category_id' => $category->id,
@@ -129,16 +126,16 @@ class AuthorPageLayoutTest extends TestCase
             'published_at' => now(),
             'photo' => 'blog-photos/test.jpg',
         ]);
-        
+
         $translation = $post->translations()->create([
             'locale' => 'en',
             'title' => 'Test Post',
             'slug' => 'test-post',
             'content' => 'Test content',
         ]);
-        
+
         $response = $this->get('/en/author/john-doe');
-        
+
         $response->assertStatus(200);
         // Image should be wrapped in <a> tag linking to post
         $response->assertSee('<a href', false);
@@ -150,16 +147,16 @@ class AuthorPageLayoutTest extends TestCase
     {
         $author = $this->createUser(['slug' => 'john-doe', 'name' => 'John Doe']);
         $category = Category::factory()->create();
-        
+
         $post = BlogPost::factory()->create([
             'user_id' => $author->id,
             'category_id' => $category->id,
             'is_published' => true,
             'published_at' => now(),
         ]);
-        
+
         $response = $this->get('/en');
-        
+
         $response->assertStatus(200);
         // Author info should link to author page
         $response->assertSee('john-doe', false);
@@ -168,7 +165,7 @@ class AuthorPageLayoutTest extends TestCase
     protected function createUser(array $attributes = [])
     {
         $userModel = config('auth.providers.users.model');
-        
+
         return $userModel::factory()->create(array_merge([
             'name' => 'Test User',
             'email' => 'test@example.com',

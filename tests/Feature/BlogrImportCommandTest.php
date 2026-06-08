@@ -1,12 +1,14 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
-use Illuminate\Support\Facades\File;
-use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\Tag;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Support\Facades\File;
+use Spatie\Permission\Models\Role;
 
 it('can import blogr data from json file', function () {
     // Create a test export file (without posts to avoid user dependency)
@@ -22,18 +24,18 @@ it('can import blogr data from json file', function () {
         ],
         'series' => [],
     ];
-    
+
     $importPath = storage_path('app/test-import.json');
     File::put($importPath, json_encode($exportData, JSON_PRETTY_PRINT));
-    
+
     $this->artisan('blogr:import', ['file' => $importPath])
         ->expectsOutput('✅ Blogr data imported successfully')
         ->assertExitCode(0);
-    
+
     // Verify data was imported
     expect(Category::where('slug', 'imported-category')->exists())->toBeTrue();
     expect(Tag::where('slug', 'imported-tag')->exists())->toBeTrue();
-    
+
     // Cleanup
     File::delete($importPath);
 });
@@ -41,10 +43,10 @@ it('can import blogr data from json file', function () {
 it('validates json file format before import', function () {
     $invalidPath = storage_path('app/invalid.json');
     File::put($invalidPath, 'invalid json');
-    
+
     $this->artisan('blogr:import', ['file' => $invalidPath])
         ->assertExitCode(1);
-    
+
     File::delete($invalidPath);
 });
 
@@ -57,7 +59,7 @@ it('handles missing file gracefully', function () {
 it('can skip existing records during import', function () {
     // Create existing category
     Category::create(['name' => 'Existing', 'slug' => 'existing', 'is_default' => false]);
-    
+
     $exportData = [
         'version' => '0.12.5',
         'exported_at' => now()->toIso8601String(),
@@ -69,23 +71,23 @@ it('can skip existing records during import', function () {
         'tags' => [],
         'series' => [],
     ];
-    
+
     $importPath = storage_path('app/test-skip.json');
     File::put($importPath, json_encode($exportData));
-    
+
     $this->artisan('blogr:import', ['file' => $importPath, '--skip-existing' => true])
         ->assertExitCode(0);
-    
+
     expect(Category::count())->toBe(3); // General (default) + Existing (skipped) + New Category
-    
+
     File::delete($importPath);
 });
 
 it('can import users with their roles', function () {
     // Setup roles first
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
-    
+    Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
+
     $exportData = [
         'version' => '0.12.5',
         'exported_at' => now()->toIso8601String(),
@@ -110,36 +112,36 @@ it('can import users with their roles', function () {
             ],
         ],
     ];
-    
+
     $importPath = storage_path('app/test-users-import.json');
     File::put($importPath, json_encode($exportData, JSON_PRETTY_PRINT));
-    
+
     $this->artisan('blogr:import', ['file' => $importPath])
         ->assertExitCode(0);
-    
+
     // Verify users were imported with correct roles
-    $adminUser = \Happytodev\Blogr\Models\User::where('email', 'admin.import@test.com')->first();
+    $adminUser = User::where('email', 'admin.import@test.com')->first();
     expect($adminUser)->not->toBeNull();
     expect($adminUser->hasRole('admin'))->toBeTrue();
-    
-    $writerUser = \Happytodev\Blogr\Models\User::where('email', 'writer.import@test.com')->first();
+
+    $writerUser = User::where('email', 'writer.import@test.com')->first();
     expect($writerUser)->not->toBeNull();
     expect($writerUser->hasRole('writer'))->toBeTrue();
-    
+
     // Cleanup
     File::delete($importPath);
 });
 
 it('reassigns roles correctly on reimport', function () {
     // Setup roles
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
-    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
-    
+    Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
+
     // Create initial user with writer role
-    $user = \Happytodev\Blogr\Models\User::factory()->create(['email' => 'role.change@test.com']);
+    $user = User::factory()->create(['email' => 'role.change@test.com']);
     $user->syncRoles('writer');
     $userId = $user->id;
-    
+
     // Import data that changes role to admin
     $exportData = [
         'version' => '0.12.5',
@@ -158,19 +160,19 @@ it('reassigns roles correctly on reimport', function () {
             ],
         ],
     ];
-    
+
     $importPath = storage_path('app/test-role-change.json');
     File::put($importPath, json_encode($exportData, JSON_PRETTY_PRINT));
-    
+
     // Import without skip-existing (allows overwrite)
     $this->artisan('blogr:import', ['file' => $importPath])
         ->assertExitCode(0);
-    
+
     // Verify role was updated
-    $updatedUser = \Happytodev\Blogr\Models\User::find($userId);
+    $updatedUser = User::find($userId);
     expect($updatedUser->hasRole('admin'))->toBeTrue();
     expect($updatedUser->hasRole('writer'))->toBeFalse();
-    
+
     // Cleanup
     File::delete($importPath);
 });
@@ -193,18 +195,18 @@ it('handles invalid roles gracefully during import', function () {
             ],
         ],
     ];
-    
+
     $importPath = storage_path('app/test-invalid-role.json');
     File::put($importPath, json_encode($exportData, JSON_PRETTY_PRINT));
-    
+
     // Import should still succeed but log warning about invalid role
     $this->artisan('blogr:import', ['file' => $importPath])
         ->assertExitCode(0);
-    
+
     // User should be created even if role is invalid
-    $user = \Happytodev\Blogr\Models\User::where('email', 'invalid.role@test.com')->first();
+    $user = User::where('email', 'invalid.role@test.com')->first();
     expect($user)->not->toBeNull();
-    
+
     // Cleanup
     File::delete($importPath);
 });
@@ -256,7 +258,7 @@ it('detects cms page format and delegates to CmsPageImportExportService', functi
         ->assertExitCode(0);
 
     // Verify CMS page was imported
-    $page = \Happytodev\Blogr\Models\CmsPage::where('slug', 'installation-guide')->first();
+    $page = CmsPage::where('slug', 'installation-guide')->first();
     expect($page)->not->toBeNull();
     expect($page->translations)->toHaveCount(2);
 
@@ -318,29 +320,29 @@ it('can import cms pages with their translations and blocks', function () {
             ],
         ],
     ];
-    
+
     $importPath = storage_path('app/test-cms-import.json');
     File::put($importPath, json_encode($exportData, JSON_PRETTY_PRINT));
-    
+
     $this->artisan('blogr:import', ['file' => $importPath])
         ->assertExitCode(0);
-    
+
     // Verify CMS page was imported
-    $page = \Happytodev\Blogr\Models\CmsPage::where('slug', 'imported-page')->first();
+    $page = CmsPage::where('slug', 'imported-page')->first();
     expect($page)->not->toBeNull();
     expect($page->blocks)->toBeArray();
     expect(count($page->blocks))->toBe(1);
     expect($page->blocks[0]['type'])->toBe('hero');
-    
+
     // Verify translations
     $enTranslation = $page->translations()->where('locale', 'en')->first();
     expect($enTranslation)->not->toBeNull();
     expect($enTranslation->title)->toBe('Imported Page');
-    
+
     $frTranslation = $page->translations()->where('locale', 'fr')->first();
     expect($frTranslation)->not->toBeNull();
     expect($frTranslation->title)->toBe('Page Importée');
-    
+
     // Cleanup
     File::delete($importPath);
 });
@@ -369,7 +371,7 @@ it('preserves blocks structure during cms page import', function () {
             'button' => ['text' => 'Get Started', 'url' => '/start'],
         ],
     ];
-    
+
     $exportData = [
         'version' => '0.12.5',
         'exported_at' => now()->toIso8601String(),
@@ -411,26 +413,26 @@ it('preserves blocks structure during cms page import', function () {
             ],
         ],
     ];
-    
+
     $importPath = storage_path('app/test-complex-cms.json');
     File::put($importPath, json_encode($exportData, JSON_PRETTY_PRINT));
-    
+
     $this->artisan('blogr:import', ['file' => $importPath])
         ->assertExitCode(0);
-    
+
     // Verify complex blocks were preserved exactly
-    $page = \Happytodev\Blogr\Models\CmsPage::where('slug', 'complex-page')->first();
+    $page = CmsPage::where('slug', 'complex-page')->first();
     expect($page)->not->toBeNull();
     expect($page->blocks)->toBe($complexBlocks);
     expect(count($page->blocks))->toBe(3);
-    
+
     // Verify specific block structure
     $heroBlock = collect($page->blocks)->firstWhere('id', 'hero-block');
     expect($heroBlock['cta']['text'])->toBe('Learn More');
-    
+
     $featuresBlock = collect($page->blocks)->firstWhere('id', 'features-block');
     expect(count($featuresBlock['items']))->toBe(2);
-    
+
     // Cleanup
     File::delete($importPath);
 });

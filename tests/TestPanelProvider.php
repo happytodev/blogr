@@ -4,6 +4,7 @@ namespace Happytodev\Blogr\Tests;
 
 use Filament\Panel;
 use Filament\PanelProvider;
+use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
 
 class TestPanelProvider extends PanelProvider
 {
@@ -14,7 +15,7 @@ class TestPanelProvider extends PanelProvider
             ->id('test')
             ->path('admin')
             ->resources([
-                \Happytodev\Blogr\Filament\Resources\Tags\TagResource::class,
+                TagResource::class,
             ]);
     }
 }

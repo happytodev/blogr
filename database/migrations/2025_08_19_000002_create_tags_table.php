@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create(config('blogr.tables.prefix', '') . 'tags', function (Blueprint $table) {
+        Schema::create(config('blogr.tables.prefix', '').'tags', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
@@ -18,6 +18,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists(config('blogr.tables.prefix', '') . 'tags');
+        Schema::dropIfExists(config('blogr.tables.prefix', '').'tags');
     }
 };

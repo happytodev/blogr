@@ -1,6 +1,8 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+use Happytodev\Blogr\Tests\TestCase;
+
+uses(TestCase::class);
 
 // Duplicate test file: real Cms tests live at tests/Feature/Cms/CmsPageTest.php
 // This file is intentionally short-circuited to avoid running duplicate tests

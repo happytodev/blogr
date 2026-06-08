@@ -1,12 +1,12 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
-use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogPost;
-use Happytodev\Blogr\Models\BlogPostTranslation;
+use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -58,7 +58,7 @@ it('can add translations to a series', function () {
 
 it('can list articles in a series ordered by position', function () {
     $series = BlogSeries::create(['slug' => 'learn-laravel']);
-    
+
     $post1 = BlogPost::create([
         'title' => 'First Post',
         'slug' => 'first-post',
@@ -108,13 +108,13 @@ it('can list articles in a series ordered by position', function () {
 
 it('allows gaps in series positions', function () {
     $series = BlogSeries::create(['slug' => 'learn-laravel']);
-    
+
     $post1 = BlogPost::create([
         'blog_series_id' => $series->id,
         'series_position' => 1,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -127,7 +127,7 @@ it('allows gaps in series positions', function () {
         'series_position' => 5,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -141,13 +141,13 @@ it('allows gaps in series positions', function () {
 
 it('can get the next article in a series', function () {
     $series = BlogSeries::create(['slug' => 'learn-laravel']);
-    
+
     $post1 = BlogPost::create([
         'blog_series_id' => $series->id,
         'series_position' => 1,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -160,7 +160,7 @@ it('can get the next article in a series', function () {
         'series_position' => 2,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -177,13 +177,13 @@ it('can get the next article in a series', function () {
 
 it('can get the previous article in a series', function () {
     $series = BlogSeries::create(['slug' => 'learn-laravel']);
-    
+
     $post1 = BlogPost::create([
         'blog_series_id' => $series->id,
         'series_position' => 1,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -196,7 +196,7 @@ it('can get the previous article in a series', function () {
         'series_position' => 2,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -213,13 +213,13 @@ it('can get the previous article in a series', function () {
 
 it('returns null when there is no next article in series', function () {
     $series = BlogSeries::create(['slug' => 'learn-laravel']);
-    
+
     $post = BlogPost::create([
         'blog_series_id' => $series->id,
         'series_position' => 1,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -234,13 +234,13 @@ it('returns null when there is no next article in series', function () {
 
 it('returns null when there is no previous article in series', function () {
     $series = BlogSeries::create(['slug' => 'learn-laravel']);
-    
+
     $post = BlogPost::create([
         'blog_series_id' => $series->id,
         'series_position' => 1,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -255,13 +255,13 @@ it('returns null when there is no previous article in series', function () {
 
 it('can get series navigation for a post', function () {
     $series = BlogSeries::create(['slug' => 'learn-laravel']);
-    
+
     $post1 = BlogPost::create([
         'blog_series_id' => $series->id,
         'series_position' => 1,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -274,7 +274,7 @@ it('can get series navigation for a post', function () {
         'series_position' => 2,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -287,7 +287,7 @@ it('can get series navigation for a post', function () {
         'series_position' => 3,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -310,7 +310,7 @@ it('series is optional for blog posts', function () {
         'series_position' => null,
         'default_locale' => 'en',
         'title' => 'Test Post',
-        'slug' => 'test-post-' . uniqid(),
+        'slug' => 'test-post-'.uniqid(),
         'content' => 'Test content',
         'user_id' => 1,
         'category_id' => 1,
@@ -327,7 +327,7 @@ it('auto-generates slug when not provided for blog series', function () {
     $series = BlogSeries::create([
         'position' => 1,
     ]);
-    
+
     expect($series->slug)
         ->not()->toBeNull()
         ->and($series->slug)->toStartWith('series-');
@@ -338,7 +338,7 @@ it('requires unique slug for blog series', function () {
 
     expect(fn () => BlogSeries::create([
         'slug' => 'learn-laravel',
-    ]))->toThrow(\Illuminate\Database\QueryException::class);
+    ]))->toThrow(QueryException::class);
 });
 
 it('can scope to published series only', function () {
@@ -497,19 +497,19 @@ test('series can have translations', function () {
         'slug' => 'my-series',
         'published_at' => now(),
     ]);
-    
+
     $series->translations()->create([
         'locale' => 'en',
         'title' => 'My Series',
         'description' => 'English description',
     ]);
-    
+
     $series->translations()->create([
         'locale' => 'fr',
         'title' => 'Ma Série',
         'description' => 'Description française',
     ]);
-    
+
     expect($series->translations()->count())->toBe(2);
     expect($series->translations()->where('locale', 'fr')->first()->title)->toBe('Ma Série');
 });
@@ -519,21 +519,21 @@ test('series translation can be retrieved by locale', function () {
         'slug' => 'test-series',
         'published_at' => now(),
     ]);
-    
+
     $series->translations()->create([
         'locale' => 'en',
         'title' => 'Test Series',
         'description' => 'Test description',
     ]);
-    
+
     $series->translations()->create([
         'locale' => 'es',
         'title' => 'Serie de Prueba',
         'description' => 'Descripción de prueba',
     ]);
-    
+
     $translation = $series->translations()->where('locale', 'es')->first();
-    
+
     expect($translation)->not->toBeNull();
     expect($translation->title)->toBe('Serie de Prueba');
     expect($translation->description)->toBe('Descripción de prueba');
@@ -544,9 +544,9 @@ test('series can have multiple language translations', function () {
         'slug' => 'multilingual-series',
         'published_at' => now(),
     ]);
-    
+
     $locales = ['en', 'fr', 'es', 'de'];
-    
+
     foreach ($locales as $locale) {
         $series->translations()->create([
             'locale' => $locale,
@@ -554,7 +554,7 @@ test('series can have multiple language translations', function () {
             'description' => "Description in {$locale}",
         ]);
     }
-    
+
     expect($series->translations()->count())->toBe(4);
     $storedLocales = $series->translations()->pluck('locale')->sort()->values()->toArray();
     $expectedLocales = collect($locales)->sort()->values()->toArray();
@@ -566,37 +566,36 @@ test('blog controller eager loads series translations', function () {
         'is_published' => true,
         'published_at' => now(),
     ]);
-    
+
     $series = BlogSeries::create([
         'slug' => 'test-series',
         'published_at' => now(),
     ]);
-    
+
     $series->translations()->create([
         'locale' => 'en',
         'title' => 'Test Series',
         'description' => 'Test description',
     ]);
-    
+
     $series->translations()->create([
         'locale' => 'fr',
         'title' => 'Série de Test',
         'description' => 'Description de test',
     ]);
-    
+
     $post->update([
         'blog_series_id' => $series->id,
         'series_position' => 1,
     ]);
-    
+
     // Get the post's default translation
     $translation = $post->translations()->where('locale', 'en')->first();
-    
+
     // Verify series translations are accessible
     $freshPost = BlogPost::with(['series.translations'])->find($post->id);
-    
+
     expect($freshPost->series)->not->toBeNull();
     expect($freshPost->series->translations)->toHaveCount(2);
     expect($freshPost->series->translations->firstWhere('locale', 'fr')->title)->toBe('Série de Test');
 });
-

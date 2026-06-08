@@ -1,12 +1,12 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
@@ -164,7 +164,7 @@ test('compact author bio has bottom spacing', function () {
 
 test('author pseudo falls back to name when slug is empty', function () {
     $this->author->update(['slug' => null]);
-    
+
     config(['blogr.display.show_author_pseudo' => true]);
 
     $response = $this->get(route('blog.index', ['locale' => 'en']));

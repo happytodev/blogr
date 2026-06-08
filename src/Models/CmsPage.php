@@ -2,9 +2,10 @@
 
 namespace Happytodev\Blogr\Models;
 
+use Happytodev\Blogr\Database\Factories\CmsPageFactory;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CmsPage extends Model
@@ -39,11 +40,11 @@ class CmsPage extends Model
         // Validate slug is not reserved before saving
         static::saving(function ($page) {
             $reservedSlugs = config('blogr.cms.reserved_slugs', []);
-            
+
             if (in_array($page->slug, $reservedSlugs)) {
                 throw new \InvalidArgumentException(
-                    "The slug '{$page->slug}' is reserved and cannot be used for CMS pages. " .
-                    "Reserved slugs: " . implode(', ', $reservedSlugs)
+                    "The slug '{$page->slug}' is reserved and cannot be used for CMS pages. ".
+                    'Reserved slugs: '.implode(', ', $reservedSlugs)
                 );
             }
 
@@ -78,8 +79,8 @@ class CmsPage extends Model
     public function currentTranslation(?string $locale = null): ?CmsPageTranslation
     {
         $locale = $locale ?? app()->getLocale();
-        
-        return $this->translation($locale) 
+
+        return $this->translation($locale)
             ?? $this->translation($this->default_locale)
             ?? $this->translations()->first();
     }
@@ -89,8 +90,8 @@ class CmsPage extends Model
      */
     public function isPublished(): bool
     {
-        return $this->is_published 
-            && $this->published_at 
+        return $this->is_published
+            && $this->published_at
             && $this->published_at->isPast();
     }
 
@@ -127,10 +128,10 @@ class CmsPage extends Model
      */
     public function scopeByTemplate($query, CmsPageTemplate|string $template)
     {
-        $templateValue = $template instanceof CmsPageTemplate 
-            ? $template->value 
+        $templateValue = $template instanceof CmsPageTemplate
+            ? $template->value
             : $template;
-            
+
         return $query->where('template', $templateValue);
     }
 
@@ -139,6 +140,6 @@ class CmsPage extends Model
      */
     protected static function newFactory()
     {
-        return \Happytodev\Blogr\Database\Factories\CmsPageFactory::new();
+        return CmsPageFactory::new();
     }
 }

@@ -1,11 +1,11 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
-use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 
 test('links in post content have proper hover styles', function () {
     $user = User::factory()->create();
@@ -30,14 +30,14 @@ test('links in post content have proper hover styles', function () {
     $response = $this->get(route('blog.show', ['locale' => 'en', 'slug' => 'test-post-with-links']));
 
     $response->assertStatus(200);
-    
+
     // Check that links are present in the content
     $response->assertSee('href="https://example.com"', false);
     $response->assertSee('href="https://example.org"', false);
-    
+
     // Check that the CSS for link hover is present
     $content = $response->getContent();
-    
+
     // Verify that hover styles exist for links
     expect($content)->toContain('.prose p a:hover')
         ->and($content)->toContain('.prose li a:hover')
@@ -67,11 +67,11 @@ test('links in lists have proper hover styles', function () {
     $response = $this->get(route('blog.show', ['locale' => 'en', 'slug' => 'test-post-with-list-links']));
 
     $response->assertStatus(200);
-    
+
     // Check that links are present
     $response->assertSee('href="https://example.com"', false);
     $response->assertSee('href="https://example.org"', false);
-    
+
     // Verify hover styles
     $content = $response->getContent();
     expect($content)->toContain('.prose li a:hover');

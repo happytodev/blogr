@@ -1,16 +1,20 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Http\Controllers\BlogController;
+use Happytodev\Blogr\Models\Tag;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 if (config('blogr.route.frontend.enabled', true)) {
     // Blog routes for testing (non-localized)
     Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
     Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
-    
+
     // Blog routes for testing (localized) - Always register for testing
     Route::get('/{locale}/blog', [BlogController::class, 'index'])->name('blog.index.localized');
     Route::get('/{locale}/blog/{slug}', [BlogController::class, 'show'])->name('blog.show.localized');
@@ -32,7 +36,7 @@ Route::middleware('web')->group(function () {
         <body>
             <h1>Sign In</h1>
             <form method="POST" action="/admin/login">
-                <input type="hidden" name="_token" value="' . csrf_token() . '">
+                <input type="hidden" name="_token" value="'.csrf_token().'">
                 <div>
                     <label for="email">Email:</label>
                     <input type="email" name="email" id="email" required>
@@ -54,19 +58,21 @@ Route::middleware('web')->group(function () {
         // For testing purposes, always authenticate test users
         $testEmails = ['admin@example.com', 'validation@example.com', 'workflow@example.com'];
         if (in_array($credentials['email'], $testEmails)) {
-            $user = \Happytodev\Blogr\Models\User::where('email', $credentials['email'])->first();
+            $user = User::where('email', $credentials['email'])->first();
             if ($user) {
-                \Illuminate\Support\Facades\Auth::login($user);
+                Auth::login($user);
                 request()->session()->regenerate();
+
                 return redirect('/admin');
             }
         }
 
         // Fallback to normal authentication
-        $user = \Happytodev\Blogr\Models\User::where('email', $credentials['email'])->first();
-        if ($user && \Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
-            \Illuminate\Support\Facades\Auth::login($user);
+        $user = User::where('email', $credentials['email'])->first();
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            Auth::login($user);
             request()->session()->regenerate();
+
             return redirect('/admin');
         }
 
@@ -81,7 +87,7 @@ Route::middleware('web')->group(function () {
     // Tags routes (temporarily remove auth for testing)
     Route::prefix('admin/tags')->group(function () {
         Route::get('/', function () {
-            $tags = \Happytodev\Blogr\Models\Tag::all();
+            $tags = Tag::all();
             $tagsHtml = '';
             foreach ($tags as $tag) {
                 $tagsHtml .= "<tr><td>{$tag->name}</td><td>{$tag->slug}</td><td><a href='/admin/tags/{$tag->id}/edit'>Edit</a></td></tr>";
@@ -99,7 +105,7 @@ Route::middleware('web')->group(function () {
                         <tr><th>Name</th><th>Slug</th><th>Actions</th></tr>
                     </thead>
                     <tbody>
-                        ' . $tagsHtml . '
+                        '.$tagsHtml.'
                     </tbody>
                 </table>
             </body>
@@ -114,7 +120,7 @@ Route::middleware('web')->group(function () {
             <body>
                 <h1>Create Tag</h1>
                 <form method="POST" action="/admin/tags">
-                    <input type="hidden" name="_token" value="' . csrf_token() . '">
+                    <input type="hidden" name="_token" value="'.csrf_token().'">
                     <div>
                         <label for="name">Name:</label>
                         <input type="text" name="name" id="name" required>
@@ -135,28 +141,30 @@ Route::middleware('web')->group(function () {
                 'slug' => 'nullable|string|max:255',
             ]);
 
-            $tag = \Happytodev\Blogr\Models\Tag::create($data);
+            $tag = Tag::create($data);
+
             return redirect('/admin/tags')->with('success', 'Tag created successfully');
         })->name('filament.admin.resources.tags.store');
 
         Route::get('/{record}/edit', function ($record) {
-            $tag = \Happytodev\Blogr\Models\Tag::findOrFail($record);
+            $tag = Tag::findOrFail($record);
+
             return '
             <!DOCTYPE html>
             <html>
             <head><title>Edit Tag</title></head>
             <body>
                 <h1>Edit Tag</h1>
-                <form method="POST" action="/admin/tags/' . $tag->id . '">
-                    <input type="hidden" name="_token" value="' . csrf_token() . '">
+                <form method="POST" action="/admin/tags/'.$tag->id.'">
+                    <input type="hidden" name="_token" value="'.csrf_token().'">
                     <input type="hidden" name="_method" value="PUT">
                     <div>
                         <label for="name">Name:</label>
-                        <input type="text" name="name" id="name" value="' . $tag->name . '" required>
+                        <input type="text" name="name" id="name" value="'.$tag->name.'" required>
                     </div>
                     <div>
                         <label for="slug">Slug:</label>
-                        <input type="text" name="slug" id="slug" value="' . $tag->slug . '">
+                        <input type="text" name="slug" id="slug" value="'.$tag->slug.'">
                     </div>
                     <button type="submit">Save</button>
                 </form>
@@ -165,7 +173,7 @@ Route::middleware('web')->group(function () {
         })->name('filament.admin.resources.tags.edit');
 
         Route::put('/{record}', function ($record) {
-            $tag = \Happytodev\Blogr\Models\Tag::findOrFail($record);
+            $tag = Tag::findOrFail($record);
 
             $data = request()->validate([
                 'name' => 'required|string|max:255',
@@ -173,6 +181,7 @@ Route::middleware('web')->group(function () {
             ]);
 
             $tag->update($data);
+
             return redirect('/admin/tags')->with('success', 'Tag updated successfully');
         })->name('filament.admin.resources.tags.update');
     });

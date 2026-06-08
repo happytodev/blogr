@@ -36,6 +36,7 @@ interface BlogrExtension
 
     /**
      * Optional array of extension IDs that this extension depends on.
+     *
      * @return string[]
      */
     public function getDependencies(): array;

@@ -1,10 +1,12 @@
 <?php
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
+
 use function Pest\Laravel\get;
 
 beforeEach(function () {
@@ -20,7 +22,7 @@ test('navigation renders cms page link correctly', function () {
         'template' => 'default',
         'is_published' => true,
     ]);
-    
+
     CmsPageTranslation::create([
         'cms_page_id' => $page->id,
         'locale' => 'en',
@@ -28,7 +30,7 @@ test('navigation renders cms page link correctly', function () {
         'title' => 'About Us',
         'content' => 'About content',
     ]);
-    
+
     Config::set('blogr.ui.navigation.menu_items', [
         [
             'type' => 'cms_page',
@@ -37,12 +39,12 @@ test('navigation renders cms page link correctly', function () {
             'target' => '_self',
         ],
     ]);
-    
+
     $response = get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200)
         ->assertSee('About');
-    
+
     // Verify the URL is correct
     $expectedUrl = route('cms.page.show', ['locale' => 'en', 'slug' => 'about']);
     $response->assertSee($expectedUrl, false);
@@ -54,7 +56,7 @@ test('navigation marks cms page as active when on that page', function () {
         'template' => 'default',
         'is_published' => true,
     ]);
-    
+
     CmsPageTranslation::create([
         'cms_page_id' => $page->id,
         'locale' => 'en',
@@ -62,7 +64,7 @@ test('navigation marks cms page as active when on that page', function () {
         'title' => 'Contact',
         'content' => 'Contact content',
     ]);
-    
+
     Config::set('blogr.ui.navigation.menu_items', [
         [
             'type' => 'cms_page',
@@ -71,10 +73,10 @@ test('navigation marks cms page as active when on that page', function () {
             'target' => '_self',
         ],
     ]);
-    
+
     // Visit the CMS page
     $response = get(route('cms.page.show', ['locale' => 'en', 'slug' => 'contact']));
-    
+
     $response->assertStatus(200);
 });
 
@@ -84,7 +86,7 @@ test('navigation handles cms page with multiple locales', function () {
         'template' => 'default',
         'is_published' => true,
     ]);
-    
+
     // English translation
     CmsPageTranslation::create([
         'cms_page_id' => $page->id,
@@ -93,7 +95,7 @@ test('navigation handles cms page with multiple locales', function () {
         'title' => 'Services',
         'content' => 'Services content',
     ]);
-    
+
     // French translation
     CmsPageTranslation::create([
         'cms_page_id' => $page->id,
@@ -102,7 +104,7 @@ test('navigation handles cms page with multiple locales', function () {
         'title' => 'Services',
         'content' => 'Contenu services',
     ]);
-    
+
     Config::set('blogr.ui.navigation.menu_items', [
         [
             'type' => 'cms_page',
@@ -111,12 +113,12 @@ test('navigation handles cms page with multiple locales', function () {
             'target' => '_self',
         ],
     ]);
-    
+
     // Test EN locale
     $responseEn = get(route('blog.index', ['locale' => 'en']));
     $responseEn->assertStatus(200)
         ->assertSee('Services');
-    
+
     // Test FR locale
     $responseFr = get(route('blog.index', ['locale' => 'fr']));
     $responseFr->assertStatus(200)
@@ -132,9 +134,9 @@ test('navigation handles missing cms page gracefully', function () {
             'target' => '_self',
         ],
     ]);
-    
+
     $response = get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200);
 });
 
@@ -144,7 +146,7 @@ test('navigation handles cms page without translation for locale', function () {
         'template' => 'default',
         'is_published' => true,
     ]);
-    
+
     CmsPageTranslation::create([
         'cms_page_id' => $page->id,
         'locale' => 'en',
@@ -152,7 +154,7 @@ test('navigation handles cms page without translation for locale', function () {
         'title' => 'Test',
         'content' => 'Test content',
     ]);
-    
+
     Config::set('blogr.ui.navigation.menu_items', [
         [
             'type' => 'cms_page',
@@ -161,9 +163,9 @@ test('navigation handles cms page without translation for locale', function () {
             'target' => '_self',
         ],
     ]);
-    
+
     $response = get(route('blog.index', ['locale' => 'fr']));
-    
+
     $response->assertStatus(200);
 });
 
@@ -173,7 +175,7 @@ test('cms page can be added to menu with multilingual labels', function () {
         'template' => 'default',
         'is_published' => true,
     ]);
-    
+
     CmsPageTranslation::create([
         'cms_page_id' => $page->id,
         'locale' => 'en',
@@ -181,7 +183,7 @@ test('cms page can be added to menu with multilingual labels', function () {
         'title' => 'FAQ',
         'content' => 'FAQ content',
     ]);
-    
+
     Config::set('blogr.ui.navigation.menu_items', [
         [
             'type' => 'cms_page',
@@ -193,9 +195,9 @@ test('cms page can be added to menu with multilingual labels', function () {
             'target' => '_self',
         ],
     ]);
-    
+
     $response = get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200)
         ->assertSee('FAQ');
 });

@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -13,7 +13,7 @@ return new class extends Migration
         if (DB::getDriverName() === 'sqlite') {
             return;
         }
-        
+
         // MySQL/PostgreSQL: Make translatable fields nullable
         Schema::table('blog_posts', function (Blueprint $table) {
             $table->string('title')->nullable()->change();
@@ -28,12 +28,12 @@ return new class extends Migration
         if (DB::getDriverName() === 'sqlite') {
             return;
         }
-        
+
         Schema::table('blog_posts', function (Blueprint $table) {
             $table->string('title')->nullable(false)->change();
             $table->text('content')->nullable(false)->change();
             $table->string('slug')->nullable(false)->change();
-            
+
             // Note: Don't touch tldr and SEO fields as they remain nullable
         });
     }

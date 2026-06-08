@@ -2,6 +2,8 @@
 
 namespace Happytodev\Blogr\Models;
 
+use Happytodev\Blogr\Tests\Database\Factories\BlogPostTranslationFactory;
+use Happytodev\Blogr\Traits\ClearsLocaleCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,10 +34,10 @@ class BlogPostTranslation extends Model
      */
     protected static function newFactory()
     {
-        return \Happytodev\Blogr\Tests\Database\Factories\BlogPostTranslationFactory::new();
+        return BlogPostTranslationFactory::new();
     }
 
-    use \Happytodev\Blogr\Traits\ClearsLocaleCache;
+    use ClearsLocaleCache;
 
     /**
      * Get the post that owns this translation.
@@ -77,17 +79,17 @@ class BlogPostTranslation extends Model
     public function calculateReadingTime(): void
     {
         $readingSpeed = config('blogr.reading_speed.words_per_minute', 200);
-        
+
         // Combine title and content for word count
-        $text = $this->title . ' ' . $this->content;
-        
+        $text = $this->title.' '.$this->content;
+
         // Remove HTML tags and count words
         $text = strip_tags($text);
         $wordCount = str_word_count($text);
-        
+
         // Calculate reading time in minutes
         $readingTime = ceil($wordCount / $readingSpeed);
-        
+
         $this->reading_time = $readingTime;
         $this->save();
     }

@@ -20,8 +20,8 @@ class CmsPageBackupService
                 'pages' => CmsPage::with('translations')->get()->toArray(),
             ];
 
-            $filename = 'cms-pages-backup-' . now()->format('Y-m-d-H-i-s') . '.json';
-            $path = storage_path('app/blogr-backups/' . $filename);
+            $filename = 'cms-pages-backup-'.now()->format('Y-m-d-H-i-s').'.json';
+            $path = storage_path('app/blogr-backups/'.$filename);
 
             File::ensureDirectoryExists(storage_path('app/blogr-backups'));
             File::put($path, json_encode($backupData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
@@ -30,7 +30,7 @@ class CmsPageBackupService
 
             return $path;
         } catch (\Exception $e) {
-            Log::error("BlogrBackupService: Backup failed: " . $e->getMessage());
+            Log::error('BlogrBackupService: Backup failed: '.$e->getMessage());
             throw $e;
         }
     }
@@ -43,7 +43,7 @@ class CmsPageBackupService
         try {
             $backupDir = storage_path('app/blogr-backups');
 
-            if (!File::exists($backupDir)) {
+            if (! File::exists($backupDir)) {
                 return [];
             }
 
@@ -61,7 +61,8 @@ class CmsPageBackupService
                 ->values()
                 ->toArray();
         } catch (\Exception $e) {
-            Log::error("BlogrBackupService: Failed to list backups: " . $e->getMessage());
+            Log::error('BlogrBackupService: Failed to list backups: '.$e->getMessage());
+
             return [];
         }
     }
@@ -72,14 +73,14 @@ class CmsPageBackupService
     public function restore(string $backupPath, bool $deleteExisting = false): array
     {
         try {
-            if (!File::exists($backupPath)) {
+            if (! File::exists($backupPath)) {
                 throw new \Exception("Backup file not found: {$backupPath}");
             }
 
             $backupData = json_decode(File::get($backupPath), true);
 
-            if (!isset($backupData['pages'])) {
-                throw new \Exception("Invalid backup format");
+            if (! isset($backupData['pages'])) {
+                throw new \Exception('Invalid backup format');
             }
 
             if ($deleteExisting) {
@@ -113,18 +114,18 @@ class CmsPageBackupService
                         $stats['translations_restored']++;
                     }
                 } catch (\Exception $e) {
-                    $stats['errors'][] = "Failed to restore page: " . $e->getMessage();
+                    $stats['errors'][] = 'Failed to restore page: '.$e->getMessage();
                 }
             }
 
             Log::info(
-                "BlogrBackupService: Restored CMS pages. Pages: {$stats['pages_restored']}, " .
+                "BlogrBackupService: Restored CMS pages. Pages: {$stats['pages_restored']}, ".
                 "Translations: {$stats['translations_restored']}"
             );
 
             return $stats;
         } catch (\Exception $e) {
-            Log::error("BlogrBackupService: Restore failed: " . $e->getMessage());
+            Log::error('BlogrBackupService: Restore failed: '.$e->getMessage());
             throw $e;
         }
     }
@@ -138,11 +139,14 @@ class CmsPageBackupService
             if (File::exists($backupPath)) {
                 File::delete($backupPath);
                 Log::info("BlogrBackupService: Deleted backup {$backupPath}");
+
                 return true;
             }
+
             return false;
         } catch (\Exception $e) {
-            Log::error("BlogrBackupService: Failed to delete backup: " . $e->getMessage());
+            Log::error('BlogrBackupService: Failed to delete backup: '.$e->getMessage());
+
             return false;
         }
     }
@@ -172,7 +176,8 @@ class CmsPageBackupService
 
             return $deletedCount;
         } catch (\Exception $e) {
-            Log::error("BlogrBackupService: Cleanup failed: " . $e->getMessage());
+            Log::error('BlogrBackupService: Cleanup failed: '.$e->getMessage());
+
             return 0;
         }
     }

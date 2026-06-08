@@ -1,10 +1,12 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
+use Happytodev\Blogr\BlogrServiceProvider;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
+use Happytodev\Blogr\Tests\TestCase;
+
 use function Pest\Laravel\get;
 
 beforeEach(function () {
@@ -24,47 +26,47 @@ beforeEach(function () {
     ]);
 });
 
-test("blog routes work with empty prefix (homepage)", function () {
+test('blog routes work with empty prefix (homepage)', function () {
     // Refresh application with new config
     $this->app['config']->set('blogr.locales.enabled', false);
     $this->app['config']->set('blogr.route.homepage', true);
     $this->app['config']->set('blogr.route.frontend.enabled', true);
-    
+
     // Rebind routes by refreshing the service provider
-    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
-    
+    $this->app->register(BlogrServiceProvider::class, true);
+
     // The blog should be accessible at the root domain
-    $response = get("/");
+    $response = get('/');
 
     // May return 200 or 404 depending on data
     expect($response->status())->toBeIn([200, 404]);
 });
 
-test("blog routes redirect with empty prefix and locales enabled", function () {
+test('blog routes redirect with empty prefix and locales enabled', function () {
     // Refresh application with new config
     $this->app['config']->set('blogr.route.homepage', true);
     $this->app['config']->set('blogr.locales.enabled', true);
     $this->app['config']->set('blogr.locales.default', 'en');
     $this->app['config']->set('blogr.locales.available', ['en', 'fr']);
     $this->app['config']->set('blogr.route.frontend.enabled', true);
-    
+
     // Verify configuration is set correctly
     expect(config('blogr.route.homepage'))->toBeTrue();
     expect(config('blogr.locales.enabled'))->toBeTrue();
     expect(config('blogr.locales.default'))->toBe('en');
 });
 
-test("blog routes work with prefix", function () {
+test('blog routes work with prefix', function () {
     // Refresh application with new config
     $this->app['config']->set('blogr.route.prefix', 'blog');
     $this->app['config']->set('blogr.locales.enabled', false);
     $this->app['config']->set('blogr.route.homepage', false);
     $this->app['config']->set('blogr.route.frontend.enabled', true);
-    
+
     // Rebind routes by refreshing the service provider
-    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
-    
+    $this->app->register(BlogrServiceProvider::class, true);
+
     // The blog should be accessible at /blog
-    $response = get("/blog");
+    $response = get('/blog');
     $response->assertStatus(200);
 });

@@ -7,8 +7,8 @@ use Filament\Forms;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Happytodev\Blogr\Filament\Resources\CmsPages\CmsBlockBuilder;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource;
+use Happytodev\Blogr\Filament\Resources\CmsPages\CmsBlockBuilder;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
 
@@ -18,7 +18,7 @@ class EditCmsPageTranslation extends EditRecord
 
     public ?CmsPage $cmsPage = null;
 
-    public function mount(int | string $record = '', int | string $translation = ''): void
+    public function mount(int|string $record = '', int|string $translation = ''): void
     {
         static::authorizeResourceAccess();
 
@@ -113,6 +113,7 @@ class EditCmsPageTranslation extends EditRecord
     {
         $locale = strtoupper($this->record?->locale ?? '');
         $title = $this->record?->title ?? '';
+
         return "Traduction {$locale} — {$title} enregistrée";
     }
 
@@ -125,7 +126,7 @@ class EditCmsPageTranslation extends EditRecord
         ];
 
         if ($this->record) {
-            $breadcrumbs[] = strtoupper($this->record->locale) . ' — ' . ($this->record->title ?? '');
+            $breadcrumbs[] = strtoupper($this->record->locale).' — '.($this->record->title ?? '');
         }
 
         return $breadcrumbs;

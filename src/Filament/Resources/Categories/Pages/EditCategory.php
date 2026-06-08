@@ -2,11 +2,11 @@
 
 namespace Happytodev\Blogr\Filament\Resources\Categories\Pages;
 
-use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
+use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
 
 class EditCategory extends EditRecord
 {

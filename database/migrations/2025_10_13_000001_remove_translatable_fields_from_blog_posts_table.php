@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -16,11 +16,11 @@ return new class extends Migration
         // This ensures no NOT NULL constraint violations during column drops
         // Use delete() instead of truncate() for MySQL compatibility with foreign keys
         DB::table('blog_posts')->delete();
-        
+
         Schema::table('blog_posts', function (Blueprint $table) {
             // Drop indexes first
             $table->dropUnique(['slug']); // Drop blog_posts_slug_unique index
-            
+
             // Now remove translatable fields (now only in blog_post_translations)
             $table->dropColumn([
                 'title',
@@ -51,4 +51,3 @@ return new class extends Migration
         });
     }
 };
-

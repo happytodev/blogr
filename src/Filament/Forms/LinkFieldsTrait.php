@@ -49,8 +49,8 @@ trait LinkFieldsTrait
             ->url()
             ->nullable()
             ->placeholder('https://example.com/about')
-            ->visible(fn(Get $get) => $get($linkTypeFieldName) === 'external')
-            ->required(fn(Get $get) => $get($linkTypeFieldName) === 'external')
+            ->visible(fn (Get $get) => $get($linkTypeFieldName) === 'external')
+            ->required(fn (Get $get) => $get($linkTypeFieldName) === 'external')
             ->columnSpan(1);
     }
 
@@ -66,12 +66,13 @@ trait LinkFieldsTrait
                     ->get()
                     ->mapWithKeys(function ($category) {
                         $translation = $category->translations->first();
-                        return [$category->id => $translation->name ?? 'Category #' . $category->id];
+
+                        return [$category->id => $translation->name ?? 'Category #'.$category->id];
                     });
             })
             ->searchable()
-            ->visible(fn(Get $get) => $get($linkTypeFieldName) === 'category')
-            ->required(fn(Get $get) => $get($linkTypeFieldName) === 'category')
+            ->visible(fn (Get $get) => $get($linkTypeFieldName) === 'category')
+            ->required(fn (Get $get) => $get($linkTypeFieldName) === 'category')
             ->columnSpan(1);
     }
 
@@ -87,23 +88,24 @@ trait LinkFieldsTrait
                     ->get()
                     ->mapWithKeys(function ($page) {
                         $translation = $page->translations->first();
-                        return [$page->id => $translation->title ?? 'Page #' . $page->id];
+
+                        return [$page->id => $translation->title ?? 'Page #'.$page->id];
                     });
             })
             ->searchable()
-            ->visible(fn(Get $get) => $get($linkTypeFieldName) === 'cms_page')
-            ->required(fn(Get $get) => $get($linkTypeFieldName) === 'cms_page')
+            ->visible(fn (Get $get) => $get($linkTypeFieldName) === 'cms_page')
+            ->required(fn (Get $get) => $get($linkTypeFieldName) === 'cms_page')
             ->columnSpan(1);
     }
 
     /**
      * Get all link fields as schema array for use in forms
      *
-     * @param string $linkTypeFieldName Name of the link_type field
-     * @param string $urlFieldName Name of the URL field
-     * @param string $categoryIdFieldName Name of the category_id field
-     * @param string $cmsPageIdFieldName Name of the cms_page_id field
-     * @param bool $includeBlogHome Whether to include 'Blog Home' option
+     * @param  string  $linkTypeFieldName  Name of the link_type field
+     * @param  string  $urlFieldName  Name of the URL field
+     * @param  string  $categoryIdFieldName  Name of the category_id field
+     * @param  string  $cmsPageIdFieldName  Name of the cms_page_id field
+     * @param  bool  $includeBlogHome  Whether to include 'Blog Home' option
      */
     public static function getLinkFieldsSchema(
         string $linkTypeFieldName = 'link_type',

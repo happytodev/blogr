@@ -2,11 +2,12 @@
 
 namespace Happytodev\Blogr\Database\Seeders;
 
-use Illuminate\Database\Seeder;
+use App\Models\User;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
+use Illuminate\Database\Seeder;
 
 class BlogPostSeeder extends Seeder
 {
@@ -15,9 +16,9 @@ class BlogPostSeeder extends Seeder
     public function run(): void
     {
         // Get the first user or create one
-        $this->user = \App\Models\User::first();
-        if (!$this->user) {
-            $this->user = \App\Models\User::create([
+        $this->user = User::first();
+        if (! $this->user) {
+            $this->user = User::create([
                 'name' => 'Admin',
                 'email' => 'admin@blogr.test',
                 'password' => bcrypt('password'),
@@ -179,6 +180,7 @@ class BlogPostSeeder extends Seeder
     private function calculateReadingTime(string $content): int
     {
         $wordCount = str_word_count(strip_tags($content));
+
         return max(1, (int) ceil($wordCount / 200));
     }
 

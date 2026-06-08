@@ -1,10 +1,10 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Helpers\ConfigHelper;
 use Happytodev\Blogr\Helpers\SEOHelper;
+use Happytodev\Blogr\Tests\TestCase;
 
 test('SEO configuration is properly loaded', function () {
     // Test that config values are accessible or have defaults
@@ -25,7 +25,7 @@ test('SEOHelper methods exist', function () {
     $methods = [
         'forListingPage',
         'forBlogPost',
-        'generateJsonLd'
+        'generateJsonLd',
     ];
 
     foreach ($methods as $method) {

@@ -6,11 +6,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Happytodev\Blogr\Models\BlogPost;
-use Illuminate\Database\Eloquent\Builder;
 
 class ScheduledPosts extends BaseWidget
 {
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected static ?string $heading = 'Scheduled Posts';
 
@@ -33,6 +32,7 @@ class ScheduledPosts extends BaseWidget
                         if (strlen($state) <= 40) {
                             return null;
                         }
+
                         return $state;
                     }),
 

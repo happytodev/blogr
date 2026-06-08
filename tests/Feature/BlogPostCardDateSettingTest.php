@@ -1,20 +1,21 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
+use Carbon\Carbon;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
 
 it('displays publication date on blog cards when setting is enabled by default', function () {
     Storage::fake('public');
-    
+
     $user = User::factory()->create();
     $category = Category::factory()->create();
-    
+
     $post = BlogPost::create([
         'user_id' => $user->id,
         'category_id' => $category->id,
@@ -26,27 +27,27 @@ it('displays publication date on blog cards when setting is enabled by default',
         'slug' => 'test-post',
         'content' => 'Test content',
     ]);
-    
+
     // Default setting should be enabled (true)
     expect(config('blogr.ui.dates.show_publication_date'))->toBeTrue();
     expect(config('blogr.ui.dates.show_publication_date_on_cards'))->toBeTrue();
-    
+
     $response = $this->get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200);
     $response->assertSee('October 15, 2024');
 });
 
 it('hides publication date on blog cards when setting is disabled', function () {
     Storage::fake('public');
-    
+
     // Disable the setting
     config(['blogr.ui.dates.show_publication_date' => true]);
     config(['blogr.ui.dates.show_publication_date_on_cards' => false]);
-    
+
     $user = User::factory()->create();
     $category = Category::factory()->create();
-    
+
     $post = BlogPost::create([
         'user_id' => $user->id,
         'category_id' => $category->id,
@@ -58,11 +59,11 @@ it('hides publication date on blog cards when setting is disabled', function () 
         'slug' => 'test-post-hidden-date',
         'content' => 'Test content',
     ]);
-    
+
     $response = $this->get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200);
-    
+
     // Should display the post title but not the date
     $response->assertSee('Test Post Hidden Date');
     $response->assertDontSee('October 15, 2024');
@@ -70,13 +71,13 @@ it('hides publication date on blog cards when setting is disabled', function () 
 
 it('respects show_publication_date setting on category pages', function () {
     Storage::fake('public');
-    
+
     config(['blogr.ui.dates.show_publication_date' => true]);
     config(['blogr.ui.dates.show_publication_date_on_cards' => false]);
-    
+
     $user = User::factory()->create();
     $category = Category::factory()->create(['slug' => 'tech']);
-    
+
     $post = BlogPost::create([
         'user_id' => $user->id,
         'category_id' => $category->id,
@@ -88,9 +89,9 @@ it('respects show_publication_date setting on category pages', function () {
         'slug' => 'category-test-post',
         'content' => 'Test content',
     ]);
-    
+
     $response = $this->get(route('blog.category', ['categorySlug' => 'tech']));
-    
+
     $response->assertStatus(200);
     $response->assertSee('Category Test Post');
     $response->assertDontSee('October 15, 2024');
@@ -98,14 +99,14 @@ it('respects show_publication_date setting on category pages', function () {
 
 it('respects show_publication_date setting on tag pages', function () {
     Storage::fake('public');
-    
+
     config(['blogr.ui.dates.show_publication_date' => true]);
     config(['blogr.ui.dates.show_publication_date_on_cards' => false]);
-    
+
     $user = User::factory()->create();
     $category = Category::factory()->create();
-    $tag = \Happytodev\Blogr\Models\Tag::factory()->create(['slug' => 'laravel']);
-    
+    $tag = Tag::factory()->create(['slug' => 'laravel']);
+
     $post = BlogPost::create([
         'user_id' => $user->id,
         'category_id' => $category->id,
@@ -117,11 +118,11 @@ it('respects show_publication_date setting on tag pages', function () {
         'slug' => 'tag-test-post',
         'content' => 'Test content',
     ]);
-    
+
     $post->tags()->attach($tag->id);
-    
+
     $response = $this->get(route('blog.tag', ['tagSlug' => 'laravel']));
-    
+
     $response->assertStatus(200);
     $response->assertSee('Tag Test Post');
     $response->assertDontSee('October 15, 2024');

@@ -1,11 +1,11 @@
 <?php
 
-use Workbench\App\Models\User;
 use Happytodev\Blogr\Models\Tag;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Workbench\App\Models\User;
 
-use function Pest\Laravel\{actingAs};
+use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
 
@@ -19,8 +19,8 @@ it('can login and access admin dashboard', function () {
 
     // For testing purposes, bypass authentication and directly visit the tags page
     $page = visit('/admin/tags')
-         ->assertPathIs('/admin/tags')
-         ->assertSee('Tags');
+        ->assertPathIs('/admin/tags')
+        ->assertSee('Tags');
     $page->screenshot();
 })->skip('Browser tests require proper Dusk/browser testing setup with authentication');
 
@@ -34,19 +34,19 @@ it('can create and edit tag through browser workflow', function () {
 
     // Directly visit the tags page (authentication bypassed for testing)
     $page = visit('/admin/tags')
-         ->assertPathIs('/admin/tags')
-         ->assertSee('Create Tag');
+        ->assertPathIs('/admin/tags')
+        ->assertSee('Create Tag');
 
     // Create a new tag
     $page->click('Create Tag')
-         ->assertPathIs('/admin/tags/create')
-         ->assertSee('Create Tag')
-         ->fill('name', 'Browser Test Tag')
-         ->fill('slug', 'browser-test-tag')
-         ->press('Create')
-         ->assertPathIs('/admin/tags')
-         ->wait(2)
-         ->assertSee('Browser Test Tag');
+        ->assertPathIs('/admin/tags/create')
+        ->assertSee('Create Tag')
+        ->fill('name', 'Browser Test Tag')
+        ->fill('slug', 'browser-test-tag')
+        ->press('Create')
+        ->assertPathIs('/admin/tags')
+        ->wait(2)
+        ->assertSee('Browser Test Tag');
 
     // Verify tag was created in database
     $tag = Tag::where('name', 'Browser Test Tag')->first();

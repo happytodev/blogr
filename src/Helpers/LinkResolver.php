@@ -14,11 +14,11 @@ class LinkResolver
     /**
      * Resolve a link from block data
      *
-     * @param array $data Block data containing link_type and related fields
-     * @param string $linkTypeKey The key containing the link type (e.g., 'cta_link_type')
-     * @param string $urlKey The key containing the URL (e.g., 'cta_url')
-     * @param string $categoryIdKey The key containing the category ID (e.g., 'cta_category_id')
-     * @param string $cmsPageIdKey The key containing the CMS page ID (e.g., 'cta_cms_page_id')
+     * @param  array  $data  Block data containing link_type and related fields
+     * @param  string  $linkTypeKey  The key containing the link type (e.g., 'cta_link_type')
+     * @param  string  $urlKey  The key containing the URL (e.g., 'cta_url')
+     * @param  string  $categoryIdKey  The key containing the category ID (e.g., 'cta_category_id')
+     * @param  string  $cmsPageIdKey  The key containing the CMS page ID (e.g., 'cta_cms_page_id')
      * @return string|null The resolved URL or null if not found
      */
     public static function resolve(
@@ -52,16 +52,18 @@ class LinkResolver
             $defaultLocale = config('blogr.locales.default', 'en');
             $prefix = config('blogr.route.prefix', 'blog');
             $isHomepage = config('blogr.route.homepage', false);
-            
+
             if ($localesEnabled) {
                 if ($isHomepage || empty($prefix) || $prefix === '/') {
                     return "/{$defaultLocale}";
                 }
+
                 return "/{$defaultLocale}/{$prefix}";
             } else {
                 if ($isHomepage || empty($prefix) || $prefix === '/') {
-                    return "/";
+                    return '/';
                 }
+
                 return "/{$prefix}";
             }
         }
@@ -72,12 +74,12 @@ class LinkResolver
      */
     private static function resolveCategoryLink(?int $categoryId): ?string
     {
-        if (!$categoryId) {
+        if (! $categoryId) {
             return null;
         }
 
         $category = Category::find($categoryId);
-        if (!$category) {
+        if (! $category) {
             return null;
         }
 
@@ -86,24 +88,26 @@ class LinkResolver
         } catch (\Exception $e) {
             // Fallback: construct URL manually using config
             $translation = $category->translations()->first();
-            if (!$translation) {
+            if (! $translation) {
                 return null;
             }
-            
+
             $localesEnabled = config('blogr.locales.enabled', false);
             $defaultLocale = config('blogr.locales.default', 'en');
             $prefix = config('blogr.route.prefix', 'blog');
             $isHomepage = config('blogr.route.homepage', false);
-            
+
             if ($localesEnabled) {
                 if ($isHomepage || empty($prefix) || $prefix === '/') {
                     return "/{$defaultLocale}/category/{$translation->slug}";
                 }
+
                 return "/{$defaultLocale}/{$prefix}/category/{$translation->slug}";
             } else {
                 if ($isHomepage || empty($prefix) || $prefix === '/') {
                     return "/category/{$translation->slug}";
                 }
+
                 return "/{$prefix}/category/{$translation->slug}";
             }
         }
@@ -114,29 +118,29 @@ class LinkResolver
      */
     private static function resolveCmsPageLink(?int $pageId): ?string
     {
-        if (!$pageId) {
+        if (! $pageId) {
             return null;
         }
 
         $page = CmsPage::find($pageId);
-        if (!$page) {
+        if (! $page) {
             return null;
         }
 
         try {
             // Get the first translation to access the slug
             $translation = $page->translations()->first();
-            if (!$translation) {
+            if (! $translation) {
                 return null;
             }
 
             // Check if locales are enabled
             $localesEnabled = config('blogr.locales.enabled', false);
-            
+
             if ($localesEnabled) {
                 return route('cms.page.show', [
                     'locale' => $translation->locale,
-                    'slug' => $translation->slug
+                    'slug' => $translation->slug,
                 ]);
             } else {
                 return route('cms.page.show', ['slug' => $translation->slug]);
@@ -144,31 +148,34 @@ class LinkResolver
         } catch (\Exception $e) {
             // Fallback: construct URL manually using config
             $translation = $page->translations()->first();
-            if (!$translation) {
+            if (! $translation) {
                 return null;
             }
-            
+
             $localesEnabled = config('blogr.locales.enabled', false);
             $prefix = config('blogr.cms.prefix', 'page');
-            
+
             // Check if this page is marked as homepage
             if ($page->is_homepage ?? false) {
                 if ($localesEnabled) {
                     return "/{$translation->locale}";
                 }
-                return "/";
+
+                return '/';
             }
-            
+
             // Regular CMS page with prefix
             if ($localesEnabled) {
                 if (empty($prefix)) {
                     return "/{$translation->locale}/{$translation->slug}";
                 }
+
                 return "/{$translation->locale}/{$prefix}/{$translation->slug}";
             } else {
                 if (empty($prefix)) {
                     return "/{$translation->slug}";
                 }
+
                 return "/{$prefix}/{$translation->slug}";
             }
         }

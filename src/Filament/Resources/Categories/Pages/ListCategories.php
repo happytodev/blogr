@@ -2,9 +2,9 @@
 
 namespace Happytodev\Blogr\Filament\Resources\Categories\Pages;
 
-use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
 
 class ListCategories extends ListRecords
 {

@@ -1,17 +1,11 @@
 <?php
 
-
-
 namespace Happytodev\Blogr\Tests\Feature;
 
-
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 use Happytodev\Blogr\Models\BlogSeries;
-use Happytodev\Blogr\Models\BlogSeriesTranslation;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class BlogSeriesModelTest extends TestCase
 {
@@ -111,7 +105,7 @@ class BlogSeriesModelTest extends TestCase
 
     public function test_fillable_array_includes_photo(): void
     {
-        $series = new BlogSeries();
+        $series = new BlogSeries;
         $fillable = $series->getFillable();
 
         $this->assertContains(

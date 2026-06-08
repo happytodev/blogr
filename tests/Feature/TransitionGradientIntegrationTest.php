@@ -27,10 +27,10 @@ describe('Transition Gradient Integration', function () {
         // Test color extraction
         $prevColor = WaveSeparatorService::extractEdgeColor($heroBlock, 'bottom');
         $nextColor = WaveSeparatorService::extractEdgeColor($statsBlock, 'top');
-        
+
         // Hero bottom-right: should be TO color
         expect($prevColor)->toBe('#764ba2');
-        
+
         // Stats top (from to-r): should be blended toward FROM
         expect($nextColor)->toBeString();
         expect($nextColor)->toMatch('/^#[0-9a-f]{6}$/i');
@@ -49,7 +49,7 @@ describe('Transition Gradient Integration', function () {
         // Bottom edge of vertical gradient should be the TO color
         $bottomColor = WaveSeparatorService::extractEdgeColor($verticalBlock, 'bottom');
         expect($bottomColor)->toBe('#000000');
-        
+
         // Top edge should be FROM color
         $topColor = WaveSeparatorService::extractEdgeColor($verticalBlock, 'top');
         expect($topColor)->toBe('#ffffff');
@@ -67,7 +67,7 @@ describe('Transition Gradient Integration', function () {
 
         $bottomColor = WaveSeparatorService::extractEdgeColor($radialBlock, 'bottom');
         $topColor = WaveSeparatorService::extractEdgeColor($radialBlock, 'top');
-        
+
         // Radial bottom should use TO color
         expect($bottomColor)->toBe('#0000ff');
         // Radial top should use FROM color
@@ -86,13 +86,13 @@ describe('Transition Gradient Integration', function () {
 
         $bottomColor = WaveSeparatorService::extractEdgeColor($horizontalBlock, 'bottom');
         $topColor = WaveSeparatorService::extractEdgeColor($horizontalBlock, 'top');
-        
+
         // Both should be blends of the two colors
         expect($bottomColor)->toBeString();
         expect($topColor)->toBeString();
         expect($bottomColor)->toMatch('/^#[0-9a-f]{6}$/i');
         expect($topColor)->toMatch('/^#[0-9a-f]{6}$/i');
-        
+
         // Bottom should be closer to TO (0.7 blend)
         // Top should be closer to FROM (0.3 blend)
         // We can't test exact values due to rounding, but both should be valid hex
@@ -156,12 +156,12 @@ describe('Transition Gradient Integration', function () {
 
             $bottomColor = WaveSeparatorService::extractEdgeColor($block, 'bottom');
             $topColor = WaveSeparatorService::extractEdgeColor($block, 'top');
-            
+
             expect($bottomColor)->toBeString();
             expect($topColor)->toBeString();
             expect($bottomColor)->toMatch('/^#[0-9a-f]{6}$/i');
             expect($topColor)->toMatch('/^#[0-9a-f]{6}$/i');
-            
+
             // Specific checks for vertical gradients
             if ($dir === 'to-b') {
                 expect($bottomColor)->toBe('#764ba2');

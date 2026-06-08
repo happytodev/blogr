@@ -2,13 +2,12 @@
 
 namespace Happytodev\Blogr\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Workbench\App\Models\User;
-use Happytodev\Blogr\Models\BlogSeries;
-use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
-use Illuminate\Support\Str;
+use Happytodev\Blogr\Models\BlogSeries;
+use Happytodev\Blogr\Models\BlogSeriesTranslation;
+use Illuminate\Database\Seeder;
+use Workbench\App\Models\User;
 
 class SeriesWithMultipleAuthorsSeeder extends Seeder
 {

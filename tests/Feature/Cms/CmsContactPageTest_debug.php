@@ -1,10 +1,12 @@
 <?php
 
-use Happytodev\Blogr\Models\CmsPage;
+use Happytodev\Blogr\Database\Seeders\CmsPageSeeder;
 use Happytodev\Blogr\Enums\CmsBlockType;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
-use Happytodev\Blogr\Database\Seeders\CmsPageSeeder;
+use Happytodev\Blogr\Filament\Resources\CmsPages\CmsBlockBuilder;
+use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Tests\CmsTestCase;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Mail;
 
 uses(CmsTestCase::class);
@@ -39,7 +41,7 @@ test('map block type exists in enum', function () {
 // ──────────────────────────────────────────────
 
 test('contact page seeder creates all 4 locale translations', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $page = CmsPage::where('slug', 'contact')->first();
@@ -51,7 +53,7 @@ test('contact page seeder creates all 4 locale translations', function () {
 });
 
 test('contact page english translation has correct slug and title', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $en = CmsPage::where('slug', 'contact')->first()->translations()->where('locale', 'en')->first();
@@ -60,7 +62,7 @@ test('contact page english translation has correct slug and title', function () 
 });
 
 test('contact page french translation has correct slug and title', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $fr = CmsPage::where('slug', 'contact')->first()->translations()->where('locale', 'fr')->first();
@@ -69,7 +71,7 @@ test('contact page french translation has correct slug and title', function () {
 });
 
 test('contact page spanish translation has correct slug and title', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $es = CmsPage::where('slug', 'contact')->first()->translations()->where('locale', 'es')->first();
@@ -78,7 +80,7 @@ test('contact page spanish translation has correct slug and title', function () 
 });
 
 test('contact page polish translation has correct slug and title', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $pl = CmsPage::where('slug', 'contact')->first()->translations()->where('locale', 'pl')->first();
@@ -91,7 +93,7 @@ test('contact page polish translation has correct slug and title', function () {
 // ──────────────────────────────────────────────
 
 test('each locale has exactly 6 blocks with correct types', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $page = CmsPage::where('slug', 'contact')->first();
@@ -116,7 +118,7 @@ test('each locale has exactly 6 blocks with correct types', function () {
 // ──────────────────────────────────────────────
 
 test('hero block has text shadow enabled for readability on dark gradient', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $en = CmsPage::where('slug', 'contact')->first()->translations()->where('locale', 'en')->first();
@@ -132,7 +134,7 @@ test('hero block has text shadow enabled for readability on dark gradient', func
 // ──────────────────────────────────────────────
 
 test('stats block has light and dark mode colors', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $en = CmsPage::where('slug', 'contact')->first()->translations()->where('locale', 'en')->first();
@@ -156,7 +158,7 @@ test('stats block has light and dark mode colors', function () {
 // ──────────────────────────────────────────────
 
 test('map block is centered on Grasse France', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     foreach (['en', 'fr', 'es', 'pl'] as $locale) {
@@ -171,7 +173,7 @@ test('map block is centered on Grasse France', function () {
 });
 
 test('map block has tagline set', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $en = CmsPage::where('slug', 'contact')->first()->translations()->where('locale', 'en')->first();
@@ -182,7 +184,7 @@ test('map block has tagline set', function () {
 });
 
 test('map block has 3 markers including Grasse landmarks', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $en = CmsPage::where('slug', 'contact')->first()->translations()->where('locale', 'en')->first();
@@ -197,7 +199,7 @@ test('map block has 3 markers including Grasse landmarks', function () {
 });
 
 test('map block has NO Google Maps references in data', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $en = CmsPage::where('slug', 'contact')->first()->translations()->where('locale', 'en')->first();
@@ -209,7 +211,7 @@ test('map block has NO Google Maps references in data', function () {
 });
 
 test('map block has light and dark mode colors for readability', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $en = CmsPage::where('slug', 'contact')->first()->translations()->where('locale', 'en')->first();
@@ -235,7 +237,7 @@ test('map block has light and dark mode colors for readability', function () {
 // ──────────────────────────────────────────────
 
 test('contact_form block exists in every locale', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     foreach (['en', 'fr', 'es', 'pl'] as $locale) {
@@ -247,7 +249,7 @@ test('contact_form block exists in every locale', function () {
 });
 
 test('contact_form block has light and dark mode colors', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $en = CmsPage::where('slug', 'contact')->first()->translations()->where('locale', 'en')->first();
@@ -269,7 +271,7 @@ test('contact_form block has light and dark mode colors', function () {
 // ──────────────────────────────────────────────
 
 test('features block has X and Bluesky instead of chat', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     foreach (['en', 'fr', 'es', 'pl'] as $locale) {
@@ -285,15 +287,15 @@ test('features block has X and Bluesky instead of chat', function () {
         expect($emailItem['title'])->toMatch('/Email|Correo|Mail|Email|email/i');
 
         // Must contain X / Twitter reference
-        $xItem = collect($items)->first(fn($i) => str_contains($i['title'], 'X') || str_contains($i['title'], 'Twitter'));
+        $xItem = collect($items)->first(fn ($i) => str_contains($i['title'], 'X') || str_contains($i['title'], 'Twitter'));
         expect($xItem)->not->toBeNull();
 
         // Must contain Bluesky
-        $bskyItem = collect($items)->first(fn($i) => str_contains($i['title'], 'Bluesky') || str_contains($i['title'], 'Bluesky'));
+        $bskyItem = collect($items)->first(fn ($i) => str_contains($i['title'], 'Bluesky') || str_contains($i['title'], 'Bluesky'));
         expect($bskyItem)->not->toBeNull();
 
         // Must NOT have Live Chat
-        $chatItem = collect($items)->first(fn($i) => str_contains(strtolower($i['title']), 'chat'));
+        $chatItem = collect($items)->first(fn ($i) => str_contains(strtolower($i['title']), 'chat'));
         expect($chatItem)->toBeNull();
     }
 });
@@ -304,7 +306,7 @@ test('features block has X and Bluesky instead of chat', function () {
 
 test('contact submit route is registered', function () {
     $routes = Route::getRoutes()->getRoutesByMethod()['POST'] ?? [];
-    $contactRoute = collect($routes)->first(fn($r) => $r->getName() === 'blogr.cms.contact.submit');
+    $contactRoute = collect($routes)->first(fn ($r) => $r->getName() === 'blogr.cms.contact.submit');
     expect($contactRoute)->not->toBeNull();
     expect($contactRoute->uri())->toBe('contact/submit');
 });
@@ -312,7 +314,7 @@ test('contact submit route is registered', function () {
 test('contact submit accepts valid data', function () {
     Mail::fake();
 
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+    $response = $this->withoutMiddleware(VerifyCsrfToken::class)
         ->postJson(route('blogr.cms.contact.submit'), [
             'name' => 'John Doe',
             'email' => 'john@example.com',
@@ -320,41 +322,44 @@ test('contact submit accepts valid data', function () {
             'message' => 'This is a test message that is long enough to pass validation.',
         ]);
 
-    $response->assertStatus(200); if (!$response->ok()) { dump($response->getContent()); }
+    $response->assertStatus(200);
+    if (! $response->ok()) {
+        dump($response->getContent());
+    }
     $response->assertJson(['success' => true]);
 });
 
 test('contact submit rejects missing name', function () {
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+    $response = $this->withoutMiddleware(VerifyCsrfToken::class)
         ->postJson(route('blogr.cms.contact.submit'), [
-        'email' => 'john@example.com',
-        'subject' => 'Test',
-        'message' => 'A test message here.',
-    ]);
+            'email' => 'john@example.com',
+            'subject' => 'Test',
+            'message' => 'A test message here.',
+        ]);
 
     $response->assertStatus(422);
 });
 
 test('contact submit rejects invalid email', function () {
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+    $response = $this->withoutMiddleware(VerifyCsrfToken::class)
         ->postJson(route('blogr.cms.contact.submit'), [
-        'name' => 'John',
-        'email' => 'not-an-email',
-        'subject' => 'Test',
-        'message' => 'A test message here.',
-    ]);
+            'name' => 'John',
+            'email' => 'not-an-email',
+            'subject' => 'Test',
+            'message' => 'A test message here.',
+        ]);
 
     $response->assertStatus(422);
 });
 
 test('contact submit rejects missing message', function () {
-    $response = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+    $response = $this->withoutMiddleware(VerifyCsrfToken::class)
         ->postJson(route('blogr.cms.contact.submit'), [
-        'name' => 'John',
-        'email' => 'john@example.com',
-        'subject' => 'Test',
-        'message' => '',
-    ]);
+            'name' => 'John',
+            'email' => 'john@example.com',
+            'subject' => 'Test',
+            'message' => '',
+        ]);
 
     $response->assertStatus(422);
 });
@@ -376,7 +381,7 @@ test('contact submit csrf protection works', function () {
 // ──────────────────────────────────────────────
 
 test('map block blade view has no Google Maps references', function () {
-    $path = projectRoot() . '/resources/views/components/blocks/map.blade.php';
+    $path = projectRoot().'/resources/views/components/blocks/map.blade.php';
     $content = file_get_contents($path);
 
     expect($content)->not->toContain('google');
@@ -386,7 +391,7 @@ test('map block blade view has no Google Maps references', function () {
 });
 
 test('map block blade view uses Leaflet CDN from unpkg', function () {
-    $path = projectRoot() . '/resources/views/components/blocks/map.blade.php';
+    $path = projectRoot().'/resources/views/components/blocks/map.blade.php';
     $content = file_get_contents($path);
 
     expect($content)->toContain('unpkg.com/leaflet');
@@ -395,7 +400,7 @@ test('map block blade view uses Leaflet CDN from unpkg', function () {
 });
 
 test('map block blade view uses CartoDB tiles for dark mode', function () {
-    $path = projectRoot() . '/resources/views/components/blocks/map.blade.php';
+    $path = projectRoot().'/resources/views/components/blocks/map.blade.php';
     $content = file_get_contents($path);
 
     expect($content)->toContain('basemaps.cartocdn.com/dark_all');
@@ -406,7 +411,7 @@ test('map block blade view uses CartoDB tiles for dark mode', function () {
 // ──────────────────────────────────────────────
 
 test('contact form blade view has proper dark mode label contrast', function () {
-    $path = projectRoot() . '/resources/views/components/blocks/contact_form.blade.php';
+    $path = projectRoot().'/resources/views/components/blocks/contact_form.blade.php';
     $content = file_get_contents($path);
 
     // Labels should have proper dark mode contrast
@@ -417,7 +422,7 @@ test('contact form blade view has proper dark mode label contrast', function () 
 });
 
 test('contact form blade view uses Alpine.js for form handling', function () {
-    $path = projectRoot() . '/resources/views/components/blocks/contact_form.blade.php';
+    $path = projectRoot().'/resources/views/components/blocks/contact_form.blade.php';
     $content = file_get_contents($path);
 
     expect($content)->toContain('x-data');
@@ -430,7 +435,7 @@ test('contact form blade view uses Alpine.js for form handling', function () {
 // ──────────────────────────────────────────────
 
 test('CmsBlockBuilder has contactFormBlock and mapBlock static methods', function () {
-    $reflection = new ReflectionClass(\Happytodev\Blogr\Filament\Resources\CmsPages\CmsBlockBuilder::class);
+    $reflection = new ReflectionClass(CmsBlockBuilder::class);
     expect($reflection->hasMethod('contactFormBlock'))->toBeTrue();
     expect($reflection->hasMethod('mapBlock'))->toBeTrue();
     expect($reflection->hasMethod('featuresBlock'))->toBeTrue();
@@ -440,7 +445,7 @@ test('CmsBlockBuilder has contactFormBlock and mapBlock static methods', functio
 });
 
 test('CmsBlockBuilder make() does not throw', function () {
-    \Happytodev\Blogr\Filament\Resources\CmsPages\CmsBlockBuilder::make();
+    CmsBlockBuilder::make();
     expect(true)->toBeTrue();
 });
 

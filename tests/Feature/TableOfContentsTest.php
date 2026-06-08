@@ -1,11 +1,11 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
-use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 
 beforeEach(function () {
     $this->user = User::factory()->create();

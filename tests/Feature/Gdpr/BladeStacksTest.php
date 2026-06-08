@@ -6,7 +6,7 @@ uses(CmsTestCase::class);
 
 function viewPath(string $relative): string
 {
-    return dirname(__DIR__, 3) . '/resources/views/' . ltrim($relative, '/');
+    return dirname(__DIR__, 3).'/resources/views/'.ltrim($relative, '/');
 }
 
 // ─── BLOG LAYOUT STACKS ────────────────────────────────

@@ -2,8 +2,8 @@
 
 namespace Happytodev\Blogr\Database\Seeders;
 
-use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
+use Happytodev\Blogr\Models\CmsPage;
 use Illuminate\Database\Seeder;
 
 class CmsPageSeeder extends Seeder

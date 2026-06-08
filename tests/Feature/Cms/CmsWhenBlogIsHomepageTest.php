@@ -2,6 +2,7 @@
 
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Tests\TestCase;
+
 use function Pest\Laravel\get;
 
 uses(TestCase::class);
@@ -21,10 +22,10 @@ test('CMS homepage route not registered when blog is configured as homepage', fu
         'slug' => 'cms-home',
         'content' => 'CMS Homepage',
     ]);
-    
+
     // Root should show blog, not CMS
     $response = get('/');
-    
+
     // Should get blog index (200) or 404 if no posts, but NOT CMS content
     expect($response->status())->toBeIn([200, 404]);
     $response->assertDontSee('CMS Homepage');

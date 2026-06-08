@@ -1,14 +1,13 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Happytodev\Blogr\Tests\TestCase;
 
 it('blogr settings page loads with Filament form schema', function () {
     // Test that the page can be instantiated
-    $page = new BlogrSettings();
+    $page = new BlogrSettings;
 
     // Test that the form method exists
     expect(method_exists($page, 'form'))->toBeTrue();
@@ -21,7 +20,7 @@ it('blogr settings page loads with Filament form schema', function () {
 });
 
 it('blogr settings has all required public properties', function () {
-    $page = new BlogrSettings();
+    $page = new BlogrSettings;
 
     $expectedProperties = [
         'posts_per_page',
@@ -59,7 +58,7 @@ it('blogr settings mount method loads config correctly', function () {
         'blogr.seo.structured_data.enabled' => false,
     ]);
 
-    $page = new BlogrSettings();
+    $page = new BlogrSettings;
     $page->mount();
 
     // Test that config values are loaded into properties
@@ -75,7 +74,7 @@ it('blogr settings mount method loads config correctly', function () {
 it('blogr settings page renders without component errors', function () {
     // This test ensures that the page can be instantiated and configured correctly
 
-    $page = new BlogrSettings();
+    $page = new BlogrSettings;
 
     // The key test is that we can call the view without errors
     expect($page->getView())->toBe('blogr::filament.pages.blogr-settings');
@@ -94,7 +93,7 @@ it('filament components are properly published', function () {
     // rather than published views which may not exist in test environment
 
     // Test that the BlogrSettings page can be instantiated without errors
-    $page = new BlogrSettings();
+    $page = new BlogrSettings;
     expect($page)->toBeInstanceOf(BlogrSettings::class);
 
     // Test that the page has the required Filament traits

@@ -3,8 +3,8 @@
 namespace Happytodev\Blogr\Commands;
 
 use Happytodev\Blogr\Database\Seeders\CmsPageSeeder;
-use Happytodev\Blogr\Services\CmsPageBackupService;
 use Happytodev\Blogr\Models\CmsPage;
+use Happytodev\Blogr\Services\CmsPageBackupService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -31,15 +31,17 @@ class BlogrPublishDemoPagesCommand extends Command
         $contactExists = CmsPage::where('slug', 'contact')->exists();
         $demoExists = $homeExists || $contactExists;
 
-        if ($demoExists && !$this->option('force')) {
-            if (!$this->option('no-interaction')) {
+        if ($demoExists && ! $this->option('force')) {
+            if (! $this->option('no-interaction')) {
                 $this->warn('⚠️  Demo pages already exist!');
-                if (!$this->confirm('Do you want to overwrite them? Use --force to skip this prompt.')) {
+                if (! $this->confirm('Do you want to overwrite them? Use --force to skip this prompt.')) {
                     $this->info('Cancelled. Use --force to skip confirmation.');
+
                     return 0;
                 }
             } else {
                 $this->error('Demo pages already exist. Use --force to overwrite.');
+
                 return 1;
             }
         }
@@ -51,7 +53,8 @@ class BlogrPublishDemoPagesCommand extends Command
                 $backupPath = $this->backupService->backup();
                 $this->info("✅ Backup created at: {$backupPath}");
             } catch (\Exception $e) {
-                $this->error("❌ Backup failed: " . $e->getMessage());
+                $this->error('❌ Backup failed: '.$e->getMessage());
+
                 return 1;
             }
         }
@@ -59,7 +62,7 @@ class BlogrPublishDemoPagesCommand extends Command
         // Run the seeder
         try {
             $this->info('📝 Seeding demo pages...');
-            $seeder = new CmsPageSeeder();
+            $seeder = new CmsPageSeeder;
             $seeder->run();
 
             $this->info('✅ Demo CMS pages published successfully!');
@@ -75,8 +78,9 @@ class BlogrPublishDemoPagesCommand extends Command
 
             return 0;
         } catch (\Exception $e) {
-            $this->error("❌ Failed to publish demo pages: " . $e->getMessage());
-            Log::error('BlogrPublishDemoPagesCommand: ' . $e->getMessage());
+            $this->error('❌ Failed to publish demo pages: '.$e->getMessage());
+            Log::error('BlogrPublishDemoPagesCommand: '.$e->getMessage());
+
             return 1;
         }
     }

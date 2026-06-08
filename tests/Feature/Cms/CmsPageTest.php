@@ -1,8 +1,8 @@
 <?php
 
+use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
-use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Tests\CmsTestCase;
 
 uses(CmsTestCase::class);

@@ -7,7 +7,7 @@ return [
         'model_label' => 'Benutzer',
         'plural_model_label' => 'Benutzer',
     ],
-    
+
     // Blog UI
     'ui' => [
         'table_of_contents' => 'Inhaltsverzeichnis',
@@ -36,7 +36,7 @@ return [
         'visit_blog' => 'In neuer Registerkarte öffnen',
         'view_website' => 'Website anzeigen',
     ],
-    
+
     // Series
     'series' => [
         'title' => 'Blog-Serien',
@@ -52,7 +52,7 @@ return [
         'current' => 'aktuell',
         'view_all_series' => 'Alle Serien ansehen',
     ],
-    
+
     // Dates
     'date' => [
         'published_on' => 'Veröffentlicht am :date',

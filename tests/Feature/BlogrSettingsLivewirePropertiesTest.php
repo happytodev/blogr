@@ -1,19 +1,12 @@
 <?php
 
-
-
 namespace Happytodev\Blogr\Tests\Feature;
 
-
-uses(\Happytodev\Blogr\Tests\TestCase::class);
-use Happytodev\Blogr\Filament\Pages\BlogrSettings;       
-
-use Happytodev\Blogr\Tests\TestCase;    
-
+uses(TestCase::class);
+use Happytodev\Blogr\Filament\Pages\BlogrSettings;
+use Happytodev\Blogr\Tests\TestCase;
 use ReflectionClass;
-
 use ReflectionProperty;
-
 
 class BlogrSettingsLivewirePropertiesTest extends TestCase
 {
@@ -29,7 +22,7 @@ class BlogrSettingsLivewirePropertiesTest extends TestCase
             $propertyType = $property->getType();
 
             // Skip properties without type declarations (they are supported)
-            if (!$propertyType) {
+            if (! $propertyType) {
                 continue;
             }
 
@@ -53,10 +46,10 @@ class BlogrSettingsLivewirePropertiesTest extends TestCase
                 'null', // null is supported when it's the only type
             ];
 
-            if (!in_array($typeName, $supportedTypes) && !$propertyType->isBuiltin()) {
+            if (! in_array($typeName, $supportedTypes) && ! $propertyType->isBuiltin()) {
                 // For non-builtin types, we need to check if they're supported
                 // For now, we'll allow common types but flag suspicious ones
-                if (!preg_match('/^\\\\?/', $typeName)) {
+                if (! preg_match('/^\\\\?/', $typeName)) {
                     $this->fail("Property '{$propertyName}' has unsupported type '{$typeName}' for Livewire.");
                 }
             }

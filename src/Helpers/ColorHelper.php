@@ -6,8 +6,8 @@ class ColorHelper
 {
     /**
      * Generate dark mode variant from a light Tailwind color class
-     * 
-     * @param string $lightColor The light color class (e.g., 'bg-blue-50')
+     *
+     * @param  string  $lightColor  The light color class (e.g., 'bg-blue-50')
      * @return string The color with dark mode variant (e.g., 'bg-blue-50 dark:bg-blue-900')
      */
     public static function generateDarkMode(string $lightColor): string
@@ -20,7 +20,7 @@ class ColorHelper
         if (preg_match('/(bg|text|border)-(\w+)-(\d+)/', $lightColor, $matches)) {
             $prefix = $matches[1]; // bg, text, or border
             $color = $matches[2];  // blue, red, etc.
-            $shade = (int)$matches[3]; // 50, 100, etc.
+            $shade = (int) $matches[3]; // 50, 100, etc.
 
             // Invert shade for dark mode
             // 50 -> 900, 100 -> 800, 200 -> 700, etc.
@@ -43,8 +43,8 @@ class ColorHelper
 
     /**
      * Remove dark mode classes from a color string
-     * 
-     * @param string $colorWithDark Color string potentially with dark mode classes
+     *
+     * @param  string  $colorWithDark  Color string potentially with dark mode classes
      * @return string Color string without dark mode classes
      */
     public static function removeDarkMode(string $colorWithDark): string
@@ -54,8 +54,8 @@ class ColorHelper
 
     /**
      * Extract only dark mode classes from a color string
-     * 
-     * @param string $colorWithDark Color string potentially with dark mode classes
+     *
+     * @param  string  $colorWithDark  Color string potentially with dark mode classes
      * @return string Only the dark mode classes
      */
     public static function extractDarkMode(string $colorWithDark): string
@@ -63,14 +63,15 @@ class ColorHelper
         if (preg_match('/dark:[^\s]+/', $colorWithDark, $matches)) {
             return $matches[0];
         }
+
         return '';
     }
 
     /**
      * Adjust brightness of a hex color
-     * 
-     * @param string $hex Color in hex format (e.g., #FF0000)
-     * @param int $percent Percentage to adjust (-100 to +100)
+     *
+     * @param  string  $hex  Color in hex format (e.g., #FF0000)
+     * @param  int  $percent  Percentage to adjust (-100 to +100)
      * @return string Adjusted color in hex format
      */
     public static function adjustBrightness(string $hex, int $percent): string
@@ -118,7 +119,7 @@ class ColorHelper
             $b = self::hslToRgb($p, $q, $h - 1 / 3);
         }
 
-        return '#' . implode('', array_map(fn($c) => str_pad(dechex((int)round($c * 255)), 2, '0', STR_PAD_LEFT), [$r, $g, $b]));
+        return '#'.implode('', array_map(fn ($c) => str_pad(dechex((int) round($c * 255)), 2, '0', STR_PAD_LEFT), [$r, $g, $b]));
     }
 
     /**
@@ -141,34 +142,36 @@ class ColorHelper
         if ($t < 2 / 3) {
             return $p + ($q - $p) * (2 / 3 - $t) * 6;
         }
+
         return $p;
     }
 
     /**
      * Convert hex color to RGB format
-     * 
-     * @param string $hex Color in hex format
+     *
+     * @param  string  $hex  Color in hex format
      * @return string Color in rgb(r,g,b) format
      */
     public static function hexToRgb(string $hex): string
     {
         $hex = ltrim($hex, '#');
         [$r, $g, $b] = array_map('hexdec', str_split($hex, 2));
+
         return "rgb($r, $g, $b)";
     }
 
     /**
      * Convert RGB values to hex format
-     * 
-     * @param int $r Red value (0-255)
-     * @param int $g Green value (0-255)
-     * @param int $b Blue value (0-255)
+     *
+     * @param  int  $r  Red value (0-255)
+     * @param  int  $g  Green value (0-255)
+     * @param  int  $b  Blue value (0-255)
      * @return string Color in hex format
      */
     public static function rgbToHex(int $r, int $g, int $b): string
     {
-        return '#' . str_pad(dechex((int)round($r)), 2, '0', STR_PAD_LEFT)
-            . str_pad(dechex((int)round($g)), 2, '0', STR_PAD_LEFT)
-            . str_pad(dechex((int)round($b)), 2, '0', STR_PAD_LEFT);
+        return '#'.str_pad(dechex((int) round($r)), 2, '0', STR_PAD_LEFT)
+            .str_pad(dechex((int) round($g)), 2, '0', STR_PAD_LEFT)
+            .str_pad(dechex((int) round($b)), 2, '0', STR_PAD_LEFT);
     }
 }

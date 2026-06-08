@@ -1,22 +1,23 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
+use Happytodev\Blogr\Commands\BlogrInstallCommand;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
     // Create a temporary app directory structure for testing
-    $this->testAppPath = __DIR__ . '/../.temp-app';
-    $this->userModelPath = $this->testAppPath . '/Models/User.php';
-    
+    $this->testAppPath = __DIR__.'/../.temp-app';
+    $this->userModelPath = $this->testAppPath.'/Models/User.php';
+
     // Clean up if exists
     if (File::exists($this->testAppPath)) {
         File::deleteDirectory($this->testAppPath);
     }
-    
+
     // Create directory structure
-    File::makeDirectory($this->testAppPath . '/Models', 0755, true);
+    File::makeDirectory($this->testAppPath.'/Models', 0755, true);
 });
 
 afterEach(function () {
@@ -63,17 +64,17 @@ class User extends Authenticatable
 PHP;
 
     File::put($this->userModelPath, $basicUserModel);
-    
+
     // Call the configuration method
-    $command = new \Happytodev\Blogr\Commands\BlogrInstallCommand();
+    $command = new BlogrInstallCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('configureUserModelForFilament');
     $method->setAccessible(true);
     $method->invoke($command, $this->userModelPath);
-    
+
     // Read the modified file
     $modifiedContent = File::get($this->userModelPath);
-    
+
     // Assertions
     expect($modifiedContent)->toContain('use Filament\Models\Contracts\FilamentUser;')
         ->and($modifiedContent)->toContain('use Filament\Panel;')
@@ -112,22 +113,22 @@ class User extends Authenticatable implements FilamentUser
 PHP;
 
     File::put($this->userModelPath, $configuredUserModel);
-    
+
     // Call the configuration method
-    $command = new \Happytodev\Blogr\Commands\BlogrInstallCommand();
+    $command = new BlogrInstallCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('configureUserModelForFilament');
     $method->setAccessible(true);
     $method->invoke($command, $this->userModelPath);
-    
+
     // Read the modified file
     $modifiedContent = File::get($this->userModelPath);
-    
+
     // Count occurrences - should only appear once
     $filamentUserCount = substr_count($modifiedContent, 'use Filament\Models\Contracts\FilamentUser;');
     $filamentPanelCount = substr_count($modifiedContent, 'use Filament\Panel;');
     $implementsCount = substr_count($modifiedContent, 'implements FilamentUser');
-    
+
     expect($filamentUserCount)->toBe(1)
         ->and($filamentPanelCount)->toBe(1)
         ->and($implementsCount)->toBe(1);
@@ -149,17 +150,17 @@ class User extends Authenticatable
 PHP;
 
     File::put($this->userModelPath, $basicUserModel);
-    
+
     // Call the configuration method
-    $command = new \Happytodev\Blogr\Commands\BlogrInstallCommand();
+    $command = new BlogrInstallCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('configureUserModelForFilament');
     $method->setAccessible(true);
     $method->invoke($command, $this->userModelPath);
-    
+
     // Read the modified file
     $modifiedContent = File::get($this->userModelPath);
-    
+
     // Should use email domain check
     expect($modifiedContent)->toContain('str_ends_with($this->email');
 });
@@ -181,20 +182,20 @@ class User extends Authenticatable implements MustVerifyEmail
 PHP;
 
     File::put($this->userModelPath, $userWithInterfaces);
-    
+
     // Call the configuration method
-    $command = new \Happytodev\Blogr\Commands\BlogrInstallCommand();
+    $command = new BlogrInstallCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('configureUserModelForFilament');
     $method->setAccessible(true);
     $method->invoke($command, $this->userModelPath);
-    
+
     // Read the modified file
     $modifiedContent = File::get($this->userModelPath);
-    
+
     // Should preserve existing interface and add FilamentUser
     $hasCorrectImplements = str_contains($modifiedContent, 'implements MustVerifyEmail, FilamentUser') ||
                            str_contains($modifiedContent, 'implements FilamentUser, MustVerifyEmail');
-    
+
     expect($hasCorrectImplements)->toBeTrue();
 });

@@ -1,9 +1,9 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogSeries;
+use Happytodev\Blogr\Tests\TestCase;
 
 it('has series configuration in config file', function () {
     expect(config('blogr.series.enabled'))->toBeTrue();
@@ -28,7 +28,7 @@ it('returns storage url when series has photo', function () {
 
 it('uses custom default image from config', function () {
     config(['blogr.series.default_image' => '/custom/image.jpg']);
-    
+
     $series = BlogSeries::factory()->create([
         'photo' => null,
     ]);
@@ -37,14 +37,14 @@ it('uses custom default image from config', function () {
 });
 
 it('default svg image file exists in package', function () {
-    $imagePath = __DIR__ . '/../../resources/images/default-series.svg';
+    $imagePath = __DIR__.'/../../resources/images/default-series.svg';
     expect(file_exists($imagePath))->toBeTrue();
     expect(filesize($imagePath))->toBeGreaterThan(0);
 });
 
 it('series settings are included in blogr settings form', function () {
     $config = config('blogr');
-    
+
     expect($config)->toHaveKey('series');
     expect($config['series'])->toHaveKey('enabled');
     expect($config['series'])->toHaveKey('default_image');
@@ -52,7 +52,7 @@ it('series settings are included in blogr settings form', function () {
 
 it('series default image path is configurable', function () {
     $defaultImage = config('blogr.series.default_image');
-    
+
     expect($defaultImage)->not->toBeNull();
     expect($defaultImage)->toBeString();
     expect($defaultImage)->toContain('.svg');

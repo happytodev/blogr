@@ -1,11 +1,11 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -39,7 +39,7 @@ function createBlogPost(array $overrides = []): BlogPost
 
 test('can create a translation with tldr', function () {
     $post = createBlogPost();
-    
+
     $translation = BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'fr',
@@ -50,13 +50,13 @@ test('can create a translation with tldr', function () {
         'seo_title' => 'SEO Titre FR',
         'seo_description' => 'SEO Description FR',
     ]);
-    
+
     expect($translation->tldr)->toBe('Résumé court en français');
 });
 
 test('tldr is saved in database', function () {
     $post = createBlogPost();
-    
+
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'fr',
@@ -65,7 +65,7 @@ test('tldr is saved in database', function () {
         'content' => 'Contenu',
         'tldr' => 'Résumé sauvegardé',
     ]);
-    
+
     $this->assertDatabaseHas('blog_post_translations', [
         'blog_post_id' => $post->id,
         'locale' => 'fr',
@@ -75,7 +75,7 @@ test('tldr is saved in database', function () {
 
 test('seo fields are saved correctly', function () {
     $post = createBlogPost();
-    
+
     $translation = BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'es',
@@ -86,14 +86,14 @@ test('seo fields are saved correctly', function () {
         'seo_description' => 'Descripción SEO ES',
         'seo_keywords' => 'palabra1, palabra2',
     ]);
-    
+
     expect($translation->seo_title)->toBe('SEO Titulo ES');
     expect($translation->seo_description)->toBe('Descripción SEO ES');
 });
 
 test('can update translation with tldr and seo fields', function () {
     $post = createBlogPost();
-    
+
     $translation = BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'de',
@@ -103,19 +103,19 @@ test('can update translation with tldr and seo fields', function () {
         'tldr' => 'Kurz',
         'seo_title' => 'SEO Titel',
     ]);
-    
+
     $translation->update([
         'tldr' => 'Aktualisierte Zusammenfassung',
         'seo_description' => 'Neue SEO Beschreibung',
     ]);
-    
+
     expect($translation->fresh()->tldr)->toBe('Aktualisierte Zusammenfassung');
     expect($translation->fresh()->seo_description)->toBe('Neue SEO Beschreibung');
 });
 
 test('translation belongs to blog post', function () {
     $post = createBlogPost();
-    
+
     $translation = BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'fr',
@@ -123,14 +123,14 @@ test('translation belongs to blog post', function () {
         'slug' => 'test',
         'content' => 'Content',
     ]);
-    
+
     expect($translation->post)->toBeInstanceOf(BlogPost::class);
     expect($translation->post->id)->toBe($post->id);
 });
 
 test('blog post can have multiple translations', function () {
     $post = createBlogPost();
-    
+
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'fr',
@@ -138,7 +138,7 @@ test('blog post can have multiple translations', function () {
         'slug' => 'francais',
         'content' => 'Contenu FR',
     ]);
-    
+
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'es',
@@ -146,7 +146,7 @@ test('blog post can have multiple translations', function () {
         'slug' => 'espanol',
         'content' => 'Contenido ES',
     ]);
-    
+
     $post->load('translations');
     expect($post->translations)->toHaveCount(3); // EN (from hook) + FR + ES
 });

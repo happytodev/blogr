@@ -2,12 +2,12 @@
 
 namespace Happytodev\Blogr\Http\Controllers;
 
-use Illuminate\Http\Response;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
-use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\CmsPage;
+use Happytodev\Blogr\Models\Tag;
+use Illuminate\Http\Response;
 
 class SitemapController
 {
@@ -15,6 +15,7 @@ class SitemapController
     {
         $locale = $locale ?? config('blogr.locales.default', 'en');
         $xml = $this->generateSitemap($locale);
+
         return response($xml, 200)
             ->header('Content-Type', 'application/xml; charset=UTF-8')
             ->header('Cache-Control', 'public, max-age=3600');
@@ -32,7 +33,7 @@ class SitemapController
 
         foreach ($posts as $post) {
             $translation = $post->translations->firstWhere('locale', $locale);
-            if (!$translation) {
+            if (! $translation) {
                 $translation = $post->getDefaultTranslation();
             }
             if ($translation && $translation->slug) {
@@ -91,7 +92,7 @@ class SitemapController
                 ->get();
             foreach ($pages as $page) {
                 $translation = $page->translations->firstWhere('locale', $locale);
-                if (!$translation) {
+                if (! $translation) {
                     $translation = $page->getDefaultTranslation();
                 }
                 if ($translation && $translation->slug) {
@@ -112,16 +113,16 @@ class SitemapController
             }
         }
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
 
         foreach ($urls as $url) {
-            $xml .= '  <url>' . "\n";
-            $xml .= '    <loc>' . $this->escapeXml($url['loc']) . '</loc>' . "\n";
-            $xml .= '    <lastmod>' . $url['lastmod'] . '</lastmod>' . "\n";
-            $xml .= '    <changefreq>' . $url['changefreq'] . '</changefreq>' . "\n";
-            $xml .= '    <priority>' . $url['priority'] . '</priority>' . "\n";
-            $xml .= '  </url>' . "\n";
+            $xml .= '  <url>'."\n";
+            $xml .= '    <loc>'.$this->escapeXml($url['loc']).'</loc>'."\n";
+            $xml .= '    <lastmod>'.$url['lastmod'].'</lastmod>'."\n";
+            $xml .= '    <changefreq>'.$url['changefreq'].'</changefreq>'."\n";
+            $xml .= '    <priority>'.$url['priority'].'</priority>'."\n";
+            $xml .= '  </url>'."\n";
         }
 
         $xml .= '</urlset>';

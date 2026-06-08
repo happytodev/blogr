@@ -1,12 +1,7 @@
 <?php
+
 uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
-
-use Mockery\MockInterface;
-use Illuminate\Foundation\Vite;
-use Orchestra\Testbench\TestCase;
-use Illuminate\Support\HtmlString;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

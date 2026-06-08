@@ -2,13 +2,14 @@
 
 namespace Happytodev\Blogr\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Happytodev\Blogr\Models\BlogSeries;
-use Happytodev\Blogr\Models\BlogSeriesTranslation;
+use App\Models\User;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
+use Happytodev\Blogr\Models\BlogSeries;
+use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
+use Illuminate\Database\Seeder;
 
 class BlogSeriesSeeder extends Seeder
 {
@@ -17,9 +18,9 @@ class BlogSeriesSeeder extends Seeder
     public function run(): void
     {
         // Get the first user or create one
-        $this->user = \App\Models\User::first();
-        if (!$this->user) {
-            $this->user = \App\Models\User::create([
+        $this->user = User::first();
+        if (! $this->user) {
+            $this->user = User::create([
                 'name' => 'Blog Author',
                 'email' => 'author@example.com',
                 'password' => bcrypt('password'),
@@ -290,7 +291,7 @@ class BlogSeriesSeeder extends Seeder
                 ],
                 [
                     'title' => $translation['title'],
-                    'slug' => $data['slug'] . ($locale !== 'en' ? '-' . $locale : ''),
+                    'slug' => $data['slug'].($locale !== 'en' ? '-'.$locale : ''),
                     'content' => $translation['content'],
                     'seo_title' => $translation['title'],
                     'seo_description' => $translation['seo_description'],
@@ -308,7 +309,7 @@ class BlogSeriesSeeder extends Seeder
         if (isset($this->command) && method_exists($this->command, 'info')) {
             $this->command->info($message);
         } else {
-            echo $message . PHP_EOL;
+            echo $message.PHP_EOL;
         }
     }
 

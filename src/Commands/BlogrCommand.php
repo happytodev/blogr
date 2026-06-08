@@ -62,8 +62,9 @@ class BlogrCommand extends Command
     {
         $this->info('Installing Blogr tutorial content...');
 
-        if (!$this->option('force') && !$this->confirm('This will create tutorial posts. Continue?')) {
+        if (! $this->option('force') && ! $this->confirm('This will create tutorial posts. Continue?')) {
             $this->warn('Installation cancelled.');
+
             return;
         }
 
@@ -111,7 +112,7 @@ class BlogrCommand extends Command
             $this->info("Successfully installed {$count} tutorial posts.");
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->error('Failed to install tutorials: ' . $e->getMessage());
+            $this->error('Failed to install tutorials: '.$e->getMessage());
         }
     }
 
@@ -119,14 +120,16 @@ class BlogrCommand extends Command
     {
         $this->info('Removing Blogr tutorial content...');
 
-        if (!$this->option('force') && !$this->confirm('This will permanently delete tutorial posts. Continue?')) {
+        if (! $this->option('force') && ! $this->confirm('This will permanently delete tutorial posts. Continue?')) {
             $this->warn('Removal cancelled.');
+
             return;
         }
 
         $category = Category::where('slug', 'blogr-tutorial')->first();
-        if (!$category) {
+        if (! $category) {
             $this->warn('No tutorial category found.');
+
             return;
         }
 
@@ -145,8 +148,9 @@ class BlogrCommand extends Command
     protected function listTutorials(): void
     {
         $category = Category::where('slug', 'blogr-tutorial')->first();
-        if (!$category) {
+        if (! $category) {
             $this->warn('No tutorial category found.');
+
             return;
         }
 
@@ -156,6 +160,7 @@ class BlogrCommand extends Command
 
         if ($posts->isEmpty()) {
             $this->warn('No tutorial posts found.');
+
             return;
         }
 

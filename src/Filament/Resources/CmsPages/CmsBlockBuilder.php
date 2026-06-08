@@ -4,24 +4,24 @@ namespace Happytodev\Blogr\Filament\Resources\CmsPages;
 
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
 use Happytodev\Blogr\Enums\CmsBlockType;
-use Happytodev\Blogr\Enums\BackgroundType;
 use Happytodev\Blogr\Filament\Forms\LinkFieldsTrait;
 
 class CmsBlockBuilder
 {
     use LinkFieldsTrait;
+
     public static function make(): Builder
     {
         return Builder::make('blocks')
@@ -57,9 +57,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::HERO->value)
             ->label(CmsBlockType::HERO->getLabel())
             ->icon(CmsBlockType::HERO->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('title')
                             ->label(__('Title'))
                             ->required()
@@ -143,9 +143,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::FEATURES->value)
             ->label(CmsBlockType::FEATURES->getLabel())
             ->icon(CmsBlockType::FEATURES->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('title')
                             ->label(__('Section Title'))
                             ->maxLength(255)
@@ -169,7 +169,7 @@ class CmsBlockBuilder
 
                         Repeater::make('items')
                             ->label(__('Features'))
-                            ->schema(fn() => [
+                            ->schema(fn () => [
                                 TextInput::make('icon')
                                     ->label(__('Heroicon Name'))
                                     ->helperText(__('Ex: heroicon-o-bolt, heroicon-o-shield-check'))
@@ -204,9 +204,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::TESTIMONIALS->value)
             ->label(CmsBlockType::TESTIMONIALS->getLabel())
             ->icon(CmsBlockType::TESTIMONIALS->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('title')
                             ->label(__('Section Title'))
                             ->maxLength(255)
@@ -220,7 +220,7 @@ class CmsBlockBuilder
 
                         Repeater::make('items')
                             ->label(__('Testimonials'))
-                            ->schema(fn() => [
+                            ->schema(fn () => [
                                 TextInput::make('name')
                                     ->label(__('Name'))
                                     ->required()
@@ -277,9 +277,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::CTA->value)
             ->label(CmsBlockType::CTA->getLabel())
             ->icon(CmsBlockType::CTA->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('heading')
                             ->label(__('Heading'))
                             ->required()
@@ -327,9 +327,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::CONTENT->value)
             ->label(CmsBlockType::CONTENT->getLabel())
             ->icon(CmsBlockType::CONTENT->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         MarkdownEditor::make('content')
                             ->label(__('Content'))
                             ->required()
@@ -366,9 +366,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::FAQ->value)
             ->label(CmsBlockType::FAQ->getLabel())
             ->icon(CmsBlockType::FAQ->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('title')
                             ->label(__('Section Title'))
                             ->maxLength(255)
@@ -376,7 +376,7 @@ class CmsBlockBuilder
 
                         Repeater::make('items')
                             ->label(__('Questions'))
-                            ->schema(fn() => [
+                            ->schema(fn () => [
                                 TextInput::make('question')
                                     ->label(__('Question'))
                                     ->required()
@@ -406,9 +406,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::GALLERY->value)
             ->label(CmsBlockType::GALLERY->getLabel())
             ->icon(CmsBlockType::GALLERY->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('heading')
                             ->label(__('Heading'))
                             ->maxLength(255)
@@ -468,9 +468,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::TEAM->value)
             ->label(CmsBlockType::TEAM->getLabel())
             ->icon(CmsBlockType::TEAM->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('heading')
                             ->label(__('Heading'))
                             ->maxLength(255)
@@ -493,7 +493,7 @@ class CmsBlockBuilder
 
                         Repeater::make('members')
                             ->label(__('Team Members'))
-                            ->schema(fn() => [
+                            ->schema(fn () => [
                                 FileUpload::make('photo')
                                     ->label(__('Photo'))
                                     ->image()
@@ -556,9 +556,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::PRICING->value)
             ->label(CmsBlockType::PRICING->getLabel())
             ->icon(CmsBlockType::PRICING->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('heading')
                             ->label(__('Heading'))
                             ->maxLength(255)
@@ -588,7 +588,7 @@ class CmsBlockBuilder
 
                         Repeater::make('plans')
                             ->label(__('Pricing Plans'))
-                            ->schema(fn() => [
+                            ->schema(fn () => [
                                 TextInput::make('name')
                                     ->label(__('Plan Name'))
                                     ->required()
@@ -683,9 +683,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::BLOG_POSTS->value)
             ->label(CmsBlockType::BLOG_POSTS->getLabel())
             ->icon(CmsBlockType::BLOG_POSTS->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('heading')
                             ->label(__('Heading'))
                             ->default(__('Latest Posts'))
@@ -721,9 +721,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::STATS->value)
             ->label(CmsBlockType::STATS->getLabel())
             ->icon(CmsBlockType::STATS->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('heading')
                             ->label(__('Heading'))
                             ->maxLength(255)
@@ -731,7 +731,7 @@ class CmsBlockBuilder
 
                         Repeater::make('stats')
                             ->label(__('Statistics'))
-                            ->schema(fn() => [
+                            ->schema(fn () => [
                                 TextInput::make('number')
                                     ->label(__('Number'))
                                     ->required()
@@ -764,9 +764,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::TIMELINE->value)
             ->label(CmsBlockType::TIMELINE->getLabel())
             ->icon(CmsBlockType::TIMELINE->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('heading')
                             ->label(__('Heading'))
                             ->maxLength(255)
@@ -774,7 +774,7 @@ class CmsBlockBuilder
 
                         Repeater::make('events')
                             ->label(__('Timeline Events'))
-                            ->schema(fn() => [
+                            ->schema(fn () => [
                                 TextInput::make('date')
                                     ->label(__('Date'))
                                     ->required()
@@ -806,9 +806,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::VIDEO->value)
             ->label(CmsBlockType::VIDEO->getLabel())
             ->icon(CmsBlockType::VIDEO->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('heading')
                             ->label(__('Heading'))
                             ->maxLength(255)
@@ -844,9 +844,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::NEWSLETTER->value)
             ->label(CmsBlockType::NEWSLETTER->getLabel())
             ->icon(CmsBlockType::NEWSLETTER->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('heading')
                             ->label(__('Heading'))
                             ->required()
@@ -881,9 +881,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::MAP->value)
             ->label(CmsBlockType::MAP->getLabel())
             ->icon(CmsBlockType::MAP->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('heading')
                             ->label(__('Heading'))
                             ->maxLength(255)
@@ -941,7 +941,7 @@ class CmsBlockBuilder
 
                         Repeater::make('markers')
                             ->label(__('Markers'))
-                            ->schema(fn() => [
+                            ->schema(fn () => [
                                 TextInput::make('lat')
                                     ->label(__('Latitude'))
                                     ->numeric()
@@ -982,9 +982,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::CONTACT_FORM->value)
             ->label(CmsBlockType::CONTACT_FORM->getLabel())
             ->icon(CmsBlockType::CONTACT_FORM->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('heading')
                             ->label(__('Heading'))
                             ->maxLength(255)
@@ -1023,8 +1023,6 @@ class CmsBlockBuilder
 
     /**
      * Get common background configuration fields
-     * 
-     * @return Section
      */
     protected static function getBackgroundFields(): Section
     {
@@ -1032,12 +1030,12 @@ class CmsBlockBuilder
             ->description(__('Configure the block background for light and dark modes'))
             ->schema(fn () => [
                 Group::make()
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         Tabs::make('background_mode')
                             ->tabs([
                                 Tabs\Tab::make('Light Mode')
                                     ->icon('heroicon-o-sun')
-                                    ->schema(fn() => [
+                                    ->schema(fn () => [
                                         Select::make('background_type')
                                             ->label(__('Background Type'))
                                             ->options([
@@ -1082,7 +1080,7 @@ class CmsBlockBuilder
 
                                 Tabs\Tab::make('Dark Mode')
                                     ->icon('heroicon-o-moon')
-                                    ->schema(fn() => [
+                                    ->schema(fn () => [
                                         Select::make('background_type_dark')
                                             ->label(__('Background Type'))
                                             ->options([
@@ -1144,12 +1142,12 @@ class CmsBlockBuilder
                     ->columnSpan(1),
 
                 Group::make()
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         Tabs::make('text_colors_mode')
                             ->tabs([
                                 Tabs\Tab::make('Light Mode')
                                     ->icon('heroicon-o-sun')
-                                    ->schema(fn() => [
+                                    ->schema(fn () => [
                                         ColorPicker::make('heading_color')
                                             ->label(__('Headings Color'))
                                             ->columnSpan(1),
@@ -1166,7 +1164,7 @@ class CmsBlockBuilder
 
                                 Tabs\Tab::make('Dark Mode')
                                     ->icon('heroicon-o-moon')
-                                    ->schema(fn() => [
+                                    ->schema(fn () => [
                                         ColorPicker::make('heading_color_dark')
                                             ->label(__('Headings Color'))
                                             ->columnSpan(1),
@@ -1194,9 +1192,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::WAVE_SEPARATOR->value)
             ->label(CmsBlockType::WAVE_SEPARATOR->getLabel())
             ->icon(CmsBlockType::WAVE_SEPARATOR->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Wave Settings'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         Select::make('position')
                             ->label(__('Position'))
                             ->options([
@@ -1256,13 +1254,13 @@ class CmsBlockBuilder
                             ->label(__('Wave Color (Light Theme)'))
                             ->default('#d946ef')
                             ->columnSpan(1)
-                            ->visible(fn(callable $get) => $get('wave_mode') === 'manual'),
+                            ->visible(fn (callable $get) => $get('wave_mode') === 'manual'),
 
                         ColorPicker::make('wave_color_dark')
                             ->label(__('Wave Color (Dark Theme)'))
                             ->default('#ec4899')
                             ->columnSpan(1)
-                            ->visible(fn(callable $get) => $get('wave_mode') === 'manual'),
+                            ->visible(fn (callable $get) => $get('wave_mode') === 'manual'),
 
                         Select::make('wave_fill_style')
                             ->label(__('Fill Style'))
@@ -1272,7 +1270,7 @@ class CmsBlockBuilder
                             ])
                             ->default('fill')
                             ->columnSpan(1)
-                            ->visible(fn(callable $get) => $get('wave_mode') === 'manual'),
+                            ->visible(fn (callable $get) => $get('wave_mode') === 'manual'),
 
                         TextInput::make('wave_opacity')
                             ->label(__('Opacity'))
@@ -1283,7 +1281,7 @@ class CmsBlockBuilder
                             ->suffix('%')
                             ->helperText(__('Set the transparency: 0% (invisible) to 100% (opaque)'))
                             ->columnSpan(1)
-                            ->visible(fn(callable $get) => $get('wave_mode') === 'manual'),
+                            ->visible(fn (callable $get) => $get('wave_mode') === 'manual'),
                     ])
                     ->columns(2),
 
@@ -1297,13 +1295,13 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::TRANSITION_DIAGONAL->value)
             ->label(CmsBlockType::TRANSITION_DIAGONAL->getLabel())
             ->icon(CmsBlockType::TRANSITION_DIAGONAL->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('⚠️ Important'))
                     ->description(__('Transitions work best when the NEXT block has a solid background color (not a gradient). If the next block has a gradient, the transition may not render as expected.'))
-                    ->schema(fn() => []),
+                    ->schema(fn () => []),
 
                 Section::make(__('Shape & Style'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         Select::make('shape')
                             ->label(__('Shape'))
                             ->options([
@@ -1347,10 +1345,10 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::TRANSITION_CLIPPATH->value)
             ->label(CmsBlockType::TRANSITION_CLIPPATH->getLabel())
             ->icon(CmsBlockType::TRANSITION_CLIPPATH->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Clip Path Transition Settings'))
                     ->description(__('Creates a decorative clip-path transition between blocks'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         Select::make('height')
                             ->label(__('Height'))
                             ->options([
@@ -1380,10 +1378,10 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::TRANSITION_MARGIN->value)
             ->label(CmsBlockType::TRANSITION_MARGIN->getLabel())
             ->icon(CmsBlockType::TRANSITION_MARGIN->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Simple Transition Settings'))
                     ->description(__('Creates a simple gradient overlap transition'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         Select::make('height')
                             ->label(__('Height'))
                             ->options([
@@ -1403,10 +1401,10 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::TRANSITION_ANIMATION->value)
             ->label(CmsBlockType::TRANSITION_ANIMATION->getLabel())
             ->icon(CmsBlockType::TRANSITION_ANIMATION->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Animated Transition Settings'))
                     ->description(__('Creates an animated transition with entrance effect'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         Select::make('height')
                             ->label(__('Height'))
                             ->options([
@@ -1436,9 +1434,9 @@ class CmsBlockBuilder
         return Block::make(CmsBlockType::BLOG_TITLE->value)
             ->label(CmsBlockType::BLOG_TITLE->getLabel())
             ->icon(CmsBlockType::BLOG_TITLE->getIcon())
-            ->schema(fn() => [
+            ->schema(fn () => [
                 Section::make(__('Title Content'))
-                    ->schema(fn() => [
+                    ->schema(fn () => [
                         TextInput::make('title')
                             ->label(__('Title'))
                             ->default(__('Blog'))

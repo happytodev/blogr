@@ -1,17 +1,18 @@
 <?php
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
-use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Database\Seeders\CmsPageSeeder;
+use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Services\CmsPageBackupService;
+use Happytodev\Blogr\Tests\TestCase;
 
 it('seeds demo cms pages successfully', function () {
     // Verify no pages exist initially
     expect(CmsPage::count())->toBe(0);
 
     // Run seeder
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     // Verify pages were created
@@ -33,7 +34,7 @@ it('seeds demo cms pages successfully', function () {
 });
 
 it('creates multilingual translations for demo pages', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     // Check English and French translations exist
@@ -52,7 +53,7 @@ it('creates multilingual translations for demo pages', function () {
 });
 
 it('demo pages have valid block structure', function () {
-    $seeder = new CmsPageSeeder();
+    $seeder = new CmsPageSeeder;
     $seeder->run();
 
     $homePage = CmsPage::where('slug', 'home-page')->first();
@@ -99,7 +100,7 @@ it('prevents overwriting demo pages without force', function () {
 });
 
 it('creates backup when backup option is used', function () {
-    $backupService = new CmsPageBackupService();
+    $backupService = new CmsPageBackupService;
 
     // Clean up backups first
     foreach ($backupService->listBackups() as $backup) {

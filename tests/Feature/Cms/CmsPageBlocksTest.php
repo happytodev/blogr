@@ -1,8 +1,7 @@
 <?php
 
-use Happytodev\Blogr\Models\CmsPage;
-use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
+use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Tests\CmsTestCase;
 
 uses(CmsTestCase::class);
@@ -370,7 +369,7 @@ test('it can update blocks on existing translation', function () {
     ]);
 
     $translation->refresh();
-    
+
     expect($translation->blocks)->toHaveCount(2);
     expect($translation->blocks[0]['data']['title'])->toBe('New Title');
     expect($translation->blocks[1]['type'])->toBe('cta');
@@ -427,7 +426,7 @@ test('page with blocks in translation can be deleted', function () {
     ]);
 
     $pageId = $page->id;
-    
+
     $page->delete();
 
     expect(CmsPage::find($pageId))->toBeNull();
@@ -465,7 +464,7 @@ test('it can render gallery block', function () {
     ]);
 
     $view = view('blogr::components.blocks.gallery', [
-        'data' => $translation->blocks[0]['data']
+        'data' => $translation->blocks[0]['data'],
     ])->render();
 
     expect($view)->toContain('Our Gallery');
@@ -516,7 +515,7 @@ test('it can render team block', function () {
     ]);
 
     $view = view('blogr::components.blocks.team', [
-        'data' => $translation->blocks[0]['data']
+        'data' => $translation->blocks[0]['data'],
     ])->render();
 
     expect($view)->toContain('Our Team');

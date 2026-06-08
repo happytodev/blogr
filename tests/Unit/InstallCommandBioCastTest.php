@@ -30,20 +30,20 @@ class User extends Authenticatable
             $before = $matches[1];
             $castsContent = $matches[2];
             $after = $matches[3];
-            
+
             if (trim($castsContent) !== '') {
                 // Remove trailing commas and whitespace, then add bio cast
                 $cleanContent = rtrim($castsContent);
                 // Remove trailing comma if present
                 $cleanContent = rtrim($cleanContent, ',');
-                $newCastsContent = $cleanContent . ",\n            'bio' => 'array',\n        ";
+                $newCastsContent = $cleanContent.",\n            'bio' => 'array',\n        ";
             } else {
                 $newCastsContent = "\n            'bio' => 'array',\n        ";
             }
-            
+
             $content = str_replace(
                 $matches[0],
-                $before . $newCastsContent . $after,
+                $before.$newCastsContent.$after,
                 $content
             );
         }
@@ -77,19 +77,19 @@ class User extends Authenticatable
             $before = $matches[1];
             $castsContent = $matches[2];
             $after = $matches[3];
-            
+
             if (trim($castsContent) !== '') {
                 // Remove trailing commas and whitespace
                 $cleanContent = rtrim($castsContent);
                 $cleanContent = rtrim($cleanContent, ',');
-                $newCastsContent = $cleanContent . ",\n            'bio' => 'array',\n        ";
+                $newCastsContent = $cleanContent.",\n            'bio' => 'array',\n        ";
             } else {
                 $newCastsContent = "\n            'bio' => 'array',\n        ";
             }
-            
+
             $content = str_replace(
                 $matches[0],
-                $before . $newCastsContent . $after,
+                $before.$newCastsContent.$after,
                 $content
             );
         }
@@ -97,7 +97,7 @@ class User extends Authenticatable
         // Critical: Verify no double commas are created
         $this->assertStringNotContainsString(',,', $content);
         $this->assertStringContainsString("'bio' => 'array'", $content);
-        
+
         // Verify proper structure
         $this->assertMatchesRegularExpression('/"hashed",\s*\'bio\' => \'array\'/', $content);
     }

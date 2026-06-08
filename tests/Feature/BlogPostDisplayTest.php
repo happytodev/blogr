@@ -1,14 +1,13 @@
 <?php
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
+use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Tests\Database\Factories\CategoryFactory;
-use Happytodev\Blogr\Tests\Database\Factories\TagFactory;
-use Happytodev\Blogr\Tests\Database\Factories\UserFactory;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 
@@ -311,10 +310,10 @@ it('displays consistent reading time between index and show pages', function () 
     $indexReadingTime = $blogPost->getEstimatedReadingTime();
 
     // Simulate what happens in the controller show method
-    $translation = \Happytodev\Blogr\Models\BlogPostTranslation::where('slug', $blogPost->slug)
+    $translation = BlogPostTranslation::where('slug', $blogPost->slug)
         ->with(['post.category', 'post.tags'])
         ->firstOrFail();
-    
+
     $post = $translation->post;
 
     // Calculate reading time BEFORE adding TOC (as done in controller)

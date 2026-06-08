@@ -1,19 +1,15 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
-use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
-use Illuminate\Support\Facades\Route;
-use Happytodev\Blogr\Tests\Database\Factories\UserFactory;
-use Happytodev\Blogr\Tests\Database\Factories\CategoryFactory;
-use Happytodev\Blogr\Tests\Database\Factories\TagFactory;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 
 test('blog index page includes correct SEO meta tags', function () {
-    
+
     // Create some test posts
     $user = User::create([
         'name' => 'Test User',

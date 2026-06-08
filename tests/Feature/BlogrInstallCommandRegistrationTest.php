@@ -1,9 +1,9 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
 
 it('blogr install command is registered', function () {

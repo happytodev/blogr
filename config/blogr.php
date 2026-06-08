@@ -3,7 +3,7 @@
 // config for Happytodev/Blogr
 return [
     'posts_per_page' => 10,  // Number of posts per page
-    
+
     'route' => [
         'frontend' => [
             'enabled' => true,
@@ -44,13 +44,13 @@ return [
             'colors' => [
                 // Background color with dark mode support (use empty string to remove)
                 'background' => 'bg-white dark:bg-gray-800',
-            ]
-        ]
+            ],
+        ],
     ],
     'colors' => [
-        'primary' => '#2dfaa1'
+        'primary' => '#2dfaa1',
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Author Profile Configuration
@@ -86,7 +86,7 @@ return [
     |
     | Configure how reading time is displayed on blog posts.
     | You can enable/disable the display and customize the text format.
-    | 
+    |
     | For multilingual sites, you can define translations for each locale:
     | 'text_format' => [
     |     'en' => 'Reading time: {time}',
@@ -223,7 +223,7 @@ return [
             'organization' => [
                 'name' => env('APP_NAME', 'My Blog'),
                 'url' => env('APP_URL', 'https://yourwebsite.com'),
-                'logo' => env('APP_URL', 'https://yourwebsite.com') . '/images/logo.png',
+                'logo' => env('APP_URL', 'https://yourwebsite.com').'/images/logo.png',
             ],
         ],
     ],
@@ -529,7 +529,7 @@ return [
 
         'route' => [
             'prefix' => '', // URL prefix for CMS pages (empty = no prefix like WordPress)
-                           // Examples: '', 'page', 'pages', 'p'
+            // Examples: '', 'page', 'pages', 'p'
         ],
 
         'templates' => [
@@ -555,7 +555,7 @@ return [
             'tag',
             'series',
             'rss',
-            
+
             // Authentication routes
             'admin',
             'login',
@@ -563,7 +563,7 @@ return [
             'register',
             'password',
             'dashboard',
-            
+
             // Common system routes
             'api',
             'assets',
@@ -591,24 +591,24 @@ return [
     'analytics' => [
         'enabled' => false, // Enable/disable analytics tracking
         'provider' => null, // 'google', 'plausible', 'umami', or 'matomo'
-        
+
         // Google Analytics (GA4 or Universal Analytics)
         'google' => [
             'measurement_id' => null, // e.g., 'G-XXXXXXXXXX' or 'UA-XXXXX-X'
         ],
-        
+
         // Plausible Analytics (privacy-friendly)
         'plausible' => [
             'domain' => null, // Your site domain (e.g., 'yoursite.com')
             'src' => null, // Script URL (null = default Plausible Cloud: https://plausible.io/js/script.js)
         ],
-        
+
         // Umami Analytics (open-source, privacy-focused)
         'umami' => [
             'website_id' => null, // Your Website ID (UUID format)
             'src' => null, // Script URL (e.g., 'https://cloud.umami.is/script.js')
         ],
-        
+
         // Matomo Analytics (self-hosted or cloud)
         'matomo' => [
             'url' => null, // Matomo instance URL (e.g., 'https://matomo.yoursite.com')

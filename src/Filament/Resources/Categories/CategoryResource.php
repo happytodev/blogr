@@ -3,19 +3,18 @@
 namespace Happytodev\Blogr\Filament\Resources\Categories;
 
 use BackedEnum;
-use Filament\Tables\Table;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-
-use Happytodev\Blogr\Models\Category;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Happytodev\Blogr\Filament\Resources\Categories\Pages\EditCategory;
+use Filament\Tables\Table;
 use Happytodev\Blogr\Filament\Resources\Categories\Pages\CreateCategory;
+use Happytodev\Blogr\Filament\Resources\Categories\Pages\EditCategory;
 use Happytodev\Blogr\Filament\Resources\Categories\Pages\ListCategories;
 use Happytodev\Blogr\Filament\Resources\Categories\Schemas\CategoryForm;
 use Happytodev\Blogr\Filament\Resources\Categories\Tables\CategoriesTable;
+use Happytodev\Blogr\Models\Category;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CategoryResource extends Resource
 {

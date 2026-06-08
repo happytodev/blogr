@@ -1,11 +1,13 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
+use Happytodev\Blogr\BlogrServiceProvider;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Route;
+
 use function Pest\Laravel\get;
 
 beforeEach(function () {
@@ -35,21 +37,21 @@ test('homepage=false, locale=false: routes available at /blog/*', function () {
     $this->app['config']->set('blogr.locales.enabled', false);
     $this->app['config']->set('blogr.route.prefix', 'blog');
     $this->app['config']->set('blogr.route.frontend.enabled', true);
-    
+
     // Re-register service provider with clean config
-    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
-    
+    $this->app->register(BlogrServiceProvider::class, true);
+
     // Verify /blog is accessible (may return 200 or 404 without data)
     $response = get('/blog');
     expect($response->status())->toBeIn([200, 404]);
-    
+
     // Verify at least one blog.index route exists without {locale}
-    $routes = collect(Route::getRoutes())->filter(function($r) {
-        return $r->getName() === 'blog.index' && !str_contains($r->uri(), '{locale}');
+    $routes = collect(Route::getRoutes())->filter(function ($r) {
+        return $r->getName() === 'blog.index' && ! str_contains($r->uri(), '{locale}');
     });
-    
+
     expect(count($routes))->toBeGreaterThan(0);
-    
+
     // If we found the route, verify its URI
     if (count($routes) > 0) {
         $blogIndexRoute = $routes->first();
@@ -62,21 +64,21 @@ test('homepage=true, locale=false: routes available at /*', function () {
     $this->app['config']->set('blogr.route.homepage', true);
     $this->app['config']->set('blogr.locales.enabled', false);
     $this->app['config']->set('blogr.route.frontend.enabled', true);
-    
+
     // Re-register service provider
-    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
-    
+    $this->app->register(BlogrServiceProvider::class, true);
+
     // Test HTTP request to root
     $response = get('/');
-    
+
     // Should return 200 or 404 (not redirect)
     expect($response->status())->toBeIn([200, 404]);
-    
+
     // Verify a homepage route exists (without locale)
-    $routes = collect(Route::getRoutes())->filter(function($r) {
-        return $r->getName() === 'blog.index' && !str_contains($r->uri(), '{locale}');
+    $routes = collect(Route::getRoutes())->filter(function ($r) {
+        return $r->getName() === 'blog.index' && ! str_contains($r->uri(), '{locale}');
     });
-    
+
     expect(count($routes))->toBeGreaterThan(0);
 });
 
@@ -88,14 +90,14 @@ test('homepage=false, locale=true: redirect /blog to /{locale}/blog', function (
     $this->app['config']->set('blogr.locales.available', ['en', 'fr']);
     $this->app['config']->set('blogr.route.prefix', 'blog');
     $this->app['config']->set('blogr.route.frontend.enabled', true);
-    
+
     // Re-register service provider
-    $this->app->register(\Happytodev\Blogr\BlogrServiceProvider::class, true);
-    
+    $this->app->register(BlogrServiceProvider::class, true);
+
     // Test HTTP request - should redirect
     $response = get('/blog');
     $response->assertRedirect('/en/blog');
-    
+
     // Test localized URL works
     $response = get('/en/blog');
     expect($response->status())->toBeIn([200, 404]);
@@ -108,7 +110,7 @@ test('homepage=true, locale=true: redirect / to /{locale}', function () {
     $this->app['config']->set('blogr.locales.default', 'en');
     $this->app['config']->set('blogr.locales.available', ['en', 'fr']);
     $this->app['config']->set('blogr.route.frontend.enabled', true);
-    
+
     // Verify configuration is set correctly for redirect scenario
     expect(config('blogr.route.homepage'))->toBeTrue();
     expect(config('blogr.locales.enabled'))->toBeTrue();

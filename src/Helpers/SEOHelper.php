@@ -13,7 +13,7 @@ class SEOHelper
     public static function forListingPage(string $type = 'index', ?string $name = null, ?string $description = null): array
     {
         $currentLocale = app()->getLocale();
-        
+
         $baseTitle = ConfigHelper::getSeoDefaultTitle($currentLocale);
         $baseDescription = $description ?: ConfigHelper::getSeoDefaultDescription($currentLocale);
         $baseKeywords = ConfigHelper::getSeoDefaultKeywords($currentLocale);
@@ -175,9 +175,9 @@ class SEOHelper
                 'url' => $config['structured_data']['organization']['url'] ?? $defaultConfig['structured_data']['organization']['url'],
                 'logo' => [
                     '@type' => 'ImageObject',
-                    'url' => $config['structured_data']['organization']['logo'] ?? $defaultConfig['structured_data']['organization']['logo']
-                ]
-            ]
+                    'url' => $config['structured_data']['organization']['logo'] ?? $defaultConfig['structured_data']['organization']['logo'],
+                ],
+            ],
         ];
 
         // Add additional schema data if available (for blog posts)
@@ -195,7 +195,7 @@ class SEOHelper
             if (isset($seoData['author'])) {
                 $baseSchema['author'] = [
                     '@type' => 'Person',
-                    'name' => $seoData['author']
+                    'name' => $seoData['author'],
                 ];
             }
             if (isset($seoData['published_time'])) {

@@ -1,14 +1,11 @@
 <?php
 
-
-
 namespace Happytodev\Blogr\Tests\Feature;
 
-
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
+use Filament\Schemas\Components\Tabs;
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Tests\TestCase;
-use Filament\Schemas\Components\Tabs;
 
 class BlogrFilamentBackupTabTest extends TestCase
 {
@@ -20,11 +17,11 @@ class BlogrFilamentBackupTabTest extends TestCase
         // The schema is an array with a Tabs component
         $this->assertIsArray($schema);
         $this->assertNotEmpty($schema);
-        
+
         // Get the Tabs component (should be first element)
         $tabsComponent = $schema[0];
         $this->assertInstanceOf(Tabs::class, $tabsComponent);
-        
+
         // The existence of the Tabs component validates that tabs are configured
         // We can't easily access individual tab labels without fully initializing the component
         // which would require mounting the entire Livewire component
@@ -57,4 +54,3 @@ class BlogrFilamentBackupTabTest extends TestCase
         $this->assertTrue(true, 'Export functionality structure validated');
     }
 }
-

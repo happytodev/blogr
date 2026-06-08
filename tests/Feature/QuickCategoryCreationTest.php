@@ -1,9 +1,9 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -22,9 +22,9 @@ it('can create a category with quick creation form data', function () {
         'slug' => 'new-test-category',
         'is_default' => false,
     ];
-    
+
     $category = Category::create($categoryData);
-    
+
     expect($category)->toBeInstanceOf(Category::class);
     expect($category->name)->toBe('New Test Category');
     expect($category->slug)->toBe('new-test-category');
@@ -36,6 +36,6 @@ it('auto-generates slug from name when creating category', function () {
         'name' => 'My Awesome Category',
         'slug' => '',
     ]);
-    
+
     expect($category->slug)->toBe('my-awesome-category');
 });

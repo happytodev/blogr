@@ -2,28 +2,30 @@
 
 namespace Happytodev\Blogr\Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class TestUsersSeeder extends Seeder
 {
     public function run(): void
     {
-        $userModel = config('auth.providers.users.model', \App\Models\User::class);
+        $userModel = config('auth.providers.users.model', User::class);
 
         // Create roles first if they don't exist (using Spatie Permission)
         try {
-            $adminRole = \Spatie\Permission\Models\Role::firstOrCreate(
+            $adminRole = Role::firstOrCreate(
                 ['name' => 'admin'],
                 ['guard_name' => 'web']
             );
-            $writerRole = \Spatie\Permission\Models\Role::firstOrCreate(
+            $writerRole = Role::firstOrCreate(
                 ['name' => 'writer'],
                 ['guard_name' => 'web']
             );
         } catch (\Exception $e) {
             // Roles table might not exist yet, continue anyway
-            $this->command?->warn('⚠️  Could not create roles: ' . $e->getMessage());
+            $this->command?->warn('⚠️  Could not create roles: '.$e->getMessage());
         }
 
         // Create admin user
@@ -53,7 +55,7 @@ class TestUsersSeeder extends Seeder
                 }
             }
         } catch (\Exception $e) {
-            $this->command?->warn('⚠️  Could not assign admin role: ' . $e->getMessage());
+            $this->command?->warn('⚠️  Could not assign admin role: '.$e->getMessage());
         }
 
         // Create writer user
@@ -83,7 +85,7 @@ class TestUsersSeeder extends Seeder
                 }
             }
         } catch (\Exception $e) {
-            $this->command?->warn('⚠️  Could not assign writer role: ' . $e->getMessage());
+            $this->command?->warn('⚠️  Could not assign writer role: '.$e->getMessage());
         }
 
         $this->command?->info('✅ Test users created successfully.');

@@ -1,7 +1,8 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+use Happytodev\Blogr\Tests\TestCase;
 
+uses(TestCase::class);
 
 test('read more translation key exists in english', function () {
     app()->setLocale('en');
@@ -32,4 +33,3 @@ test('save settings translation key exists in french', function () {
     app()->setLocale('fr');
     expect(__('blogr::blogr.settings.save'))->toBe('Enregistrer les paramètres');
 });
-

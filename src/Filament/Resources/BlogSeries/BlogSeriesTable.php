@@ -2,14 +2,14 @@
 
 namespace Happytodev\Blogr\Filament\Resources\BlogSeries;
 
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 class BlogSeriesTable
@@ -25,7 +25,7 @@ class BlogSeriesTable
                     ->copyable()
                     ->copyMessage('Slug copied!')
                     ->weight('bold'),
-                
+
                 TextColumn::make('translations.title')
                     ->label('Title')
                     ->searchable()
@@ -35,15 +35,16 @@ class BlogSeriesTable
                         if (is_string($state) && strlen($state) > 50) {
                             return $state;
                         }
+
                         return null;
                     }),
-                
+
                 TextColumn::make('position')
                     ->label('Order')
                     ->sortable()
                     ->badge()
                     ->color('primary'),
-                
+
                 IconColumn::make('is_featured')
                     ->label('Featured')
                     ->boolean()
@@ -51,21 +52,21 @@ class BlogSeriesTable
                     ->falseIcon('heroicon-o-star')
                     ->trueColor('warning')
                     ->falseColor('gray'),
-                
+
                 TextColumn::make('posts_count')
                     ->counts('posts')
                     ->label('Posts')
                     ->badge()
                     ->color('success')
                     ->icon('heroicon-o-document-text'),
-                
+
                 TextColumn::make('translations_count')
                     ->counts('translations')
                     ->label('Translations')
                     ->badge()
                     ->color('info')
                     ->icon('heroicon-o-language'),
-                
+
                 TextColumn::make('published_at')
                     ->label('Published')
                     ->dateTime('M j, Y')
@@ -73,13 +74,13 @@ class BlogSeriesTable
                     ->placeholder('Draft')
                     ->badge()
                     ->color(fn ($state) => $state ? 'success' : 'warning'),
-                
+
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime('M j, Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                
+
                 TextColumn::make('updated_at')
                     ->label('Updated')
                     ->dateTime('M j, Y H:i')
@@ -92,11 +93,11 @@ class BlogSeriesTable
                     ->placeholder('All series')
                     ->trueLabel('Featured only')
                     ->falseLabel('Not featured'),
-                
+
                 Filter::make('published')
                     ->label('Published Only')
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('published_at')),
-                
+
                 Filter::make('draft')
                     ->label('Drafts Only')
                     ->query(fn (Builder $query): Builder => $query->whereNull('published_at')),

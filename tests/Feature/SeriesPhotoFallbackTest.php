@@ -1,10 +1,10 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
@@ -12,16 +12,16 @@ beforeEach(function () {
 });
 
 test('series photo field is fillable in BlogSeries model', function () {
-    expect(in_array('photo', (new BlogSeries())->getFillable()))->toBeTrue();
+    expect(in_array('photo', (new BlogSeries)->getFillable()))->toBeTrue();
 });
 
 test('series translation photo field is fillable in BlogSeriesTranslation model', function () {
-    expect(in_array('photo', (new BlogSeriesTranslation())->getFillable()))->toBeTrue();
+    expect(in_array('photo', (new BlogSeriesTranslation)->getFillable()))->toBeTrue();
 });
 
 test('series translation can save and retrieve photo', function () {
     $series = BlogSeries::factory()->create();
-    
+
     $translation = BlogSeriesTranslation::create([
         'blog_series_id' => $series->id,
         'locale' => 'fr',
@@ -49,14 +49,14 @@ test('series falls back to main photo when translation has no photo', function (
 
     $series = $series->fresh(['translations']);
     $translation = $series->translations->firstWhere('locale', 'fr');
-    
+
     $photoToUse = null;
     if ($translation->photo) {
         $photoToUse = $translation->photo;
     } elseif ($series->photo) {
         $photoToUse = $series->photo;
     }
-    
+
     expect($photoToUse)->toBe('series-images/main-photo.jpg');
 });
 
@@ -83,19 +83,19 @@ test('series falls back to another translation photo when neither translation no
 
     $series = $series->fresh(['translations']);
     $translation = $series->translations->firstWhere('locale', 'fr');
-    
+
     $photoToUse = null;
     if ($translation->photo) {
         $photoToUse = $translation->photo;
     } elseif ($series->photo) {
         $photoToUse = $series->photo;
     } else {
-        $anyTranslationWithPhoto = $series->translations->first(fn($t) => !empty($t->photo));
+        $anyTranslationWithPhoto = $series->translations->first(fn ($t) => ! empty($t->photo));
         if ($anyTranslationWithPhoto) {
             $photoToUse = $anyTranslationWithPhoto->photo;
         }
     }
-    
+
     expect($photoToUse)->toBe('series-images/en-photo.jpg');
 });
 
@@ -121,7 +121,7 @@ test('series photo uses temporary url with expiry for security', function () {
     ]);
 
     $photoUrl = $series->photo_url;
-    
+
     // For cloud storage (S3), URL should have expiry and signature
     // For local storage, it will be a regular URL
     // Just verify we get a valid URL

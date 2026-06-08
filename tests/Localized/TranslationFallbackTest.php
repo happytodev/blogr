@@ -22,7 +22,7 @@ test('post with only English translation accessed in French shows English versio
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'en',
-        'slug' => 'test-post-en-only-' . uniqid(),
+        'slug' => 'test-post-en-only-'.uniqid(),
         'title' => 'Test Post in English',
         'content' => '# Test Content in English',
         'tldr' => 'English TLDR',
@@ -30,10 +30,10 @@ test('post with only English translation accessed in French shows English versio
     ]);
 
     $translation = $post->translations()->first();
-    $url = '/fr/blog/' . $translation->slug;
+    $url = '/fr/blog/'.$translation->slug;
 
     $response = $this->get($url);
-    
+
     $response->assertStatus(200);
     $response->assertSee('Test Post in English');
 });
@@ -53,7 +53,7 @@ test('post with bilingual translations shows correct language version', function
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'en',
-        'slug' => 'bilingual-post-' . uniqid(),
+        'slug' => 'bilingual-post-'.uniqid(),
         'title' => 'Post in English',
         'content' => '# Content in English',
         'tldr' => 'English TLDR',
@@ -63,7 +63,7 @@ test('post with bilingual translations shows correct language version', function
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'fr',
-        'slug' => 'bilingual-post-fr-' . uniqid(),
+        'slug' => 'bilingual-post-fr-'.uniqid(),
         'title' => 'Article en Français',
         'content' => '# Contenu en Français',
         'tldr' => 'TLDR français',
@@ -72,13 +72,13 @@ test('post with bilingual translations shows correct language version', function
 
     // Test English version
     $enTranslation = $post->translations()->where('locale', 'en')->first();
-    $responseEn = $this->get('/en/blog/' . $enTranslation->slug);
+    $responseEn = $this->get('/en/blog/'.$enTranslation->slug);
     $responseEn->assertStatus(200);
     $responseEn->assertSee('Post in English');
 
     // Test French version - should show French content
     $frTranslation = $post->translations()->where('locale', 'fr')->first();
-    $responseFr = $this->get('/fr/blog/' . $frTranslation->slug);
+    $responseFr = $this->get('/fr/blog/'.$frTranslation->slug);
     $responseFr->assertStatus(200);
     $responseFr->assertSee('Article en Français');
 });
@@ -98,7 +98,7 @@ test('unpublished post returns 404 even with translation', function () {
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'en',
-        'slug' => 'unpublished-test-' . uniqid(),
+        'slug' => 'unpublished-test-'.uniqid(),
         'title' => 'Unpublished Post',
         'content' => '# Draft Content',
         'tldr' => 'Draft TLDR',
@@ -126,7 +126,7 @@ test('future published post returns 404', function () {
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'en',
-        'slug' => 'future-test-' . uniqid(),
+        'slug' => 'future-test-'.uniqid(),
         'title' => 'Future Post',
         'content' => '# Scheduled Content',
         'tldr' => 'Future TLDR',

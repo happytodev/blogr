@@ -3,14 +3,14 @@
 namespace Happytodev\Blogr\Filament\Resources\BlogPostResource\RelationManagers;
 
 use BackedEnum;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Happytodev\Blogr\Services\LocaleService;
@@ -19,14 +19,16 @@ use Illuminate\Database\Eloquent\Model;
 class TranslationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'translations';
+
     protected static ?string $title = 'Main Content';
-    protected static string | BackedEnum | null $icon = 'heroicon-o-document-text';
-    
+
+    protected static string|BackedEnum|null $icon = 'heroicon-o-document-text';
+
     public function getHeading(): string
     {
         return 'Main Content';
     }
-    
+
     public function getDescription(): ?string
     {
         return '📝 This is where you add the main content of your blog post. Add a translation for each language you want to support. Click "Create" to add your first translation.';
@@ -46,20 +48,20 @@ class TranslationsRelationManager extends RelationManager
                 ->disabled(fn (?Model $record) => $record !== null)
                 ->helperText('Select the language for this translation')
                 ->columnSpan(2),
-            
+
             Forms\Components\TextInput::make('title')
                 ->label('Title')
                 ->required()
                 ->maxLength(255)
                 ->columnSpan(2),
-            
+
             Forms\Components\TextInput::make('slug')
                 ->label('Slug')
                 ->required()
                 ->maxLength(255)
                 ->helperText('URL-friendly version of the title')
                 ->columnSpan(2),
-            
+
             Forms\Components\Textarea::make('tldr')
                 ->label('TL;DR (Summary)')
                 ->rows(3)
@@ -69,10 +71,11 @@ class TranslationsRelationManager extends RelationManager
                 ->helperText(function ($state, Forms\Components\Textarea $component) {
                     $max = $component->getMaxLength();
                     $remaining = $max - strlen($state ?? '');
+
                     return "Brief summary of the post. Remaining characters: $remaining / $max.";
                 })
                 ->columnSpan(2),
-            
+
             Forms\Components\MarkdownEditor::make('content')
                 ->label('Content')
                 ->required()
@@ -82,7 +85,7 @@ class TranslationsRelationManager extends RelationManager
                     'orderedList', 'redo', 'strike', 'table', 'undo',
                 ])
                 ->columnSpan(2),
-            
+
             Forms\Components\TextInput::make('seo_title')
                 ->label('SEO Title')
                 ->maxLength(60)
@@ -91,10 +94,11 @@ class TranslationsRelationManager extends RelationManager
                 ->helperText(function ($state, Forms\Components\TextInput $component) {
                     $max = $component->getMaxLength();
                     $remaining = $max - strlen($state ?? '');
+
                     return "Optimal length: 50-60 characters. Remaining: $remaining / $max.";
                 })
                 ->columnSpan(2),
-            
+
             Forms\Components\Textarea::make('seo_description')
                 ->label('SEO Description')
                 ->rows(2)
@@ -104,10 +108,11 @@ class TranslationsRelationManager extends RelationManager
                 ->helperText(function ($state, Forms\Components\Textarea $component) {
                     $max = $component->getMaxLength();
                     $remaining = $max - strlen($state ?? '');
+
                     return "Optimal length: 150-160 characters. Remaining: $remaining / $max.";
                 })
                 ->columnSpan(2),
-            
+
             Forms\Components\TextInput::make('seo_keywords')
                 ->label('SEO Keywords')
                 ->maxLength(255)
@@ -133,29 +138,29 @@ class TranslationsRelationManager extends RelationManager
                         default => 'info',
                     })
                     ->sortable(),
-                
+
                 Tables\Columns\TextColumn::make('title')
                     ->label('Title')
                     ->searchable()
                     ->sortable()
                     ->limit(50),
-                
+
                 Tables\Columns\TextColumn::make('slug')
                     ->label('Slug')
                     ->searchable()
                     ->limit(40)
                     ->copyable()
                     ->copyMessage('Slug copied'),
-                
+
                 Tables\Columns\TextColumn::make('reading_time')
                     ->label('Reading Time')
                     ->formatStateUsing(fn (?int $state) => $state ? "{$state} min" : 'N/A')
                     ->sortable(),
-                
+
                 Tables\Columns\IconColumn::make('has_content')
                     ->label('Content')
                     ->boolean()
-                    ->getStateUsing(fn (Model $record) => !empty($record->content))
+                    ->getStateUsing(fn (Model $record) => ! empty($record->content))
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
@@ -176,29 +181,31 @@ class TranslationsRelationManager extends RelationManager
                     ->modalHeading('Create Translation')
                     ->modalWidth('5xl')
                     ->mutateFormDataUsing(function (array $data): array {
-                        if (!empty($data['content'])) {
+                        if (! empty($data['content'])) {
                             $wpm = config('blogr.reading_speed.words_per_minute', 200);
                             $wordCount = str_word_count(strip_tags($data['content']));
                             $data['reading_time'] = max(1, ceil($wordCount / $wpm));
                         }
+
                         return $data;
                     })
                     ->successNotificationTitle('Translation created successfully'),
             ])
             ->actions([
                 EditAction::make()
-                    ->modalHeading(fn (Model $record) => "Edit Translation (" . strtoupper($record->locale) . ")")
+                    ->modalHeading(fn (Model $record) => 'Edit Translation ('.strtoupper($record->locale).')')
                     ->modalWidth('5xl')
                     ->mutateFormDataUsing(function (array $data): array {
-                        if (!empty($data['content'])) {
+                        if (! empty($data['content'])) {
                             $wpm = config('blogr.reading_speed.words_per_minute', 200);
                             $wordCount = str_word_count(strip_tags($data['content']));
                             $data['reading_time'] = max(1, ceil($wordCount / $wpm));
                         }
+
                         return $data;
                     })
                     ->successNotificationTitle('Translation updated successfully'),
-                
+
                 DeleteAction::make()
                     ->requiresConfirmation()
                     ->successNotificationTitle('Translation deleted successfully'),
@@ -227,7 +234,7 @@ class TranslationsRelationManager extends RelationManager
             ->translations()
             ->pluck('locale')
             ->toArray();
-        
+
         return count($availableLocales) > count($existingLocales);
     }
 }

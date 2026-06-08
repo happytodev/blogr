@@ -2,7 +2,6 @@
 
 namespace Happytodev\Blogr\Tests\Traits;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 trait CleanupSpatiePermissionTables

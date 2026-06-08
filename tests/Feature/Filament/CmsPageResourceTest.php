@@ -1,13 +1,14 @@
 <?php
 
-use Happytodev\Blogr\Models\CmsPage;
-use Happytodev\Blogr\Models\CmsPageTranslation;
-use Happytodev\Blogr\Models\User;
+use Filament\Actions\DeleteAction;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource;
+use Happytodev\Blogr\Models\CmsPage;
+use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Tests\CmsTestCase;
-use Filament\Actions\DeleteAction;
+use Illuminate\Support\ViewErrorBag;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 
 uses(CmsTestCase::class);
 
@@ -20,18 +21,18 @@ beforeEach(function () {
     // The Livewire ViewErrorBag patch fixed 10 tests, but CMS form has separate issues.
     // All tests work correctly in production.
     $this->markTestSkipped('CMS form validation and record binding issues in test context');
-    
+
     // Create roles if they don't exist
-    $adminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin']);
-    
+    $adminRole = Role::firstOrCreate(['name' => 'admin']);
+
     // Create admin user for Filament tests
     $this->admin = User::factory()->create();
     $this->admin->assignRole($adminRole);
     $this->actingAs($this->admin);
-    
+
     // Initialize ViewErrorBag in session to prevent Livewire validation errors
     // Livewire expects errors bag in session, but in test environment it's not always initialized
-    $this->session(['errors' => new \Illuminate\Support\ViewErrorBag()]);
+    $this->session(['errors' => new ViewErrorBag]);
 });
 
 test('it can render cms pages list page', function () {
@@ -98,7 +99,7 @@ test('it can create a page with blocks', function () {
 
     $page = CmsPage::where('slug', 'page-with-blocks')->first();
     expect($page->blocks)->toBeJson();
-    
+
     $blocks = json_decode($page->blocks, true);
     expect($blocks)->toHaveCount(1);
     expect($blocks[0]['type'])->toBe('hero');
@@ -197,7 +198,7 @@ test('it can update page blocks', function () {
 
     $page->refresh();
     $blocks = json_decode($page->blocks, true);
-    
+
     expect($blocks)->toHaveCount(2);
     expect($blocks[0]['data']['title'])->toBe('Updated Hero');
     expect($blocks[1]['type'])->toBe('cta');
@@ -256,7 +257,7 @@ test('it validates only one homepage allowed', function () {
 
 test('it can schedule publishing', function () {
     $futureDate = now()->addWeek();
-    
+
     $pageData = [
         'slug' => 'scheduled-page',
         'template' => CmsPageTemplate::LANDING->value,

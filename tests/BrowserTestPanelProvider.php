@@ -4,9 +4,16 @@ namespace Happytodev\Blogr\Tests;
 
 use Filament\Panel;
 use Filament\PanelProvider;
+use Happytodev\Blogr\BlogrPlugin;
 use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;
 use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
-use Happytodev\Blogr\BlogrPlugin;
+use Happytodev\Blogr\Tests\Middleware\InitializeSessionErrors;
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Workbench\App\Models\User;
 
 class BrowserTestPanelProvider extends PanelProvider
@@ -29,13 +36,13 @@ class BrowserTestPanelProvider extends PanelProvider
                 BlogrPlugin::make(),
             ])
             ->middleware([
-                \Illuminate\Cookie\Middleware\EncryptCookies::class,
-                \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-                \Illuminate\Session\Middleware\StartSession::class,
-                \Happytodev\Blogr\Tests\Middleware\InitializeSessionErrors::class,
-                \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-                \Illuminate\Auth\Middleware\Authenticate::class,
-                \Illuminate\Routing\Middleware\SubstituteBindings::class,
+                EncryptCookies::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                InitializeSessionErrors::class,
+                ShareErrorsFromSession::class,
+                Authenticate::class,
+                SubstituteBindings::class,
             ])
             ->authGuard('web')
             ->brandName('Blogr Test')

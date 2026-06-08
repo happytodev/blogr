@@ -4,10 +4,11 @@ namespace Happytodev\Blogr\Services;
 
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use ZipArchive;
 
@@ -49,9 +50,9 @@ class CmsPageImportExportService
         $dir = storage_path('app/blogr-exports');
         File::ensureDirectoryExists($dir);
 
-        if (!$path) {
+        if (! $path) {
             $slug = $page->slug;
-            $path = $dir . "/{$slug}-export-" . now()->format('Ymd_His') . '.json';
+            $path = $dir."/{$slug}-export-".now()->format('Ymd_His').'.json';
         }
 
         File::put($path, $json);
@@ -61,7 +62,7 @@ class CmsPageImportExportService
 
     public function importFromFile(string $filePath, string $onConflict = 'new'): CmsPage
     {
-        if (!File::exists($filePath)) {
+        if (! File::exists($filePath)) {
             throw new \InvalidArgumentException("File not found: {$filePath}");
         }
 
@@ -79,7 +80,7 @@ class CmsPageImportExportService
         $data = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \InvalidArgumentException('Invalid JSON: ' . json_last_error_msg());
+            throw new \InvalidArgumentException('Invalid JSON: '.json_last_error_msg());
         }
 
         return $this->importFromArray($data, $onConflict);
@@ -90,7 +91,7 @@ class CmsPageImportExportService
         $pageData = $data['data'] ?? $data;
         $media = $data['media'] ?? [];
 
-        if (!isset($pageData['slug'])) {
+        if (! isset($pageData['slug'])) {
             throw new \InvalidArgumentException('Missing required field: slug');
         }
 
@@ -117,7 +118,7 @@ class CmsPageImportExportService
 
         $pageData['is_homepage'] = $pageData['is_homepage'] ?? false;
 
-        if (!empty($media)) {
+        if (! empty($media)) {
             $this->downloadMediaFiles($media);
             $translations = $this->replaceMediaUrlsInBlocks($translations, $media);
         }
@@ -129,7 +130,7 @@ class CmsPageImportExportService
 
         if (isset($pageData['published_at'])) {
             $pageData['published_at'] = is_string($pageData['published_at'])
-                ? \Illuminate\Support\Carbon::parse($pageData['published_at'])
+                ? Carbon::parse($pageData['published_at'])
                 : $pageData['published_at'];
         }
 
@@ -156,7 +157,7 @@ class CmsPageImportExportService
 
         $page->load('translations');
 
-        Log::info("CmsPageImportExportService: Imported page '{$pageData['slug']}' with " . count($translations) . " translations");
+        Log::info("CmsPageImportExportService: Imported page '{$pageData['slug']}' with ".count($translations).' translations');
 
         return $page;
     }
@@ -167,7 +168,7 @@ class CmsPageImportExportService
         $counter = 1;
 
         while (CmsPage::where('slug', $slug)->exists()) {
-            $slug = $base . '-' . $counter;
+            $slug = $base.'-'.$counter;
             $counter++;
         }
 
@@ -180,7 +181,7 @@ class CmsPageImportExportService
         $counter = 1;
 
         while (CmsPageTranslation::where('locale', $locale)->where('slug', $slug)->exists()) {
-            $slug = $base . '-' . $counter;
+            $slug = $base.'-'.$counter;
             $counter++;
         }
 
@@ -253,7 +254,7 @@ class CmsPageImportExportService
 
     protected function isLocalStoragePath(string $path): bool
     {
-        return !Str::startsWith($path, 'http://') && !Str::startsWith($path, 'https://') && !Str::startsWith($path, 'data:');
+        return ! Str::startsWith($path, 'http://') && ! Str::startsWith($path, 'https://') && ! Str::startsWith($path, 'data:');
     }
 
     protected function getPublicUrl(string $path): string
@@ -262,7 +263,7 @@ class CmsPageImportExportService
             return Storage::disk('public')->url($path);
         }
 
-        return url('storage/' . ltrim($path, '/'));
+        return url('storage/'.ltrim($path, '/'));
     }
 
     protected function findFieldForKey(array $data, string $searchValue): string
@@ -292,6 +293,7 @@ class CmsPageImportExportService
                 return false;
             }
             $seen[$key] = true;
+
             return true;
         }));
     }
@@ -326,7 +328,7 @@ class CmsPageImportExportService
                     Log::warning("CmsPageImportExportService: Failed to download '{$item['url']}' - HTTP {$response->status()}");
                 }
             } catch (\Exception $e) {
-                Log::warning("CmsPageImportExportService: Failed to download '{$item['url']}': " . $e->getMessage());
+                Log::warning("CmsPageImportExportService: Failed to download '{$item['url']}': ".$e->getMessage());
             }
         }
     }
@@ -336,7 +338,7 @@ class CmsPageImportExportService
         $urlToPath = [];
 
         foreach ($media as $item) {
-            if (!empty($item['url']) && !empty($item['path'])) {
+            if (! empty($item['url']) && ! empty($item['path'])) {
                 $urlToPath[$item['url']] = $item['path'];
             }
         }
@@ -378,26 +380,26 @@ class CmsPageImportExportService
 
     protected function importFromZip(string $zipPath, string $onConflict): CmsPage
     {
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
 
         if ($zip->open($zipPath) !== true) {
             throw new \RuntimeException('Cannot open ZIP file');
         }
 
         $jsonContent = $zip->getFromName('data.json');
-        if (!$jsonContent) {
+        if (! $jsonContent) {
             $zip->close();
             throw new \RuntimeException('data.json not found in ZIP file');
         }
 
-        $tempDir = storage_path('app/temp/cms-import-' . now()->timestamp);
+        $tempDir = storage_path('app/temp/cms-import-'.now()->timestamp);
         File::ensureDirectoryExists($tempDir);
 
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $filename = $zip->getNameIndex($i);
             if (Str::startsWith($filename, 'media/')) {
                 $content = $zip->getFromIndex($i);
-                $localPath = $tempDir . '/' . basename($filename);
+                $localPath = $tempDir.'/'.basename($filename);
                 File::put($localPath, $content);
             }
         }
@@ -408,12 +410,12 @@ class CmsPageImportExportService
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             File::deleteDirectory($tempDir);
-            throw new \InvalidArgumentException('Invalid JSON in ZIP: ' . json_last_error_msg());
+            throw new \InvalidArgumentException('Invalid JSON in ZIP: '.json_last_error_msg());
         }
 
         if (isset($data['media'])) {
             foreach ($data['media'] as &$mediaItem) {
-                $localFile = $tempDir . '/' . basename($mediaItem['path']);
+                $localFile = $tempDir.'/'.basename($mediaItem['path']);
                 if (File::exists($localFile)) {
                     $mediaItem['_local_file'] = $localFile;
                 }
@@ -423,6 +425,7 @@ class CmsPageImportExportService
         try {
             $page = $this->importFromArray($data, $onConflict);
             File::deleteDirectory($tempDir);
+
             return $page;
         } catch (\Exception $e) {
             File::deleteDirectory($tempDir);

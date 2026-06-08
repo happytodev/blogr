@@ -18,14 +18,16 @@ class BlogrRemoveTutorialsCommand extends Command
     {
         $this->info('Removing Blogr tutorial content...');
 
-        if (!$this->option('force') && !$this->confirm('This will permanently delete tutorial posts. Continue?')) {
+        if (! $this->option('force') && ! $this->confirm('This will permanently delete tutorial posts. Continue?')) {
             $this->warn('Removal cancelled.');
+
             return self::FAILURE;
         }
 
         $category = Category::where('slug', 'blogr-tutorial')->first();
-        if (!$category) {
+        if (! $category) {
             $this->warn('No tutorial category found.');
+
             return self::SUCCESS;
         }
 
@@ -39,7 +41,7 @@ class BlogrRemoveTutorialsCommand extends Command
         }
 
         $this->info("✅ Successfully removed {$count} tutorial posts.");
-        
+
         return self::SUCCESS;
     }
 }

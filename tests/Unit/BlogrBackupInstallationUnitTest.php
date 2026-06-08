@@ -1,8 +1,8 @@
 <?php
 
-use Orchestra\Testbench\TestCase as Orchestra;
 use Happytodev\Blogr\Services\BackupInstallationChecker;
 use Happytodev\Blogr\Services\BackupInstaller;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class BlogrBackupInstallationUnitTest extends Orchestra
 {
@@ -39,7 +39,7 @@ class BlogrBackupInstallationUnitTest extends Orchestra
 
     public function test_backup_installation_checker_detects_installed_package()
     {
-        $checker = new BackupInstallationChecker();
+        $checker = new BackupInstallationChecker;
 
         // Test that the method returns a boolean
         $result = $checker->isInstalled();
@@ -48,7 +48,7 @@ class BlogrBackupInstallationUnitTest extends Orchestra
 
     public function test_backup_installation_checker_detects_config_publication()
     {
-        $checker = new BackupInstallationChecker();
+        $checker = new BackupInstallationChecker;
 
         // Test that the method returns a boolean
         $result = $checker->isConfigPublished();
@@ -57,7 +57,7 @@ class BlogrBackupInstallationUnitTest extends Orchestra
 
     public function test_backup_installation_checker_gets_version()
     {
-        $checker = new BackupInstallationChecker();
+        $checker = new BackupInstallationChecker;
 
         // Test that the method returns null or string
         $result = $checker->getInstalledVersion();
@@ -66,7 +66,7 @@ class BlogrBackupInstallationUnitTest extends Orchestra
 
     public function test_backup_installer_can_check_installation_possibility()
     {
-        $installer = new BackupInstaller();
+        $installer = new BackupInstaller;
 
         // Test that canInstall returns a boolean
         $result = $installer->canInstall();
@@ -75,7 +75,7 @@ class BlogrBackupInstallationUnitTest extends Orchestra
 
     public function test_backup_installer_has_install_method()
     {
-        $installer = new BackupInstaller();
+        $installer = new BackupInstaller;
 
         // Test that install method exists and returns boolean
         $this->assertTrue(method_exists($installer, 'install'));
@@ -86,7 +86,7 @@ class BlogrBackupInstallationUnitTest extends Orchestra
 
     public function test_backup_installer_has_publish_config_method()
     {
-        $installer = new BackupInstaller();
+        $installer = new BackupInstaller;
 
         // Test that publishConfig method exists
         $this->assertTrue(method_exists($installer, 'publishConfig'));
@@ -94,7 +94,7 @@ class BlogrBackupInstallationUnitTest extends Orchestra
 
     public function test_backup_installer_has_configure_for_blogr_method()
     {
-        $installer = new BackupInstaller();
+        $installer = new BackupInstaller;
 
         // Test that configureForBlogr method exists
         $this->assertTrue(method_exists($installer, 'configureForBlogr'));

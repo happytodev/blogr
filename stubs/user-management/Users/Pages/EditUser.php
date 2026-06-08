@@ -21,7 +21,7 @@ class EditUser extends EditRecord
     {
         $user = $this->record;
         $role = $this->data['role'] ?? null;
-        
+
         if ($role) {
             $user->syncRoles([$role]);
         }

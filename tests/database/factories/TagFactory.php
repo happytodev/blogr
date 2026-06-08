@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Happytodev\Blogr\Models\Tag>
+ * @extends Factory<Tag>
  */
 class TagFactory extends Factory
 {

@@ -2,40 +2,42 @@
 
 namespace Happytodev\Blogr\Tests;
 
-use Filament\Panel;
-use Filament\PanelProvider;
-use Mockery\MockInterface;
+use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use BladeUI\Icons\BladeIconsServiceProvider;
+use Filament\Actions\ActionsServiceProvider;
+use Filament\FilamentServiceProvider;
+use Filament\Forms\FormsServiceProvider;
+use Filament\Infolists\InfolistsServiceProvider;
+use Filament\Notifications\NotificationsServiceProvider;
+use Filament\Schemas\SchemasServiceProvider;
+use Filament\Support\SupportServiceProvider;
+use Filament\Tables\TablesServiceProvider;
+use Filament\Widgets\WidgetsServiceProvider;
+use Happytodev\Blogr\BlogrServiceProvider;
+use Happytodev\Blogr\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Vite;
 use Illuminate\Support\HtmlString;
-use Filament\FilamentServiceProvider;
 use Livewire\LivewireServiceProvider;
-use Filament\Forms\FormsServiceProvider;
-use Filament\Schemas\SchemasServiceProvider;
-use Filament\Tables\TablesServiceProvider;
-use Happytodev\Blogr\BlogrServiceProvider;
-use BladeUI\Icons\BladeIconsServiceProvider;
-use Illuminate\Support\Facades\Schema;
-use Filament\Actions\ActionsServiceProvider;
-use Filament\Support\SupportServiceProvider;
-use Filament\Widgets\WidgetsServiceProvider;
+use Livewire\Mechanisms\DataStore;
+use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Filament\Infolists\InfolistsServiceProvider;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
-use Filament\Notifications\NotificationsServiceProvider;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionServiceProvider;
 
 class TestCase extends Orchestra
 {
     use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn(string $modelName) => 'Happytodev\\Blogr\\Tests\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'Happytodev\\Blogr\\Tests\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
 
         // Add the Vite mock here
@@ -59,8 +61,8 @@ class TestCase extends Orchestra
 
     private function ensureLivewireDataStoreIsSingleton(): void
     {
-        $ds = app(\Livewire\Mechanisms\DataStore::class);
-        app()->instance(\Livewire\Mechanisms\DataStore::class, $ds);
+        $ds = app(DataStore::class);
+        app()->instance(DataStore::class, $ds);
     }
 
     protected function getPackageProviders($app)
@@ -90,13 +92,13 @@ class TestCase extends Orchestra
         config()->set('database.default', 'testing');
 
         $app['config']->set('app.key', 'base64:/QGZSf6gflmQp4zukiY3ab0DnTFMOqLK1//pgpQhFzw=');
-        
+
         // Configure session to use array driver (default for tests)
         // This ensures session data persists across middleware calls within a single request
         $app['config']->set('session.driver', 'array');
 
         // Configure the auth user model to use the Blogr User model
-        $app['config']->set('auth.providers.users.model', \Happytodev\Blogr\Models\User::class);
+        $app['config']->set('auth.providers.users.model', User::class);
 
         // Configure blogr settings for testing - MUST be set before ServiceProvider loads
         $app['config']->set('blogr.locales.enabled', false);
@@ -113,8 +115,8 @@ class TestCase extends Orchestra
         // Configure Spatie Permission to use 'web' guard by default
         $app['config']->set('permission', [
             'models' => [
-                'permission' => \Spatie\Permission\Models\Permission::class,
-                'role' => \Spatie\Permission\Models\Role::class,
+                'permission' => Permission::class,
+                'role' => Role::class,
             ],
             'table_names' => [
                 'roles' => 'roles',
@@ -147,16 +149,16 @@ class TestCase extends Orchestra
     protected function defineDatabaseMigrations()
     {
         // Load test-specific migrations (includes users + permission tables with hasTable() check)
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-        
+        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
+
         // Load package migrations (blog, cms, etc - excludes permission migration)
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 
     private function loadTranslationsForTests()
     {
         // Load package translations so tests can access __('blogr::key')
-        $langPath = __DIR__ . '/../resources/lang';
+        $langPath = __DIR__.'/../resources/lang';
         $this->app['translator']->addNamespace('blogr', $langPath);
     }
 

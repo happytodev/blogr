@@ -1,9 +1,9 @@
 <?php
 
-use Orchestra\Testbench\TestCase as Orchestra;
+use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Services\BackupInstallationChecker;
 use Happytodev\Blogr\Services\BackupInstaller;
-use Happytodev\Blogr\Commands\BlogrInstallCommand;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class BlogrBackupUnitTest extends Orchestra
 {
@@ -40,19 +40,19 @@ class BlogrBackupUnitTest extends Orchestra
 
     public function test_backup_installation_checker_can_be_instantiated()
     {
-        $checker = new BackupInstallationChecker();
+        $checker = new BackupInstallationChecker;
         $this->assertInstanceOf(BackupInstallationChecker::class, $checker);
     }
 
     public function test_backup_installer_can_be_instantiated()
     {
-        $installer = new BackupInstaller();
+        $installer = new BackupInstaller;
         $this->assertInstanceOf(BackupInstaller::class, $installer);
     }
 
     public function test_backup_installation_checker_has_required_methods()
     {
-        $checker = new BackupInstallationChecker();
+        $checker = new BackupInstallationChecker;
 
         $this->assertTrue(method_exists($checker, 'isInstalled'));
         $this->assertTrue(method_exists($checker, 'isConfigPublished'));
@@ -61,7 +61,7 @@ class BlogrBackupUnitTest extends Orchestra
 
     public function test_backup_installer_has_required_methods()
     {
-        $installer = new BackupInstaller();
+        $installer = new BackupInstaller;
 
         $this->assertTrue(method_exists($installer, 'canInstall'));
         $this->assertTrue(method_exists($installer, 'install'));
@@ -69,9 +69,9 @@ class BlogrBackupUnitTest extends Orchestra
         $this->assertTrue(method_exists($installer, 'configureForBlogr'));
     }
 
-    public function test_blogr_install_command_has_setupBackupSystem_method()
+    public function test_blogr_install_command_has_setup_backup_system_method()
     {
-        $command = new BlogrInstallCommand();
+        $command = new BlogrInstallCommand;
         $this->assertTrue(method_exists($command, 'setupBackupSystem'));
     }
 }

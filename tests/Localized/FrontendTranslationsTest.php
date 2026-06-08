@@ -12,14 +12,14 @@ it('can display a blog post with locales enabled', function () {
         'is_published' => true,
         'published_at' => now()->subDay(),
     ]);
-    
+
     // Verify the Observer created 'en' translation
     $enTranslation = $post->translations()->where('locale', 'en')->first();
     expect($enTranslation)->not->toBeNull();
     expect($enTranslation->slug)->toBe('english-slug');
-    
+
     $response = $this->get('/en/blog/english-slug');
-    
+
     $response->assertStatus(200);
     $response->assertSee('English Title');
     $response->assertViewHas('currentLocale', 'en');
@@ -33,7 +33,7 @@ it('can display translated post in French', function () {
         'is_published' => true,
         'published_at' => now()->subDay(),
     ]);
-    
+
     // Add French translation
     $post->translations()->create([
         'locale' => 'fr',
@@ -42,9 +42,9 @@ it('can display translated post in French', function () {
         'content' => 'Contenu français',
         'excerpt' => 'Extrait français',
     ]);
-    
+
     $response = $this->get('/fr/blog/titre-francais');
-    
+
     $response->assertStatus(200);
     $response->assertSee('Titre Français');
     $response->assertViewHas('currentLocale', 'fr');
@@ -58,7 +58,7 @@ it('provides translations for language switcher', function () {
         'is_published' => true,
         'published_at' => now()->subDay(),
     ]);
-    
+
     // Add French translation
     $post->translations()->create([
         'locale' => 'fr',
@@ -67,11 +67,11 @@ it('provides translations for language switcher', function () {
         'content' => 'Contenu français',
         'excerpt' => 'Extrait français',
     ]);
-    
+
     $response = $this->get('/en/blog/english-slug');
-    
+
     $response->assertStatus(200);
-    
+
     // Check that availableTranslations view data includes both locales
     $translations = $response->viewData('availableTranslations');
     expect($translations)->toHaveCount(2); // en + fr

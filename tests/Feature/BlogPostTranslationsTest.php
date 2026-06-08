@@ -1,12 +1,13 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -26,7 +27,7 @@ it('can create a blog post with translation', function () {
         'user_id' => 1,
         'category_id' => 1,
         'title' => 'My First Post',
-        'slug' => 'my-first-post-' . uniqid(),
+        'slug' => 'my-first-post-'.uniqid(),
         'content' => 'Full content of the post',
         'tldr' => 'A short excerpt',
         'meta_title' => 'SEO Title',
@@ -50,18 +51,18 @@ it('can add multiple translations to a post', function () {
         'user_id' => 1,
         'category_id' => 1,
         'title' => 'English Title',
-        'slug' => 'english-title-' . uniqid(),
+        'slug' => 'english-title-'.uniqid(),
         'content' => 'English content',
     ]);
 
     // Hook creates 'en' translation automatically
     $post->load('translations');
-    
+
     // Add French translation manually
     $post->translations()->create([
         'locale' => 'fr',
         'title' => 'Titre français',
-        'slug' => 'titre-francais-' . uniqid(),
+        'slug' => 'titre-francais-'.uniqid(),
         'content' => 'Contenu français',
     ]);
 
@@ -77,17 +78,17 @@ it('can get translation for specific locale', function () {
         'user_id' => 1,
         'category_id' => 1,
         'title' => 'English Title',
-        'slug' => 'english-title-' . uniqid(),
+        'slug' => 'english-title-'.uniqid(),
         'content' => 'English content',
     ]);
 
     // Hook creates 'en' translation automatically
     $post->load('translations');
-    
+
     $post->translations()->create([
         'locale' => 'fr',
         'title' => 'Titre français',
-        'slug' => 'titre-francais-' . uniqid(),
+        'slug' => 'titre-francais-'.uniqid(),
         'content' => 'Contenu français',
     ]);
 
@@ -190,7 +191,7 @@ it('requires unique slug per locale', function () {
         'title' => 'Second Post EN',
         'slug' => 'same-slug', // Same slug as post1
         'content' => 'Content',
-    ]))->toThrow(\Illuminate\Database\QueryException::class);
+    ]))->toThrow(QueryException::class);
 });
 
 it('requires unique slug globally across all locales', function () {
@@ -204,12 +205,12 @@ it('requires unique slug globally across all locales', function () {
     ]);
 
     // Try to create French translation with same slug - should fail
-    expect(fn() => $post->translations()->create([
+    expect(fn () => $post->translations()->create([
         'locale' => 'fr',
         'title' => 'Mon Article',
         'slug' => 'my-unique-post', // Same slug = conflict!
         'content' => 'Contenu français',
-    ]))->toThrow(\Illuminate\Database\QueryException::class);
+    ]))->toThrow(QueryException::class);
 });
 
 it('can associate categories with specific translation', function () {
@@ -234,7 +235,7 @@ it('can associate categories with specific translation', function () {
 
     // Observer creates 'en' translation
     $enTranslation = $post->translations()->where('locale', 'en')->first();
-    
+
     $frTranslation = $post->translations()->create([
         'locale' => 'fr',
         'title' => 'Article Tech',
@@ -291,7 +292,7 @@ it('can associate tags with specific translation', function () {
 it('calculates reading time per translation', function () {
     // English: ~200 words
     $enContent = str_repeat('word ', 200);
-    
+
     // French: ~400 words
     $frContent = str_repeat('mot ', 400);
 
@@ -300,21 +301,21 @@ it('calculates reading time per translation', function () {
         'user_id' => 1,
         'category_id' => 1,
         'title' => 'Short Article',
-        'slug' => 'short-article-' . uniqid(),
+        'slug' => 'short-article-'.uniqid(),
         'content' => $enContent,
     ]);
 
     // Hook creates 'en' translation
     $post->load('translations');
     $enTranslation = $post->translations()->where('locale', 'en')->first();
-    
+
     // Calculate reading time for English translation
     $enTranslation->calculateReadingTime();
 
     $frTranslation = $post->translations()->create([
         'locale' => 'fr',
         'title' => 'Article Long',
-        'slug' => 'article-long-' . uniqid(),
+        'slug' => 'article-long-'.uniqid(),
         'content' => $frContent,
     ]);
 
@@ -330,7 +331,7 @@ it('calculates reading time per translation', function () {
 // ============================================================================
 
 test('translation tldr field is fillable', function () {
-    $translation = new BlogPostTranslation();
+    $translation = new BlogPostTranslation;
     expect($translation->getFillable())->toContain('tldr');
 });
 
@@ -345,7 +346,7 @@ test('can create translation with tldr', function () {
         'is_published' => true,
         'published_at' => now(),
     ]);
-    
+
     $translation = BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'fr',
@@ -368,7 +369,7 @@ test('tldr is saved in database', function () {
         'slug' => 'test',
         'content' => 'Content',
     ]);
-    
+
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'es',
@@ -386,9 +387,9 @@ test('tldr is saved in database', function () {
 });
 
 test('seo fields are fillable and saved', function () {
-    $translation = new BlogPostTranslation();
+    $translation = new BlogPostTranslation;
     $fillable = $translation->getFillable();
-    
+
     expect($fillable)->toContain('seo_title')
         ->and($fillable)->toContain('seo_description')
         ->and($fillable)->toContain('seo_keywords');
@@ -403,7 +404,7 @@ test('can update translation with tldr and seo fields', function () {
         'slug' => 'test',
         'content' => 'Content',
     ]);
-    
+
     $translation = BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'de',
@@ -429,19 +430,19 @@ test('can update translation with tldr and seo fields', function () {
 
 test('dates use carbon isoFormat LL for localization', function () {
     $date = now()->setDate(2025, 10, 7);
-    
+
     // Test that isoFormat produces localized dates
     $enDate = $date->locale('en')->isoFormat('LL');
     $frDate = $date->locale('fr')->isoFormat('LL');
     $esDate = $date->locale('es')->isoFormat('LL');
     $deDate = $date->locale('de')->isoFormat('LL');
-    
+
     // Verify each locale produces a different format
     expect($enDate)->toContain('October')
         ->and($frDate)->toContain('octobre')
         ->and($esDate)->toContain('octubre')
         ->and($deDate)->toContain('Oktober');
-    
+
     // Verify dates are different (localized)
     expect($enDate)->not->toBe($frDate)
         ->and($frDate)->not->toBe($esDate);
@@ -458,7 +459,7 @@ test('draft label is translated correctly', function () {
         'is_published' => false,
         'published_at' => null,
     ]);
-    
+
     BlogPostTranslation::create([
         'blog_post_id' => $post->id,
         'locale' => 'fr',
@@ -468,7 +469,7 @@ test('draft label is translated correctly', function () {
     ]);
 
     app()->setLocale('fr');
-    
+
     // Note: Draft posts return 404, but the translation key should exist
     expect(__('blogr::blogr.date.draft'))->toBe('Brouillon');
 });
@@ -476,9 +477,9 @@ test('draft label is translated correctly', function () {
 test('date format adapts to current locale in views', function () {
     // Test that views use ->locale($currentLocale)->isoFormat('LL')
     // This ensures dates display correctly based on language
-    
+
     $date = now()->setDate(2025, 12, 25); // Christmas
-    
+
     // Test multiple locales
     $formats = [
         'en' => $date->locale('en')->isoFormat('LL'),
@@ -486,23 +487,23 @@ test('date format adapts to current locale in views', function () {
         'es' => $date->locale('es')->isoFormat('LL'),
         'de' => $date->locale('de')->isoFormat('LL'),
     ];
-    
+
     // Verify English contains December
     expect($formats['en'])->toContain('December');
-    
+
     // Verify French contains décembre
     expect($formats['fr'])->toContain('décembre');
-    
+
     // Verify Spanish contains diciembre
     expect($formats['es'])->toContain('diciembre');
-    
+
     // Verify German contains Dezember
     expect($formats['de'])->toContain('Dezember');
 });
 
 test('carbon isoFormat LL returns localized date', function () {
     $date = now()->setDate(2025, 10, 7);
-    
+
     // Test different locales
     expect($date->locale('en')->isoFormat('LL'))->toContain('October');
     expect($date->locale('fr')->isoFormat('LL'))->toContain('octobre');

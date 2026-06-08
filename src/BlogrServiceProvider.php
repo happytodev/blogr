@@ -2,43 +2,52 @@
 
 namespace Happytodev\Blogr;
 
-use Filament\Support\Assets\Js;
-use Filament\Support\Assets\Css;
-use Filament\Support\Assets\Asset;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\View;
-use Happytodev\Blogr\Models\BlogPost;
-use Happytodev\Blogr\Services\LocaleService;
-use Illuminate\Filesystem\Filesystem;
-use Spatie\LaravelPackageTools\Package;
-use Happytodev\Blogr\Testing\TestsBlogr;
-use Filament\Support\Facades\FilamentIcon;
-use Filament\Support\Facades\FilamentAsset;
-use Happytodev\Blogr\Commands\BlogrCommand;
+use App\Models\User;
 use Filament\Support\Assets\AlpineComponent;
-use Happytodev\Blogr\Helpers\ConfigHelper;
-use Happytodev\Blogr\Policies\BlogPostPolicy;
-use Happytodev\Blogr\Policies\UserPolicy;
-use Livewire\Features\SupportTesting\Testable;
-use Happytodev\Blogr\Commands\BlogrInstallCommand;
-use Happytodev\Blogr\Commands\InstallUserManagementCommand;
-use Happytodev\Blogr\Commands\MigratePostsToTranslations;
+use Filament\Support\Assets\Asset;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentIcon;
+use Happytodev\Blogr\Commands\BlogrCommand;
 use Happytodev\Blogr\Commands\BlogrExportCommand;
 use Happytodev\Blogr\Commands\BlogrImportCommand;
-use Happytodev\Blogr\Commands\BlogrPublishDemoPagesCommand;
+use Happytodev\Blogr\Commands\BlogrInstallCommand;
 use Happytodev\Blogr\Commands\BlogrInstallTutorialsCommand;
-use Happytodev\Blogr\Commands\BlogrRemoveTutorialsCommand;
 use Happytodev\Blogr\Commands\BlogrListTutorialsCommand;
-use Happytodev\Blogr\Http\Controllers\BlogController;
+use Happytodev\Blogr\Commands\BlogrPublishDemoPagesCommand;
+use Happytodev\Blogr\Commands\BlogrRemoveTutorialsCommand;
+use Happytodev\Blogr\Commands\InstallUserManagementCommand;
+use Happytodev\Blogr\Commands\MigratePostsToTranslations;
+use Happytodev\Blogr\Contracts\BlogrExtension;
+use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
+use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
+use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
+use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;
+use Happytodev\Blogr\Filament\Widgets\ScheduledPosts;
+use Happytodev\Blogr\Helpers\ConfigHelper;
 use Happytodev\Blogr\Http\Controllers\AuthorController;
+use Happytodev\Blogr\Http\Controllers\BlogController;
+use Happytodev\Blogr\Http\Controllers\CmsContactController;
+use Happytodev\Blogr\Http\Controllers\CmsPageController;
 use Happytodev\Blogr\Http\Controllers\RssFeedController;
 use Happytodev\Blogr\Http\Controllers\SitemapController;
-use Happytodev\Blogr\Http\Controllers\CmsPageController;
+use Happytodev\Blogr\Http\Middleware\SetLocale;
+use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
-use Happytodev\Blogr\Observers\BlogSeriesTranslationObserver;
 use Happytodev\Blogr\Observers\BlogPostObserver;
+use Happytodev\Blogr\Observers\BlogSeriesTranslationObserver;
+use Happytodev\Blogr\Policies\BlogPostPolicy;
+use Happytodev\Blogr\Policies\UserPolicy;
+use Happytodev\Blogr\Services\ExtensionRegistry;
+use Happytodev\Blogr\Services\LocaleService;
+use Happytodev\Blogr\Testing\TestsBlogr;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
+use Livewire\Features\SupportTesting\Testable;
+use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
 
 class BlogrServiceProvider extends PackageServiceProvider
 {
@@ -72,7 +81,7 @@ class BlogrServiceProvider extends PackageServiceProvider
         if (file_exists($package->basePath('/../resources/views'))) {
             $package->hasViews(static::$viewNamespace);
         }
-        
+
         // Register commands
         $package->hasCommands([
             BlogrCommand::class,
@@ -92,11 +101,11 @@ class BlogrServiceProvider extends PackageServiceProvider
     {
         // Register config helper
         $this->app->singleton('blogr.config', function ($app) {
-            return new ConfigHelper();
+            return new ConfigHelper;
         });
 
         // Register extension registry
-        $this->app->singleton(\Happytodev\Blogr\Services\ExtensionRegistry::class);
+        $this->app->singleton(ExtensionRegistry::class);
     }
 
     public function packageBooted(): void
@@ -104,20 +113,20 @@ class BlogrServiceProvider extends PackageServiceProvider
         // FIX: Manually load and inject blogr translations
         // The issue: Spatie's loadTranslationsFrom() registers hints, but Laravel's loader
         // may cache them. We directly load and inject all translations into the translator.
-        
+
         $translator = $this->app['translator'];
         $locale = $translator->getLocale();
-        
+
         $vendorPath = $this->app->langPath('vendor/blogr');
-        
+
         // Manually load blogr translations from vendor path
         if (is_dir($vendorPath)) {
             $file = "{$vendorPath}/{$locale}/blogr.php";
-            
+
             if (file_exists($file)) {
                 // Include and get the translations array
                 $translations = include $file;
-                
+
                 // Inject them directly into the translator's loaded cache
                 // The structure is: loaded[namespace][group][locale] = translations
                 // When parsing 'blogr::notifications.post_saved_subject':
@@ -129,29 +138,29 @@ class BlogrServiceProvider extends PackageServiceProvider
                     $trans_refl = new \ReflectionClass($translator);
                     $loaded_prop = $trans_refl->getProperty('loaded');
                     $loaded_prop->setAccessible(true);
-                    
+
                     $loaded = $loaded_prop->getValue($translator);
-                    
+
                     // Inject each section as a separate group
                     foreach ($translations as $section => $items) {
                         if (is_array($items)) {
                             $loaded['blogr'][$section][$locale] = $items;
                         }
                     }
-                    
+
                     $loaded_prop->setValue($translator, $loaded);
                 }
             }
         }
-        
+
         // Register Policies
         Gate::policy(BlogPost::class, BlogPostPolicy::class);
-        
+
         // Register User Policy (check if User model exists before registering)
         if (class_exists('App\\Models\\User')) {
-            Gate::policy(\App\Models\User::class, UserPolicy::class);
+            Gate::policy(User::class, UserPolicy::class);
         }
-        
+
         // Register model observers
         BlogSeriesTranslation::observe(BlogSeriesTranslationObserver::class);
         BlogPost::observe(BlogPostObserver::class);
@@ -175,61 +184,61 @@ class BlogrServiceProvider extends PackageServiceProvider
 
         // Handle Stubs
         if (app()->runningInConsole()) {
-            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
+            foreach (app(Filesystem::class)->files(__DIR__.'/../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/blogr/{$file->getFilename()}"),
                 ], 'blogr-stubs');
             }
-            
+
             // Publish translations with separate tag
             $this->publishes([
-                __DIR__ . '/../resources/lang' => $this->app->langPath('vendor/blogr'),
+                __DIR__.'/../resources/lang' => $this->app->langPath('vendor/blogr'),
             ], ['blogr-translations', 'blogr-lang', 'blogr']);
-            
+
             // Publish default series image and assets
             $this->publishes([
-                __DIR__ . '/../resources/images' => public_path('vendor/blogr/images'),
+                __DIR__.'/../resources/images' => public_path('vendor/blogr/images'),
             ], ['blogr-assets', 'blogr']);
-            
+
             // Publish config (already handled by Spatie Package Tools, but we add 'blogr' tag)
             $this->publishes([
-                __DIR__ . '/../config/blogr.php' => config_path('blogr.php'),
+                __DIR__.'/../config/blogr.php' => config_path('blogr.php'),
             ], ['blogr-config', 'blogr']);
-            
+
             // Publish views (already handled by Spatie Package Tools, but we add 'blogr' tag)
             $this->publishes([
-                __DIR__ . '/../resources/views' => resource_path('views/vendor/blogr'),
+                __DIR__.'/../resources/views' => resource_path('views/vendor/blogr'),
             ], ['blogr-views', 'blogr']);
-            
+
             // Publish migrations (excluding permission migration which is loaded internally)
             // Note: We exclude 2024_01_01_000001_create_permission_tables.php because:
             // 1. It's loaded by the package directly (hasMigrations() call)
             // 2. It contains Schema::hasTable() checks for idempotency
             // 3. Users should NOT publish it manually to avoid conflicts
-            $migrationFiles = glob(__DIR__ . '/../database/migrations/*.php');
+            $migrationFiles = glob(__DIR__.'/../database/migrations/*.php');
             $migrationsToPublish = [];
-            
+
             foreach ($migrationFiles as $migrationFile) {
                 // Exclude permission migration from manual publishing
-                if (!str_contains($migrationFile, 'create_permission_tables.php')) {
+                if (! str_contains($migrationFile, 'create_permission_tables.php')) {
                     $filename = basename($migrationFile);
                     $migrationsToPublish[$migrationFile] = database_path("migrations/{$filename}");
                 }
             }
-            
-            if (!empty($migrationsToPublish)) {
+
+            if (! empty($migrationsToPublish)) {
                 $this->publishes($migrationsToPublish, ['blogr-migrations', 'blogr']);
             }
         }
 
         // Testing
         Testable::mixin(new TestsBlogr);
-        
+
         // Register frontend routes if enabled
         if (config()->get('blogr.route.frontend.enabled', true)) {
             $this->registerFrontendRoutes();
         }
-        
+
         // Register CMS routes if enabled
         if (config('blogr.cms.enabled', false)) {
             $this->registerCmsRoutes();
@@ -238,7 +247,7 @@ class BlogrServiceProvider extends PackageServiceProvider
         // Share available locales with frontend views that don't already have
         // a controller-specific value (e.g. CmsPageController passes per-page locales).
         View::composer('blogr::*', function ($view) {
-            if (!$view->offsetExists('availableLocales')) {
+            if (! $view->offsetExists('availableLocales')) {
                 $view->with('availableLocales', app(LocaleService::class)->getAvailable());
             }
         });
@@ -264,23 +273,23 @@ class BlogrServiceProvider extends PackageServiceProvider
     protected function repairStalePublishedViews(): void
     {
         $publishedDir = resource_path('views/vendor/blogr/components/blocks');
-        $publishedMap = $publishedDir . '/map.blade.php';
+        $publishedMap = $publishedDir.'/map.blade.php';
 
-        if (!file_exists($publishedMap)) {
+        if (! file_exists($publishedMap)) {
             return;
         }
 
         $stalePatterns = [
             'openstreetmap.org/export/embed',
             'google.com/maps',
-            'Open in ' . 'Google Maps',
+            'Open in '.'Google Maps',
         ];
 
         $content = file_get_contents($publishedMap);
         foreach ($stalePatterns as $pattern) {
             if (str_contains($content, $pattern)) {
                 // Stale published view detected — overwrite with current package version
-                $packageMap = __DIR__ . '/../resources/views/components/blocks/map.blade.php';
+                $packageMap = __DIR__.'/../resources/views/components/blocks/map.blade.php';
                 if (file_exists($packageMap)) {
                     $fresh = file_get_contents($packageMap);
                     file_put_contents($publishedMap, $fresh);
@@ -337,17 +346,44 @@ class BlogrServiceProvider extends PackageServiceProvider
      */
     protected function registerCoreExtension(): void
     {
-        $registry = $this->app->make(\Happytodev\Blogr\Services\ExtensionRegistry::class);
+        $registry = $this->app->make(ExtensionRegistry::class);
 
-        $registry->register(new class implements \Happytodev\Blogr\Contracts\BlogrExtension
+        $registry->register(new class implements BlogrExtension
         {
-            public function getId(): string { return 'blogr-core'; }
-            public function getName(): string { return 'Blogr Core'; }
-            public function getDescription(): string { return 'Core blog system with multilingual support, CMS pages, SEO, analytics, and more.'; }
-            public function getVersion(): string { return \Happytodev\Blogr\Blogr::VERSION; }
-            public function getAuthor(): string { return 'HappyToDev'; }
-            public function getHomepage(): ?string { return 'https://github.com/happytodev/blogr'; }
-            public function getDependencies(): array { return []; }
+            public function getId(): string
+            {
+                return 'blogr-core';
+            }
+
+            public function getName(): string
+            {
+                return 'Blogr Core';
+            }
+
+            public function getDescription(): string
+            {
+                return 'Core blog system with multilingual support, CMS pages, SEO, analytics, and more.';
+            }
+
+            public function getVersion(): string
+            {
+                return Blogr::VERSION;
+            }
+
+            public function getAuthor(): string
+            {
+                return 'HappyToDev';
+            }
+
+            public function getHomepage(): ?string
+            {
+                return 'https://github.com/happytodev/blogr';
+            }
+
+            public function getDependencies(): array
+            {
+                return [];
+            }
         });
     }
 
@@ -359,7 +395,7 @@ class BlogrServiceProvider extends PackageServiceProvider
         $availableLocales = config('blogr.locales.available', ['en']);
         $localePattern = '[a-z]{2}(?:[_-][a-zA-Z]{2,4})?';
         $homepageType = config('blogr.homepage.type', 'blog');
-        
+
         // If CMS is configured as homepage, blog should NOT override root routes
         $blogIsHomepage = ($homepageType === 'blog' || ($isHomepage && $homepageType === 'blog'));
 
@@ -397,62 +433,62 @@ class BlogrServiceProvider extends PackageServiceProvider
                     ->where('locale', $localePattern)
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.index');
-                    
+
                 $this->app['router']->get('{locale}/series', [BlogController::class, 'seriesIndex'])
                     ->where('locale', $localePattern)
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.series.index');
-                    
+
                 $this->app['router']->get('{locale}/series/{seriesSlug}', [BlogController::class, 'series'])
                     ->where(['locale' => $localePattern, 'seriesSlug' => '.*'])
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.series');
-                    
+
                 $this->app['router']->get('{locale}/author/{userSlug}', [AuthorController::class, 'show'])
                     ->where(['locale' => $localePattern, 'userSlug' => '.*'])
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.author');
-                    
+
                 $this->app['router']->get('{locale}/category/{categorySlug}', [BlogController::class, 'category'])
                     ->where(['locale' => $localePattern, 'categorySlug' => '.*'])
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.category');
-                    
+
                 $this->app['router']->get('{locale}/tag/{tagSlug}', [BlogController::class, 'tag'])
                     ->where(['locale' => $localePattern, 'tagSlug' => '.*'])
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.tag');
-                    
+
                 // RSS Feed routes with locale (homepage mode - MUST be before {slug} catch-all)
                 if (config('blogr.rss.enabled', true)) {
                     $this->app['router']->get('{locale}/feed', [RssFeedController::class, 'index'])
                         ->where('locale', $localePattern)
                         ->middleware(config('blogr.route.middleware', ['web']))
                         ->name('blog.feed');
-                    
+
                     $this->app['router']->get('{locale}/feed/category/{categorySlug}', [RssFeedController::class, 'category'])
                         ->where(['locale' => $localePattern, 'categorySlug' => '.*'])
                         ->middleware(config('blogr.route.middleware', ['web']))
                         ->name('blog.feed.category');
-                    
+
                     $this->app['router']->get('{locale}/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])
                         ->where(['locale' => $localePattern, 'tagSlug' => '.*'])
                         ->middleware(config('blogr.route.middleware', ['web']))
@@ -462,11 +498,11 @@ class BlogrServiceProvider extends PackageServiceProvider
                         ->where('locale', $localePattern)
                         ->middleware(array_merge(
                             config('blogr.route.middleware', ['web']),
-                            [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                            [SetLocale::class]
                         ))
                         ->name('blog.feeds');
                 }
-                
+
                 // Sitemap routes with locale
                 if (config('blogr.sitemap.enabled', true)) {
                     $this->app['router']->get('{locale}/sitemap.xml', [SitemapController::class, 'index'])
@@ -474,105 +510,105 @@ class BlogrServiceProvider extends PackageServiceProvider
                         ->middleware(config('blogr.route.middleware', ['web']))
                         ->name('blog.sitemap');
                 }
-                    
+
                 $this->app['router']->get('{locale}/{slug}', [BlogController::class, 'show'])
                     ->where(['locale' => $localePattern, 'slug' => '.*']) // Allow any slug since specific routes are already defined
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.show');
             } else {
                 // Blog with prefix and locale: /{locale}/{prefix}/
-                $fullPrefix = '{locale}/' . $prefix;
-                
+                $fullPrefix = '{locale}/'.$prefix;
+
                 $this->app['router']->get($fullPrefix, [BlogController::class, 'index'])
                     ->where('locale', $localePattern)
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.index');
-                    
-                $this->app['router']->get($fullPrefix . '/series', [BlogController::class, 'seriesIndex'])
+
+                $this->app['router']->get($fullPrefix.'/series', [BlogController::class, 'seriesIndex'])
                     ->where('locale', $localePattern)
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.series.index');
-                    
-                $this->app['router']->get($fullPrefix . '/series/{seriesSlug}', [BlogController::class, 'series'])
+
+                $this->app['router']->get($fullPrefix.'/series/{seriesSlug}', [BlogController::class, 'series'])
                     ->where(['locale' => $localePattern, 'seriesSlug' => '.*'])
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.series');
-                    
-                $this->app['router']->get($fullPrefix . '/author/{userSlug}', [AuthorController::class, 'show'])
+
+                $this->app['router']->get($fullPrefix.'/author/{userSlug}', [AuthorController::class, 'show'])
                     ->where(['locale' => $localePattern, 'userSlug' => '.*'])
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.author');
-                    
-                $this->app['router']->get($fullPrefix . '/category/{categorySlug}', [BlogController::class, 'category'])
+
+                $this->app['router']->get($fullPrefix.'/category/{categorySlug}', [BlogController::class, 'category'])
                     ->where(['locale' => $localePattern, 'categorySlug' => '.*'])
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.category');
-                    
-                $this->app['router']->get($fullPrefix . '/tag/{tagSlug}', [BlogController::class, 'tag'])
+
+                $this->app['router']->get($fullPrefix.'/tag/{tagSlug}', [BlogController::class, 'tag'])
                     ->where(['locale' => $localePattern, 'tagSlug' => '.*'])
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.tag');
-                    
+
                 // RSS Feed routes with locale (MUST be before {slug} catch-all)
                 if (config('blogr.rss.enabled', true)) {
-                    $this->app['router']->get($fullPrefix . '/feed', [RssFeedController::class, 'index'])
+                    $this->app['router']->get($fullPrefix.'/feed', [RssFeedController::class, 'index'])
                         ->where('locale', $localePattern)
                         ->middleware(config('blogr.route.middleware', ['web']))
                         ->name('blog.feed');
-                    
-                    $this->app['router']->get($fullPrefix . '/feed/category/{categorySlug}', [RssFeedController::class, 'category'])
+
+                    $this->app['router']->get($fullPrefix.'/feed/category/{categorySlug}', [RssFeedController::class, 'category'])
                         ->where(['locale' => $localePattern, 'categorySlug' => '.*'])
                         ->middleware(config('blogr.route.middleware', ['web']))
                         ->name('blog.feed.category');
-                    
-                    $this->app['router']->get($fullPrefix . '/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])
+
+                    $this->app['router']->get($fullPrefix.'/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])
                         ->where(['locale' => $localePattern, 'tagSlug' => '.*'])
                         ->middleware(config('blogr.route.middleware', ['web']))
                         ->name('blog.feed.tag');
 
-                    $this->app['router']->get($fullPrefix . '/feeds', [RssFeedController::class, 'directory'])
+                    $this->app['router']->get($fullPrefix.'/feeds', [RssFeedController::class, 'directory'])
                         ->where('locale', $localePattern)
                         ->middleware(array_merge(
                             config('blogr.route.middleware', ['web']),
-                            [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                            [SetLocale::class]
                         ))
                         ->name('blog.feeds');
                 }
-                
+
                 // Sitemap routes with locale and prefix
                 if (config('blogr.sitemap.enabled', true)) {
-                    $this->app['router']->get($fullPrefix . '/sitemap.xml', [SitemapController::class, 'index'])
+                    $this->app['router']->get($fullPrefix.'/sitemap.xml', [SitemapController::class, 'index'])
                         ->where('locale', $localePattern)
                         ->middleware(config('blogr.route.middleware', ['web']))
                         ->name('blog.sitemap');
                 }
-                    
-                $this->app['router']->get($fullPrefix . '/{slug}', [BlogController::class, 'show'])
+
+                $this->app['router']->get($fullPrefix.'/{slug}', [BlogController::class, 'show'])
                     ->where(['locale' => $localePattern, 'slug' => '.*']) // Allow any slug since specific routes are already defined
                     ->middleware(array_merge(
                         config('blogr.route.middleware', ['web']),
-                        [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        [SetLocale::class]
                     ))
                     ->name('blog.show');
             }
@@ -592,7 +628,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                         $this->app['router']->get('/{slug}', [BlogController::class, 'show'])
                             ->where('slug', '.*') // Allow any slug since specific routes are already defined
                             ->name('blog.show');
-                        
+
                         // RSS Feed routes (no locale)
                         if (config('blogr.rss.enabled', true)) {
                             $this->app['router']->get('/feed', [RssFeedController::class, 'index'])->name('blog.feed');
@@ -600,7 +636,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                             $this->app['router']->get('/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])->name('blog.feed.tag');
                             $this->app['router']->get('/feeds', [RssFeedController::class, 'directory'])->name('blog.feeds');
                         }
-                        
+
                         // Sitemap route (no locale)
                         if (config('blogr.sitemap.enabled', true)) {
                             $this->app['router']->get('/sitemap.xml', [SitemapController::class, 'index'])->name('blog.sitemap');
@@ -621,7 +657,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                         $this->app['router']->get('/{slug}', [BlogController::class, 'show'])
                             ->where('slug', '.*') // Allow any slug since specific routes are already defined
                             ->name('blog.show');
-                        
+
                         // RSS Feed routes (no locale)
                         if (config('blogr.rss.enabled', true)) {
                             $this->app['router']->get('/feed', [RssFeedController::class, 'index'])->name('blog.feed');
@@ -629,7 +665,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                             $this->app['router']->get('/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])->name('blog.feed.tag');
                             $this->app['router']->get('/feeds', [RssFeedController::class, 'directory'])->name('blog.feeds');
                         }
-                        
+
                         // Sitemap route (no locale)
                         if (config('blogr.sitemap.enabled', true)) {
                             $this->app['router']->get('/sitemap.xml', [SitemapController::class, 'index'])->name('blog.sitemap');
@@ -641,7 +677,7 @@ class BlogrServiceProvider extends PackageServiceProvider
 
     /**
      * Register CMS routes with flexible prefix system
-     * 
+     *
      * Routes structure:
      * - Homepage (is_homepage=true): always at / or /{locale}
      * - With prefix: /{prefix}/{slug} or /{locale}/{prefix}/{slug}
@@ -655,30 +691,30 @@ class BlogrServiceProvider extends PackageServiceProvider
         $localePattern = '[a-z]{2}(?:[_-][a-zA-Z]{2,4})?';
         $cmsPrefix = trim(config('blogr.cms.prefix', ''), '/');
         $middleware = config('blogr.route.middleware', ['web']);
-        
+
         // Get reserved slugs (blog, feed, author, etc.)
         $reservedSlugs = config('blogr.cms.reserved_slugs', [
             'blog', 'feed', 'author', 'category', 'tag', 'series', 'rss',
             'admin', 'login', 'logout', 'register', 'dashboard',
         ]);
-        
+
         // Add CMS prefix to reserved list only if not empty
-        if (!empty($cmsPrefix)) {
+        if (! empty($cmsPrefix)) {
             $reservedSlugs[] = $cmsPrefix;
         }
-        
+
         // Create negative lookahead pattern: ^(?!reserved1|reserved2|...)
-        $reservedPattern = '^(?!' . implode('|', $reservedSlugs) . ')';
-        
+        $reservedPattern = '^(?!'.implode('|', $reservedSlugs).')';
+
         $router = $this->app['router'];
-        
+
         // ==============================================
         // 1. HOMEPAGE ROUTES (always at / or /{locale})
         // ==============================================
         // Check if CMS is configured as homepage
         $homepageType = config('blogr.homepage.type', 'blog');
         $cmsIsHomepage = $homepageType === 'cms';
-        
+
         // Only register CMS homepage redirect if CMS is actually the homepage
         // (Blog handles its own redirect in registerBlogRoutes)
         if ($localesEnabled && $cmsIsHomepage) {
@@ -687,13 +723,13 @@ class BlogrServiceProvider extends PackageServiceProvider
                     return redirect("/{$defaultLocale}", 302);
                 })->name('cms.homepage.redirect');
         }
-        
+
         if ($cmsIsHomepage) {
             if ($localesEnabled) {
                 // Homepage with locale: /{locale}
                 $router->get('{locale}', [CmsPageController::class, 'showHomepage'])
                     ->where('locale', $localePattern)
-                    ->middleware(array_merge($middleware, [\Happytodev\Blogr\Http\Middleware\SetLocale::class]))
+                    ->middleware(array_merge($middleware, [SetLocale::class]))
                     ->name('cms.homepage');
             } else {
                 // Homepage without locale: /
@@ -702,11 +738,11 @@ class BlogrServiceProvider extends PackageServiceProvider
                     ->name('cms.homepage');
             }
         }
-        
+
         // ==============================================
         // 2. CONTACT FORM SUBMIT ROUTE
         // ==============================================
-        $router->post('/contact/submit', [\Happytodev\Blogr\Http\Controllers\CmsContactController::class, 'submit'])
+        $router->post('/contact/submit', [CmsContactController::class, 'submit'])
             ->middleware($middleware)
             ->name('blogr.cms.contact.submit');
 
@@ -714,36 +750,36 @@ class BlogrServiceProvider extends PackageServiceProvider
         // 3. CMS PAGE ROUTES (with or without prefix)
         // ==============================================
         if ($localesEnabled) {
-            if (!empty($cmsPrefix)) {
+            if (! empty($cmsPrefix)) {
                 // WITH PREFIX: /{locale}/{prefix}/{slug}
-                $router->get('{locale}/' . $cmsPrefix . '/{slug}', [CmsPageController::class, 'show'])
+                $router->get('{locale}/'.$cmsPrefix.'/{slug}', [CmsPageController::class, 'show'])
                     ->where([
                         'locale' => $localePattern,
                         'slug' => '.*', // No collision with prefix
                     ])
-                    ->middleware(array_merge($middleware, [\Happytodev\Blogr\Http\Middleware\SetLocale::class]))
+                    ->middleware(array_merge($middleware, [SetLocale::class]))
                     ->name('cms.page.show');
             } else {
                 // WITHOUT PREFIX: /{locale}/{slug} (anti-collision)
                 $router->get('{locale}/{slug}', [CmsPageController::class, 'show'])
                     ->where([
                         'locale' => $localePattern,
-                        'slug' => $reservedPattern . '.*', // Anti-collision regex
+                        'slug' => $reservedPattern.'.*', // Anti-collision regex
                     ])
-                    ->middleware(array_merge($middleware, [\Happytodev\Blogr\Http\Middleware\SetLocale::class]))
+                    ->middleware(array_merge($middleware, [SetLocale::class]))
                     ->name('cms.page.show');
             }
         } else {
-            if (!empty($cmsPrefix)) {
+            if (! empty($cmsPrefix)) {
                 // WITH PREFIX: /{prefix}/{slug}
-                $router->get($cmsPrefix . '/{slug}', [CmsPageController::class, 'show'])
+                $router->get($cmsPrefix.'/{slug}', [CmsPageController::class, 'show'])
                     ->where('slug', '.*') // No collision with prefix
                     ->middleware($middleware)
                     ->name('cms.page.show');
             } else {
                 // WITHOUT PREFIX: /{slug} (anti-collision)
                 $router->get('{slug}', [CmsPageController::class, 'show'])
-                    ->where('slug', $reservedPattern . '.*') // Anti-collision regex
+                    ->where('slug', $reservedPattern.'.*') // Anti-collision regex
                     ->middleware($middleware)
                     ->name('cms.page.show');
             }
@@ -756,16 +792,16 @@ class BlogrServiceProvider extends PackageServiceProvider
     protected function registerWidgets(): void
     {
         // Only register widgets if we're in a Filament context
-        if (!class_exists('\Filament\PanelProvider')) {
+        if (! class_exists('\Filament\PanelProvider')) {
             return;
         }
 
         $widgets = [
-            \Happytodev\Blogr\Filament\Widgets\BlogStatsOverview::class,
-            \Happytodev\Blogr\Filament\Widgets\RecentBlogPosts::class,
-            \Happytodev\Blogr\Filament\Widgets\ScheduledPosts::class,
-            \Happytodev\Blogr\Filament\Widgets\BlogPostsChart::class,
-            \Happytodev\Blogr\Filament\Widgets\BlogReadingStats::class,
+            BlogStatsOverview::class,
+            RecentBlogPosts::class,
+            ScheduledPosts::class,
+            BlogPostsChart::class,
+            BlogReadingStats::class,
         ];
 
         // Register widgets with Filament

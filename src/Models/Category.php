@@ -2,15 +2,15 @@
 
 namespace Happytodev\Blogr\Models;
 
-use Illuminate\Support\Str;
-use Happytodev\Blogr\Models\BlogPost;
+use Happytodev\Blogr\Tests\Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Category extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = ['name', 'slug', 'is_default'];
 
     /**
@@ -18,12 +18,12 @@ class Category extends Model
      */
     protected static function newFactory()
     {
-        return \Happytodev\Blogr\Tests\Database\Factories\CategoryFactory::new();
+        return CategoryFactory::new();
     }
 
     public function getTable()
     {
-        return config('blogr.tables.prefix', '') . 'categories';
+        return config('blogr.tables.prefix', '').'categories';
     }
 
     public function posts()
@@ -48,7 +48,7 @@ class Category extends Model
         if ($this->relationLoaded('translations')) {
             return $this->translations->firstWhere('locale', $locale);
         }
-        
+
         // Otherwise, query the database
         return $this->translations()->where('locale', $locale)->first();
     }

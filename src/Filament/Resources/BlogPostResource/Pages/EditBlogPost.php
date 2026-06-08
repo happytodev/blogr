@@ -9,10 +9,10 @@ use Happytodev\Blogr\Models\BlogPost;
 class EditBlogPost extends EditRecord
 {
     protected static string $resource = BlogPostResource::class;
-    
+
     // Notification is dispatched from BlogPost model's created() hook for new posts
     // For updates, admins don't receive notifications (as per original design)
-    
+
     protected function mutateFormDataBeforeSave(array $data): array
     {
         if (isset($data['blog_series_id']) && isset($data['series_position'])) {
@@ -27,7 +27,7 @@ class EditBlogPost extends EditRecord
             }
         }
         unset($data['series_position_custom']);
+
         return $data;
     }
 }
-

@@ -1,13 +1,13 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
-use Illuminate\Support\Facades\Hash;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Support\Facades\Hash;
 
 beforeEach(function () {
     $this->author = User::create([
@@ -45,7 +45,7 @@ test('homepage displays published articles without series', function () {
     ]);
 
     $response = $this->get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200);
     $response->assertSee('Standalone Article 1');
     $response->assertSee('Standalone Article 2');
@@ -73,7 +73,7 @@ test('homepage displays articles from series', function () {
     ]);
 
     $response = $this->get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200);
     $response->assertSee('Article in Series');
 });
@@ -110,7 +110,7 @@ test('homepage displays both series and non-series articles', function () {
     ]);
 
     $response = $this->get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200);
     $response->assertSee('Vue Article');
     $response->assertSee('Tutorial Article');
@@ -127,7 +127,7 @@ test('homepage does not display unpublished articles', function () {
     ]);
 
     $response = $this->get(route('blog.index', ['locale' => 'en']));
-    
+
     $response->assertStatus(200);
     $response->assertDontSee('Draft Article');
 });

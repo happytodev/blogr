@@ -2,18 +2,18 @@
 
 namespace Happytodev\Blogr\Filament\Resources\BlogPosts;
 
-use Filament\Tables\Table;
-use Filament\Actions\EditAction;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\DatePicker;
-use Filament\Facades\Filament;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Table;
 use Happytodev\Blogr\Models\BlogSeries;
+use Illuminate\Database\Eloquent\Builder;
 
 class BlogPostTable
 {
@@ -23,7 +23,7 @@ class BlogPostTable
             ->defaultSort('created_at', 'desc')
             ->modifyQueryUsing(function ($query) {
                 $user = Filament::auth()->user();
-                if ($user->hasRole('writer') && !$user->hasRole('admin')) {
+                if ($user->hasRole('writer') && ! $user->hasRole('admin')) {
                     $query->where('user_id', $user->id);
                 }
 

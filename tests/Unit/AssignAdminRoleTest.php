@@ -2,10 +2,10 @@
 
 namespace Happytodev\Blogr\Tests\Unit;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Happytodev\Blogr\Tests\TestCase;
-use Workbench\App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
+use Workbench\App\Models\User;
 
 class AssignAdminRoleTest extends TestCase
 {
@@ -14,7 +14,7 @@ class AssignAdminRoleTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Create admin role if it doesn't exist
         Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);

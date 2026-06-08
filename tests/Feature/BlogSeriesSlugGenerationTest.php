@@ -1,10 +1,10 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\BlogSeriesTranslation;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -17,13 +17,13 @@ it('generates temporary slug when creating series without slug', function () {
         'is_featured' => false,
         'published_at' => now(),
     ];
-    
+
     // This should NOT fail with NOT NULL constraint
     $series = BlogSeries::create($data);
-    
+
     expect($series)->not->toBeNull();
     expect($series->id)->not->toBeNull();
-    
+
     // Slug should be auto-generated (temporary or default)
     expect($series->slug)->not->toBeNull();
     expect($series->slug)->not->toBe('');
@@ -37,7 +37,7 @@ it('preserves manually set slug when provided', function () {
         'is_featured' => false,
         'published_at' => now(),
     ]);
-    
+
     expect($series->slug)->toBe('custom-series-slug');
 });
 
@@ -48,7 +48,7 @@ it('updates slug from first translation title', function () {
         'is_featured' => false,
         'published_at' => now(),
     ]);
-    
+
     // Create first translation
     $translation = BlogSeriesTranslation::create([
         'blog_series_id' => $series->id,
@@ -56,10 +56,10 @@ it('updates slug from first translation title', function () {
         'title' => 'My Amazing Series',
         'description' => 'A great series',
     ]);
-    
+
     // Refresh series
     $series->refresh();
-    
+
     // Slug should be updated from translation title
     expect($series->slug)->toBe('my-amazing-series');
 });

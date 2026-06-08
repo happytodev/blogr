@@ -1,21 +1,23 @@
 <?php
 
+use Happytodev\Blogr\Filament\Resources\CmsPageResource;
+use Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages\EditCmsPageTranslation;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Filament\Resources\CmsPageResource;
-use Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages\EditCmsPageTranslation;
 use Happytodev\Blogr\Tests\CmsTestCase;
+use Illuminate\Support\ViewErrorBag;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 
 uses(CmsTestCase::class);
 
 beforeEach(function () {
-    $adminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin']);
+    $adminRole = Role::firstOrCreate(['name' => 'admin']);
     $this->admin = User::factory()->create();
     $this->admin->assignRole($adminRole);
     $this->actingAs($this->admin);
-    $this->session(['errors' => new \Illuminate\Support\ViewErrorBag()]);
+    $this->session(['errors' => new ViewErrorBag]);
 
     $this->page = CmsPage::factory()->create([
         'slug' => 'install',

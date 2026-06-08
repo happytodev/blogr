@@ -19,7 +19,7 @@ class EditCmsPage extends EditRecord
 {
     protected static string $resource = CmsPageResource::class;
 
-    public function mount(int | string $record): void
+    public function mount(int|string $record): void
     {
         parent::mount($record);
 
@@ -81,7 +81,7 @@ class EditCmsPage extends EditRecord
             $isDefault = $locale === $defaultLocale;
             $blockCount = is_array($translation->blocks) ? count($translation->blocks) : 0;
             $blocksLabel = $blockCount > 0
-                ? "{$blockCount} bloc" . ($blockCount > 1 ? 's' : '')
+                ? "{$blockCount} bloc".($blockCount > 1 ? 's' : '')
                 : 'Aucun bloc';
 
             $editUrl = CmsPageResource::getUrl('edit-translation', [
@@ -144,7 +144,7 @@ HTML;
                                 ->reject(fn ($locale) => in_array($locale, $existingLocales))
                                 ->mapWithKeys(fn ($locale) => [
                                     $locale => $localeService->localeLabel($locale)
-                                        . ($locale === $defaultLocale ? ' (défaut)' : ''),
+                                        .($locale === $defaultLocale ? ' (défaut)' : ''),
                                 ]);
                         })
                         ->required()

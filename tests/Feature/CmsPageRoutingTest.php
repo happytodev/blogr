@@ -1,8 +1,9 @@
 <?php
 
-use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
+use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Tests\CmsTestCase;
+
 use function Pest\Laravel\get;
 
 uses(CmsTestCase::class)->group('cms');
@@ -20,7 +21,7 @@ describe('CMS Routes - Without Prefix', function () {
 
     test('CMS homepage is accessible at root when blog is not homepage', function () {
         config(['blogr.route.homepage' => false]);
-        
+
         $page = CmsPage::factory()->homepage()->create();
         $page->translations()->create([
             'locale' => 'en',
@@ -28,9 +29,9 @@ describe('CMS Routes - Without Prefix', function () {
             'slug' => 'home',
             'content' => 'Homepage content',
         ]);
-        
+
         $response = get('/');
-        
+
         $response->assertStatus(200);
         $response->assertSee('Welcome Home');
     });
@@ -43,9 +44,9 @@ describe('CMS Routes - Without Prefix', function () {
             'slug' => 'about',
             'content' => 'About content',
         ]);
-        
+
         $response = get('/about');
-        
+
         $response->assertStatus(200);
         $response->assertSee('About Us');
     });
@@ -59,10 +60,10 @@ describe('CMS Routes - Without Prefix', function () {
             'slug' => 'my-page',
             'content' => 'Page content',
         ]);
-        
+
         // Blog route should still work
         $response = get('/blog');
-        
+
         // Should get blog index, not 404 or CMS page
         expect($response->status())->toBeIn([200, 404]); // 404 if no posts
         $response->assertDontSee('My Page'); // Should NOT see CMS content
@@ -71,7 +72,7 @@ describe('CMS Routes - Without Prefix', function () {
     test('reserved slugs are blocked in CMS pages', function () {
         expect(function () {
             CmsPage::factory()->create(['slug' => 'blog']);
-        })->toThrow(\InvalidArgumentException::class);
+        })->toThrow(InvalidArgumentException::class);
     });
 });
 
@@ -89,9 +90,9 @@ describe('CMS Publication Status', function () {
             'slug' => 'draft',
             'content' => 'Draft content',
         ]);
-        
+
         $response = get('/draft');
-        
+
         $response->assertStatus(404);
     });
 
@@ -103,9 +104,9 @@ describe('CMS Publication Status', function () {
             'slug' => 'future',
             'content' => 'Future content',
         ]);
-        
+
         $response = get('/future');
-        
+
         $response->assertStatus(404);
     });
 
@@ -117,9 +118,9 @@ describe('CMS Publication Status', function () {
             'slug' => 'live',
             'content' => 'Live content',
         ]);
-        
+
         $response = get('/live');
-        
+
         $response->assertStatus(200);
         $response->assertSee('Live Page');
     });
@@ -129,9 +130,9 @@ describe('CMS Homepage Management', function () {
     test('only one homepage can exist at a time', function () {
         $page1 = CmsPage::factory()->homepage()->create();
         expect($page1->is_homepage)->toBeTrue();
-        
+
         $page2 = CmsPage::factory()->homepage()->create();
-        
+
         // page1 should no longer be homepage
         $page1->refresh();
         expect($page1->is_homepage)->toBeFalse();
@@ -141,7 +142,7 @@ describe('CMS Homepage Management', function () {
     test('homepage does not use prefix even when configured', function () {
         config(['blogr.cms.prefix' => 'page']);
         config(['blogr.route.homepage' => false]);
-        
+
         $page = CmsPage::factory()->homepage()->create();
         $page->translations()->create([
             'locale' => 'en',
@@ -149,12 +150,12 @@ describe('CMS Homepage Management', function () {
             'slug' => 'home',
             'content' => 'Homepage',
         ]);
-        
+
         // Homepage at root
         $response = get('/');
         $response->assertStatus(200);
         $response->assertSee('Home');
-        
+
         // NOT accessible with prefix
         $response = get('/page/home');
         $response->assertStatus(404);
@@ -176,9 +177,9 @@ describe('CMS Templates', function () {
             'slug' => 'default',
             'content' => 'Default content',
         ]);
-        
+
         $response = get('/default');
-        
+
         $response->assertStatus(200);
         $response->assertSee('Default Page');
     });
@@ -191,9 +192,9 @@ describe('CMS Templates', function () {
             'slug' => 'landing',
             'content' => 'Landing content',
         ]);
-        
+
         $response = get('/landing');
-        
+
         $response->assertStatus(200);
         $response->assertSee('Landing Page');
     });
@@ -211,15 +212,15 @@ describe('CMS SEO', function () {
             'meta_description' => 'Custom SEO Description',
             'meta_keywords' => 'seo, test, keywords',
         ]);
-        
+
         $response = get('/seo');
-        
+
         $response->assertStatus(200);
         // Verify SEO data is stored correctly in translation
         expect($translation->meta_title)->toBe('Custom SEO Title');
         expect($translation->meta_description)->toBe('Custom SEO Description');
         expect($translation->meta_keywords)->toBe('seo, test, keywords');
-        
+
         // NOTE: Meta tag rendering in HTML depends on the layout template
         // which may not be fully configured in test environment
         // The important thing is that SEO data is correctly stored and retrievable

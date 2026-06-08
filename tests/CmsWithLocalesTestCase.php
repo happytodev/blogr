@@ -2,28 +2,28 @@
 
 namespace Happytodev\Blogr\Tests;
 
+use Illuminate\Foundation\Application;
+
 class CmsWithLocalesTestCase extends CmsTestCase
 {
     /**
      * Get environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app
-     * @return void
+     * @param  Application  $app
      */
     public function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
-        
+
         // Enable locales BEFORE routes are registered
         $app['config']->set('blogr.locales.enabled', true);
         $app['config']->set('blogr.locales.available', ['en', 'fr']);
         $app['config']->set('blogr.locales.default', 'en');
         $app['config']->set('blogr.cms.prefix', '');
-        
+
         // Set CMS as homepage (new unified config)
         $app['config']->set('blogr.homepage.type', 'cms');
         // Legacy support: Disable blog as homepage
         $app['config']->set('blogr.route.homepage', false);
     }
 }
-

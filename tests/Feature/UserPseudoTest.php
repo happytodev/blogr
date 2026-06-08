@@ -1,9 +1,10 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
-
+uses(TestCase::class);
 
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 
@@ -24,8 +25,8 @@ test('user slug must be unique', function () {
         'slug' => 'johndoe',
     ]);
 
-    $this->expectException(\Illuminate\Database\QueryException::class);
-    
+    $this->expectException(QueryException::class);
+
     User::factory()->create([
         'slug' => 'johndoe',
     ]);
@@ -44,6 +45,6 @@ test('user can have a null slug', function () {
 test('slug can be auto-generated from name', function () {
     $name = 'Test User Name';
     $expectedSlug = Str::slug($name);
-    
+
     expect($expectedSlug)->toBe('test-user-name');
 });

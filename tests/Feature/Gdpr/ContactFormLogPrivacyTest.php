@@ -9,7 +9,7 @@ uses(CmsTestCase::class);
 it('does not log personal data on contact form failure', function () {
     Mail::shouldReceive('raw')
         ->once()
-        ->andThrow(new \Exception('Simulated SMTP error'));
+        ->andThrow(new Exception('Simulated SMTP error'));
 
     Log::shouldReceive('error')
         ->once()
@@ -38,7 +38,7 @@ it('does not log personal data on contact form failure', function () {
 it('does not log mail credentials on contact form failure', function () {
     Mail::shouldReceive('raw')
         ->once()
-        ->andThrow(new \Exception('Simulated SMTP error'));
+        ->andThrow(new Exception('Simulated SMTP error'));
 
     Log::shouldReceive('error')
         ->once()
@@ -68,7 +68,7 @@ it('does not log mail credentials on contact form failure', function () {
 it('returns 500 with generic message on contact form failure', function () {
     Mail::shouldReceive('raw')
         ->once()
-        ->andThrow(new \Exception('Something went wrong'));
+        ->andThrow(new Exception('Something went wrong'));
 
     $response = $this->postJson(route('blogr.cms.contact.submit'), [
         'name' => 'John Doe',

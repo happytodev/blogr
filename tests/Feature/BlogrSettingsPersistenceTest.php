@@ -1,9 +1,8 @@
 <?php
-uses(Happytodev\Blogr\Tests\TestCase::class);
 
+uses(TestCase::class);
 
-
-use Happytodev\Blogr\Filament\Pages\BlogrSettings;
+use Happytodev\Blogr\Tests\TestCase;
 
 it('demonstrates the bug: second posts assignment overwrites first', function () {
     // Simulate what happens in the save method
@@ -14,13 +13,13 @@ it('demonstrates the bug: second posts assignment overwrites first', function ()
             ],
         ],
     ];
-    
+
     // Later in the code, another section tries to set posts
     $testConfig['ui']['posts'] = [
         'default_image' => '/test.jpg',
         'show_language_switcher' => true,
     ];
-    
+
     // This demonstrates the bug: the second assignment overwrites the first
     expect($testConfig['ui']['posts'])->not->toHaveKey('tags_position');
     expect($testConfig['ui']['posts'])->toHaveKey('default_image');
@@ -37,7 +36,7 @@ it('correctly merges all ui.posts settings in a single array', function () {
             ],
         ],
     ];
-    
+
     // All keys should be present
     expect($correctConfig['ui']['posts'])->toHaveKeys(['tags_position', 'default_image', 'show_language_switcher']);
     expect($correctConfig['ui']['posts']['tags_position'])->toBe('top');
