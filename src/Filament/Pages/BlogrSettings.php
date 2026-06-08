@@ -250,6 +250,8 @@ class BlogrSettings extends Page
     // Matomo
     public ?string $analytics_matomo_url = null;
     public ?string $analytics_matomo_site_id = null;
+    // Anonymize IP
+    public ?bool $analytics_anonymize_ip = null;
 
     // Sitemap Settings
     public ?bool $sitemap_enabled = null;
@@ -467,6 +469,7 @@ class BlogrSettings extends Page
         // Matomo
         $this->analytics_matomo_url = $config['analytics']['matomo']['url'] ?? null;
         $this->analytics_matomo_site_id = $config['analytics']['matomo']['site_id'] ?? null;
+        $this->analytics_anonymize_ip = $config['analytics']['anonymize_ip'] ?? true;
 
         // Load sitemap settings
         $this->sitemap_enabled = $config['sitemap']['enabled'] ?? true;
@@ -631,16 +634,16 @@ class BlogrSettings extends Page
                                                 ->columnSpan(1),
 
                                             TextInput::make('mail_brevo_username')
-                                                ->label('Brevo Username / Email')
-                                                ->placeholder('hello@blogr.happyto.dev')
-                                                ->helperText('Your Brevo SMTP username (usually your email).')
+                                                ->label('Brevo SMTP Login')
+                                                ->placeholder('adf070001@smtp-brevo.com')
+                                                ->helperText('Your Brevo SMTP login from Brevo > SMTP & API > SMTP Settings (the full email-like address, NOT your account email).')
                                                 ->visible(fn (Get $get) => $get('mail_provider') === 'brevo')
                                                 ->columnSpan(1),
 
                                             TextInput::make('mail_brevo_password')
-                                                ->label('Brevo SMTP Key / Password')
+                                                ->label('Brevo SMTP Key')
                                                 ->placeholder('xsmtpsib-xxxxxxxx...')
-                                                ->helperText('Your Brevo SMTP key. Starts with xsmtpsib-')
+                                                ->helperText('Your SMTP key from Brevo > SMTP & API > SMTP Keys. This is your password for SMTP authentication.')
                                                 ->password()
                                                 ->visible(fn (Get $get) => $get('mail_provider') === 'brevo')
                                                 ->columnSpan(1),
@@ -672,18 +675,28 @@ class BlogrSettings extends Page
                                                             ->success()
                                                             ->send();
                                                     } catch (\Exception $e) {
+                                                        $mailer = config('mail.mailers.smtp', []);
+                                                        $from = config('mail.from.address');
+
                                                         \Illuminate\Support\Facades\Log::error('Blogr test email failed', [
                                                             'error' => $e->getMessage(),
                                                             'mail_driver' => config('mail.default'),
-                                                            'mail_host' => config('mail.mailers.smtp.host'),
-                                                            'mail_port' => config('mail.mailers.smtp.port'),
-                                                            'mail_username' => config('mail.mailers.smtp.username'),
-                                                            'mail_from' => config('mail.from.address'),
+                                                            'mail_host' => $mailer['host'] ?? 'not set',
+                                                            'mail_port' => $mailer['port'] ?? 'not set',
+                                                            'mail_username' => $mailer['username'] ?? 'not set',
+                                                            'mail_from' => $from,
                                                         ]);
+
+                                                        $msg = $e->getMessage();
+                                                        $hint = '';
+
+                                                        if (str_contains($msg, 'Authentication failed') || str_contains($msg, '535')) {
+                                                            $hint = ' Check that your Brevo SMTP username is the email you used to register your Brevo account, and the password is a valid SMTP key from Brevo (Settings > SMTP & API > SMTP Keys).';
+                                                        }
 
                                                         \Filament\Notifications\Notification::make()
                                                             ->title('Test email failed')
-                                                            ->body($e->getMessage())
+                                                            ->body($msg . $hint)
                                                             ->danger()
                                                             ->send();
                                                     }
@@ -1727,6 +1740,13 @@ class BlogrSettings extends Page
                                 ])
                                 ->visible(fn(Get $get) => $get('analytics_enabled') && $get('analytics_provider') === 'matomo')
                                 ->collapsible(),
+
+                            Toggle::make('analytics_anonymize_ip')
+                                ->label('Anonymize IP addresses')
+                                ->helperText('Removes the last octet of visitor IP addresses before sending to analytics providers. Recommended for GDPR compliance.')
+                                ->default(true)
+                                ->visible(fn(Get $get) => $get('analytics_enabled'))
+                                ->columnSpanFull(),
                         ]),
 
                     // ========================================
@@ -2360,6 +2380,7 @@ class BlogrSettings extends Page
                     'url' => $this->analytics_matomo_url,
                     'site_id' => $this->analytics_matomo_site_id,
                 ],
+                'anonymize_ip' => $this->analytics_anonymize_ip ?? true,
             ],
             'mail' => [
                 'provider' => $this->mail_provider ?? '',
@@ -2398,11 +2419,31 @@ class BlogrSettings extends Page
                 'MAIL_FROM_ADDRESS' => $this->mail_from_address ?? '',
                 'MAIL_FROM_NAME' => $this->mail_from_name ?? '',
             ]);
+
+            // Also apply mail config at runtime so test email works immediately
+            config()->set('mail.mailers.smtp', [
+                'transport' => 'smtp',
+                'host' => 'smtp-relay.brevo.com',
+                'port' => 587,
+                'encryption' => 'tls',
+                'username' => $this->mail_brevo_username ?? '',
+                'password' => $this->mail_brevo_password,
+                'timeout' => null,
+            ]);
+
+            config()->set('mail.from.address', $this->mail_from_address ?? '');
+            config()->set('mail.from.name', $this->mail_from_name ?? '');
         }
+
+        $envPath = app()->environmentFilePath();
+        $envWritable = $envPath && is_writable($envPath);
 
         Notification::make()
             ->title('Settings saved successfully!')
             ->success()
+            ->body($this->mail_provider === 'brevo' && !$envWritable
+                ? 'Warning: .env file is not writable. Mail credentials were not saved to .env.'
+                : '')
             ->send();
     }
 
