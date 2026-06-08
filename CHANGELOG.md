@@ -2,6 +2,15 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.2.1](https://github.com/happytodev/blogr/compare/v1.2.0...v1.2.1) - 2026-06-07
+
+### 🐛 Bug Fixes
+
+- **Brevo SMTP config**: Fixed credential reading priority — reads from config first instead of relying on `env()` which returns null with config cache enabled. Also properly sets `mail.from.address` and `mail.from.name` at runtime.
+- **Contact form error logging**: Added detailed error logging to `storage/logs/laravel.log` when email sending fails.
+- **Test email button**: Added "Send Test Email" button in Settings > General > Email Configuration to validate mail setup without submitting a contact form.
+- **Removed debug log**: Cleaned up `Log::debug()` that was spamming production logs.
+
 ## [v1.2.0](https://github.com/happytodev/blogr/compare/v1.1.2...v1.2.0) - 2026-06-07
 
 ### ✨ Features
