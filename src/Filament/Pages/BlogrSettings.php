@@ -645,6 +645,50 @@ class BlogrSettings extends Page
                                                 ->visible(fn (Get $get) => $get('mail_provider') === 'brevo')
                                                 ->columnSpan(1),
                                         ])
+                                        ->headerActions([
+                                            Action::make('send_test_email')
+                                                ->label('Send Test Email')
+                                                ->icon('heroicon-o-envelope')
+                                                ->color('gray')
+                                                ->form([
+                                                    \Filament\Forms\Components\TextInput::make('test_email')
+                                                        ->label('Send test to')
+                                                        ->placeholder('your@email.com')
+                                                        ->email()
+                                                        ->required(),
+                                                ])
+                                                ->action(function (array $data) {
+                                                    try {
+                                                        \Illuminate\Support\Facades\Mail::raw(
+                                                            'This is a test email from Blogr. Your email configuration is working correctly!',
+                                                            function ($message) use ($data) {
+                                                                $message->to($data['test_email'])
+                                                                    ->subject('[Blogr] Test Email');
+                                                            }
+                                                        );
+
+                                                        \Filament\Notifications\Notification::make()
+                                                            ->title('Test email sent successfully!')
+                                                            ->success()
+                                                            ->send();
+                                                    } catch (\Exception $e) {
+                                                        \Illuminate\Support\Facades\Log::error('Blogr test email failed', [
+                                                            'error' => $e->getMessage(),
+                                                            'mail_driver' => config('mail.default'),
+                                                            'mail_host' => config('mail.mailers.smtp.host'),
+                                                            'mail_port' => config('mail.mailers.smtp.port'),
+                                                            'mail_username' => config('mail.mailers.smtp.username'),
+                                                            'mail_from' => config('mail.from.address'),
+                                                        ]);
+
+                                                        \Filament\Notifications\Notification::make()
+                                                            ->title('Test email failed')
+                                                            ->body($e->getMessage())
+                                                            ->danger()
+                                                            ->send();
+                                                    }
+                                                }),
+                                        ])
                                         ->columnSpanFull(),
 
                                     Placeholder::make('cms_info')

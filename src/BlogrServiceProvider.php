@@ -137,13 +137,6 @@ class BlogrServiceProvider extends PackageServiceProvider
                     }
                     
                     $loaded_prop->setValue($translator, $loaded);
-                    
-                    \Log::debug('BlogrServiceProvider::packageBooted - blogr translations injected', [
-                        'locale' => $locale,
-                        'file' => $file,
-                        'sections_count' => count(array_keys($translations)),
-                        'sections' => array_keys($translations),
-                    ]);
                 }
             }
         }
@@ -307,8 +300,14 @@ class BlogrServiceProvider extends PackageServiceProvider
         $provider = config('blogr.mail.provider');
 
         if ($provider === 'brevo') {
-            $username = env('MAIL_USERNAME', config('blogr.mail.brevo.username'));
-            $password = env('MAIL_PASSWORD', config('blogr.mail.brevo.password'));
+            // Read credentials from config FIRST (written by BlogrSettings),
+            // fallback to .env for backward compat.
+            // env() returns null with config cache enabled, so we must use config().
+            $username = config('blogr.mail.brevo.username') ?: env('MAIL_USERNAME');
+            $password = config('blogr.mail.brevo.password') ?: env('MAIL_PASSWORD');
+
+            $fromAddress = config('blogr.mail.from.address') ?: env('MAIL_FROM_ADDRESS');
+            $fromName = config('blogr.mail.from.name') ?: env('MAIL_FROM_NAME');
 
             if ($password) {
                 config()->set('mail.mailers.smtp', [
@@ -320,6 +319,9 @@ class BlogrServiceProvider extends PackageServiceProvider
                     'password' => $password,
                     'timeout' => null,
                 ]);
+
+                config()->set('mail.from.address', $fromAddress ?: 'hello@example.com');
+                config()->set('mail.from.name', $fromName ?: config('app.name'));
             }
         }
     }

@@ -4,6 +4,7 @@ namespace Happytodev\Blogr\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class CmsContactController extends Controller
@@ -39,6 +40,18 @@ class CmsContactController extends Controller
 
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
+            Log::error('Blogr contact form failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'mail_driver' => config('mail.default'),
+                'mail_host' => config('mail.mailers.smtp.host'),
+                'mail_port' => config('mail.mailers.smtp.port'),
+                'mail_username' => config('mail.mailers.smtp.username'),
+                'mail_encryption' => config('mail.mailers.smtp.encryption'),
+                'mail_from' => config('mail.from.address'),
+                'to_email' => $toEmail,
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => __('Could not send your message. Please try again later.'),
