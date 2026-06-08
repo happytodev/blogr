@@ -9,7 +9,13 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
 
 ## Workflow
 
-### 1. Determine the new version
+### 1. Preview changes since the last release
+
+- Run: `git log $(git describe --tags --abbrev=0)..HEAD --oneline --no-decorate`
+- If no tags exist yet, use: `git log --oneline --no-decorate`
+- Present the output to the user so they can see what changed before choosing a bump type
+
+### 2. Determine the new version
 
 - Read current version from `composer.json` (`"version": "0.x.y"`)
 - Ask user for bump type: `patch`, `minor`, `major`, or an explicit version like `0.19.0`
@@ -25,7 +31,7 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
 
 - Present the computed version to the user for confirmation
 
-### 2. Organize uncommitted changes into feature-grouped commits
+### 3. Organize uncommitted changes into feature-grouped commits
 
 - Run `git status --short` to list changed/new files
 - **If there are no uncommitted changes**, skip this step
@@ -53,16 +59,15 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
   git commit -m "<type>(<scope>): <description>"
   ```
 
-### 3. Generate and present release notes
+### 4. Generate and present release notes
 
-- Run: `git log $(git describe --tags --abbrev=0)..HEAD --oneline --no-decorate`
-- Format as markdown with conventional commit categories (Features, Bug Fixes, Dependencies, etc.)
+- Use the commit log from step 1 to format as markdown with conventional commit categories (Features, Bug Fixes, Dependencies, etc.)
 - **Show the formatted markdown to the user using the `question` tool** with a "Looks good, proceed" option and an "Edit notes" option.
 - **Do NOT just ask "proceed?"** — display the full formatted release notes in the question so the user can review every line before approving.
 - Include a third option "Cancel" in case the user wants to abort.
 - Only proceed when the user explicitly approves.
 
-### 4. Run tests (ZERO TOLERANCE)
+### 5. Run tests (ZERO TOLERANCE)
 
 - Run: `vendor/bin/pest --parallel` (takes 4-5s)
 - **Do NOT pipe through grep/tail/head — capture the raw output.** The last lines show the result:
@@ -73,7 +78,7 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
 - Zero tolerance: "skipped" and "passed" are OK; "failed" or "ERROR" means STOP.
 - Report the failure count to the user and tell them what tests failed.
 
-### 5. Update version files (atomic commit)
+### 6. Update version files (atomic commit)
 
 - **`composer.json`**: Edit the `"version"` field
 - **`src/Blogr.php`**: Edit `const VERSION = '...'`
@@ -83,7 +88,7 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
   git commit -m "chore: bump version to v{version}"
   ```
 
-### 6. Update CHANGELOG.md (atomic commit)
+### 7. Update CHANGELOG.md (atomic commit)
 
 - Prepend a new entry at the top following the existing format:
 
@@ -95,7 +100,7 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
   - **{title}**: {description}
   ```
 
-- Use the user-approved release notes content from step 3
+- Use the user-approved release notes content from step 4
 - Keep existing entries intact
 - **Commit** only CHANGELOG.md:
   ```bash
@@ -103,23 +108,23 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
   git commit -m "docs(changelog): v{version}"
   ```
 
-### 7. Tag
+### 8. Tag
 
 ```bash
 git tag v{version}
 ```
 
-### 8. Push commits and tag
+### 9. Push commits and tag
 
 ```bash
 git push origin main v{version}
 ```
 
-### 9. Create GitHub Release
+### 10. Create GitHub Release
 
-- Set `RELEASE_NOTES` to the *exact markdown* the user approved in step 3 (the body of the CHANGELOG entry, without the heading/date line)
+- Set `RELEASE_NOTES` to the *exact markdown* the user approved in step 4 (the body of the CHANGELOG entry, without the heading/date line)
 - Run: `gh release create v{version} --title "v{version}" --notes "$RELEASE_NOTES"`
 
-### 10. Confirm
+### 11. Confirm
 
 - Inform the user the release was published with the URL and commit hash
