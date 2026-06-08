@@ -37,4 +37,4 @@ jobs:
         run: npm init -y && npm install playwright && npx playwright install --with-deps chromium
 
       - name: Execute tests
-        run: vendor/bin/pest
+        run: vendor/bin/pest --no-coverage
