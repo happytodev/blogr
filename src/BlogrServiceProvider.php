@@ -94,6 +94,9 @@ class BlogrServiceProvider extends PackageServiceProvider
         $this->app->singleton('blogr.config', function ($app) {
             return new ConfigHelper();
         });
+
+        // Register extension registry
+        $this->app->singleton(\Happytodev\Blogr\Services\ExtensionRegistry::class);
     }
 
     public function packageBooted(): void
@@ -243,6 +246,9 @@ class BlogrServiceProvider extends PackageServiceProvider
         // Apply mail configuration from blogr settings (if a custom provider is set)
         $this->applyMailConfig();
 
+        // Register core Blogr as an extension in the extension registry
+        $this->registerCoreExtension();
+
         // Auto-repair stale published views that may contain old iframe/Google Maps patterns.
         // When users run `php artisan vendor:publish --tag=blogr-views`, the current views
         // are copied to resources/views/vendor/blogr/. These published views take precedence
@@ -324,6 +330,25 @@ class BlogrServiceProvider extends PackageServiceProvider
                 config()->set('mail.from.name', $fromName ?: config('app.name'));
             }
         }
+    }
+
+    /**
+     * Register the core Blogr package as an extension in the extension registry.
+     */
+    protected function registerCoreExtension(): void
+    {
+        $registry = $this->app->make(\Happytodev\Blogr\Services\ExtensionRegistry::class);
+
+        $registry->register(new class implements \Happytodev\Blogr\Contracts\BlogrExtension
+        {
+            public function getId(): string { return 'blogr-core'; }
+            public function getName(): string { return 'Blogr Core'; }
+            public function getDescription(): string { return 'Core blog system with multilingual support, CMS pages, SEO, analytics, and more.'; }
+            public function getVersion(): string { return \Happytodev\Blogr\Blogr::VERSION; }
+            public function getAuthor(): string { return 'HappyToDev'; }
+            public function getHomepage(): ?string { return 'https://github.com/happytodev/blogr'; }
+            public function getDependencies(): array { return []; }
+        });
     }
 
     protected function registerFrontendRoutes(): void

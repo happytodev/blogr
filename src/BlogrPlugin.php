@@ -6,6 +6,7 @@ use Filament\Contracts\Plugin;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
+use Happytodev\Blogr\Filament\Pages\Plugins;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
 use Happytodev\Blogr\Filament\Resources\BlogSeriesResource;
 use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
@@ -43,6 +44,7 @@ class BlogrPlugin implements Plugin
 
         $panel->pages([
             BlogrSettings::class,
+            Plugins::class,
         ]);
 
         $panel->widgets([
