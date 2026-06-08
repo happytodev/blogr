@@ -1,6 +1,7 @@
 <?php
 
 use Happytodev\Blogr\Tests\TestCase;
+
 uses(TestCase::class);
 
 use Carbon\Carbon;

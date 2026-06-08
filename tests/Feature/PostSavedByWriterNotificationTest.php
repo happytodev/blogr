@@ -1,6 +1,7 @@
 <?php
 
 use Happytodev\Blogr\Tests\CmsTestCase;
+
 uses(CmsTestCase::class);
 
 use Happytodev\Blogr\Models\BlogPost;

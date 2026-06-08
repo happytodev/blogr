@@ -3,6 +3,7 @@
 namespace Happytodev\Blogr\Tests\Feature;
 
 use Happytodev\Blogr\Tests\TestCase;
+
 uses(TestCase::class);
 use Happytodev\Blogr\Models\BlogSeries;
 use Illuminate\Foundation\Testing\RefreshDatabase;
