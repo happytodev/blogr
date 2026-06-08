@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.1.2](https://github.com/happytodev/blogr/compare/v1.1.1...v1.1.2) - 2026-06-07
+
+### 🐛 Bug Fixes
+
+- **Hero block text visibility**: Fixed white text on white background in light mode — moved `text-white` from the wrapper to individual elements, allowing the `background-wrapper`'s injected `!important` styles to override when custom colors are set.
+
 ## [v1.1.1](https://github.com/happytodev/blogr/compare/v1.1.0...v1.1.1) - 2026-06-07
 
 ### 🐛 Bug Fixes
