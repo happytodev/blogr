@@ -4,7 +4,7 @@ use Happytodev\Blogr\Tests\CmsTestCase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-uses(\Happytodev\Blogr\Tests\CmsTestCase::class);
+uses(CmsTestCase::class);
 
 it('does not log personal data on contact form failure', function () {
     Mail::shouldReceive('raw')

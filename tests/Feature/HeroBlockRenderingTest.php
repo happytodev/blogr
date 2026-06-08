@@ -5,7 +5,7 @@ use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\View;
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 beforeEach(function () {
     config(['blogr.route.frontend.enabled' => true]);

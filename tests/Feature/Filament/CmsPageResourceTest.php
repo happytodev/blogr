@@ -10,7 +10,7 @@ use Illuminate\Support\ViewErrorBag;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-uses(\Happytodev\Blogr\Tests\CmsTestCase::class);
+uses(CmsTestCase::class);
 
 beforeEach(function () {
     // SKIP: CMS Page Resource form validation & record fetching issues in test context

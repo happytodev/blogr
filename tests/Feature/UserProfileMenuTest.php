@@ -1,6 +1,6 @@
 <?php
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 use Filament\Facades\Filament;
 use Happytodev\Blogr\Models\User;

@@ -1,6 +1,6 @@
 <?php
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 uses(RefreshDatabase::class);
 
 use Happytodev\Blogr\Models\BlogPost;

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 beforeEach(function () {
     // Create a test routes/web.php file with default Laravel route

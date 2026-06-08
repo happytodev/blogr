@@ -2,7 +2,7 @@
 
 use Happytodev\Blogr\Tests\TestCase;
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 test('homepage configuration logic works correctly', function () {
     // Test that homepage overrides prefix

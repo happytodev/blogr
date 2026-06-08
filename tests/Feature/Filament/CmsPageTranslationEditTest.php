@@ -10,7 +10,7 @@ use Illuminate\Support\ViewErrorBag;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-uses(\Happytodev\Blogr\Tests\CmsTestCase::class);
+uses(CmsTestCase::class);
 
 beforeEach(function () {
     $adminRole = Role::firstOrCreate(['name' => 'admin']);

@@ -1,6 +1,6 @@
 <?php
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 use Happytodev\Blogr\Filament\Resources\Tags\Pages\EditTag;
 use Happytodev\Blogr\Models\Tag;

@@ -4,7 +4,7 @@ use Happytodev\Blogr\Helpers\ColorHelper;
 use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 uses(RefreshDatabase::class);
 
 beforeEach(function () {

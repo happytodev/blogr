@@ -2,7 +2,7 @@
 
 use Happytodev\Blogr\Tests\TestCase;
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 // TODO: Fix view rendering issue in test environment
 // The component works in production but doesn't render in test response

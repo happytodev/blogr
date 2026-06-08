@@ -2,7 +2,7 @@
 
 namespace Happytodev\Blogr\Tests\Feature;
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;

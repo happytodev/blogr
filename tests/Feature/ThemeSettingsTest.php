@@ -3,7 +3,7 @@
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Tests\TestCase;
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 test('theme primary color is loaded from config', function () {
     config(['blogr.ui.theme.primary_color' => '#bd1194']);

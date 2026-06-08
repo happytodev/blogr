@@ -1,6 +1,6 @@
 <?php
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 use Happytodev\Blogr\Database\Seeders\CmsPageSeeder;
 use Happytodev\Blogr\Models\CmsPage;

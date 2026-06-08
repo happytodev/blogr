@@ -1,6 +1,6 @@
 <?php
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 use Happytodev\Blogr\Http\Controllers\SitemapController;
 use Happytodev\Blogr\Models\BlogPost;

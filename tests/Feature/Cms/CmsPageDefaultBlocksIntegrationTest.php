@@ -5,7 +5,7 @@ use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Tests\CmsTestCase;
 
-uses(\Happytodev\Blogr\Tests\CmsTestCase::class);
+uses(CmsTestCase::class);
 
 // ─── LANDING ───────────────────────────────────────────────
 

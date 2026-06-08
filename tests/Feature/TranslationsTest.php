@@ -2,7 +2,7 @@
 
 use Happytodev\Blogr\Tests\TestCase;
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 test('read more translation key exists in english', function () {
     app()->setLocale('en');

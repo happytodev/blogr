@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\get;
 
-uses(\Happytodev\Blogr\Tests\CmsWithLocalesTestCase::class);
+uses(CmsWithLocalesTestCase::class);
 uses()->group('cms');
 
 beforeEach(function () {

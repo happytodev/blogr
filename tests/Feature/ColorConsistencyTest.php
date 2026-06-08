@@ -2,7 +2,7 @@
 
 use Happytodev\Blogr\Tests\TestCase;
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 test('series list component does not contain hardcoded purple colors', function () {
     $content = file_get_contents(__DIR__.'/../../resources/views/components/series-list.blade.php');

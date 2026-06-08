@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\get;
 
-uses(\Happytodev\Blogr\Tests\CmsTestCase::class);
+uses(CmsTestCase::class);
 uses()->group('cms');
 
 beforeEach(function () {

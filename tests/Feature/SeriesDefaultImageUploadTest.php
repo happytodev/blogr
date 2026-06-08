@@ -3,7 +3,7 @@
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Tests\TestCase;
 
-uses(\Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 test('series default image converts string config to array', function () {
     // Simulate config with string value (current situation)
