@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.5.2](https://github.com/happytodev/blogr/compare/v1.5.1...v1.5.2) - 2026-06-09
+
+### 🐛 Bug Fixes
+
+- **CI PHP 8.4 test flakiness**: Added `File::ensureDirectoryExists()` in `import rejects unsupported file format` test. The `storage/app/blogr-exports/` directory was missing in CI, causing `File::put()` to fail silently and the exception message to mismatch.
+
 ## [v1.5.1](https://github.com/happytodev/blogr/compare/v1.5.0...v1.5.1) - 2026-06-09
 
 ### 🐛 Bug Fixes
