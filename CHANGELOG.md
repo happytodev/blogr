@@ -2,6 +2,21 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.5.1](https://github.com/happytodev/blogr/compare/v1.5.0...v1.5.1) - 2026-06-09
+
+### 🐛 Bug Fixes
+
+- **Pest namespace resolution**: Moved `use` imports above `uses()` calls in 103 test files. PHP resolves `use` statements in source order, so `uses(TestCase::class)` before `use Happytodev\Blogr\Tests\TestCase;` resolved relative to the `Pest\Bootstrappers` namespace where `include_once` executes.
+- **CI Playwright**: Added `npm install playwright` before `npx playwright install` to fix browser test setup.
+- **CI coverage**: Added `--no-coverage` flag — `phpunit.xml.dist` has `failOnWarning=true` and `<coverage>` config caused exit 1 without a driver.
+- **CI Pint auto-push**: Added `permissions: contents: write` and `x-access-token` authentication to fix 403 on auto-commit.
+- **CI corrupted files**: Fixed 4 PHP files with duplicated `<?php<?php`, escaped `\$`, and merged lines that blocked Pint from running.
+- **Category factory race**: Added `Str::random(6)` suffix to slug in `CategoryFactory::definition()` to prevent unique constraint violations in parallel test runs.
+
+### 🔧 Maintenance
+
+- **Release manager skill**: Reordered workflow to show changelog preview before asking bump type.
+
 ## [v1.5.0](https://github.com/happytodev/blogr/compare/v1.4.0...v1.5.0) - 2026-06-08
 
 ### ✨ Features
