@@ -54,10 +54,10 @@ class BlogController
             $query->where('locale', $locale);
         })
             ->with([
-            'category.translations',
-            'tags.translations',
-            'translations', // Load all translations for photo fallback
-        ])
+                'category.translations',
+                'tags.translations',
+                'translations', // Load all translations for photo fallback
+            ])
             ->orderBy('published_at', 'desc')
             ->where('is_published', true)
             ->where(function ($query) {

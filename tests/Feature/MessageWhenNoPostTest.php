@@ -1,7 +1,8 @@
 <?php
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

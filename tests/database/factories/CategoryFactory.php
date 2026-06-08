@@ -24,7 +24,7 @@ class CategoryFactory extends Factory
 
         return [
             'name' => ucfirst($name),
-            'slug' => Str::slug($name) . '-' . Str::random(6),
+            'slug' => Str::slug($name).'-'.Str::random(6),
             'is_default' => false,
         ];
     }
