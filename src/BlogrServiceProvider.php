@@ -457,6 +457,14 @@ class BlogrServiceProvider extends PackageServiceProvider
                         ->where(['locale' => $localePattern, 'tagSlug' => '.*'])
                         ->middleware(config('blogr.route.middleware', ['web']))
                         ->name('blog.feed.tag');
+
+                    $this->app['router']->get('{locale}/feeds', [RssFeedController::class, 'directory'])
+                        ->where('locale', $localePattern)
+                        ->middleware(array_merge(
+                            config('blogr.route.middleware', ['web']),
+                            [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        ))
+                        ->name('blog.feeds');
                 }
                 
                 // Sitemap routes with locale
@@ -542,6 +550,14 @@ class BlogrServiceProvider extends PackageServiceProvider
                         ->where(['locale' => $localePattern, 'tagSlug' => '.*'])
                         ->middleware(config('blogr.route.middleware', ['web']))
                         ->name('blog.feed.tag');
+
+                    $this->app['router']->get($fullPrefix . '/feeds', [RssFeedController::class, 'directory'])
+                        ->where('locale', $localePattern)
+                        ->middleware(array_merge(
+                            config('blogr.route.middleware', ['web']),
+                            [\Happytodev\Blogr\Http\Middleware\SetLocale::class]
+                        ))
+                        ->name('blog.feeds');
                 }
                 
                 // Sitemap routes with locale and prefix
@@ -582,6 +598,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                             $this->app['router']->get('/feed', [RssFeedController::class, 'index'])->name('blog.feed');
                             $this->app['router']->get('/feed/category/{categorySlug}', [RssFeedController::class, 'category'])->name('blog.feed.category');
                             $this->app['router']->get('/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])->name('blog.feed.tag');
+                            $this->app['router']->get('/feeds', [RssFeedController::class, 'directory'])->name('blog.feeds');
                         }
                         
                         // Sitemap route (no locale)
@@ -610,6 +627,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                             $this->app['router']->get('/feed', [RssFeedController::class, 'index'])->name('blog.feed');
                             $this->app['router']->get('/feed/category/{categorySlug}', [RssFeedController::class, 'category'])->name('blog.feed.category');
                             $this->app['router']->get('/feed/tag/{tagSlug}', [RssFeedController::class, 'tag'])->name('blog.feed.tag');
+                            $this->app['router']->get('/feeds', [RssFeedController::class, 'directory'])->name('blog.feeds');
                         }
                         
                         // Sitemap route (no locale)

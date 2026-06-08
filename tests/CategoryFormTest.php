@@ -12,7 +12,7 @@ it('configures category form schema with correct components', function () {
 
     $components = $configuredSchema->getComponents();
 
-    expect($components)->toHaveCount(3);
+    expect($components)->toHaveCount(4);
 
     // Check name field
     $nameField = $components[0];

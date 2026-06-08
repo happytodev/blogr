@@ -256,6 +256,12 @@ class BlogrSettings extends Page
     // Sitemap Settings
     public ?bool $sitemap_enabled = null;
 
+    // RSS Settings
+    public ?bool $rss_enabled = null;
+    public ?int $rss_items_limit = null;
+    public ?bool $rss_show_in_header = null;
+    public ?bool $rss_show_in_footer = null;
+
     // Contact Settings
     public ?string $contact_to_email = null;
 
@@ -473,6 +479,12 @@ class BlogrSettings extends Page
 
         // Load sitemap settings
         $this->sitemap_enabled = $config['sitemap']['enabled'] ?? true;
+
+        // Load RSS settings
+        $this->rss_enabled = $config['rss']['enabled'] ?? true;
+        $this->rss_items_limit = $config['rss']['items_limit'] ?? 20;
+        $this->rss_show_in_header = $config['rss']['show_in_header'] ?? false;
+        $this->rss_show_in_footer = $config['rss']['show_in_footer'] ?? false;
 
         // Load contact settings
         $this->contact_to_email = $config['contact']['to_email'] ?? '';
@@ -868,6 +880,42 @@ class BlogrSettings extends Page
                                         ->label('Enable XML Sitemap')
                                         ->helperText('Generate and serve /sitemap.xml for search engines')
                                         ->default(true)
+                                        ->columnSpan(2),
+
+                                    \Filament\Forms\Components\Placeholder::make('rss_separator')
+                                        ->label('RSS Feeds')
+                                        ->content('Configure RSS/Atom feed visibility and discoverability on the frontend.')
+                                        ->columnSpanFull(),
+
+                                    Toggle::make('rss_enabled')
+                                        ->label('Enable RSS Feeds')
+                                        ->helperText('Enable RSS feed generation at /feed or /{locale}/feed')
+                                        ->default(true)
+                                        ->live()
+                                        ->columnSpan(1),
+
+                                    TextInput::make('rss_items_limit')
+                                        ->label('Feed Items Limit')
+                                        ->numeric()
+                                        ->minValue(1)
+                                        ->maxValue(100)
+                                        ->default(20)
+                                        ->helperText('Maximum number of posts in the feed')
+                                        ->visible(fn (Get $get) => $get('rss_enabled'))
+                                        ->columnSpan(1),
+
+                                    Toggle::make('rss_show_in_header')
+                                        ->label('Show RSS Icon in Header')
+                                        ->helperText('Display RSS icon in the navigation bar')
+                                        ->default(false)
+                                        ->visible(fn (Get $get) => $get('rss_enabled'))
+                                        ->columnSpan(1),
+
+                                    Toggle::make('rss_show_in_footer')
+                                        ->label('Show RSS Icon in Footer')
+                                        ->helperText('Display RSS icon in the footer area')
+                                        ->default(false)
+                                        ->visible(fn (Get $get) => $get('rss_enabled'))
                                         ->columnSpan(1),
                                 ])
                                 ->columns(2)
@@ -2358,6 +2406,12 @@ class BlogrSettings extends Page
             ],
             'sitemap' => [
                 'enabled' => $this->sitemap_enabled ?? true,
+            ],
+            'rss' => [
+                'enabled' => $this->rss_enabled ?? true,
+                'items_limit' => $this->rss_items_limit ?? 20,
+                'show_in_header' => $this->rss_show_in_header ?? false,
+                'show_in_footer' => $this->rss_show_in_footer ?? false,
             ],
             'contact' => [
                 'to_email' => $this->contact_to_email ?? '',

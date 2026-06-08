@@ -470,6 +470,8 @@ return [
         'items_limit' => 20, // Maximum number of items in the feed
         'description' => 'Latest blog posts', // Default feed description
         'cache_duration' => 3600, // Cache duration in seconds (1 hour)
+        'show_in_header' => false, // Show RSS icon in navigation header
+        'show_in_footer' => false, // Show RSS icon in footer
     ],
 
     /*

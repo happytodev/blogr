@@ -3,6 +3,7 @@
 namespace Happytodev\Blogr\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\View\View;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
@@ -31,6 +32,52 @@ class RssFeedController
         $posts = $this->getPosts($locale, null, $tag->id);
         $xml = $this->generateRssFeed($posts, $locale, null, $tag);
         return $this->xmlResponse($xml);
+    }
+
+    public function directory(?string $locale = null): View
+    {
+        $locale = $locale ?? config('blogr.locales.default', 'en');
+        $localesEnabled = config('blogr.locales.enabled', false);
+
+        $categories = Category::with('translations')
+            ->orderBy('name')
+            ->get()
+            ->map(function ($category) use ($locale, $localesEnabled) {
+                return [
+                    'name' => $category->name,
+                    'translatedName' => $category->translate($locale)?->name,
+                    'slug' => $category->slug,
+                    'postsCount' => $category->posts()->count(),
+                    'url' => $localesEnabled
+                        ? route('blog.feed.category', ['locale' => $locale, 'categorySlug' => $category->slug])
+                        : route('blog.feed.category', ['categorySlug' => $category->slug]),
+                ];
+            });
+
+        $tags = Tag::with('translations')
+            ->orderBy('name')
+            ->get()
+            ->map(function ($tag) use ($locale, $localesEnabled) {
+                return [
+                    'name' => $tag->name,
+                    'translatedName' => $tag->translate($locale)?->name,
+                    'slug' => $tag->slug,
+                    'postsCount' => $tag->posts()->count(),
+                    'url' => $localesEnabled
+                        ? route('blog.feed.tag', ['locale' => $locale, 'tagSlug' => $tag->slug])
+                        : route('blog.feed.tag', ['tagSlug' => $tag->slug]),
+                ];
+            });
+
+        $mainFeedUrl = $localesEnabled
+            ? route('blog.feed', ['locale' => $locale])
+            : route('blog.feed');
+
+        $currentLocale = $locale;
+
+        return view('blogr::feeds', compact(
+            'categories', 'tags', 'mainFeedUrl', 'currentLocale'
+        ));
     }
     
     protected function getPosts(string $locale, ?int $categoryId = null, ?int $tagId = null)
@@ -142,8 +189,10 @@ class RssFeedController
     
     protected function xmlResponse(string $xml): Response
     {
+        $cacheDuration = config('blogr.rss.cache_duration', 3600);
+
         return response($xml, 200)
             ->header('Content-Type', 'application/rss+xml; charset=UTF-8')
-            ->header('Cache-Control', 'public, max-age=3600');
+            ->header('Cache-Control', "public, max-age={$cacheDuration}");
     }
 }

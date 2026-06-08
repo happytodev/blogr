@@ -73,4 +73,16 @@ return [
         'post_saved_line2' => 'Sie erhalten diese Benachrichtigung, weil Sie ein Administrator sind.',
         'view_post' => 'Artikel ansehen',
     ],
+
+    // Feeds
+    'feeds' => [
+        'title' => 'Feeds',
+        'description' => 'Abonnieren Sie unsere RSS-Feeds, um mit den neuesten Inhalten auf dem Laufenden zu bleiben.',
+        'main_feed' => 'Haupt-Feed',
+        'all_posts' => 'Alle Beiträge',
+        'main_feed_desc' => 'Neueste Beiträge aus allen Kategorien',
+        'categories' => 'Kategorien',
+        'tags' => 'Tags',
+        'posts' => 'Beiträge',
+    ],
 ];

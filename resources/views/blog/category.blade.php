@@ -6,6 +6,17 @@
     @endphp
 @endsection
 
+@if(config('blogr.rss.enabled', true))
+@php
+    $catFeedUrl = config('blogr.locales.enabled', false)
+        ? route('blog.feed.category', ['locale' => $currentLocale, 'categorySlug' => $category->slug])
+        : route('blog.feed.category', ['categorySlug' => $category->slug]);
+@endphp
+@push('head')
+    <link rel="alternate" type="application/rss+xml" title="{{ $displayName ?? $category->name }} - RSS Feed" href="{{ $catFeedUrl }}">
+@endpush
+@endif
+
 @section('content')
     <div class="container mx-auto px-4 py-12">
         <!-- Page Header -->

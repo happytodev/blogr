@@ -108,6 +108,17 @@
     @include('blogr::components.analytics-tracker')
     @stack('analytics-after')
 
+    {{-- RSS Auto-discovery --}}
+    @if(config('blogr.rss.enabled', true))
+    @php
+        $rssLocaleEnabled = config('blogr.locales.enabled', false);
+        $mainFeedUrl = $rssLocaleEnabled
+            ? route('blog.feed', ['locale' => $currentLocale])
+            : route('blog.feed');
+    @endphp
+    <link rel="alternate" type="application/rss+xml" title="{{ config('app.name', 'Blog') }} - RSS Feed" href="{{ $mainFeedUrl }}">
+    @endif
+
     @stack('head')
     @stack('styles')
     

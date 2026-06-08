@@ -78,4 +78,16 @@ return [
         'save' => 'Save Settings',
         'navigation_label' => 'Settings',
     ],
+
+    // Feeds
+    'feeds' => [
+        'title' => 'Feeds',
+        'description' => 'Subscribe to our RSS feeds to stay updated with the latest content.',
+        'main_feed' => 'Main Feed',
+        'all_posts' => 'All Posts',
+        'main_feed_desc' => 'Latest blog posts from all categories',
+        'categories' => 'Categories',
+        'tags' => 'Tags',
+        'posts' => 'posts',
+    ],
 ];

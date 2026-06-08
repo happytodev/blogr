@@ -78,4 +78,16 @@ return [
         'save' => 'Enregistrer les paramètres',
         'navigation_label' => 'Paramètres',
     ],
+
+    // Feeds
+    'feeds' => [
+        'title' => 'Flux RSS',
+        'description' => 'Abonnez-vous à nos flux RSS pour rester informé des derniers contenus.',
+        'main_feed' => 'Flux principal',
+        'all_posts' => 'Tous les articles',
+        'main_feed_desc' => 'Derniers articles de toutes les catégories',
+        'categories' => 'Catégories',
+        'tags' => 'Tags',
+        'posts' => 'articles',
+    ],
 ];

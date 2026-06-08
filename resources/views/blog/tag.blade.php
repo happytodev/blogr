@@ -6,6 +6,17 @@
     @endphp
 @endsection
 
+@if(config('blogr.rss.enabled', true))
+@php
+    $tagFeedUrl = config('blogr.locales.enabled', false)
+        ? route('blog.feed.tag', ['locale' => $currentLocale, 'tagSlug' => $tag->slug])
+        : route('blog.feed.tag', ['tagSlug' => $tag->slug]);
+@endphp
+@push('head')
+    <link rel="alternate" type="application/rss+xml" title="{{ $displayName ?? $tag->name }} - RSS Feed" href="{{ $tagFeedUrl }}">
+@endpush
+@endif
+
 @section('content')
     <div class="container mx-auto px-4 py-12">
         <!-- Page Header -->

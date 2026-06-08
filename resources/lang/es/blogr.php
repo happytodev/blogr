@@ -73,4 +73,16 @@ return [
         'post_saved_line2' => 'Recibe esta notificación porque es un administrador.',
         'view_post' => 'Ver artículo',
     ],
+
+    // Feeds
+    'feeds' => [
+        'title' => 'Feeds RSS',
+        'description' => 'Suscríbase a nuestros feeds RSS para mantenerse actualizado con el contenido más reciente.',
+        'main_feed' => 'Feed principal',
+        'all_posts' => 'Todos los artículos',
+        'main_feed_desc' => 'Últimos artículos de todas las categorías',
+        'categories' => 'Categorías',
+        'tags' => 'Etiquetas',
+        'posts' => 'artículos',
+    ],
 ];
