@@ -64,6 +64,9 @@ return [
     'settings' => [
         'save' => 'Guardar configuración',
         'navigation_label' => 'Configuración',
+        'saved_successfully' => '¡Configuración guardada con éxito!',
+        'run_sync_command' => 'Para aplicar la nueva ruta del panel de administración, ejecute: php artisan blogr:sync-admin-path',
+        'env_not_writable' => 'Advertencia: el archivo .env no se puede escribir. Las credenciales de correo no se guardaron.',
     ],
 
     // Notifications

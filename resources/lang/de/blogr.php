@@ -64,6 +64,9 @@ return [
     'settings' => [
         'save' => 'Einstellungen speichern',
         'navigation_label' => 'Einstellungen',
+        'saved_successfully' => 'Einstellungen erfolgreich gespeichert!',
+        'run_sync_command' => 'Um den neuen Admin-Panel-Pfad anzuwenden, führen Sie aus: php artisan blogr:sync-admin-path',
+        'env_not_writable' => 'Warnung: Die .env-Datei ist nicht beschreibbar. E-Mail-Anmeldedaten wurden nicht gespeichert.',
     ],
 
     // Notifications

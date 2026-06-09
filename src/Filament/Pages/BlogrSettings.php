@@ -2290,6 +2290,8 @@ class BlogrSettings extends Page
                                         }),
                                 ]),
                         ]),
+                ]),
+
         ];
     }
 
@@ -2415,8 +2417,6 @@ class BlogrSettings extends Page
         } catch (\Throwable $e) {
             $adminPath = $this->admin_path ?? 'admin';
         }
-        Log::info('BlogrSettings: Saving admin_path', ['admin_path' => $adminPath]);
-
         $data = [
             'admin_path' => $adminPath,
             'posts_per_page' => $this->posts_per_page,
@@ -2633,8 +2633,6 @@ class BlogrSettings extends Page
 
         // Re-apply admin_path at runtime after cache clear
         config()->set('blogr.admin_path', $adminPath);
-        Log::info('BlogrSettings: admin_path after save', ['admin_path' => config('blogr.admin_path'), 'env_written' => $envWritten]);
-
         // Write mail credentials to .env if Brevo is configured
         if ($this->mail_provider === 'brevo' && $this->mail_brevo_password) {
             $this->updateEnvFile([
@@ -2666,16 +2664,19 @@ class BlogrSettings extends Page
         $envPath = app()->environmentFilePath();
         $envWritable = $envPath && is_writable($envPath);
 
-        $adminDebug = 'DEBUG admin_path: ' . ($adminPath ?? 'NOT SET');
-        $envDebug = '.env writable: ' . ($envWritable ? 'yes' : 'no');
-        $formDebug = 'form->getState(): ' . (isset($formState) ? json_encode($formState['admin_path'] ?? 'NOT IN STATE') : 'EXCEPTION');
+
+        $body = __('blogr::blogr.settings.saved_successfully');
+
+        if ($this->mail_provider === 'brevo' && ! $envWritable) {
+            $body .= "\n" . __('blogr::blogr.settings.env_not_writable');
+        }
+
+        $body .= "\n" . __('blogr::blogr.settings.run_sync_command');
 
         Notification::make()
-            ->title('Settings saved successfully!')
+            ->title(__('blogr::blogr.settings.saved_successfully'))
             ->success()
-            ->body($adminDebug . ' | ' . $envDebug . ' | ' . $formDebug . ($this->mail_provider === 'brevo' && ! $envWritable
-                ? ' | Warning: .env file is not writable. Mail credentials were not saved to .env.'
-                : ''))
+            ->body($body)
             ->send();
     }
 
