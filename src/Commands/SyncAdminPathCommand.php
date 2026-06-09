@@ -13,9 +13,19 @@ class SyncAdminPathCommand extends Command
 
     public function handle(): int
     {
-        $adminPath = config('blogr.admin_path', 'admin');
+        // Clear config cache to ensure fresh values
+        $this->call('config:clear');
 
-        $this->info("Current admin path config: <fg=yellow>{$adminPath}</>");
+        // Read from config, with env fallback
+        $envPath = env('BLOGR_ADMIN_PATH');
+        $configPath = config('blogr.admin_path');
+        $adminPath = $configPath ?: ($envPath ?: 'admin');
+
+        if ($envPath && $envPath !== $configPath) {
+            $this->warn("Config and .env differ. Using config value: <fg=yellow>{$adminPath}</>");
+        }
+
+        $this->info("Current admin panel path: <fg=yellow>{$adminPath}</>");
 
         if ($this->option('show')) {
             return self::SUCCESS;

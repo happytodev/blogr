@@ -39,6 +39,8 @@ class BlogrSettings extends Page
     use InteractsWithForms;
     use WithFileUploads;
 
+    public string $admin_path = 'admin';
+
     public const THEME_PRESETS = [
         'magenta' => [
             'label' => 'Magenta (default)',
@@ -759,7 +761,7 @@ class BlogrSettings extends Page
 
                                             TextInput::make('mail_brevo_username')
                                                 ->label('Brevo SMTP Login')
-                                                ->placeholder('adf070001@smtp-brevo.com')
+                                                ->placeholder('xxxxxx1234@smtp-brevo.com')
                                                 ->helperText('Your Brevo SMTP login from Brevo > SMTP & API > SMTP Settings (the full email-like address, NOT your account email).')
                                                 ->visible(fn (Get $get) => $get('mail_provider') === 'brevo')
                                                 ->columnSpan(1),
@@ -2263,26 +2265,31 @@ class BlogrSettings extends Page
                                 ])
                                 ->columnSpanFull(),
                         ]),
-                ]),
 
-            // ========================================
-            // ADMIN PANEL TAB
-            // ========================================
-            Tabs\Tab::make('Admin Panel')
-                ->icon('heroicon-o-shield-exclamation')
-                ->schema([
-                    Section::make('Admin Panel Configuration')
-                        ->description('Customize your admin panel access path. After changing this value, run php artisan blogr:sync-admin-path to update your AdminPanelProvider.')
+                    // ========================================
+                    // ADMIN PANEL TAB
+                    // ========================================
+                    Tabs\Tab::make('Admin Panel')
+                        ->icon('heroicon-o-shield-exclamation')
                         ->schema([
-                            TextInput::make('admin_path')
-                                ->label('Admin panel path')
-                                ->helperText('The URL path to access the admin panel (e.g. "admin", "backoffice", "dashboard"). After saving, run: php artisan blogr:sync-admin-path')
-                                ->default('admin')
-                                ->required()
-                                ->alphaDash()
-                                ->maxLength(50),
+                            Section::make('Admin Panel Configuration')
+                                ->description('Customize your admin panel access path. Current path: /' . (config('blogr.admin_path') ?? 'admin') . '. After saving, run: php artisan blogr:sync-admin-path')
+                                ->schema([
+                                    TextInput::make('admin_path')
+                                        ->label('Admin panel path')
+                                        ->helperText('The URL path to access the admin panel (e.g. "admin", "backoffice", "dashboard"). Saved to .env as BLOGR_ADMIN_PATH and config/blogr.php. After saving, run: php artisan blogr:sync-admin-path')
+                                        ->default('admin')
+                                        ->required()
+                                        ->alphaDash()
+                                        ->maxLength(50),
+                                    Placeholder::make('current_path')
+                                        ->label('Current effective path')
+                                        ->content(function () {
+                                            $path = config('blogr.admin_path', 'admin');
+                                            return '/' . $path;
+                                        }),
+                                ]),
                         ]),
-                ]),
         ];
     }
 
@@ -2396,8 +2403,22 @@ class BlogrSettings extends Page
             }
         }
 
+        // Read admin_path from form state first (most reliable in Livewire context)
+        $adminPath = 'admin';
+        try {
+            if (property_exists($this, 'form') && $this->form !== null) {
+                $formState = $this->form->getState();
+                $adminPath = $formState['admin_path'] ?? $this->admin_path ?? 'admin';
+            } else {
+                $adminPath = $this->admin_path ?? 'admin';
+            }
+        } catch (\Throwable $e) {
+            $adminPath = $this->admin_path ?? 'admin';
+        }
+        Log::info('BlogrSettings: Saving admin_path', ['admin_path' => $adminPath]);
+
         $data = [
-            'admin_path' => $this->admin_path ?? 'admin',
+            'admin_path' => $adminPath,
             'posts_per_page' => $this->posts_per_page,
             'route' => [
                 'prefix' => $this->route_prefix,
@@ -2600,11 +2621,19 @@ class BlogrSettings extends Page
             'navigation_logo_raw' => $this->navigation_logo,
         ]);
 
+        // Apply admin_path at runtime and persist to .env for reliability
+        config()->set('blogr.admin_path', $adminPath);
+        $envWritten = $this->updateEnvFile(['BLOGR_ADMIN_PATH' => $adminPath]);
+
         // Update the config file
         $this->updateConfigFile($data);
 
-        // Clear config cache
+        // Clear config cache so subsequent requests use the updated files
         Artisan::call('config:clear');
+
+        // Re-apply admin_path at runtime after cache clear
+        config()->set('blogr.admin_path', $adminPath);
+        Log::info('BlogrSettings: admin_path after save', ['admin_path' => config('blogr.admin_path'), 'env_written' => $envWritten]);
 
         // Write mail credentials to .env if Brevo is configured
         if ($this->mail_provider === 'brevo' && $this->mail_brevo_password) {
@@ -2637,12 +2666,16 @@ class BlogrSettings extends Page
         $envPath = app()->environmentFilePath();
         $envWritable = $envPath && is_writable($envPath);
 
+        $adminDebug = 'DEBUG admin_path: ' . ($adminPath ?? 'NOT SET');
+        $envDebug = '.env writable: ' . ($envWritable ? 'yes' : 'no');
+        $formDebug = 'form->getState(): ' . (isset($formState) ? json_encode($formState['admin_path'] ?? 'NOT IN STATE') : 'EXCEPTION');
+
         Notification::make()
             ->title('Settings saved successfully!')
             ->success()
-            ->body($this->mail_provider === 'brevo' && ! $envWritable
-                ? 'Warning: .env file is not writable. Mail credentials were not saved to .env.'
-                : '')
+            ->body($adminDebug . ' | ' . $envDebug . ' | ' . $formDebug . ($this->mail_provider === 'brevo' && ! $envWritable
+                ? ' | Warning: .env file is not writable. Mail credentials were not saved to .env.'
+                : ''))
             ->send();
     }
 
@@ -2675,12 +2708,12 @@ class BlogrSettings extends Page
     /**
      * Update .env file with mail configuration values.
      */
-    private function updateEnvFile(array $values): void
+    private function updateEnvFile(array $values): bool
     {
         $envPath = app()->environmentFilePath();
 
         if (! File::exists($envPath)) {
-            return;
+            return false;
         }
 
         $envContent = File::get($envPath);
@@ -2701,7 +2734,7 @@ class BlogrSettings extends Page
             }
         }
 
-        File::put($envPath, $envContent);
+        return File::put($envPath, $envContent) !== false;
     }
 
     private function generateConfigContent(array $config): string

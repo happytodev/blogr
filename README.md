@@ -763,6 +763,81 @@ php artisan blogr:import backup.zip
 
 ---
 
+## 🛡️ Security
+
+### Configurable Admin Path
+
+Protect your admin panel from mass attacks by changing the default `/admin` URL:
+
+**Via Settings page** (recommended):
+1. Go to **Settings → Admin Panel** in your Filament admin
+2. Change the "Admin panel path" field
+3. Save, then run: `php artisan blogr:sync-admin-path`
+
+**Via `.env`**:
+```env
+BLOGR_ADMIN_PATH=backoffice
+```
+
+**During fresh install**:
+```bash
+php artisan blogr:install
+# The install command will ask: "What admin panel path would you like to use?"
+```
+
+> [!NOTE]
+> After changing the path, run `php artisan blogr:sync-admin-path` to update your
+> `app/Providers/Filament/AdminPanelProvider.php` automatically.
+
+### Two-Factor Authentication (2FA)
+
+Add an extra layer of security to your admin panel with [Filament Breezy](https://github.com/jeffgreco13/filament-breezy).
+This applies to **both existing and new installations** — Breezy is not bundled with Blogr.
+
+**1. Install the package:**
+```bash
+composer require jeffgreco13/filament-breezy
+php artisan breezy:install
+```
+
+**2. Configure your AdminPanelProvider** (`app/Providers/Filament/AdminPanelProvider.php`):
+```php
+use Jeffgreco13\FilamentBreezy\BreezyCore;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        ->plugins([
+            BreezyCore::make()
+                ->myProfile(
+                    shouldRegisterUserMenu: true,
+                    hasAvatars: false,
+                ),
+        ])
+        // ... existing plugins ([BlogrPlugin::make(), ...])
+}
+```
+
+**3. Add Breezy's Tailwind source** to your theme file (`resources/css/filament/admin/theme.css`):
+```css
+@source '../../../../vendor/jeffgreco13/filament-breezy/resources/**/*';
+```
+
+**4. Rebuild the theme:**
+```bash
+php artisan filament:assets
+npm run build
+```
+
+After this, your users will have access to:
+- TOTP two-factor authentication with recovery codes
+- Password update with customizable rules
+- Profile management (name, email)
+- Active sessions management
+- Passkey/WebAuthn support (optional)
+
+---
+
 ## 🧪 Testing
 
 Blogr is battle-tested with **680+ tests** and **1900+ assertions**:
