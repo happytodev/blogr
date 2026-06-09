@@ -2,6 +2,24 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.7.0](https://github.com/happytodev/blogr/compare/v1.6.0...v1.7.0) - 2026-06-09
+
+### ✨ Features
+
+- **`blogr:install-breezy` command**: New `php artisan blogr:install-breezy` that fully automates Filament Breezy setup:
+  - Installs `jeffgreco13/filament-breezy` via Composer
+  - Calls `make:filament-theme` to set up custom admin theme (vite.config.js + `->viteTheme()`)
+  - Creates `resources/css/filament/admin/theme.css` with `@source` for Breezy Tailwind classes
+  - Adds `BreezyCore::make()->myProfile(...)->enableTwoFactorAuthentication()` to AdminPanelProvider
+  - Adds `TwoFactorAuthenticatable` trait to User model
+  - Runs `filament:assets` with instructions for `npm run build` and 2FA activation
+
+### 🐛 Bug Fixes
+
+- **2FA middleware crash**: Added `authMiddleware: false` to prevent forced 2FA check before user configures it
+- **TwoFactorAuthenticatable trait detection**: Fixed regex that was matching the import instead of the class-internal trait usage
+- **theme.css missing Filament import**: Both CREATE and UPDATE branches now ensure the Filament core theme import is present
+
 ## [v1.6.0](https://github.com/happytodev/blogr/compare/v1.5.2...v1.6.0) - 2026-06-09
 
 ### ✨ Features
