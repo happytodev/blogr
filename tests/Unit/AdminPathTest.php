@@ -1,5 +1,6 @@
 <?php
 
+use Happytodev\Blogr\Commands\InstallBreezyCommand;
 use Happytodev\Blogr\Commands\SyncAdminPathCommand;
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Illuminate\Console\Command;
@@ -203,12 +204,12 @@ test('SyncAdminPathCommand indicates no change needed when path matches', functi
 // ─── INSTALL BREEZY COMMAND ────────────────────────────
 
 test('InstallBreezyCommand class exists and extends Command', function () {
-    expect(class_exists(\Happytodev\Blogr\Commands\InstallBreezyCommand::class))->toBeTrue();
-    expect(is_subclass_of(\Happytodev\Blogr\Commands\InstallBreezyCommand::class, \Illuminate\Console\Command::class))->toBeTrue();
+    expect(class_exists(InstallBreezyCommand::class))->toBeTrue();
+    expect(is_subclass_of(InstallBreezyCommand::class, Command::class))->toBeTrue();
 });
 
 test('InstallBreezyCommand has correct signature', function () {
-    $command = new \Happytodev\Blogr\Commands\InstallBreezyCommand;
+    $command = new InstallBreezyCommand;
     $reflection = new ReflectionClass($command);
     $property = $reflection->getProperty('signature');
     $property->setAccessible(true);

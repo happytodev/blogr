@@ -4,6 +4,7 @@ namespace Happytodev\Blogr\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Jeffgreco13\FilamentBreezy\BreezyCore;
 
 class InstallBreezyCommand extends Command
 {
@@ -16,7 +17,7 @@ class InstallBreezyCommand extends Command
         $this->info('🔐 Installing Filament Breezy...');
         $this->newLine();
 
-        if (class_exists(\Jeffgreco13\FilamentBreezy\BreezyCore::class)) {
+        if (class_exists(BreezyCore::class)) {
             $this->info('✅ Filament Breezy is already installed.');
         } else {
             $this->installPackage();
@@ -118,7 +119,7 @@ class InstallBreezyCommand extends Command
                     $modified = true;
                     $this->info('  ✅ Filament theme import added.');
                 } else {
-                    $current = "@import 'tailwindcss';\n@import '../../../../vendor/filament/filament/resources/css/theme.css' layer(filament);\n" . $current;
+                    $current = "@import 'tailwindcss';\n@import '../../../../vendor/filament/filament/resources/css/theme.css' layer(filament);\n".$current;
                     $modified = true;
                     $this->info('  ✅ Filament theme import added.');
                 }
@@ -162,6 +163,7 @@ class InstallBreezyCommand extends Command
             $this->line('Add BreezyCore manually:');
             $this->line('  use Jeffgreco13\FilamentBreezy\BreezyCore;');
             $this->line('  ->plugins([BreezyCore::make()->myProfile(...)->enableTwoFactorAuthentication()])');
+
             return;
         }
 
