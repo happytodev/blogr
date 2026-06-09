@@ -4,6 +4,8 @@
 return [
     'posts_per_page' => 10,  // Number of posts per page
 
+    'admin_path' => env('BLOGR_ADMIN_PATH', 'admin'),  // Admin panel path
+
     'route' => [
         'frontend' => [
             'enabled' => true,

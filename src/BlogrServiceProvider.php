@@ -13,6 +13,7 @@ use Happytodev\Blogr\Commands\BlogrCommand;
 use Happytodev\Blogr\Commands\BlogrExportCommand;
 use Happytodev\Blogr\Commands\BlogrImportCommand;
 use Happytodev\Blogr\Commands\BlogrInstallCommand;
+use Happytodev\Blogr\Commands\SyncAdminPathCommand;
 use Happytodev\Blogr\Commands\BlogrInstallTutorialsCommand;
 use Happytodev\Blogr\Commands\BlogrListTutorialsCommand;
 use Happytodev\Blogr\Commands\BlogrPublishDemoPagesCommand;
@@ -86,6 +87,7 @@ class BlogrServiceProvider extends PackageServiceProvider
         $package->hasCommands([
             BlogrCommand::class,
             BlogrInstallCommand::class,
+            SyncAdminPathCommand::class,
             InstallUserManagementCommand::class,
             MigratePostsToTranslations::class,
             BlogrExportCommand::class,

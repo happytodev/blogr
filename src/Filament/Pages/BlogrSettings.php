@@ -607,6 +607,9 @@ class BlogrSettings extends Page
 
         // Load theme preset (no preset = custom)
         $this->theme_preset = $config['ui']['theme']['preset'] ?? '';
+
+        // Load admin panel path
+        $this->admin_path = $config['admin_path'] ?? 'admin';
     }
 
     public function updated($name, $value): void
@@ -2261,6 +2264,25 @@ class BlogrSettings extends Page
                                 ->columnSpanFull(),
                         ]),
                 ]),
+
+                // ========================================
+                // ADMIN PANEL TAB
+                // ========================================
+                Tabs\Tab::make('Admin Panel')
+                    ->icon('heroicon-o-shield-exclamation')
+                    ->schema([
+                        Section::make('Admin Panel Configuration')
+                            ->description('Customize your admin panel access path. After changing this value, run php artisan blogr:sync-admin-path to update your AdminPanelProvider.')
+                            ->schema([
+                                TextInput::make('admin_path')
+                                    ->label('Admin panel path')
+                                    ->helperText('The URL path to access the admin panel (e.g. "admin", "backoffice", "dashboard"). After saving, run: php artisan blogr:sync-admin-path')
+                                    ->default('admin')
+                                    ->required()
+                                    ->alphaDash()
+                                    ->maxLength(50),
+                            ]),
+                    ]),
         ];
     }
 
@@ -2375,6 +2397,7 @@ class BlogrSettings extends Page
         }
 
         $data = [
+            'admin_path' => $this->admin_path ?? 'admin',
             'posts_per_page' => $this->posts_per_page,
             'route' => [
                 'prefix' => $this->route_prefix,

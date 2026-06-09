@@ -59,6 +59,10 @@ class BlogrInstallCommand extends Command
         $this->configureAppUrl();
         $this->newLine();
 
+        // Step 0.6: Configure admin panel path
+        $this->configureAdminPath();
+        $this->newLine();
+
         // Step 1: Publish configuration and migrations
         $this->publishFiles();
 
@@ -1667,6 +1671,43 @@ METHOD;
             }
         } else {
             $this->line('✅ Default route already commented or not found. Nothing to do.');
+        }
+    }
+
+    protected function configureAdminPath(): void
+    {
+        $this->info('🔐 Configuring admin panel path...');
+
+        $currentPath = config('blogr.admin_path', 'admin');
+
+        if ($this->option('force')) {
+            $path = $currentPath;
+            $this->line("   ✓ Admin path set to: {$path}");
+        } else {
+            $path = $this->ask('What admin panel path would you like to use?', $currentPath);
+            $path = preg_replace('/[^a-zA-Z0-9_-]/', '', $path) ?: 'admin';
+        }
+
+        // Update the config
+        config()->set('blogr.admin_path', $path);
+
+        // Update .env
+        $envPath = app()->environmentFilePath();
+        if ($envPath && File::exists($envPath)) {
+            $envContent = File::get($envPath);
+
+            if (str_contains($envContent, 'BLOGR_ADMIN_PATH')) {
+                $envContent = preg_replace(
+                    '/BLOGR_ADMIN_PATH=.*/',
+                    "BLOGR_ADMIN_PATH={$path}",
+                    $envContent
+                );
+            } else {
+                $envContent .= "\nBLOGR_ADMIN_PATH={$path}\n";
+            }
+
+            File::put($envPath, $envContent);
+            $this->line("   ✓ BLOGR_ADMIN_PATH added to .env: {$path}");
         }
     }
 }
