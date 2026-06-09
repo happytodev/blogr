@@ -1,6 +1,8 @@
 <?php
 
 use Happytodev\Blogr\Commands\SyncAdminPathCommand;
+use Happytodev\Blogr\Filament\Pages\BlogrSettings;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
 // ─── CONFIG ─────────────────────────────────────────────
@@ -31,7 +33,7 @@ test('admin_path defaults when env is not set', function () {
 // ─── SAVE BEHAVIOR ─────────────────────────────────────
 
 test('save method applies admin_path to runtime config', function () {
-    $settings = app(\Happytodev\Blogr\Filament\Pages\BlogrSettings::class);
+    $settings = app(BlogrSettings::class);
 
     $settings->admin_path = 'admin2026';
 
@@ -42,7 +44,7 @@ test('save method applies admin_path to runtime config', function () {
         $reflection->invoke($settings);
 
         expect(config('blogr.admin_path'))->toBe('admin2026');
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         // save() may throw in test env if dependencies are missing
         // but the runtime config should still be set before any exception
         expect(config('blogr.admin_path'))->toBe('admin2026');
@@ -59,14 +61,14 @@ test('save method writes BLOGR_ADMIN_PATH to .env', function () {
     $original = File::get($envPath);
 
     try {
-        $settings = app(\Happytodev\Blogr\Filament\Pages\BlogrSettings::class);
+        $settings = app(BlogrSettings::class);
         $settings->admin_path = 'from-test-save';
         $reflection = new ReflectionMethod($settings, 'save');
         $reflection->setAccessible(true);
 
         try {
             $reflection->invoke($settings);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Expected — save() may throw, .env write should still happen
         }
 
@@ -79,7 +81,7 @@ test('save method writes BLOGR_ADMIN_PATH to .env', function () {
 });
 
 test('save method reads admin_path from form state when available', function () {
-    $settings = app(\Happytodev\Blogr\Filament\Pages\BlogrSettings::class);
+    $settings = app(BlogrSettings::class);
 
     // Simulate Filament form state containing admin_path
     // First set the property as Livewire would
@@ -90,7 +92,7 @@ test('save method reads admin_path from form state when available', function () 
 
     try {
         $reflection->invoke($settings);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         // save() may throw if form dependencies are missing
         // but runtime config should be set
     }
@@ -100,7 +102,7 @@ test('save method reads admin_path from form state when available', function () 
 });
 
 test('updateConfigFile persists admin_path when not in testing', function () {
-    $settings = app(\Happytodev\Blogr\Filament\Pages\BlogrSettings::class);
+    $settings = app(BlogrSettings::class);
 
     $reflection = new ReflectionMethod($settings, 'updateConfigFile');
     $reflection->setAccessible(true);
@@ -113,7 +115,7 @@ test('updateConfigFile persists admin_path when not in testing', function () {
 test('mount method loads admin_path from config', function () {
     config()->set('blogr.admin_path', 'from-config');
 
-    $settings = app(\Happytodev\Blogr\Filament\Pages\BlogrSettings::class);
+    $settings = app(BlogrSettings::class);
     $settings->mount();
 
     expect($settings->admin_path)->toBe('from-config');
@@ -122,7 +124,7 @@ test('mount method loads admin_path from config', function () {
 test('mount method defaults admin_path to admin when config is missing', function () {
     config()->offsetUnset('blogr.admin_path');
 
-    $settings = app(\Happytodev\Blogr\Filament\Pages\BlogrSettings::class);
+    $settings = app(BlogrSettings::class);
     $settings->mount();
 
     expect($settings->admin_path)->toBe('admin');
@@ -130,7 +132,7 @@ test('mount method defaults admin_path to admin when config is missing', functio
 
 test('BlogrSettings form schema contains admin_path field', function () {
     $source = file_get_contents(
-        (new ReflectionClass(\Happytodev\Blogr\Filament\Pages\BlogrSettings::class))->getFileName()
+        (new ReflectionClass(BlogrSettings::class))->getFileName()
     );
 
     expect($source)->toContain("TextInput::make('admin_path')");
@@ -141,7 +143,7 @@ test('BlogrSettings form schema contains admin_path field', function () {
 
 test('SyncAdminPathCommand class exists and extends Command', function () {
     expect(class_exists(SyncAdminPathCommand::class))->toBeTrue();
-    expect(is_subclass_of(SyncAdminPathCommand::class, \Illuminate\Console\Command::class))->toBeTrue();
+    expect(is_subclass_of(SyncAdminPathCommand::class, Command::class))->toBeTrue();
 });
 
 test('SyncAdminPathCommand has correct signature', function () {

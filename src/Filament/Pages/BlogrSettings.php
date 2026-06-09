@@ -2273,7 +2273,7 @@ class BlogrSettings extends Page
                         ->icon('heroicon-o-shield-exclamation')
                         ->schema([
                             Section::make('Admin Panel Configuration')
-                                ->description('Customize your admin panel access path. Current path: /' . (config('blogr.admin_path') ?? 'admin') . '. After saving, run: php artisan blogr:sync-admin-path')
+                                ->description('Customize your admin panel access path. Current path: /'.(config('blogr.admin_path') ?? 'admin').'. After saving, run: php artisan blogr:sync-admin-path')
                                 ->schema([
                                     TextInput::make('admin_path')
                                         ->label('Admin panel path')
@@ -2286,7 +2286,8 @@ class BlogrSettings extends Page
                                         ->label('Current effective path')
                                         ->content(function () {
                                             $path = config('blogr.admin_path', 'admin');
-                                            return '/' . $path;
+
+                                            return '/'.$path;
                                         }),
                                 ]),
                         ]),
@@ -2664,14 +2665,13 @@ class BlogrSettings extends Page
         $envPath = app()->environmentFilePath();
         $envWritable = $envPath && is_writable($envPath);
 
-
         $body = __('blogr::blogr.settings.saved_successfully');
 
         if ($this->mail_provider === 'brevo' && ! $envWritable) {
-            $body .= "\n" . __('blogr::blogr.settings.env_not_writable');
+            $body .= "\n".__('blogr::blogr.settings.env_not_writable');
         }
 
-        $body .= "\n" . __('blogr::blogr.settings.run_sync_command');
+        $body .= "\n".__('blogr::blogr.settings.run_sync_command');
 
         Notification::make()
             ->title(__('blogr::blogr.settings.saved_successfully'))
