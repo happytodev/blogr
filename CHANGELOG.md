@@ -2,6 +2,13 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.7.1](https://github.com/happytodev/blogr/compare/v1.7.0...v1.7.1) - 2026-06-09
+
+### 🐛 Bug Fixes
+
+- **2FA middleware**: Removed `authMiddleware: false` from Breezy config. Users who have enabled 2FA will now be prompted for their TOTP code at login. The `MustTwoFactor` middleware is active by default.
+- **Breezy migrations**: Added `vendor:publish --tag=filament-breezy-migrations` and `migrate` steps to `blogr:install-breezy`. Required database tables are now automatically created during installation.
+
 ## [v1.7.0](https://github.com/happytodev/blogr/compare/v1.6.0...v1.7.0) - 2026-06-09
 
 ### ✨ Features
