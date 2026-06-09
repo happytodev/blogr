@@ -199,3 +199,21 @@ test('SyncAdminPathCommand indicates no change needed when path matches', functi
         File::delete($providerPath);
     }
 });
+
+// ─── INSTALL BREEZY COMMAND ────────────────────────────
+
+test('InstallBreezyCommand class exists and extends Command', function () {
+    expect(class_exists(\Happytodev\Blogr\Commands\InstallBreezyCommand::class))->toBeTrue();
+    expect(is_subclass_of(\Happytodev\Blogr\Commands\InstallBreezyCommand::class, \Illuminate\Console\Command::class))->toBeTrue();
+});
+
+test('InstallBreezyCommand has correct signature', function () {
+    $command = new \Happytodev\Blogr\Commands\InstallBreezyCommand;
+    $reflection = new ReflectionClass($command);
+    $property = $reflection->getProperty('signature');
+    $property->setAccessible(true);
+
+    $signature = $property->getValue($command);
+
+    expect($signature)->toContain('blogr:install-breezy');
+});

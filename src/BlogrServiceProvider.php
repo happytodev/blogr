@@ -20,6 +20,7 @@ use Happytodev\Blogr\Commands\BlogrRemoveTutorialsCommand;
 use Happytodev\Blogr\Commands\InstallUserManagementCommand;
 use Happytodev\Blogr\Commands\MigratePostsToTranslations;
 use Happytodev\Blogr\Commands\SyncAdminPathCommand;
+use Happytodev\Blogr\Commands\InstallBreezyCommand;
 use Happytodev\Blogr\Contracts\BlogrExtension;
 use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
 use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
@@ -88,6 +89,7 @@ class BlogrServiceProvider extends PackageServiceProvider
             BlogrCommand::class,
             BlogrInstallCommand::class,
             SyncAdminPathCommand::class,
+            InstallBreezyCommand::class,
             InstallUserManagementCommand::class,
             MigratePostsToTranslations::class,
             BlogrExportCommand::class,

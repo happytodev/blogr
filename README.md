@@ -812,18 +812,32 @@ public function panel(Panel $panel): Panel
                 ->myProfile(
                     shouldRegisterUserMenu: true,
                     hasAvatars: false,
+                )
+                ->enableTwoFactorAuthentication(
+                    force: false,
+                    authMiddleware: false,
                 ),
         ])
         // ... existing plugins ([BlogrPlugin::make(), ...])
 }
 ```
 
-**3. Add Breezy's Tailwind source** to your theme file (`resources/css/filament/admin/theme.css`):
+**3. Add the `TwoFactorAuthenticatable` trait to your User model** (`app/Models/User.php`):
+```php
+use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
+
+class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable;
+}
+```
+
+**4. Add Breezy's Tailwind source** to your theme file (`resources/css/filament/admin/theme.css`):
 ```css
 @source '../../../../vendor/jeffgreco13/filament-breezy/resources/**/*';
 ```
 
-**4. Rebuild the theme:**
+**5. Rebuild the theme:**
 ```bash
 php artisan filament:assets
 npm run build
