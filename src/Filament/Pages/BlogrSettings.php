@@ -2265,24 +2265,24 @@ class BlogrSettings extends Page
                         ]),
                 ]),
 
-                // ========================================
-                // ADMIN PANEL TAB
-                // ========================================
-                Tabs\Tab::make('Admin Panel')
-                    ->icon('heroicon-o-shield-exclamation')
-                    ->schema([
-                        Section::make('Admin Panel Configuration')
-                            ->description('Customize your admin panel access path. After changing this value, run php artisan blogr:sync-admin-path to update your AdminPanelProvider.')
-                            ->schema([
-                                TextInput::make('admin_path')
-                                    ->label('Admin panel path')
-                                    ->helperText('The URL path to access the admin panel (e.g. "admin", "backoffice", "dashboard"). After saving, run: php artisan blogr:sync-admin-path')
-                                    ->default('admin')
-                                    ->required()
-                                    ->alphaDash()
-                                    ->maxLength(50),
-                            ]),
-                    ]),
+            // ========================================
+            // ADMIN PANEL TAB
+            // ========================================
+            Tabs\Tab::make('Admin Panel')
+                ->icon('heroicon-o-shield-exclamation')
+                ->schema([
+                    Section::make('Admin Panel Configuration')
+                        ->description('Customize your admin panel access path. After changing this value, run php artisan blogr:sync-admin-path to update your AdminPanelProvider.')
+                        ->schema([
+                            TextInput::make('admin_path')
+                                ->label('Admin panel path')
+                                ->helperText('The URL path to access the admin panel (e.g. "admin", "backoffice", "dashboard"). After saving, run: php artisan blogr:sync-admin-path')
+                                ->default('admin')
+                                ->required()
+                                ->alphaDash()
+                                ->maxLength(50),
+                        ]),
+                ]),
         ];
     }
 
