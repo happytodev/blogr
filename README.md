@@ -815,7 +815,6 @@ public function panel(Panel $panel): Panel
                 )
                 ->enableTwoFactorAuthentication(
                     force: false,
-                    authMiddleware: false,
                 ),
         ])
         // ... existing plugins ([BlogrPlugin::make(), ...])

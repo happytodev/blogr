@@ -211,7 +211,7 @@ class InstallBreezyCommand extends Command
                 // Add enableTwoFactorAuthentication after myProfile or after BreezyCore::make()
                 $content = preg_replace(
                     '/(BreezyCore::make\(\)\s*(?:->myProfile\([^)]*\)\s*)?)/s',
-                    "$1\n                ->enableTwoFactorAuthentication(\n                    force: false,\n                    authMiddleware: false,\n                )",
+                    "$1\n                ->enableTwoFactorAuthentication(\n                    force: false,\n                )",
                     $content,
                     1
                 );
@@ -222,7 +222,7 @@ class InstallBreezyCommand extends Command
             }
         } else {
             // BreezyCore::make() not found — add full config
-            $breezyConfig = "BreezyCore::make()\n                ->myProfile(\n                    shouldRegisterUserMenu: true,\n                    hasAvatars: false,\n                )\n                ->enableTwoFactorAuthentication(\n                    force: false,\n                    authMiddleware: false,\n                )";
+            $breezyConfig = "BreezyCore::make()\n                ->myProfile(\n                    shouldRegisterUserMenu: true,\n                    hasAvatars: false,\n                )\n                ->enableTwoFactorAuthentication(\n                    force: false,\n                )";
 
             if (str_contains($content, '->plugins([')) {
                 $content = preg_replace(
