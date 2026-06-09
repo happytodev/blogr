@@ -2,6 +2,24 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.6.0](https://github.com/happytodev/blogr/compare/v1.5.2...v1.6.0) - 2026-06-09
+
+### ✨ Features
+
+- **Configurable admin panel path**: New `admin_path` setting in Settings → Admin Panel. Change your admin URL from `/admin` to any custom path. Saved to `.env` as `BLOGR_ADMIN_PATH` and `config/blogr.php`. Run `php artisan blogr:sync-admin-path` after saving to update your `AdminPanelProvider.php`.
+- **Localized notifications**: Success messages now display in the user's language (EN/FR/ES/DE) with clear instructions to run the sync command.
+
+### 🐛 Bug Fixes
+
+- **Admin panel path save**: Fixed Livewire form binding by using `$this->form->getState()` with `\Throwable` fallback. Also persists to `.env` for production reliability when `config/` is not writable.
+- **Settings page crash**: Fixed `syntax error` on the Admin Panel tab caused by a missing tabs array closing bracket.
+- **PHP 8.4 compatibility**: Added explicit `public string $admin_path` property declaration to avoid dynamic property deprecation.
+- **BackToTopSettings type error**: Caught `\Throwable` instead of `\Exception` during form state retrieval.
+
+### 🔧 Maintenance
+
+- **Syntax check test**: Added `tests/Unit/SyntaxCheckTest.php` that validates PHP syntax of all `src/` files via `php -l`.
+
 ## [v1.5.2](https://github.com/happytodev/blogr/compare/v1.5.1...v1.5.2) - 2026-06-09
 
 ### 🐛 Bug Fixes
