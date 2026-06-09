@@ -25,6 +25,11 @@ class InstallBreezyCommand extends Command
 
         $this->newLine();
 
+        // Publish and run Breezy migrations
+        $this->publishMigrations();
+
+        $this->newLine();
+
         // Step 3: Set up Filament admin theme (vite.config.js + panel provider registration)
         $this->setupFilamentTheme();
 
@@ -63,6 +68,24 @@ class InstallBreezyCommand extends Command
         if ($exitCode !== 0) {
             $this->warn('⚠️  Composer install may have failed. Continuing...');
         }
+    }
+
+    protected function publishMigrations(): void
+    {
+        $this->info('📋 Publishing Breezy migrations...');
+
+        $this->call('vendor:publish', [
+            '--tag' => 'filament-breezy-migrations',
+            '--force' => $this->option('force'),
+        ]);
+
+        $this->info('  ✅ Breezy migrations published.');
+
+        $this->call('migrate', [
+            '--force' => true,
+        ]);
+
+        $this->info('  ✅ Breezy migrations executed.');
     }
 
     protected function setupFilamentTheme(): void
