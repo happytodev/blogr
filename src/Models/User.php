@@ -51,7 +51,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
         $hash = md5(strtolower(trim($this->email)));
 
-        return 'https://www.gravatar.com/avatar/' . $hash . '?s=80&d=mp';
+        return 'https://www.gravatar.com/avatar/'.$hash.'?s=80&d=mp';
     }
 
     public function guardName()

@@ -176,8 +176,8 @@ class BlogPost extends Model
         return $query->where('is_listed', true)
             ->where(function ($q) {
                 $q->whereNull('blog_series_id')
-                  ->orWhereHas('series', fn ($q) => $q->where('show_on_index', true))
-                  ->orWhere('is_listed', true);
+                    ->orWhereHas('series', fn ($q) => $q->where('show_on_index', true))
+                    ->orWhere('is_listed', true);
             });
     }
 
