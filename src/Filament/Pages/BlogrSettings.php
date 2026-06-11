@@ -27,6 +27,7 @@ use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Services\BlogrExportService;
 use Happytodev\Blogr\Services\BlogrImportService;
 use Happytodev\Blogr\Services\LocaleService;
+use Happytodev\Blogr\Services\TranslationUsageService;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -2307,6 +2308,38 @@ class BlogrSettings extends Page
                     Tabs\Tab::make('AI Translation')
                         ->icon('heroicon-o-language')
                         ->schema([
+                            Placeholder::make('translation_usage_recap')
+                                ->label('Monthly Usage')
+                                ->content(function () {
+                                    $provider = $this->translation_provider;
+                                    if (! $provider || $provider === 'none') {
+                                        return 'Select a provider to see usage statistics.';
+                                    }
+
+                                    $stats = app(TranslationUsageService::class)->getUsageStats($provider);
+
+                                    if (! $stats) {
+                                        return 'No usage data for this month.';
+                                    }
+
+                                    $providerNames = [
+                                        'libretranslate' => 'LibreTranslate (self-hosted)',
+                                        'azure' => 'Azure Translator',
+                                        'google' => 'Google Cloud Translation',
+                                        'openai' => 'OpenAI (GPT-4o-mini)',
+                                    ];
+
+                                    $name = $providerNames[$provider] ?? ucfirst($provider);
+
+                                    if ($stats['limit'] !== null) {
+                                        return "{$name} — {$stats['used']} / {$stats['limit']} chars used in {$stats['month_name']} ({$stats['percentage']}%). {$stats['remaining']} chars remaining.";
+                                    }
+
+                                    return "{$name} — {$stats['used']} chars translated in {$stats['month_name']}.";
+                                })
+                                ->visible(fn () => $this->translation_provider !== 'none')
+                                ->columnSpanFull(),
+
                             Section::make('AI Translation Service')
                                 ->description('Configure AI-powered translation for your CMS pages. Requires an API key or a self-hosted LibreTranslate server.')
                                 ->schema([
