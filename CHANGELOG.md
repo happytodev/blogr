@@ -2,6 +2,15 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.9.0](https://github.com/happytodev/blogr/compare/v1.8.0...v1.9.0) - 2026-06-10
+
+### ✨ Features
+
+- **Hide posts from index**: New `is_listed` toggle on each post. Uncheck to hide from blog index, homepage, category/tag pages, and RSS feed. Post remains accessible via direct URL and series pages.
+- **Hide series from index**: New `show_on_index` toggle on each series. Uncheck to hide all posts in the series from the index. Individual posts can override this with their own `is_listed` toggle.
+- **Gravatar on author profile**: Added `gravatar_url` accessor on User model for automatic avatar display on author pages.
+- **Author view improvements**: Enhanced author bio, author info, and series authors components for better display.
+
 ## [v1.8.0](https://github.com/happytodev/blogr/compare/v1.7.1...v1.8.0) - 2026-06-10
 
 ### ✨ Features
