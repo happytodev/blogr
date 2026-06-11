@@ -87,7 +87,9 @@ class LinkResolver
             return route('blogr.blog.category', ['category' => $category]);
         } catch (\Exception $e) {
             // Fallback: construct URL manually using config
-            $translation = $category->translations()->first();
+            $locale = app()->getLocale();
+            $translation = $category->translations()->where('locale', $locale)->first()
+                ?? $category->translations()->first();
             if (! $translation) {
                 return null;
             }
@@ -128,8 +130,10 @@ class LinkResolver
         }
 
         try {
-            // Get the first translation to access the slug
-            $translation = $page->translations()->first();
+            // Get the translation matching the current locale
+            $locale = app()->getLocale();
+            $translation = $page->translations()->where('locale', $locale)->first()
+                ?? $page->translations()->first();
             if (! $translation) {
                 return null;
             }
@@ -147,7 +151,9 @@ class LinkResolver
             }
         } catch (\Exception $e) {
             // Fallback: construct URL manually using config
-            $translation = $page->translations()->first();
+            $locale = app()->getLocale();
+            $translation = $page->translations()->where('locale', $locale)->first()
+                ?? $page->translations()->first();
             if (! $translation) {
                 return null;
             }
