@@ -43,10 +43,15 @@ class BlogrSettings extends Page
     public string $admin_path = 'admin';
 
     public string $translation_provider = 'none';
+
     public string $translation_libretranslate_url = '';
+
     public string $translation_azure_api_key = '';
+
     public string $translation_azure_region = 'westeurope';
+
     public string $translation_google_api_key = '';
+
     public string $translation_openai_api_key = '';
 
     public const THEME_PRESETS = [

@@ -3,6 +3,7 @@
 namespace Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
@@ -46,12 +47,12 @@ class EditBlogPost extends EditRecord
                 ->icon('heroicon-o-language')
                 ->color('success')
                 ->form([
-                    \Filament\Forms\Components\Select::make('source_locale')
+                    Select::make('source_locale')
                         ->label('Source language')
                         ->options($sourceOptions)
                         ->default($this->record->default_locale)
                         ->required(),
-                    \Filament\Forms\Components\Select::make('target_locale')
+                    Select::make('target_locale')
                         ->label('Target language')
                         ->options($targetOptions)
                         ->required()

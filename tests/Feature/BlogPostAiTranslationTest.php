@@ -1,20 +1,24 @@
 <?php
 
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
+use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Services\LocaleService;
+use Happytodev\Blogr\Services\Translation\TranslationProviderFactory;
+use Happytodev\Blogr\Tests\TestCase;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 beforeEach(function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
 
-    app(\Happytodev\Blogr\Services\LocaleService::class)->flushCache();
+    app(LocaleService::class)->flushCache();
 
     // Enable translation via config
     config()->set('blogr.translation', [
@@ -75,14 +79,14 @@ it('translates blog post fields via the translate action', function () {
 
     $this->actingAs($this->admin);
 
-    $component = Livewire::test(\Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost::class, [
+    $component = Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ]);
 
     $reflection = new ReflectionClass($component->instance());
     $method = $reflection->getMethod('translateWithAI');
     $method->setAccessible(true);
-    $provider = app(\Happytodev\Blogr\Services\Translation\TranslationProviderFactory::class)->make();
+    $provider = app(TranslationProviderFactory::class)->make();
     $method->invoke($component->instance(), $provider, 'en', 'fr');
 
     $frTranslation = BlogPostTranslation::where('blog_post_id', $this->post->id)
@@ -109,14 +113,14 @@ it('creates new translation row when target locale does not exist yet', function
 
     expect(BlogPostTranslation::where('blog_post_id', $this->post->id)->count())->toBe(1);
 
-    $component = Livewire::test(\Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost::class, [
+    $component = Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ]);
 
     $reflection = new ReflectionClass($component->instance());
     $method = $reflection->getMethod('translateWithAI');
     $method->setAccessible(true);
-    $provider = app(\Happytodev\Blogr\Services\Translation\TranslationProviderFactory::class)->make();
+    $provider = app(TranslationProviderFactory::class)->make();
     $method->invoke($component->instance(), $provider, 'en', 'fr');
 
     expect(BlogPostTranslation::where('blog_post_id', $this->post->id)->count())->toBe(2);

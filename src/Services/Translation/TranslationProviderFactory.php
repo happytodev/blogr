@@ -15,9 +15,20 @@ class TranslationProviderFactory
             'openai' => app(OpenAIProvider::class),
             default => new class implements TranslationProvider
             {
-                public function isAvailable(): bool { return false; }
-                public function translate(string $text, string $s, string $t): string { return $text; }
-                public function translateBlocks(array $blocks, string $s, string $t): array { return $blocks; }
+                public function isAvailable(): bool
+                {
+                    return false;
+                }
+
+                public function translate(string $text, string $s, string $t): string
+                {
+                    return $text;
+                }
+
+                public function translateBlocks(array $blocks, string $s, string $t): array
+                {
+                    return $blocks;
+                }
             },
         };
     }

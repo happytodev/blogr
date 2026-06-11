@@ -139,7 +139,7 @@ class EditCmsPageTranslation extends EditRecord
             }
 
             $actions[] = Actions\Action::make('syncBlocks')
-                ->label('Synchroniser les blocs depuis ' . strtoupper($sourceLocale))
+                ->label('Synchroniser les blocs depuis '.strtoupper($sourceLocale))
                 ->icon('heroicon-o-document-arrow-down')
                 ->color('gray')
                 ->action(function () use ($sourceLocale) {
@@ -157,7 +157,8 @@ class EditCmsPageTranslation extends EditRecord
             ->first();
 
         if (! $sourceTranslation) {
-            Notification::make()->title("Aucune traduction source")->danger()->send();
+            Notification::make()->title('Aucune traduction source')->danger()->send();
+
             return;
         }
 
@@ -224,6 +225,7 @@ class EditCmsPageTranslation extends EditRecord
                 ->title('Aucun bloc manquant — les deux versions sont synchronisées')
                 ->info()
                 ->send();
+
             return;
         }
 
@@ -232,7 +234,7 @@ class EditCmsPageTranslation extends EditRecord
         $this->fillForm();
 
         Notification::make()
-            ->title("{$addedCount} bloc(s) ajouté(s) depuis " . strtoupper($sourceLocale))
+            ->title("{$addedCount} bloc(s) ajouté(s) depuis ".strtoupper($sourceLocale))
             ->success()
             ->send();
     }

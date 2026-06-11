@@ -1,6 +1,7 @@
 <?php
 
 use Happytodev\Blogr\Services\Translation\CodeBlockPreserver;
+use Happytodev\Blogr\Services\Translation\TranslationProviderFactory;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
@@ -26,7 +27,7 @@ it('preserves fenced code blocks during translation', function () {
 
     $content = "Some text\n```php\necho 'hello';\n```\nMore text";
 
-    $provider = app(\Happytodev\Blogr\Services\Translation\TranslationProviderFactory::class)->make();
+    $provider = app(TranslationProviderFactory::class)->make();
     $preserver = new CodeBlockPreserver;
 
     $result = $preserver->translateContent($provider, $content, 'en', 'fr');
@@ -49,9 +50,9 @@ it('preserves inline code blocks', function () {
         },
     ]);
 
-    $content = "Use the `\$var` function here";
+    $content = 'Use the `$var` function here';
 
-    $provider = app(\Happytodev\Blogr\Services\Translation\TranslationProviderFactory::class)->make();
+    $provider = app(TranslationProviderFactory::class)->make();
     $preserver = new CodeBlockPreserver;
 
     $result = $preserver->translateContent($provider, $content, 'en', 'fr');
@@ -68,8 +69,8 @@ it('preserves multiple code blocks', function () {
 
             $block1 = "```\ncode1\n```";
             $block2 = "```\ncode2\n```";
-            $p1 = "___BLOGR_CODE_" . md5($block1) . "___";
-            $p2 = "___BLOGR_CODE_" . md5($block2) . "___";
+            $p1 = '___BLOGR_CODE_'.md5($block1).'___';
+            $p2 = '___BLOGR_CODE_'.md5($block2).'___';
             $q = str_replace([$block1, $block2], [$p1, $p2], $q);
 
             return Http::response(['translatedText' => "Debut\n{$q}\nFin"]);
@@ -78,7 +79,7 @@ it('preserves multiple code blocks', function () {
 
     $content = "Start\n```\ncode1\n```\nMiddle\n```\ncode2\n```\nEnd";
 
-    $provider = app(\Happytodev\Blogr\Services\Translation\TranslationProviderFactory::class)->make();
+    $provider = app(TranslationProviderFactory::class)->make();
     $preserver = new CodeBlockPreserver;
 
     $result = $preserver->translateContent($provider, $content, 'en', 'fr');
@@ -89,7 +90,7 @@ it('preserves multiple code blocks', function () {
 
 it('handles empty content', function () {
     $preserver = new CodeBlockPreserver;
-    $provider = app(\Happytodev\Blogr\Services\Translation\TranslationProviderFactory::class)->make();
+    $provider = app(TranslationProviderFactory::class)->make();
 
     $result = $preserver->translateContent($provider, '', 'en', 'fr');
 
@@ -101,7 +102,7 @@ it('handles content without code blocks', function () {
         'http://localhost:5000/*' => Http::response(['translatedText' => 'Bonjour le monde']),
     ]);
 
-    $provider = app(\Happytodev\Blogr\Services\Translation\TranslationProviderFactory::class)->make();
+    $provider = app(TranslationProviderFactory::class)->make();
     $preserver = new CodeBlockPreserver;
 
     $result = $preserver->translateContent($provider, 'Hello world', 'en', 'fr');
@@ -117,8 +118,8 @@ it('preserves code blocks in nested markdown', function () {
 
             $block = "```\nfunction test() {\n    return true;\n}\n```";
             $inline = '`$code`';
-            $pBlock = "___BLOGR_CODE_" . md5($block) . "___";
-            $pInline = "___BLOGR_CODE_" . md5($inline) . "___";
+            $pBlock = '___BLOGR_CODE_'.md5($block).'___';
+            $pInline = '___BLOGR_CODE_'.md5($inline).'___';
 
             $q = str_replace([$block, $inline], [$pBlock, $pInline], $q);
 
@@ -128,7 +129,7 @@ it('preserves code blocks in nested markdown', function () {
 
     $content = "## Title\n\nParagraph with **bold** and `\$code`.\n\n```\nfunction test() {\n    return true;\n}\n```\n\nEnd.";
 
-    $provider = app(\Happytodev\Blogr\Services\Translation\TranslationProviderFactory::class)->make();
+    $provider = app(TranslationProviderFactory::class)->make();
     $preserver = new CodeBlockPreserver;
 
     $result = $preserver->translateContent($provider, $content, 'en', 'fr');
@@ -141,12 +142,12 @@ it('preserves code blocks in nested markdown', function () {
 
 it('preserves code block when provider translates its content', function () {
     Http::fake([
-        '*/translate' => Http::response(['translatedText' => "D\xe9but\n___BLOGR_CODE_" . md5("```php\necho 1;\n```") . "___\nFin"]),
+        '*/translate' => Http::response(['translatedText' => "D\xe9but\n___BLOGR_CODE_".md5("```php\necho 1;\n```")."___\nFin"]),
     ]);
 
     $content = "Debut\n```php\necho 1;\n```\nFin";
 
-    $provider = app(\Happytodev\Blogr\Services\Translation\TranslationProviderFactory::class)->make();
+    $provider = app(TranslationProviderFactory::class)->make();
     $preserver = new CodeBlockPreserver;
 
     $result = $preserver->translateContent($provider, $content, 'en', 'fr');

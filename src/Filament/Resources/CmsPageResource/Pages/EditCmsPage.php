@@ -181,7 +181,7 @@ HTML;
         }
 
         // Legend row
-        $legend = <<<HTML
+        $legend = <<<'HTML'
 <div style="display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-top:0.5rem;padding-top:0.75rem;font-size:0.75rem;color:#6b7280;">
     <span>✅ Traduite</span>
     <span>🔄 Copiée</span>
