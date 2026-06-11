@@ -2,6 +2,17 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.8.0](https://github.com/happytodev/blogr/compare/v1.7.1...v1.8.0) - 2026-06-10
+
+### ✨ Features
+
+- **Comment count on post cards**: Blog post cards now display the number of comments when `$post->comment_count` is set (provided by blogr-comments plugin). Each count links to the comments section of the post.
+- **Blade stacks for plugins**: Added `@stack('comments')` on post show view, `@stack('blogr-post-article-meta')` next to post meta, and `@stack('blogr-post-card-meta')` on post cards — enabling blogr-comments and other plugins to inject UI.
+
+### 🐛 Bug Fixes
+
+- **Prism.js 404 on vue**: `prism-vue` component does not exist on cdnjs. Defined `Prism.languages.vue = Prism.languages.markup` before the autoloader loads, preventing the 404 error on every blog post page.
+
 ## [v1.7.1](https://github.com/happytodev/blogr/compare/v1.7.0...v1.7.1) - 2026-06-09
 
 ### 🐛 Bug Fixes
