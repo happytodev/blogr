@@ -62,6 +62,7 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
 ### 4. Generate and present release notes
 
 - Use the commit log from step 1 to format as markdown with conventional commit categories (Features, Bug Fixes, Dependencies, etc.)
+- **Always display the exact CHANGELOG.md entry** that will be prepended to the file. Show it to the user first using Markdown code block so they can see the full entry before approving.
 - **Show the formatted markdown to the user using the `question` tool** with a "Looks good, proceed" option and an "Edit notes" option.
 - **Do NOT just ask "proceed?"** — display the full formatted release notes in the question so the user can review every line before approving.
 - Include a third option "Cancel" in case the user wants to abort.
