@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.9.1](https://github.com/happytodev/blogr/compare/v1.9.0...v1.9.1) - 2026-06-11
+
+### 🐛 Bug Fixes
+
+- **CMS link picker locale**: The internal link selector in CMS blocks (Hero CTA, etc.) now displays page titles in the current editing locale instead of always showing the first translation from the database. Category links are also fixed.
+
 ## [v1.9.0](https://github.com/happytodev/blogr/compare/v1.8.0...v1.9.0) - 2026-06-10
 
 ### ✨ Features
