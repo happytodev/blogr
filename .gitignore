@@ -13,4 +13,5 @@ testbench.yaml
 vendor
 *.code-workspace
 tests/Browser/Screenshots
+storage/app/blogr-exports/blogr-homepage-v*.json
 
