@@ -68,8 +68,8 @@
                 // Set Carbon locale for date formatting
                 $carbonDate = $post->published_at->copy()->locale($currentLocale);
             @endphp
-            <div class="text-sm text-gray-500 dark:text-gray-400 mb-3 flex items-center">
-                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="text-sm text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                     </path>
@@ -77,6 +77,15 @@
                 <time datetime="{{ $post->published_at->toIso8601String() }}">
                     {{ $carbonDate->isoFormat('LL') }}
                 </time>
+                @if (isset($post->comment_count) && $post->comment_count > 0)
+                    <a href="{{ config('blogr.locales.enabled') ? route('blog.show', ['locale' => $currentLocale, 'slug' => $postSlug]) : route('blog.show', ['slug' => $postSlug]) }}#comments" class="inline-flex items-center gap-1 hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary-dark)] transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        <span>{{ $post->comment_count }}</span>
+                    </a>
+                @endif
+                @stack('blogr-post-card-meta')
             </div>
         @endif
 

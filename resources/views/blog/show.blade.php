@@ -383,15 +383,19 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script>
+    // Define aliases for languages not available as components (prevents 404 from autoloader)
+    Prism.languages.vue = Prism.languages.markup;
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 
 <script>
-    // Configure Prism autoloader
+    // Pre-load common languages to avoid CDN 404s
     Prism.plugins.autoloader.languages_path = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/';
-    
+
     // Add line numbers class to all pre elements
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('pre[class*="language-"]').forEach(function(pre) {
@@ -521,6 +525,8 @@
                 @if(config('blogr.display.show_author_pseudo') || config('blogr.display.show_author_avatar'))
                     <x-blogr::author-info :author="$post->user" size="sm" />
                 @endif
+
+                @stack('blogr-post-article-meta')
             </div>
 
             <!-- Featured Image -->
@@ -719,6 +725,8 @@
                 {{ __('blogr::blogr.ui.back_to_all_posts') }}
             </a>
         </div>
+
+        @stack('comments')
     </article>
 
     @if($hasSidebarToc && $tocPos === 'right')
