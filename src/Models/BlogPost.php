@@ -23,6 +23,7 @@ class BlogPost extends Model
         'photo',
         'user_id',
         'is_published',
+        'is_listed',
         'published_at',
         'category_id',
         'blog_series_id',
@@ -42,6 +43,7 @@ class BlogPost extends Model
     protected $casts = [
         'published_at' => 'datetime',
         'is_published' => 'boolean',
+        'is_listed' => 'boolean',
         'display_toc' => 'boolean',
     ];
 
@@ -166,6 +168,16 @@ class BlogPost extends Model
         return $query->where('is_published', true)
             ->where(function ($q) {
                 $q->whereNull('published_at')->orWhere('published_at', '<=', now());
+            });
+    }
+
+    public function scopeVisibleOnIndex($query)
+    {
+        return $query->where('is_listed', true)
+            ->where(function ($q) {
+                $q->whereNull('blog_series_id')
+                  ->orWhereHas('series', fn ($q) => $q->where('show_on_index', true))
+                  ->orWhere('is_listed', true);
             });
     }
 

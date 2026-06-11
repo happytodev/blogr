@@ -27,6 +27,7 @@ class BlogPostFactory extends Factory
             'photo' => null,
             'user_id' => 1, // Default user ID, will be overridden in tests
             'is_published' => false,
+            'is_listed' => true,
             'published_at' => null,
             'category_id' => Category::factory(),
             'default_locale' => 'en',

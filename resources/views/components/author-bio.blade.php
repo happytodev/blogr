@@ -29,14 +29,16 @@
             <img src="{{ url('storage/' . $author->avatar) }}" 
                  alt="{{ $author->name }}" 
                  class="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700">
-        @else
-            @if($showAvatar)
+        @elseif($showAvatar && $author->gravatar_url)
+            <img src="{{ $author->gravatar_url }}" 
+                 alt="{{ $author->name }}" 
+                 class="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700">
+        @elseif($showAvatar)
             <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center ring-2 ring-gray-200 dark:ring-gray-700">
                 <span class="text-lg font-bold text-white">
                     {{ strtoupper(substr($author->name, 0, 1)) }}
                 </span>
             </div>
-            @endif
         @endif
 
         <div class="flex-1">
@@ -65,14 +67,16 @@
                 <img src="{{ url('storage/' . $author->avatar) }}" 
                      alt="{{ $author->name }}" 
                      class="w-20 h-20 rounded-full object-cover ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">
-            @else
-                @if($showAvatar)
+            @elseif($showAvatar && $author->gravatar_url)
+                <img src="{{ $author->gravatar_url }}" 
+                     alt="{{ $author->name }}" 
+                     class="w-20 h-20 rounded-full object-cover ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">
+            @elseif($showAvatar)
                 <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">
                     <span class="text-2xl font-bold text-white">
                         {{ strtoupper(substr($author->name, 0, 1)) }}
                     </span>
                 </div>
-                @endif
             @endif
 
             {{-- Author Info --}}

@@ -33,6 +33,8 @@
                 $authorName = is_array($author) ? ($author['name'] ?? 'Unknown') : ($author->name ?? 'Unknown');
                 $authorSlug = is_array($author) ? ($author['slug'] ?? null) : ($author->slug ?? null);
                 $authorAvatar = is_array($author) ? ($author['avatar'] ?? null) : ($author->avatar ?? null);
+                $authorEmail = is_array($author) ? ($author['email'] ?? null) : ($author->email ?? null);
+                $gravatarUrl = $authorEmail ? 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($authorEmail))) . '?s=80&d=mp' : null;
                 
                 // Respect show_author_pseudo setting
                 $showPseudo = config('blogr.display.show_author_pseudo', true);
@@ -71,6 +73,10 @@
                     
                     @if($authorAvatar)
                         <img src="{{ Storage::url($authorAvatar) }}" 
+                             alt="{{ $authorName }}"
+                             class="w-full h-full object-cover">
+                    @elseif($gravatarUrl)
+                        <img src="{{ $gravatarUrl }}" 
                              alt="{{ $authorName }}"
                              class="w-full h-full object-cover">
                     @else

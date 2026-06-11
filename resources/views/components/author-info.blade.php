@@ -36,6 +36,12 @@
                 alt="{{ $displayName }}"
                 class="{{ $avatarClass }} rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700 hover:ring-[var(--color-primary)] dark:hover:ring-[var(--color-primary-dark)] transition-all duration-200"
             />
+        @elseif($showAvatar && $author->gravatar_url)
+            <img 
+                src="{{ $author->gravatar_url }}" 
+                alt="{{ $displayName }}"
+                class="{{ $avatarClass }} rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700 hover:ring-[var(--color-primary)] dark:hover:ring-[var(--color-primary-dark)] transition-all duration-200"
+            />
         @elseif($showAvatar)
             <div class="{{ $avatarClass }} rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center font-semibold text-white ring-2 ring-gray-200 dark:ring-gray-700 hover:ring-[var(--color-primary)] dark:hover:ring-[var(--color-primary-dark)] transition-all duration-200">
                 {{ strtoupper(substr($displayName, 0, 1)) }}
@@ -50,6 +56,12 @@
         @if($showAvatar && $author->avatar)
             <img 
                 src="{{ Storage::disk('public')->url($author->avatar) }}" 
+                alt="{{ $displayName }}"
+                class="{{ $avatarClass }} rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
+            />
+        @elseif($showAvatar && $author->gravatar_url)
+            <img 
+                src="{{ $author->gravatar_url }}" 
                 alt="{{ $displayName }}"
                 class="{{ $avatarClass }} rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
             />

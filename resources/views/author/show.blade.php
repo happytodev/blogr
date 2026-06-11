@@ -12,6 +12,10 @@
                     <img src="{{ url('storage/' . $author->avatar) }}" 
                          alt="{{ $author->name }}" 
                          class="w-24 h-24 rounded-full object-cover ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">
+                @elseif($showAvatar && $author->gravatar_url)
+                    <img src="{{ $author->gravatar_url }}" 
+                         alt="{{ $author->name }}" 
+                         class="w-24 h-24 rounded-full object-cover ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">
                 @elseif($showAvatar)
                     <div class="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">
                         <span class="text-3xl font-bold text-white">

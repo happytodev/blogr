@@ -43,6 +43,17 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->hasMany(BlogPost::class);
     }
 
+    public function getGravatarUrlAttribute(): ?string
+    {
+        if (! $this->email) {
+            return null;
+        }
+
+        $hash = md5(strtolower(trim($this->email)));
+
+        return 'https://www.gravatar.com/avatar/' . $hash . '?s=80&d=mp';
+    }
+
     public function guardName()
     {
         return 'web';

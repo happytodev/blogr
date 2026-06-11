@@ -28,11 +28,13 @@ class BlogSeries extends Model
         'photo',
         'position',
         'is_featured',
+        'show_on_index',
         'published_at',
     ];
 
     protected $casts = [
         'is_featured' => 'boolean',
+        'show_on_index' => 'boolean',
         'published_at' => 'datetime',
     ];
 

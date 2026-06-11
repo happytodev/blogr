@@ -422,6 +422,11 @@ class BlogPostForm
                             ->default(config('blogr.locales.default', 'en'))
                             ->required()
                             ->helperText('The primary language for this post'),
+
+                        Toggle::make('is_listed')
+                            ->label('Listed on index')
+                            ->default(true)
+                            ->helperText('Show this post on the blog index, homepage, and RSS feed. Unlisted posts remain accessible via direct URL.'),
                     ])
                     ->columns(2)
                     ->columnSpanFull()

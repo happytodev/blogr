@@ -12,6 +12,7 @@
     }])
     ->where('is_published', true)
     ->where('published_at', '<=', now())
+    ->visibleOnIndex()
     ->orderBy('published_at', 'desc')
     ->take($limit)
     ->get();

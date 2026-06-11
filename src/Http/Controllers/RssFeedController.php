@@ -91,6 +91,7 @@ class RssFeedController
             ->where('is_published', true)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
+            ->visibleOnIndex()
             ->orderBy('published_at', 'desc')
             ->limit($limit);
 

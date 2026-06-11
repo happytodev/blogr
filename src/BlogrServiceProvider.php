@@ -870,6 +870,7 @@ class BlogrServiceProvider extends PackageServiceProvider
     {
         $migrations = [
             '2026_06_08_000001_create_blogr_extension_states_table',
+            '2026_06_10_000001_add_listing_fields_to_blog_posts_and_series',
         ];
 
         // Add CMS migrations if CMS is enabled

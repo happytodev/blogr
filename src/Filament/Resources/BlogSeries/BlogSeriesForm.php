@@ -58,6 +58,12 @@ class BlogSeriesForm
                             ->default(false)
                             ->columnSpan(1),
 
+                        Toggle::make('show_on_index')
+                            ->label('Show on index')
+                            ->helperText('Show posts from this series on the blog index, homepage, and RSS feed. Individual posts can override this setting.')
+                            ->default(true)
+                            ->columnSpan(1),
+
                         DateTimePicker::make('published_at')
                             ->label('Publish Date')
                             ->helperText('Leave empty to keep as draft. Set to publish the series.')

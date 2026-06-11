@@ -64,6 +64,7 @@ class BlogController
                 $query->whereNull('published_at')
                     ->orWhere('published_at', '<=', now());
             })
+            ->visibleOnIndex()
             ->paginate(config('blogr.posts_per_page', 10))
             ->through(function ($post) use ($locale) {
                 // Get the translation for this locale
@@ -539,6 +540,7 @@ class BlogController
                 $query->whereNull('published_at')
                     ->orWhere('published_at', '<=', now());
             })
+            ->visibleOnIndex()
             ->orderBy('published_at', 'desc')
             ->paginate(config('blogr.posts_per_page', 10))
             ->through(function ($post) use ($currentLocale) {
@@ -638,6 +640,7 @@ class BlogController
                 $query->whereNull('published_at')
                     ->orWhere('published_at', '<=', now());
             })
+            ->visibleOnIndex()
             ->orderBy('published_at', 'desc')
             ->take(config('blogr.posts_per_page', 10))
             ->get()
