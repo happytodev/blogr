@@ -877,6 +877,7 @@ class BlogrServiceProvider extends PackageServiceProvider
         if (config('blogr.cms.enabled', false)) {
             $migrations[] = '2025_10_31_000001_create_cms_pages_table';
             $migrations[] = '2025_10_31_000002_create_cms_page_translations_table';
+            $migrations[] = '2026_06_11_000001_add_is_complete_to_cms_page_translations';
         }
 
         return $migrations;

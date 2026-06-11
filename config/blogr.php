@@ -617,4 +617,26 @@ return [
             'site_id' => null, // Site ID (numeric)
         ],
     ],
+
+    'translation' => [
+        'provider' => env('BLOGR_TRANSLATION_PROVIDER', 'none'),
+
+        'libretranslate' => [
+            'url' => env('LIBRETRANSLATE_URL', 'http://localhost:5000'),
+        ],
+
+        'azure' => [
+            'api_key' => env('AZURE_TRANSLATOR_KEY', ''),
+            'region' => env('AZURE_TRANSLATOR_REGION', 'westeurope'),
+        ],
+
+        'google' => [
+            'api_key' => env('GOOGLE_TRANSLATE_KEY', ''),
+        ],
+
+        'openai' => [
+            'api_key' => env('OPENAI_API_KEY', ''),
+            'model' => 'gpt-4o-mini',
+        ],
+    ],
 ];

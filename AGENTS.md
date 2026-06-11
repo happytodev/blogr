@@ -4,6 +4,17 @@
 
 **NEVER commit, amend, tag, or push unless the user explicitly loads the `release-manager` skill and requests a release.** This includes bug fixes, hotfixes, and any other changes. All commits must go through the `release-manager` workflow. Violating this rule is a process error.
 
+## ⚠️ TDD requirement — ZERO TOLERANCE
+
+**Every bug fix and every feature addition MUST be driven by tests written first (TDD).** Before writing implementation code, write the test that proves the bug exists or the feature works. Run the test to confirm it fails, implement the fix/feature, then run the test again to confirm it passes.
+
+This applies to:
+- **Bug fixes**: Write a test that reproduces the bug (fails before fix, passes after)
+- **New features**: Write tests covering the expected behavior before implementing
+- **Admin UI changes**: At minimum, add a syntax check test that catches parse errors
+
+Without a matching test, the change is not complete.
+
 ## Project
 
 FilamentPHP v4 plugin package (`happytodev/blogr`) — a multilingual blog system for Laravel 12+.

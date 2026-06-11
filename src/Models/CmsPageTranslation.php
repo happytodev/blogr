@@ -16,14 +16,16 @@ class CmsPageTranslation extends Model
         'slug',
         'title',
         'content',
-        'blocks', // JSON blocks for page builder (per translation)
+        'blocks',
         'meta_title',
         'meta_description',
         'meta_keywords',
+        'is_complete',
     ];
 
     protected $casts = [
         'blocks' => 'array',
+        'is_complete' => 'boolean',
     ];
 
     /**

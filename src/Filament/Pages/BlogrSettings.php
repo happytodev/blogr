@@ -41,6 +41,13 @@ class BlogrSettings extends Page
 
     public string $admin_path = 'admin';
 
+    public string $translation_provider = 'none';
+    public string $translation_libretranslate_url = '';
+    public string $translation_azure_api_key = '';
+    public string $translation_azure_region = 'westeurope';
+    public string $translation_google_api_key = '';
+    public string $translation_openai_api_key = '';
+
     public const THEME_PRESETS = [
         'magenta' => [
             'label' => 'Magenta (default)',
@@ -612,6 +619,13 @@ class BlogrSettings extends Page
 
         // Load admin panel path
         $this->admin_path = $config['admin_path'] ?? 'admin';
+
+        $this->translation_provider = $config['translation']['provider'] ?? 'none';
+        $this->translation_libretranslate_url = $config['translation']['libretranslate']['url'] ?? 'http://localhost:5000';
+        $this->translation_azure_api_key = $config['translation']['azure']['api_key'] ?? '';
+        $this->translation_azure_region = $config['translation']['azure']['region'] ?? 'westeurope';
+        $this->translation_google_api_key = $config['translation']['google']['api_key'] ?? '';
+        $this->translation_openai_api_key = $config['translation']['openai']['api_key'] ?? '';
     }
 
     public function updated($name, $value): void
@@ -1045,6 +1059,27 @@ class BlogrSettings extends Page
                                         ->label('Releases')
                                         ->content(fn () => 'https://blogr.happyto.dev/en/blog/v'.Blogr::getVersion())
                                         ->view('blogr::filament.components.version-link'),
+                                ])
+                                ->columns(2)
+                                ->collapsible(),
+
+                            Section::make('Admin Panel')
+                                ->description('Customize your admin panel access path. Current path: /'.(config('blogr.admin_path') ?? 'admin').'. After saving, run: php artisan blogr:sync-admin-path')
+                                ->schema([
+                                    TextInput::make('admin_path')
+                                        ->label('Admin panel path')
+                                        ->helperText('The URL path to access the admin panel (e.g. "admin", "backoffice", "dashboard"). Saved to .env as BLOGR_ADMIN_PATH and config/blogr.php. After saving, run: php artisan blogr:sync-admin-path')
+                                        ->default('admin')
+                                        ->required()
+                                        ->alphaDash()
+                                        ->maxLength(50),
+                                    Placeholder::make('current_path')
+                                        ->label('Current effective path')
+                                        ->content(function () {
+                                            $path = config('blogr.admin_path', 'admin');
+
+                                            return '/'.$path;
+                                        }),
                                 ])
                                 ->columns(2)
                                 ->collapsible(),
@@ -2267,28 +2302,51 @@ class BlogrSettings extends Page
                         ]),
 
                     // ========================================
-                    // ADMIN PANEL TAB
+                    // AI TRANSLATION TAB
                     // ========================================
-                    Tabs\Tab::make('Admin Panel')
-                        ->icon('heroicon-o-shield-exclamation')
+                    Tabs\Tab::make('AI Translation')
+                        ->icon('heroicon-o-language')
                         ->schema([
-                            Section::make('Admin Panel Configuration')
-                                ->description('Customize your admin panel access path. Current path: /'.(config('blogr.admin_path') ?? 'admin').'. After saving, run: php artisan blogr:sync-admin-path')
+                            Section::make('AI Translation Service')
+                                ->description('Configure AI-powered translation for your CMS pages. Requires an API key or a self-hosted LibreTranslate server.')
                                 ->schema([
-                                    TextInput::make('admin_path')
-                                        ->label('Admin panel path')
-                                        ->helperText('The URL path to access the admin panel (e.g. "admin", "backoffice", "dashboard"). Saved to .env as BLOGR_ADMIN_PATH and config/blogr.php. After saving, run: php artisan blogr:sync-admin-path')
-                                        ->default('admin')
-                                        ->required()
-                                        ->alphaDash()
-                                        ->maxLength(50),
-                                    Placeholder::make('current_path')
-                                        ->label('Current effective path')
-                                        ->content(function () {
-                                            $path = config('blogr.admin_path', 'admin');
-
-                                            return '/'.$path;
-                                        }),
+                                    Select::make('translation_provider')
+                                        ->label('Provider')
+                                        ->options([
+                                            'none' => 'Disabled',
+                                            'libretranslate' => 'LibreTranslate (self-hosted, free)',
+                                            'azure' => 'Azure Translator (2M chars/month free)',
+                                            'google' => 'Google Cloud Translation (500K chars/month free)',
+                                            'openai' => 'OpenAI (GPT-4o-mini, paid)',
+                                        ])
+                                        ->default('none')
+                                        ->live()
+                                        ->required(),
+                                    TextInput::make('translation_libretranslate_url')
+                                        ->label('LibreTranslate URL')
+                                        ->placeholder('http://localhost:5000')
+                                        ->helperText('🔗 https://github.com/LibreTranslate/LibreTranslate')
+                                        ->visible(fn () => $this->translation_provider === 'libretranslate'),
+                                    TextInput::make('translation_azure_api_key')
+                                        ->label('Azure Translator Key')
+                                        ->password()
+                                        ->helperText('🔗 Créer un compte : https://azure.microsoft.com/products/cognitive-services/translator/')
+                                        ->visible(fn () => $this->translation_provider === 'azure'),
+                                    TextInput::make('translation_azure_region')
+                                        ->label('Azure Region')
+                                        ->placeholder('westeurope')
+                                        ->helperText('Ex: westeurope, eastus, northeurope')
+                                        ->visible(fn () => $this->translation_provider === 'azure'),
+                                    TextInput::make('translation_google_api_key')
+                                        ->label('Google Cloud API Key')
+                                        ->password()
+                                        ->helperText('🔗 Créer un compte : https://cloud.google.com/translate')
+                                        ->visible(fn () => $this->translation_provider === 'google'),
+                                    TextInput::make('translation_openai_api_key')
+                                        ->label('OpenAI API Key')
+                                        ->password()
+                                        ->helperText('🔗 https://platform.openai.com/api-keys')
+                                        ->visible(fn () => $this->translation_provider === 'openai'),
                                 ]),
                         ]),
                 ]),
@@ -2612,6 +2670,22 @@ class BlogrSettings extends Page
                 'brevo' => [
                     'username' => $this->mail_brevo_username ?? '',
                     'password' => $this->mail_brevo_password ?? '',
+                ],
+            ],
+            'translation' => [
+                'provider' => $this->translation_provider ?? 'none',
+                'libretranslate' => [
+                    'url' => $this->translation_libretranslate_url ?? 'http://localhost:5000',
+                ],
+                'azure' => [
+                    'api_key' => $this->translation_azure_api_key ?? '',
+                    'region' => $this->translation_azure_region ?? 'westeurope',
+                ],
+                'google' => [
+                    'api_key' => $this->translation_google_api_key ?? '',
+                ],
+                'openai' => [
+                    'api_key' => $this->translation_openai_api_key ?? '',
                 ],
             ],
         ];
