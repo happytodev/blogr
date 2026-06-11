@@ -18,6 +18,11 @@ class EditCmsPageTranslation extends EditRecord
 
     public ?CmsPage $cmsPage = null;
 
+    public function areFormActionsSticky(): bool
+    {
+        return true;
+    }
+
     public function mount(int|string $record = '', int|string $translation = ''): void
     {
         static::authorizeResourceAccess();
@@ -96,17 +101,27 @@ class EditCmsPageTranslation extends EditRecord
 
     protected function getHeaderActions(): array
     {
+        return [];
+    }
+
+    protected function getFormActions(): array
+    {
         return [
-            Actions\Action::make('back')
-                ->label(__('Retour à la page'))
-                ->url(fn () => CmsPageResource::getUrl('edit', ['record' => $this->cmsPage]))
-                ->color('gray'),
+            $this->getSaveFormAction(),
+            Actions\Action::make('saveAndBack')
+                ->label('Save & Back')
+                ->color('gray')
+                ->action(function () {
+                    $this->save();
+                    $this->redirect(CmsPageResource::getUrl('edit', ['record' => $this->cmsPage]));
+                }),
+            $this->getCancelFormAction(),
         ];
     }
 
     protected function getRedirectUrl(): ?string
     {
-        return CmsPageResource::getUrl('edit', ['record' => $this->cmsPage]);
+        return null;
     }
 
     protected function getSavedNotificationTitle(): ?string

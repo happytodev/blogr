@@ -146,7 +146,7 @@ test('the main edit page header does not have per-translation buttons', function
         ->assertDontSee('edit_');
 });
 
-test('it redirects back to the main page after save', function () {
+test('it stays on the current page after save (no redirect)', function () {
     Livewire::test(EditCmsPageTranslation::class, [
         'record' => $this->page->id,
         'translation' => $this->enTranslation->id,
@@ -156,5 +156,6 @@ test('it redirects back to the main page after save', function () {
             'slug' => 'install',
         ])
         ->call('save')
-        ->assertRedirect(CmsPageResource::getUrl('edit', ['record' => $this->page->id]));
+        ->assertHasNoErrors()
+        ->assertSet('record.title', 'Updated');
 });
