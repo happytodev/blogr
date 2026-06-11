@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.10.0](https://github.com/happytodev/blogr/compare/v1.9.2...v1.10.0) - 2026-06-11
+
+### ✨ Features
+
+- **Sticky form footer**: CMS translation editor now has a sticky footer with three buttons: Save (stays on current page), Save & Back (saves and returns to page), and Cancel (returns without saving). The footer remains visible while scrolling through long forms. Ctrl+S also works to save without leaving the page.
+
 ## [v1.9.2](https://github.com/happytodev/blogr/compare/v1.9.1...v1.9.2) - 2026-06-11
 
 ### 🐛 Bug Fixes
