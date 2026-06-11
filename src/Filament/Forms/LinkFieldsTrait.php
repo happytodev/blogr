@@ -62,10 +62,13 @@ trait LinkFieldsTrait
         return Select::make($fieldName)
             ->label('Select Category')
             ->options(function () {
+                $locale = app()->getLocale();
+
                 return Category::with('translations')
                     ->get()
-                    ->mapWithKeys(function ($category) {
-                        $translation = $category->translations->first();
+                    ->mapWithKeys(function ($category) use ($locale) {
+                        $translation = $category->translations->firstWhere('locale', $locale)
+                            ?? $category->translations->first();
 
                         return [$category->id => $translation->name ?? 'Category #'.$category->id];
                     });
@@ -84,10 +87,13 @@ trait LinkFieldsTrait
         return Select::make($fieldName)
             ->label('Select CMS Page')
             ->options(function () {
+                $locale = app()->getLocale();
+
                 return CmsPage::with('translations')
                     ->get()
-                    ->mapWithKeys(function ($page) {
-                        $translation = $page->translations->first();
+                    ->mapWithKeys(function ($page) use ($locale) {
+                        $translation = $page->translations->firstWhere('locale', $locale)
+                            ?? $page->translations->first();
 
                         return [$page->id => $translation->title ?? 'Page #'.$page->id];
                     });
