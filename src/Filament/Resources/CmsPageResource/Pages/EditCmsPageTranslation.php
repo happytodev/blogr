@@ -14,6 +14,7 @@ use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Services\Translation\TranslationProvider;
 use Happytodev\Blogr\Services\Translation\TranslationProviderFactory;
+use Happytodev\Blogr\Services\TranslationUsageService;
 use Illuminate\Support\Str;
 
 class EditCmsPageTranslation extends EditRecord
@@ -263,6 +264,19 @@ class EditCmsPageTranslation extends EditRecord
             );
 
             $this->record->save();
+
+            $charCount = mb_strlen($sourceTranslation->title)
+                + mb_strlen($this->record->title)
+                + mb_strlen($sourceTranslation->slug)
+                + mb_strlen($this->record->slug)
+                + mb_strlen(json_encode($sourceTranslation->blocks ?? []))
+                + mb_strlen(json_encode($this->record->blocks ?? []));
+
+            app(TranslationUsageService::class)->trackUsage(
+                config('blogr.translation.provider', 'none'),
+                $charCount
+            );
+
             $this->fillForm();
 
             Notification::make()
