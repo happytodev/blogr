@@ -7,20 +7,22 @@ class BlockTranslator
     /** @var array<string, list<string>> */
     protected array $fieldMap = [
         'hero' => ['title', 'subtitle', 'cta_text'],
-        'features' => ['title', 'subtitle', 'cta_text'],
+        'features' => ['title', 'subtitle'],
         'content' => ['content'],
-        'testimonials' => ['title', 'subtitle'],
+        'testimonials' => ['title'],
         'stats' => ['heading'],
         'faq' => ['title'],
         'cta' => ['heading', 'subheading', 'button_text'],
         'gallery' => ['heading', 'description'],
-        'pricing' => ['title', 'subtitle'],
-        'team' => ['title'],
+        'pricing' => ['heading', 'description'],
+        'team' => ['heading', 'description'],
         'timeline' => ['heading'],
-        'video' => ['title'],
-        'newsletter' => ['heading', 'subheading', 'button_text'],
-        'blog_posts' => ['title'],
-        'blog_title' => ['title'],
+        'video' => ['heading'],
+        'newsletter' => ['heading', 'description', 'placeholder', 'button_text'],
+        'blog_posts' => ['heading'],
+        'blog-title' => ['title', 'description'],
+        'map' => ['heading', 'subtitle', 'tagline'],
+        'contact_form' => ['heading', 'subtitle', 'submit_text', 'success_message'],
     ];
 
     public function __construct(protected TranslationProvider $provider) {}
@@ -44,7 +46,7 @@ class BlockTranslator
 
         foreach ($fields as $field) {
             if (isset($data[$field]) && is_string($data[$field]) && ! empty(trim($data[$field]))) {
-                $data[$field] = $this->provider->translate($data[$field], $sourceLocale, $targetLocale);
+                $data[$field] = $this->translateText($data[$field], $sourceLocale, $targetLocale);
             }
         }
 
@@ -56,17 +58,25 @@ class BlockTranslator
         return $block;
     }
 
+    protected function translateText(string $text, string $source, string $target): string
+    {
+        if (! str_contains($text, '`')) {
+            return $this->provider->translate($text, $source, $target);
+        }
+
+        return (new CodeBlockPreserver)->translateContent($this->provider, $text, $source, $target);
+    }
+
     protected function translateNestedItems(array $data, string $type, string $source, string $target): array
     {
         $nestedMaps = [
             'features' => ['items' => ['title', 'description']],
-            'testimonials' => ['items' => ['name', 'role', 'content']],
+            'testimonials' => ['items' => ['name', 'role', 'quote']],
             'stats' => ['stats' => ['label']],
             'faq' => ['items' => ['question', 'answer']],
-            'pricing' => ['items' => ['name', 'description', 'price_label', 'button_text']],
-            'team' => ['items' => ['name', 'role', 'bio']],
+            'pricing' => ['plans' => ['name', 'description', 'cta_text']],
+            'team' => ['members' => ['name', 'role', 'bio']],
             'timeline' => ['events' => ['title', 'description']],
-            'gallery' => ['items' => ['caption']],
         ];
 
         $map = $nestedMaps[$type] ?? [];
@@ -83,9 +93,44 @@ class BlockTranslator
 
                 foreach ($itemFields as $field) {
                     if (isset($item[$field]) && is_string($item[$field]) && ! empty(trim($item[$field]))) {
-                        $data[$listKey][$i][$field] = $this->provider->translate(
+                        $data[$listKey][$i][$field] = $this->translateText(
                             $item[$field], $source, $target
                         );
+                    }
+                }
+            }
+        }
+
+        // Deep nested items (e.g., pricing plans → features)
+        $deepNestedMaps = [
+            'pricing' => ['plans' => ['features' => ['feature']]],
+        ];
+
+        $deepMap = $deepNestedMaps[$type] ?? [];
+
+        foreach ($deepMap as $parentKey => $childConfig) {
+            if (! isset($data[$parentKey]) || ! is_array($data[$parentKey])) {
+                continue;
+            }
+
+            foreach ($childConfig as $childKey => $childFields) {
+                foreach ($data[$parentKey] as $i => $parentItem) {
+                    if (! isset($parentItem[$childKey]) || ! is_array($parentItem[$childKey])) {
+                        continue;
+                    }
+
+                    foreach ($parentItem[$childKey] as $j => $childItem) {
+                        if (! is_array($childItem)) {
+                            continue;
+                        }
+
+                        foreach ($childFields as $field) {
+                            if (isset($childItem[$field]) && is_string($childItem[$field]) && ! empty(trim($childItem[$field]))) {
+                                $data[$parentKey][$i][$childKey][$j][$field] = $this->translateText(
+                                    $childItem[$field], $source, $target
+                                );
+                            }
+                        }
                     }
                 }
             }
