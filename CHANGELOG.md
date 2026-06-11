@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.9.2](https://github.com/happytodev/blogr/compare/v1.9.1...v1.9.2) - 2026-06-11
+
+### 🐛 Bug Fixes
+
+- **CMS link resolver locale**: The `LinkResolver` now resolves CMS page and category links in the current visitor's locale instead of always returning the first translation from the database. Combined with the previous admin picker fix, internal links now consistently point to the correct language.
+
 ## [v1.9.1](https://github.com/happytodev/blogr/compare/v1.9.0...v1.9.1) - 2026-06-11
 
 ### 🐛 Bug Fixes
