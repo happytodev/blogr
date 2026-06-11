@@ -2,6 +2,25 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.11.0](https://github.com/happytodev/blogr/compare/v1.10.0...v1.11.0) - 2026-06-11
+
+### ✨ Features
+
+- **AI blog post translation**: New "Translate with AI" button on the blog post edit page. Select source/target language, translate title, content, tldr, SEO fields, slug in one click.
+- **Translation usage tracking**: Characters translated are tracked per provider/month/year. A usage recap card in Settings > AI Translation shows used/remaining chars for Azure (2M/mo) and Google Cloud (500K/mo).
+- **Code block preservation**: Code blocks (fenced ``` and inline `) are preserved during translation — the API only translates natural language text around them. Applied to both blog posts and CMS page blocks.
+- **Usage recap in Settings**: Monthly usage stats displayed at the top of the AI Translation tab.
+
+### 🐛 Bug Fixes
+
+- **BlockTranslator fieldMap**: Fixed 8 block types where field names didn't match actual CMS block structures (team, blog_posts, pricing, video, newsletter, blog-title, map, contact_form). Nested item fields corrected (testimonials, pricing plans, gallery). Deep nested features in pricing plans now translated.
+- **excerpt column**: Removed `excerpt` assignment from CMS AI translation — the column doesn't exist in the database and caused SQL errors.
+- **Locale options**: Replaced `config('blogr.locales.available')` with `LocaleService::getAvailable()` to respect actual site-configured languages instead of always returning `['en']`.
+
+### ✅ Tests
+
+- **1070 tests passing** (3221 assertions) — BlockTranslator (7 tests), TranslationUsageService (7 tests), CodeBlockPreserver (8 tests), BlogPostAiTranslation (3 tests)
+
 ## [v1.10.0](https://github.com/happytodev/blogr/compare/v1.9.2...v1.10.0) - 2026-06-11
 
 ### ✨ Features
