@@ -52,6 +52,8 @@ return [
         'part_of_series' => 'Partie de la série',
         'posts_count' => ':count articles',
         'series' => 'Cette article fait partie de la série',
+        'show_less_posts' => 'Voir moins',
+        'show_more_posts' => 'Voir les :count articles supplémentaires dans cette série',
         'started_on' => 'Commencé le :date',
         'title' => 'Séries de blog',
         'view_all_series' => 'Voir toutes les séries',

@@ -52,6 +52,8 @@ return [
         'part_of_series' => 'Part of Series',
         'posts_count' => ':count posts',
         'series' => 'This post is part of the series',
+        'show_less_posts' => 'Show less',
+        'show_more_posts' => 'See :count more posts in this series',
         'started_on' => 'Started :date',
         'title' => 'Blog Series',
         'view_all_series' => 'View all series',

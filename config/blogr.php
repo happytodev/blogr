@@ -130,6 +130,7 @@ return [
     'series' => [
         'enabled' => true,
         'default_image' => '/vendor/blogr/images/default-series.svg', // Default image for series without photo
+        'max_visible_posts' => 10, // Max posts shown in series list before "show more" toggle
     ],
 
     /*

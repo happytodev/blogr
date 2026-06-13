@@ -602,9 +602,15 @@
                 <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
                     {{ __('blogr::blogr.series.posts_count', ['count' => $post->series->posts->count()]) }}</div>
 
-                <div class="space-y-3 mb-4">
-                    @foreach ($post->series->posts->sortBy('series_position') as $seriesPost)
-                        <div class="flex items-start">
+                @php
+                    $maxVisible = config('blogr.series.max_visible_posts', 10);
+                    $sortedPosts = $post->series->posts->sortBy('series_position');
+                    $extraCount = max(0, $sortedPosts->count() - $maxVisible);
+                @endphp
+
+                <div class="space-y-3 mb-4" x-data="{ showAll: false }">
+                    @foreach ($sortedPosts as $i => $seriesPost)
+                        <div class="flex items-start" x-show="showAll || {{ $i < $maxVisible ? 'true' : 'false' }}" x-transition:enter.duration.200ms>
                             <div
                                 class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold mr-3 {{ $seriesPost->id === $post->id ? 'bg-purple-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400' }}">
                                 {{ $seriesPost->series_position }}
@@ -626,6 +632,20 @@
                             </div>
                         </div>
                     @endforeach
+
+                    @if($extraCount > 0)
+                        <button @click="showAll = !showAll" type="button"
+                                class="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 hover:underline text-sm inline-flex items-center gap-1 mt-2 cursor-pointer">
+                            <svg x-show="!showAll" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            <svg x-show="showAll" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                            </svg>
+                            <span x-show="!showAll">{{ __('blogr::blogr.series.show_more_posts', ['count' => $extraCount]) }}</span>
+                            <span x-show="showAll" x-cloak>{{ __('blogr::blogr.series.show_less_posts') }}</span>
+                        </button>
+                    @endif
                 </div>
 
                 <div class="pt-4 border-t border-purple-200 dark:border-purple-700">

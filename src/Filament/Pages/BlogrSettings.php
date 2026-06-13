@@ -268,6 +268,8 @@ class BlogrSettings extends Page
 
     public ?array $series_default_image = null; // FileUpload expects array
 
+    public ?int $series_max_visible_posts = null;
+
     // UI Settings - Navigation
     public ?bool $navigation_enabled = null;
 
@@ -539,6 +541,8 @@ class BlogrSettings extends Page
         $this->series_default_image = is_string($defaultImage) && ! empty($defaultImage)
             ? [$defaultImage]
             : (is_array($defaultImage) ? $defaultImage : null);
+
+        $this->series_max_visible_posts = $config['series']['max_visible_posts'] ?? 10;
 
         // UI Settings
         $this->navigation_enabled = $config['ui']['navigation']['enabled'] ?? true;
@@ -917,6 +921,14 @@ class BlogrSettings extends Page
                                         ->label('Enable Series')
                                         ->default(true)
                                         ->helperText('Allow grouping blog posts into series'),
+                                    TextInput::make('series_max_visible_posts')
+                                        ->label('Max visible posts')
+                                        ->numeric()
+                                        ->minValue(1)
+                                        ->maxValue(50)
+                                        ->default(10)
+                                        ->helperText('Number of posts shown in the series list before the "show more" toggle appears. Additional posts are hidden behind a click-to-expand link.')
+                                        ->columnSpan(1),
                                     FileUpload::make('series_default_image')
                                         ->label('Default Series Image')
                                         ->image()
@@ -1772,55 +1784,55 @@ class BlogrSettings extends Page
 
                                     TextInput::make('footer_twitter')
                                         ->label('Twitter/X URL')
-                                        ->url()
+                                        ->rule('nullable|url')
                                         ->placeholder('https://twitter.com/yourusername')
                                         ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
 
                                     TextInput::make('footer_github')
                                         ->label('GitHub URL')
-                                        ->url()
+                                        ->rule('nullable|url')
                                         ->placeholder('https://github.com/yourusername')
                                         ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
 
                                     TextInput::make('footer_linkedin')
                                         ->label('LinkedIn URL')
-                                        ->url()
+                                        ->rule('nullable|url')
                                         ->placeholder('https://linkedin.com/in/yourusername')
                                         ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
 
                                     TextInput::make('footer_facebook')
                                         ->label('Facebook URL')
-                                        ->url()
+                                        ->rule('nullable|url')
                                         ->placeholder('https://facebook.com/yourusername')
                                         ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
 
                                     TextInput::make('footer_bluesky')
                                         ->label('Bluesky URL')
-                                        ->url()
+                                        ->rule('nullable|url')
                                         ->placeholder('https://bsky.app/profile/yourusername.bsky.social')
                                         ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
 
                                     TextInput::make('footer_youtube')
                                         ->label('YouTube URL')
-                                        ->url()
+                                        ->rule('nullable|url')
                                         ->placeholder('https://youtube.com/@yourusername')
                                         ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
 
                                     TextInput::make('footer_instagram')
                                         ->label('Instagram URL')
-                                        ->url()
+                                        ->rule('nullable|url')
                                         ->placeholder('https://instagram.com/yourusername')
                                         ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
 
                                     TextInput::make('footer_tiktok')
                                         ->label('TikTok URL')
-                                        ->url()
+                                        ->rule('nullable|url')
                                         ->placeholder('https://tiktok.com/@yourusername')
                                         ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
 
                                     TextInput::make('footer_mastodon')
                                         ->label('Mastodon URL')
-                                        ->url()
+                                        ->rule('nullable|url')
                                         ->placeholder('https://mastodon.social/@yourusername')
                                         ->visible(fn (Get $get) => $get('footer_enabled') && $get('footer_show_social_links')),
                                 ])
@@ -2550,6 +2562,7 @@ class BlogrSettings extends Page
             ],
             'series' => [
                 'enabled' => $this->series_enabled,
+                'max_visible_posts' => $this->series_max_visible_posts ?? 10,
                 // Convert array back to string for config storage
                 'default_image' => is_array($this->series_default_image) && ! empty($this->series_default_image)
                     ? $this->series_default_image[0]
