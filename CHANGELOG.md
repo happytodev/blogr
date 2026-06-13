@@ -2,6 +2,21 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.12.0](https://github.com/happytodev/blogr/compare/v1.11.0...v1.12.0) - 2026-06-11
+
+### ✨ Features
+
+- **Series list truncation**: When a series has more posts than the configured threshold (default 10), only the first N are shown with a "Show X more" button that expands the list. Threshold configurable in Settings > Series.
+- **Breezy migration docs**: Added `vendor:publish --tag=filament-breezy-migrations && php artisan migrate` step to README install guide.
+
+### 🐛 Bug Fixes
+
+- **Footer URL HTML5 validation**: Replaced `->url()` with `->rule('nullable|url')` on all 9 social link fields (Twitter, GitHub, LinkedIn, Facebook, Bluesky, YouTube, Instagram, TikTok, Mastodon). Prevents Chrome "invalid form control not focusable" error when hidden fields trigger browser URL validation.
+
+### ✅ Tests
+
+- **1077 tests passing** (3236 assertions) — Series max visible posts (4 tests), Settings footer validation (3 tests)
+
 ## [v1.11.0](https://github.com/happytodev/blogr/compare/v1.10.0...v1.11.0) - 2026-06-11
 
 ### ✨ Features
