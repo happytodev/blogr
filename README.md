@@ -800,7 +800,13 @@ composer require jeffgreco13/filament-breezy
 php artisan breezy:install
 ```
 
-**2. Configure your AdminPanelProvider** (`app/Providers/Filament/AdminPanelProvider.php`):
+**2. Publish and run Breezy migrations:**
+```bash
+php artisan vendor:publish --tag=filament-breezy-migrations
+php artisan migrate
+```
+
+**3. Configure your AdminPanelProvider** (`app/Providers/Filament/AdminPanelProvider.php`):
 ```php
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 
@@ -821,7 +827,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-**3. Add the `TwoFactorAuthenticatable` trait to your User model** (`app/Models/User.php`):
+**4. Add the `TwoFactorAuthenticatable` trait to your User model** (`app/Models/User.php`):
 ```php
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 
@@ -831,12 +837,12 @@ class User extends Authenticatable
 }
 ```
 
-**4. Add Breezy's Tailwind source** to your theme file (`resources/css/filament/admin/theme.css`):
+**5. Add Breezy's Tailwind source** to your theme file (`resources/css/filament/admin/theme.css`):
 ```css
 @source '../../../../vendor/jeffgreco13/filament-breezy/resources/**/*';
 ```
 
-**5. Rebuild the theme:**
+**6. Rebuild the theme:**
 ```bash
 php artisan filament:assets
 npm run build
