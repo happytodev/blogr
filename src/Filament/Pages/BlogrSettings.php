@@ -2330,30 +2330,18 @@ class BlogrSettings extends Page
                                 ->content(function () {
                                     $provider = $this->translation_provider;
                                     if (! $provider || $provider === 'none') {
-                                        return 'Select a provider to see usage statistics.';
+                                        return __('blogr::blogr.translation.select_provider');
                                     }
 
                                     $stats = app(TranslationUsageService::class)->getUsageStats($provider);
 
                                     if (! $stats) {
-                                        return 'No usage data for this month.';
+                                        return __('blogr::blogr.translation.no_data');
                                     }
 
-                                    $providerNames = [
-                                        'libretranslate' => 'LibreTranslate (self-hosted)',
-                                        'azure' => 'Azure Translator',
-                                        'google' => 'Google Cloud Translation',
-                                        'openai' => 'OpenAI (GPT-4o-mini)',
-                                    ];
-
-                                    $name = $providerNames[$provider] ?? ucfirst($provider);
-
-                                    if ($stats['limit'] !== null) {
-                                        return "{$name} — {$stats['used']} / {$stats['limit']} chars used in {$stats['month_name']} ({$stats['percentage']}%). {$stats['remaining']} chars remaining.";
-                                    }
-
-                                    return "{$name} — {$stats['used']} chars translated in {$stats['month_name']}.";
+                                    return json_encode($stats);
                                 })
+                                ->view('blogr::filament.components.translation-usage-card')
                                 ->visible(fn () => $this->translation_provider !== 'none')
                                 ->columnSpanFull(),
 

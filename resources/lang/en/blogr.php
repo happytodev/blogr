@@ -95,4 +95,15 @@ return [
         'tags' => 'Tags',
         'posts' => 'posts',
     ],
+
+    // AI Translation
+    'translation' => [
+        'local_counter' => 'Local counter: characters translated through this instance only. The total may be higher if the same key is used from multiple sites.',
+        'view_azure_usage' => 'View actual usage on Azure portal →',
+        'azure_metrics_help' => 'Go to <strong>Monitoring &gt; Metrics</strong>, select <em>Text Characters Translated</em> as the metric, and adjust the date range in the top-right of the chart.',
+        'chars' => 'chars',
+        'remaining' => 'remaining',
+        'select_provider' => 'Select a provider to see usage statistics.',
+        'no_data' => 'No usage data for this month.',
+    ],
 ];

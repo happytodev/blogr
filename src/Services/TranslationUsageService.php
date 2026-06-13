@@ -12,6 +12,13 @@ class TranslationUsageService
         'google' => 500_000,
     ];
 
+    public const PROVIDER_LABELS = [
+        'libretranslate' => 'LibreTranslate (self-hosted)',
+        'azure' => 'Azure Translator',
+        'google' => 'Google Cloud Translation',
+        'openai' => 'OpenAI (GPT-4o-mini)',
+    ];
+
     public function trackUsage(string $provider, int $charCount): void
     {
         $now = now();
@@ -60,11 +67,13 @@ class TranslationUsageService
 
             return [
                 'provider' => $provider,
+                'provider_label' => self::PROVIDER_LABELS[$provider] ?? ucfirst($provider),
                 'used' => $used,
                 'limit' => $limit,
+                'has_limit' => $limit !== null,
                 'remaining' => $limit !== null ? max(0, $limit - $used) : null,
-                'percentage' => $limit !== null ? round(($used / $limit) * 100, 3) : null,
-                'month_name' => $now->translatedFormat('F Y'),
+                'percentage' => $limit !== null ? round(($used / $limit) * 100, 2) : null,
+                'period' => $now->copy()->startOfMonth()->format('j') . '–' . $now->format('j F Y'),
             ];
         });
     }

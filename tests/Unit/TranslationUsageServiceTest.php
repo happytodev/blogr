@@ -47,7 +47,7 @@ it('tracks separate providers independently', function () {
         ->and($google->char_count)->toBe(1000);
 });
 
-it('returns usage stats with limit for Azure', function () {
+it('returns usage stats with limit and provider label for Azure', function () {
     DB::table('blogr_translation_usage')->insert([
         'provider' => 'azure',
         'char_count' => 150,
@@ -55,16 +55,18 @@ it('returns usage stats with limit for Azure', function () {
         'year' => now()->year,
     ]);
 
-    Cache::forget('blogr_translation_usage_azure_'.now()->year.'_'.now()->month);
+    Cache::forget('blogr_translation_usage_azure_' . now()->year . '_' . now()->month);
 
     $stats = app(TranslationUsageService::class)->getUsageStats('azure');
 
     expect($stats)->toMatchArray([
         'provider' => 'azure',
+        'provider_label' => 'Azure Translator',
         'used' => 150,
         'limit' => 2_000_000,
+        'has_limit' => true,
         'remaining' => 1_999_850,
-        'percentage' => 0.008,
+        'percentage' => 0.01,
     ]);
 });
 
@@ -76,14 +78,16 @@ it('returns usage stats without limit for LibreTranslate', function () {
         'year' => now()->year,
     ]);
 
-    Cache::forget('blogr_translation_usage_libretranslate_'.now()->year.'_'.now()->month);
+    Cache::forget('blogr_translation_usage_libretranslate_' . now()->year . '_' . now()->month);
 
     $stats = app(TranslationUsageService::class)->getUsageStats('libretranslate');
 
     expect($stats)
         ->provider->toBe('libretranslate')
+        ->provider_label->toBe('LibreTranslate (self-hosted)')
         ->used->toBe(5000)
         ->limit->toBeNull()
+        ->has_limit->toBeFalse()
         ->remaining->toBeNull()
         ->percentage->toBeNull();
 });
@@ -99,12 +103,29 @@ it('returns null when provider is null', function () {
 });
 
 it('returns zero usage when no data exists', function () {
-    Cache::forget('blogr_translation_usage_openai_'.now()->year.'_'.now()->month);
+    Cache::forget('blogr_translation_usage_openai_' . now()->year . '_' . now()->month);
 
     $stats = app(TranslationUsageService::class)->getUsageStats('openai');
 
     expect($stats)
         ->provider->toBe('openai')
+        ->provider_label->toBe('OpenAI (GPT-4o-mini)')
         ->used->toBe(0)
-        ->limit->toBeNull();
+        ->has_limit->toBeFalse();
+});
+
+it('returns period in correct format', function () {
+    DB::table('blogr_translation_usage')->insert([
+        'provider' => 'azure',
+        'char_count' => 100,
+        'month' => now()->month,
+        'year' => now()->year,
+    ]);
+
+    Cache::forget('blogr_translation_usage_azure_' . now()->year . '_' . now()->month);
+
+    $stats = app(TranslationUsageService::class)->getUsageStats('azure');
+
+    expect($stats)
+        ->period->toMatch('/^\d+–\d+ \w+ \d{4}$/');
 });

@@ -95,4 +95,15 @@ return [
         'tags' => 'Tags',
         'posts' => 'articles',
     ],
+
+    // AI Translation
+    'translation' => [
+        'local_counter' => 'Compteur local : caractères traduits via cette instance uniquement. Le total peut être plus élevé si la même clé est utilisée depuis plusieurs sites.',
+        'view_azure_usage' => 'Voir l\'utilisation réelle sur le portail Azure →',
+        'azure_metrics_help' => 'Allez dans <strong>Supervision &gt; Métriques</strong>, choisissez <em>Text Characters Translated</em> comme métrique et réglez la plage de date en haut à droite du graphique.',
+        'chars' => 'car.',
+        'remaining' => 'restants',
+        'select_provider' => 'Sélectionnez un fournisseur pour voir les statistiques d\'utilisation.',
+        'no_data' => 'Aucune donnée d\'utilisation pour ce mois.',
+    ],
 ];
