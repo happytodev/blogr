@@ -1,20 +1,24 @@
 <?php
 
+use Happytodev\Blogr\Filament\Pages\BlogrSettings;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 beforeEach(function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
 
-    $this->admin = \Happytodev\Blogr\Models\User::factory()->create();
+    $this->admin = User::factory()->create();
     $this->admin->assignRole('admin');
 });
 
 it('saves settings with empty footer URL fields without validation error', function () {
     $this->actingAs($this->admin);
 
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Pages\BlogrSettings::class)
+    Livewire::test(BlogrSettings::class)
         ->fillForm([
             'footer_enabled' => true,
             'footer_show_social_links' => true,
@@ -35,7 +39,7 @@ it('saves settings with empty footer URL fields without validation error', funct
 it('saves settings with valid footer URLs', function () {
     $this->actingAs($this->admin);
 
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Pages\BlogrSettings::class)
+    Livewire::test(BlogrSettings::class)
         ->fillForm([
             'footer_enabled' => true,
             'footer_show_social_links' => true,
@@ -56,7 +60,7 @@ it('saves settings with valid footer URLs', function () {
 it('does not require footer fields when footer is disabled', function () {
     $this->actingAs($this->admin);
 
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Pages\BlogrSettings::class)
+    Livewire::test(BlogrSettings::class)
         ->fillForm([
             'footer_enabled' => false,
             'footer_show_social_links' => false,

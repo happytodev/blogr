@@ -1,13 +1,15 @@
 <?php
 
+use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeries;
-use Happytodev\Blogr\Models\BlogSeriesTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 beforeEach(function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
@@ -22,7 +24,7 @@ beforeEach(function () {
 it('saves and retrieves max_visible_posts setting', function () {
     $this->actingAs($this->admin);
 
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Pages\BlogrSettings::class)
+    Livewire::test(BlogrSettings::class)
         ->fillForm([
             'series_max_visible_posts' => 7,
         ])
@@ -34,7 +36,7 @@ it('saves and retrieves max_visible_posts setting', function () {
 it('shows series max visible posts field in settings', function () {
     $this->actingAs($this->admin);
 
-    $response = $this->get(\Happytodev\Blogr\Filament\Pages\BlogrSettings::getUrl());
+    $response = $this->get(BlogrSettings::getUrl());
 
     $response->assertStatus(200);
     $response->assertSee('Max visible posts');
