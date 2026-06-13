@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.12.1](https://github.com/happytodev/blogr/compare/v1.12.0...v1.12.1) - 2026-06-11
+
+### 🐛 Bug Fixes
+
+- **Packagist tag mismatch**: v1.12.0 was re-tagged after a rebase, making it immutable on Packagist. v1.12.1 restores the correct commit for `composer update`.
+
 ## [v1.12.0](https://github.com/happytodev/blogr/compare/v1.11.0...v1.12.0) - 2026-06-11
 
 ### ✨ Features
