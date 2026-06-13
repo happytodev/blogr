@@ -2,6 +2,29 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.14.0](https://github.com/happytodev/blogr/compare/v1.13.0...v1.14.0) - 2026-06-13
+
+### ✨ Features
+
+- **Profile avatar upload**: Users can now upload a profile photo from their profile page via Breezy 2FA. Includes image editor (crop 1:1, resize 200×200). Managed from Settings > General > Profile & 2FA.
+- **Settings toggle**: New `enable_avatar_upload` toggle in Settings to show/hide the avatar field on the profile page. Reads from `config('blogr.enable_avatar_upload')` so Breezy respects it without editing PHP.
+- **avatar_url column**: New `avatar_url` column on the `users` table for Breezy avatar storage. `getFilamentAvatarUrl()` prioritises `avatar_url` > `avatar` > Gravatar.
+- **Frontend fallback**: All author avatar views now check `avatar_url` first, then `avatar`, then Gravatar, then initials.
+- **InstallBreezyCommand repair**: The command now detects and fixes misplaced `avatarUploadComponent()` calls (from previous buggy versions), upgrades them with image editor, and adds `avatar_url` to the User model's `$fillable`.
+
+### 🐛 Bug Fixes
+
+- **Avatar disappearing on reload**: Breezy stores avatar in `avatar_url` column via `$user->update(['avatar_url' => '...'])`. If `avatar_url` was not in `$fillable`, mass assignment was silently ignored. The command now adds it automatically.
+- **Parenthesis insertion**: Fixed parentheses-balancing in `findMatchingParen()` helper — the command now correctly inserts method chains after `myProfile()` even when arguments contain nested parentheses.
+
+### ✅ Tests
+
+- **1107 tests passing** (3297 assertions) — AvatarPersistenceTest (5), AvatarSettingsTest (4), UserAvatarTest (7), InstallBreezyCommandTest (6).
+
+### ⚠️ Upgrade Note
+
+If you already have Breezy 2FA installed, re-run `php artisan blogr:install-breezy` after updating to add `avatar_url` to your User model's `$fillable` and update the Breezy config with the avatar upload component.
+
 ## [v1.13.0](https://github.com/happytodev/blogr/compare/v1.12.2...v1.13.0) - 2026-06-11
 
 ### ✨ Features
