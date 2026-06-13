@@ -33,6 +33,7 @@
                 $authorName = is_array($author) ? ($author['name'] ?? 'Unknown') : ($author->name ?? 'Unknown');
                 $authorSlug = is_array($author) ? ($author['slug'] ?? null) : ($author->slug ?? null);
                 $authorAvatar = is_array($author) ? ($author['avatar'] ?? null) : ($author->avatar ?? null);
+                $authorAvatarUrl = is_array($author) ? ($author['avatar_url'] ?? null) : ($author->avatar_url ?? null);
                 $authorEmail = is_array($author) ? ($author['email'] ?? null) : ($author->email ?? null);
                 $gravatarUrl = $authorEmail ? 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($authorEmail))) . '?s=80&d=mp' : null;
                 
@@ -71,7 +72,11 @@
                     <div class="{{ $avatarSize }} rounded-full border-2 border-white dark:border-gray-800 overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700">
                 @endif
                     
-                    @if($authorAvatar)
+                    @if($authorAvatarUrl)
+                        <img src="{{ Storage::url($authorAvatarUrl) }}" 
+                             alt="{{ $authorName }}"
+                             class="w-full h-full object-cover">
+                    @elseif($authorAvatar)
                         <img src="{{ Storage::url($authorAvatar) }}" 
                              alt="{{ $authorName }}"
                              class="w-full h-full object-cover">

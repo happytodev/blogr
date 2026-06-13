@@ -640,4 +640,15 @@ return [
             'model' => 'gpt-4o-mini',
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Profile Avatar
+    |--------------------------------------------------------------------------
+    |
+    | When Breezy 2FA is installed, users can upload a profile photo from
+    | their profile page. Disable this to hide the avatar upload entirely.
+    |
+    */
+    'enable_avatar_upload' => true,
 ];

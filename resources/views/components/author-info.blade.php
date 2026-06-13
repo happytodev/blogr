@@ -30,7 +30,13 @@
 
 @if($authorProfileEnabled)
     <a href="{{ route('blog.author', $routeParams) }}" {{ $attributes->merge(['class' => 'flex items-center gap-2']) }}>
-        @if($showAvatar && $author->avatar)
+        @if($showAvatar && ($author->avatar_url ?? false))
+            <img 
+                src="{{ url('storage/' . $author->avatar_url) }}" 
+                alt="{{ $displayName }}"
+                class="{{ $avatarClass }} rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700 hover:ring-[var(--color-primary)] dark:hover:ring-[var(--color-primary-dark)] transition-all duration-200"
+            />
+        @elseif($showAvatar && $author->avatar)
             <img 
                 src="{{ Storage::disk('public')->url($author->avatar) }}" 
                 alt="{{ $displayName }}"
@@ -53,7 +59,13 @@
     </a>
 @else
     <div {{ $attributes->merge(['class' => 'flex items-center gap-2']) }}>
-        @if($showAvatar && $author->avatar)
+        @if($showAvatar && ($author->avatar_url ?? false))
+            <img 
+                src="{{ url('storage/' . $author->avatar_url) }}" 
+                alt="{{ $displayName }}"
+                class="{{ $avatarClass }} rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
+            />
+        @elseif($showAvatar && $author->avatar)
             <img 
                 src="{{ Storage::disk('public')->url($author->avatar) }}" 
                 alt="{{ $displayName }}"

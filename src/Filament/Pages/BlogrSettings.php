@@ -270,6 +270,8 @@ class BlogrSettings extends Page
 
     public ?int $series_max_visible_posts = null;
 
+    public ?bool $enable_avatar_upload = null;
+
     // UI Settings - Navigation
     public ?bool $navigation_enabled = null;
 
@@ -543,6 +545,8 @@ class BlogrSettings extends Page
             : (is_array($defaultImage) ? $defaultImage : null);
 
         $this->series_max_visible_posts = $config['series']['max_visible_posts'] ?? 10;
+
+        $this->enable_avatar_upload = $config['enable_avatar_upload'] ?? true;
 
         // UI Settings
         $this->navigation_enabled = $config['ui']['navigation']['enabled'] ?? true;
@@ -1063,6 +1067,17 @@ class BlogrSettings extends Page
                                         ->default(false)
                                         ->visible(fn (Get $get) => $get('rss_enabled'))
                                         ->columnSpan(1),
+                                ])
+                                ->columns(2)
+                                ->collapsible(),
+
+                            Section::make('Profile & 2FA')
+                                ->description('Configure profile avatar upload and two-factor authentication settings')
+                                ->schema([
+                                    Toggle::make('enable_avatar_upload')
+                                        ->label('Enable avatar upload on profile page')
+                                        ->default(true)
+                                        ->helperText('When enabled, users can upload a profile photo from their profile page. When disabled, the avatar field is hidden. Requires Breezy 2FA to be installed (php artisan blogr:install-breezy). Changes take effect immediately.'),
                                 ])
                                 ->columns(2)
                                 ->collapsible(),
@@ -2728,6 +2743,11 @@ class BlogrSettings extends Page
                 ],
             ],
         ];
+
+        $data['enable_avatar_upload'] = $this->enable_avatar_upload ?? true;
+
+        // Apply at runtime immediately
+        config()->set('blogr.enable_avatar_upload', $this->enable_avatar_upload ?? true);
 
         // Log logo path for debugging
         \Log::info('BlogrSettings: Saving logo path to config', [

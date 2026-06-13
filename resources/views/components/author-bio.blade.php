@@ -25,7 +25,11 @@
     {{-- Add bottom margin to avoid content being glued to following content and respect avatar setting --}}
     <div {{ $attributes->merge(['class' => 'flex items-center gap-4 py-4 border-t border-b border-gray-200 dark:border-gray-700 mb-6']) }}>
         @php $showAvatar = config('blogr.display.show_author_avatar', true); @endphp
-        @if($showAvatar && ($author->avatar ?? false))
+        @if($showAvatar && ($author->avatar_url ?? false))
+            <img src="{{ url('storage/' . $author->avatar_url) }}" 
+                 alt="{{ $author->name }}" 
+                 class="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700">
+        @elseif($showAvatar && ($author->avatar ?? false))
             <img src="{{ url('storage/' . $author->avatar) }}" 
                  alt="{{ $author->name }}" 
                  class="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700">
@@ -63,7 +67,11 @@
         <div class="flex flex-col md:flex-row gap-6">
             {{-- Author Avatar --}}
             @php $showAvatar = config('blogr.display.show_author_avatar', true); @endphp
-            @if($showAvatar && ($author->avatar ?? false))
+        @if($showAvatar && ($author->avatar_url ?? false))
+            <img src="{{ url('storage/' . $author->avatar_url) }}" 
+                 alt="{{ $author->name }}" 
+                 class="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700">
+        @elseif($showAvatar && ($author->avatar ?? false))
                 <img src="{{ url('storage/' . $author->avatar) }}" 
                      alt="{{ $author->name }}" 
                      class="w-20 h-20 rounded-full object-cover ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">

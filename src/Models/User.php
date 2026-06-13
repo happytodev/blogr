@@ -3,6 +3,7 @@
 namespace Happytodev\Blogr\Models;
 
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Happytodev\Blogr\Tests\Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerifyEmail
 {
     use HasFactory, HasRoles;
 
@@ -21,6 +22,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'email_verified_at',
         'slug',
         'avatar',
+        'avatar_url',
         'bio',
     ];
 
@@ -52,6 +54,19 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         $hash = md5(strtolower(trim($this->email)));
 
         return 'https://www.gravatar.com/avatar/'.$hash.'?s=80&d=mp';
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        if ($this->avatar_url) {
+            return url('storage/' . $this->avatar_url);
+        }
+
+        if ($this->avatar) {
+            return url('storage/' . $this->avatar);
+        }
+
+        return $this->gravatar_url;
     }
 
     public function guardName()

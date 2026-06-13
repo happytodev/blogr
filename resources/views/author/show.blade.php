@@ -8,7 +8,11 @@
             <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-6">
                 {{-- Author Avatar --}}
                 @php $showAvatar = config('blogr.display.show_author_avatar', true); @endphp
-                @if($showAvatar && ($author->avatar ?? false))
+                @if($showAvatar && ($author->avatar_url ?? false))
+                    <img src="{{ url('storage/' . $author->avatar_url) }}" 
+                         alt="{{ $author->name }}" 
+                         class="w-24 h-24 rounded-full object-cover ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">
+                @elseif($showAvatar && ($author->avatar ?? false))
                     <img src="{{ url('storage/' . $author->avatar) }}" 
                          alt="{{ $author->name }}" 
                          class="w-24 h-24 rounded-full object-cover ring-4 ring-white dark:ring-gray-600 shadow-lg flex-shrink-0">

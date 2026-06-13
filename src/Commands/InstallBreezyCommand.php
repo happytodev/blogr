@@ -207,22 +207,84 @@ class InstallBreezyCommand extends Command
 
         // Check for BreezyCore configuration — add or update
         if (str_contains($content, 'BreezyCore::make()')) {
-            if (! str_contains($content, 'enableTwoFactorAuthentication')) {
-                // Add enableTwoFactorAuthentication after myProfile or after BreezyCore::make()
+            // Update hasAvatars to use config() so the Settings toggle works
+            if (preg_match('/hasAvatars:\s*(true|false)/', $content)) {
                 $content = preg_replace(
-                    '/(BreezyCore::make\(\)\s*(?:->myProfile\([^)]*\)\s*)?)/s',
-                    "$1\n                ->enableTwoFactorAuthentication(\n                    force: false,\n                )",
+                    '/hasAvatars:\s*(true|false)/',
+                    "hasAvatars: config('blogr.enable_avatar_upload', true)",
                     $content,
                     1
                 );
+                $modified = true;
+                $this->info('  ✅ hasAvatars updated to use config() for Settings integration.');
+            }
+
+            if (! str_contains($content, 'enableTwoFactorAuthentication')) {
+                // Add enableTwoFactorAuthentication after myProfile or after BreezyCore::make()
+                $enableInsertion = "\n                ->enableTwoFactorAuthentication(\n                    force: false,\n                )";
+
+                $myProfilePos = strpos($content, '->myProfile(');
+                if ($myProfilePos !== false) {
+                    $insertPos = $this->findMatchingParen($content, $myProfilePos + strlen('->myProfile(')) + 1;
+                    $content = substr_replace($content, $enableInsertion, $insertPos, 0);
+                } else {
+                    // No myProfile — insert after BreezyCore::make()
+                    $content = preg_replace(
+                        '/(BreezyCore::make\(\))/s',
+                        "$1" . $enableInsertion,
+                        $content,
+                        1
+                    );
+                }
                 $modified = true;
                 $this->info('  ✅ enableTwoFactorAuthentication added to BreezyCore.');
             } else {
                 $this->info('  ✅ enableTwoFactorAuthentication already present.');
             }
+
+            // Repair misplaced avatarUploadComponent (from previous buggy versions that inserted it inside myProfile)
+            if (str_contains($content, '->avatarUploadComponent')) {
+                if ($this->isAvatarUploadInsideMyProfile($content)) {
+                    // Extract the full avatarUploadComponent call
+                    $avatarPos = strpos($content, '->avatarUploadComponent');
+                    $closeParen = $this->findMatchingParen($content, $avatarPos + strlen('->avatarUploadComponent('));
+                    $fullCall = substr($content, $avatarPos, $closeParen - $avatarPos + 1);
+                    // Upgrade the call with image editor if not present
+                    if (! str_contains($fullCall, 'imageEditor')) {
+                        $fullCall = "->avatarUploadComponent(fn (\$fileUpload) => \$fileUpload->imageEditor()->imageCropAspectRatio('1:1')->imageResizeTargetWidth('200')->imageResizeTargetHeight('200'))";
+                    }
+                    // Remove the misplaced call
+                    $content = substr_replace($content, '', $avatarPos, $closeParen - $avatarPos + 1);
+                    // Clean up trailing comma/whitespace left after removal
+                    $content = preg_replace('/,\s*\n\s*\)/', ')' . "\n", $content);
+                    // Find myProfile closing paren AFTER the removal
+                    $myProfileOpen = strpos($content, '->myProfile(');
+                    $myProfileClose = $this->findMatchingParen($content, $myProfileOpen + strlen('->myProfile('));
+                    // Insert the call after myProfile's closing paren
+                    $insertPos = $myProfileClose + 1;
+                    $content = substr_replace($content, "\n            " . $fullCall, $insertPos, 0);
+                    $modified = true;
+                    $this->info('  ✅ Repaired misplaced avatarUploadComponent (moved outside myProfile).');
+                }
+            }
+
+            // Add avatarUploadComponent with image editor if not present
+            if (! str_contains($content, 'avatarUploadComponent')) {
+                $insertion = "\n                ->avatarUploadComponent(fn (\$fileUpload) => \$fileUpload->imageEditor()->imageCropAspectRatio('1:1')->imageResizeTargetWidth('200')->imageResizeTargetHeight('200'))";
+
+                $pos = strpos($content, '->myProfile(');
+                if ($pos !== false) {
+                    $insertPos = $this->findMatchingParen($content, $pos + strlen('->myProfile(')) + 1;
+                    $content = substr_replace($content, $insertion, $insertPos, 0);
+                    $modified = true;
+                    $this->info('  ✅ avatarUploadComponent with image editor added to BreezyCore.');
+                }
+            } else {
+                $this->info('  ✅ avatarUploadComponent already present.');
+            }
         } else {
             // BreezyCore::make() not found — add full config
-            $breezyConfig = "BreezyCore::make()\n                ->myProfile(\n                    shouldRegisterUserMenu: true,\n                    hasAvatars: false,\n                )\n                ->enableTwoFactorAuthentication(\n                    force: false,\n                )";
+            $breezyConfig = "BreezyCore::make()\n                ->myProfile(\n                    shouldRegisterUserMenu: true,\n                    hasAvatars: config('blogr.enable_avatar_upload', true),\n                )\n                ->avatarUploadComponent(fn (\$fileUpload) => \$fileUpload->imageEditor()->imageCropAspectRatio('1:1')->imageResizeTargetWidth('200')->imageResizeTargetHeight('200'))\n                ->enableTwoFactorAuthentication(\n                    force: false,\n                )";
 
             if (str_contains($content, '->plugins([')) {
                 $content = preg_replace(
@@ -297,10 +359,54 @@ class InstallBreezyCommand extends Command
             } else {
                 $this->info('  ✅ TwoFactorAuthenticatable trait already present.');
             }
+
+            // Add avatar_url to fillable if not present
+            if (! str_contains($userContent, "'avatar_url'")) {
+                $userContent = preg_replace(
+                    "/'avatar',\n/",
+                    "'avatar',\n        'avatar_url',\n",
+                    $userContent,
+                    1
+                );
+                File::put($userPath, $userContent);
+                $this->info('  ✅ avatar_url added to User model fillable.');
+            } else {
+                $this->info('  ✅ avatar_url already in User model fillable.');
+            }
         } else {
             $this->warn('  ⚠️  User model not found. Add the trait manually:');
             $this->line('    use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;');
             $this->line('    class User extends Authenticatable { use TwoFactorAuthenticatable; }');
         }
+    }
+
+    private function findMatchingParen(string $content, int $openPos): int
+    {
+        $depth = 1;
+        $i = $openPos;
+        while ($depth > 0 && isset($content[$i])) {
+            if ($content[$i] === '(') $depth++;
+            elseif ($content[$i] === ')') $depth--;
+            $i++;
+        }
+
+        return $i - 1;
+    }
+
+    private function isAvatarUploadInsideMyProfile(string $content): bool
+    {
+        $myProfileOpen = strpos($content, '->myProfile(');
+        if ($myProfileOpen === false) {
+            return false;
+        }
+
+        $myProfileClose = $this->findMatchingParen($content, $myProfileOpen + strlen('->myProfile('));
+
+        $avatarPos = strpos($content, '->avatarUploadComponent');
+        if ($avatarPos === false) {
+            return false;
+        }
+
+        return $avatarPos > $myProfileOpen && $avatarPos < $myProfileClose;
     }
 }
