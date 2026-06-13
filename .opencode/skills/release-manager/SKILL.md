@@ -109,17 +109,41 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
   git commit -m "docs(changelog): v{version}"
   ```
 
-### 8. Tag
+### 8. Sync with remote before tagging
+
+- **Critical**: Run `git fetch origin main` to get the latest remote state.
+- Verify that your local `main` matches `origin/main`:
+  ```bash
+  if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+      echo "⚠️  Local and remote main diverge. Run 'git pull --rebase origin main' first."
+      exit 1
+  fi
+  ```
+- If they diverge, run `git pull --rebase origin main` and `git push origin main` before proceeding.
+- Check that the tag does not already exist locally or remotely:
+  ```bash
+  if git tag -l "v{version}" | grep -q . || git ls-remote --tags origin "refs/tags/v{version}" | grep -q .; then
+      echo "⚠️  Tag v{version} already exists. Create a new patch version instead."
+      exit 1
+  fi
+  ```
+- **⚠️  NEVER re-tag a version that has already been pushed.** Once a tag is published, it is immutable for Packagist. If you need to fix a tag, bump to a new patch version.
+
+### 9. Push main first, then tag
 
 ```bash
+git push origin main
 git tag v{version}
+# Verify tag points to HEAD:
+if [ "$(git rev-parse v{version})" != "$(git rev-parse HEAD)" ]; then
+    echo "⚠️  Tag does not match HEAD. Delete and re-tag."
+    git tag -d v{version}
+    exit 1
+fi
+git push origin v{version}
 ```
 
-### 9. Push commits and tag
-
-```bash
-git push origin main v{version}
-```
+➡ **Push `main` BEFORE creating the tag.** This prevents the tag from pointing to a stale commit after a rebase.
 
 ### 10. Create GitHub Release
 

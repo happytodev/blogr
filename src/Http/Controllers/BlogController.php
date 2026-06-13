@@ -43,10 +43,7 @@ class BlogController
 
     public function index($locale = null)
     {
-        // Handle locale
-        $locale = $this->resolveLocale($locale);
-
-        // Set app locale for helpers to use
+        $locale = $locale ?? config('blogr.locales.default', 'en');
         app()->setLocale($locale);
 
         // Get posts that have translations in this locale with pagination
@@ -175,8 +172,7 @@ class BlogController
             $actualSlug = $localeOrSlug;
         }
 
-        // Validate locale
-        $locale = $this->resolveLocale($locale);
+        $locale = $locale ?? config('blogr.locales.default', 'en');
 
         // Set app locale for helpers to use
         app()->setLocale($locale);
@@ -502,7 +498,7 @@ class BlogController
         }
 
         // Validate and resolve locale
-        $currentLocale = $this->resolveLocale($locale);
+        $currentLocale = $locale ?? config('blogr.locales.default', 'en');
 
         // Try to find category by main slug first
         $category = Category::where('slug', $actualCategorySlug)->first();
@@ -601,8 +597,7 @@ class BlogController
             $actualTagSlug = $localeOrTagSlug;
         }
 
-        // Validate and resolve locale
-        $currentLocale = $this->resolveLocale($locale);
+        $currentLocale = $locale ?? config('blogr.locales.default', 'en');
 
         // Try to find tag by main slug first
         $tag = Tag::where('slug', $actualTagSlug)->first();
@@ -688,8 +683,7 @@ class BlogController
 
     public function seriesIndex($locale = null)
     {
-        // Handle locale
-        $locale = $this->resolveLocale($locale);
+        $locale = $locale ?? config('blogr.locales.default', 'en');
 
         $series = BlogSeries::with(['translations', 'posts'])
             ->published()
@@ -754,8 +748,7 @@ class BlogController
             $actualSlug = $localeOrSlug;
         }
 
-        // Validate locale
-        $locale = $this->resolveLocale($locale);
+        $locale = $locale ?? config('blogr.locales.default', 'en');
 
         // Try to find series by translated slug first
         $series = BlogSeries::whereHas('translations', function ($query) use ($actualSlug, $locale) {
@@ -861,32 +854,8 @@ class BlogController
         ])->with('currentSeries', $series); // Share series for navigation component
     }
 
-    /**
-     * Resolve the locale from the request or use the default.
-     *
-     * @param  string|null  $locale
-     */
-    protected function resolveLocale($locale = null): string
-    {
-        $localesEnabled = config('blogr.locales.enabled', false);
-
-        if (! $localesEnabled) {
-            return config('blogr.locales.default', 'en');
-        }
-
-        if ($locale && in_array($locale, config('blogr.locales.available', ['en']))) {
-            return $locale;
-        }
-
-        return config('blogr.locales.default', 'en');
-    }
-
-    /**
-     * Get content without frontmatter for markdown conversion.
-     */
     protected function getContentWithoutFrontmatter(string $content): string
     {
-        // Remove frontmatter (content between --- and ---)
         $pattern = '/^---\s*\n.*?\n---\s*\n/s';
 
         return preg_replace($pattern, '', $content);
