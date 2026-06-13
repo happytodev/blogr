@@ -73,7 +73,7 @@ class TranslationUsageService
                 'has_limit' => $limit !== null,
                 'remaining' => $limit !== null ? max(0, $limit - $used) : null,
                 'percentage' => $limit !== null ? round(($used / $limit) * 100, 2) : null,
-                'period' => $now->copy()->startOfMonth()->format('j') . '–' . $now->format('j F Y'),
+                'period' => $now->copy()->startOfMonth()->format('j').'–'.$now->format('j F Y'),
             ];
         });
     }

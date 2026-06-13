@@ -55,7 +55,7 @@ it('returns usage stats with limit and provider label for Azure', function () {
         'year' => now()->year,
     ]);
 
-    Cache::forget('blogr_translation_usage_azure_' . now()->year . '_' . now()->month);
+    Cache::forget('blogr_translation_usage_azure_'.now()->year.'_'.now()->month);
 
     $stats = app(TranslationUsageService::class)->getUsageStats('azure');
 
@@ -78,7 +78,7 @@ it('returns usage stats without limit for LibreTranslate', function () {
         'year' => now()->year,
     ]);
 
-    Cache::forget('blogr_translation_usage_libretranslate_' . now()->year . '_' . now()->month);
+    Cache::forget('blogr_translation_usage_libretranslate_'.now()->year.'_'.now()->month);
 
     $stats = app(TranslationUsageService::class)->getUsageStats('libretranslate');
 
@@ -103,7 +103,7 @@ it('returns null when provider is null', function () {
 });
 
 it('returns zero usage when no data exists', function () {
-    Cache::forget('blogr_translation_usage_openai_' . now()->year . '_' . now()->month);
+    Cache::forget('blogr_translation_usage_openai_'.now()->year.'_'.now()->month);
 
     $stats = app(TranslationUsageService::class)->getUsageStats('openai');
 
@@ -122,7 +122,7 @@ it('returns period in correct format', function () {
         'year' => now()->year,
     ]);
 
-    Cache::forget('blogr_translation_usage_azure_' . now()->year . '_' . now()->month);
+    Cache::forget('blogr_translation_usage_azure_'.now()->year.'_'.now()->month);
 
     $stats = app(TranslationUsageService::class)->getUsageStats('azure');
 
