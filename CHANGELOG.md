@@ -2,6 +2,16 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.12.2](https://github.com/happytodev/blogr/compare/v1.12.1...v1.12.2) - 2026-06-11
+
+### 🐛 Bug Fixes
+
+- **Locale filtering on blog index**: Removed `resolveLocale()` which always returned `'en'` due to duplicate config keys. All 6 controller methods (`index`, `show`, `category`, `tag`, `seriesIndex`, `series`) now use the URL locale directly, so a post with only a French translation correctly appears on `/fr/blog` and not on `/en/blog` (and vice versa).
+
+### ✅ Tests
+
+- **1082 tests passing** (3246 assertions) — 5 new tests covering French-only/English-only/bilingual post visibility on localized indexes.
+
 ## [v1.12.1](https://github.com/happytodev/blogr/compare/v1.12.0...v1.12.1) - 2026-06-11
 
 ### 🐛 Bug Fixes
