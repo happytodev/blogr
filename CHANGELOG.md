@@ -2,7 +2,24 @@
 
 All notable changes to `blogr` will be documented in this file.
 
-## [v1.12.2](https://github.com/happytodev/blogr/compare/v1.12.1...v1.12.2) - 2026-06-11
+## [v1.13.0](https://github.com/happytodev/blogr/compare/v1.12.2...v1.13.0) - 2026-06-11
+
+### ✨ Features
+
+- **Translation usage card**: New visual progress bar with dark mode support, provider labels, period display (e.g. "1–13 June 2026"), and localized help text. Progress bar uses inline CSS to work regardless of Tailwind compilation.
+- **Azure portal link**: Generic link to Cognitive Services accounts in Azure Portal with instructions to find "Text Characters Translated" metrics.
+- **Localized help**: All usage card text is translatable (EN/FR) — "local counter" notice, Azure help, "chars"/"remaining" labels.
+- **Provider labels**: Each provider now shows a clear label ("Azure Translator", "LibreTranslate (self-hosted)", etc.) in the usage card.
+
+### 🐛 Bug Fixes
+
+- **Progress bar visibility**: Minimum 8px width ensures the bar is visible even at very low usage percentages.
+
+### ✅ Tests
+
+- **1083 tests passing** (3254 assertions) — 3 new tests for provider_label, has_limit, period format.
+
+## [v1.12.2](https://github.com/happytodev/blogr/compare/v1.12.1...v1.12.2) - 2026-06-11(https://github.com/happytodev/blogr/compare/v1.12.1...v1.12.2) - 2026-06-11
 
 ### 🐛 Bug Fixes
 
