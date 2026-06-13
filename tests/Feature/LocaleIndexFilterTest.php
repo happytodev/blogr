@@ -4,9 +4,10 @@ use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\LocalizedTestCase;
 use Spatie\Permission\Models\Role;
 
-uses(Happytodev\Blogr\Tests\LocalizedTestCase::class);
+uses(LocalizedTestCase::class);
 
 beforeEach(function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
