@@ -6,7 +6,7 @@ it('returns gravatar url for user with email', function () {
     $user = User::factory()->create(['email' => 'test@example.com']);
 
     expect($user->gravatar_url)->toBe(
-        'https://www.gravatar.com/avatar/' . md5('test@example.com') . '?s=80&d=mp'
+        'https://www.gravatar.com/avatar/'.md5('test@example.com').'?s=80&d=mp'
     );
 });
 

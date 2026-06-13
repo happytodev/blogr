@@ -2,10 +2,11 @@
 
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\TestCase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-uses(Happytodev\Blogr\Tests\TestCase::class);
+uses(TestCase::class);
 
 beforeEach(function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);

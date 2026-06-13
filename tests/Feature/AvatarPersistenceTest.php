@@ -1,10 +1,11 @@
 <?php
 
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\LocalizedTestCase;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 
-uses(Happytodev\Blogr\Tests\LocalizedTestCase::class);
+uses(LocalizedTestCase::class);
 
 beforeEach(function () {
     Storage::fake('public');

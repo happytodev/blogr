@@ -231,7 +231,7 @@ class InstallBreezyCommand extends Command
                     // No myProfile — insert after BreezyCore::make()
                     $content = preg_replace(
                         '/(BreezyCore::make\(\))/s',
-                        "$1" . $enableInsertion,
+                        '$1'.$enableInsertion,
                         $content,
                         1
                     );
@@ -256,13 +256,13 @@ class InstallBreezyCommand extends Command
                     // Remove the misplaced call
                     $content = substr_replace($content, '', $avatarPos, $closeParen - $avatarPos + 1);
                     // Clean up trailing comma/whitespace left after removal
-                    $content = preg_replace('/,\s*\n\s*\)/', ')' . "\n", $content);
+                    $content = preg_replace('/,\s*\n\s*\)/', ')'."\n", $content);
                     // Find myProfile closing paren AFTER the removal
                     $myProfileOpen = strpos($content, '->myProfile(');
                     $myProfileClose = $this->findMatchingParen($content, $myProfileOpen + strlen('->myProfile('));
                     // Insert the call after myProfile's closing paren
                     $insertPos = $myProfileClose + 1;
-                    $content = substr_replace($content, "\n            " . $fullCall, $insertPos, 0);
+                    $content = substr_replace($content, "\n            ".$fullCall, $insertPos, 0);
                     $modified = true;
                     $this->info('  ✅ Repaired misplaced avatarUploadComponent (moved outside myProfile).');
                 }
@@ -385,8 +385,11 @@ class InstallBreezyCommand extends Command
         $depth = 1;
         $i = $openPos;
         while ($depth > 0 && isset($content[$i])) {
-            if ($content[$i] === '(') $depth++;
-            elseif ($content[$i] === ')') $depth--;
+            if ($content[$i] === '(') {
+                $depth++;
+            } elseif ($content[$i] === ')') {
+                $depth--;
+            }
             $i++;
         }
 

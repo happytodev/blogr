@@ -1,18 +1,20 @@
 <?php
 
+use Happytodev\Blogr\Commands\InstallBreezyCommand;
+
 beforeEach(function () {
-    $this->reflection = new ReflectionClass(\Happytodev\Blogr\Commands\InstallBreezyCommand::class);
+    $this->reflection = new ReflectionClass(InstallBreezyCommand::class);
 });
 
 it('detects hasAvatars pattern in existing config', function () {
-    $content = "BreezyCore::make()
+    $content = 'BreezyCore::make()
                 ->myProfile(
                     shouldRegisterUserMenu: true,
                     hasAvatars: false,
                 )
                 ->enableTwoFactorAuthentication(
                     force: false,
-                )";
+                )';
 
     $hasMatch = preg_match('/hasAvatars:\s*(true|false)/', $content);
 
@@ -20,14 +22,14 @@ it('detects hasAvatars pattern in existing config', function () {
 });
 
 it('replaces hasAvatars with config() call', function () {
-    $content = "BreezyCore::make()
+    $content = 'BreezyCore::make()
                 ->myProfile(
                     shouldRegisterUserMenu: true,
                     hasAvatars: false,
                 )
                 ->enableTwoFactorAuthentication(
                     force: false,
-                )";
+                )';
 
     $result = preg_replace(
         '/hasAvatars:\s*(true|false)/',
@@ -60,8 +62,11 @@ it('handles nested parentheses in myProfile correctly', function () {
     $depth = 1;
     $i = $openParen;
     while ($depth > 0 && isset($content[$i])) {
-        if ($content[$i] === '(') $depth++;
-        elseif ($content[$i] === ')') $depth--;
+        if ($content[$i] === '(') {
+            $depth++;
+        } elseif ($content[$i] === ')') {
+            $depth--;
+        }
         $i++;
     }
     $insertPos = $i;
@@ -87,8 +92,11 @@ it('adds avatarUploadComponent after single-line myProfile', function () {
     $depth = 1;
     $i = $openParen;
     while ($depth > 0 && isset($content[$i])) {
-        if ($content[$i] === '(') $depth++;
-        elseif ($content[$i] === ')') $depth--;
+        if ($content[$i] === '(') {
+            $depth++;
+        } elseif ($content[$i] === ')') {
+            $depth--;
+        }
         $i++;
     }
     $insertPos = $i;
@@ -112,10 +120,10 @@ it('detects enableTwoFactorAuthentication in existing config', function () {
 });
 
 it('detects misplaced avatarUploadComponent inside myProfile', function () {
-    $reflection = new ReflectionClass(\Happytodev\Blogr\Commands\InstallBreezyCommand::class);
+    $reflection = new ReflectionClass(InstallBreezyCommand::class);
     $method = $reflection->getMethod('isAvatarUploadInsideMyProfile');
     $method->setAccessible(true);
-    $command = app(\Happytodev\Blogr\Commands\InstallBreezyCommand::class);
+    $command = app(InstallBreezyCommand::class);
 
     // Simulate the broken state from previous buggy version
     $content = "BreezyCore::make()
@@ -132,10 +140,10 @@ it('detects misplaced avatarUploadComponent inside myProfile', function () {
 });
 
 it('does not detect correctly placed avatarUploadComponent', function () {
-    $reflection = new ReflectionClass(\Happytodev\Blogr\Commands\InstallBreezyCommand::class);
+    $reflection = new ReflectionClass(InstallBreezyCommand::class);
     $method = $reflection->getMethod('isAvatarUploadInsideMyProfile');
     $method->setAccessible(true);
-    $command = app(\Happytodev\Blogr\Commands\InstallBreezyCommand::class);
+    $command = app(InstallBreezyCommand::class);
 
     $content = "BreezyCore::make()
                 ->myProfile(
@@ -163,20 +171,20 @@ it('repairs misplaced avatarUploadComponent', function () {
 
     // Simulate the repair logic from InstallBreezyCommand
     $avatarPos = strpos($content, '->avatarUploadComponent');
-    $reflection = new ReflectionClass(\Happytodev\Blogr\Commands\InstallBreezyCommand::class);
+    $reflection = new ReflectionClass(InstallBreezyCommand::class);
     $findParen = $reflection->getMethod('findMatchingParen');
     $findParen->setAccessible(true);
-    $command = app(\Happytodev\Blogr\Commands\InstallBreezyCommand::class);
+    $command = app(InstallBreezyCommand::class);
 
     $closeParen = $findParen->invoke($command, $content, $avatarPos + strlen('->avatarUploadComponent('));
     $fullCall = substr($content, $avatarPos, $closeParen - $avatarPos + 1);
     $content = substr_replace($content, '', $avatarPos, $closeParen - $avatarPos + 1);
-    $content = preg_replace('/,\s*\n\s*\)/', ')' . "\n", $content);
+    $content = preg_replace('/,\s*\n\s*\)/', ')'."\n", $content);
 
     $myProfileOpen = strpos($content, '->myProfile(');
     $myProfileClose = $findParen->invoke($command, $content, $myProfileOpen + strlen('->myProfile('));
     $insertPos = $myProfileClose + 1;
-    $content = substr_replace($content, "\n            " . $fullCall, $insertPos, 0);
+    $content = substr_replace($content, "\n            ".$fullCall, $insertPos, 0);
 
     expect($content)->toContain('avatarUploadComponent')
         ->and($content)->not->toMatch('/myProfile\([^)]*avatarUploadComponent/');
