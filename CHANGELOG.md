@@ -2,6 +2,25 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.15.0](https://github.com/happytodev/blogr/compare/v1.14.0...v1.15.0) - 2026-06-14
+
+### ✨ Features
+
+- **AuthorBio component**: New biography editor in the Breezy profile page with per-locale MarkdownEditor tabs and AI translation via a Filament Action modal (instead of custom HTML).
+- **HasAvatar interface**: User model now implements `HasAvatar` — the Filament user menu displays the uploaded avatar instead of Gravatar fallback.
+- **InstallBreezyCommand improvements**:
+  - `--force` removed from `make:filament-theme` to preserve custom AdminPanelProvider settings (admin path, etc.)
+  - Nested bracket matching (`findMatchingBracket()`) prevents plugins regex from breaking on arrays inside `->plugins([...])`
+
+### 🐛 Bug Fixes
+
+- **Livewire alias 419**: Registered `author_bio` (not `blogr.author-bio`) to match Breezy's `myProfileComponents(['author_bio' => ...])` key — fixes "Page Expired" on bio save.
+- **imageUrl() crash**: Removed invalid `->imageUrl()` calls from `avatarUploadComponent` (method doesn't exist on FileUpload in this Filament version).
+
+### ✅ Tests
+
+- **1108 tests passing** (3302 assertions) — AuthorBioComponentTest (5), InstallBreezyCommandTest (6 new: bracket matching, hasAvatars, path preservation, --force check, imageUrl absence).
+
 ## [v1.14.0](https://github.com/happytodev/blogr/compare/v1.13.0...v1.14.0) - 2026-06-13
 
 ### ✨ Features
