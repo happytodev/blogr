@@ -22,6 +22,7 @@ use Happytodev\Blogr\Commands\InstallUserManagementCommand;
 use Happytodev\Blogr\Commands\MigratePostsToTranslations;
 use Happytodev\Blogr\Commands\SyncAdminPathCommand;
 use Happytodev\Blogr\Contracts\BlogrExtension;
+use Happytodev\Blogr\Filament\Livewire\AuthorBio;
 use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
 use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
 use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
@@ -45,9 +46,11 @@ use Happytodev\Blogr\Services\ExtensionRegistry;
 use Happytodev\Blogr\Services\LocaleService;
 use Happytodev\Blogr\Testing\TestsBlogr;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Livewire\Features\SupportTesting\Testable;
+use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -266,15 +269,15 @@ class BlogrServiceProvider extends PackageServiceProvider
         // Must register with 'author_bio' name (not 'blogr.author-bio') because
         // Breezy renders components via @livewire($component) where $component
         // is the array key from myProfileComponents(['author_bio' => ...])
-        if (class_exists(\Livewire\Livewire::class)) {
-            \Livewire\Livewire::component('author_bio', \Happytodev\Blogr\Filament\Livewire\AuthorBio::class);
+        if (class_exists(Livewire::class)) {
+            Livewire::component('author_bio', AuthorBio::class);
         }
 
         // Ensure Livewire endpoints are excluded from CSRF verification
         // This prevents 419 "Page Expired" errors on the Breezy profile page
-        if (class_exists(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)) {
+        if (class_exists(ValidateCsrfToken::class)) {
             try {
-                \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::except([
+                ValidateCsrfToken::except([
                     'livewire/*',
                     'livewire/update',
                 ]);

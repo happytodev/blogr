@@ -3,12 +3,15 @@
 namespace Happytodev\Blogr\Filament\Livewire;
 
 use Filament\Actions\Action;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Schema;
+use Happytodev\Blogr\Services\LocaleService;
 use Happytodev\Blogr\Services\Translation\TranslationProviderFactory;
 use Happytodev\Blogr\Services\TranslationUsageService;
+use Illuminate\Support\Facades\Log;
 use Jeffgreco13\FilamentBreezy\Livewire\MyProfileComponent;
 
 class AuthorBio extends MyProfileComponent
@@ -35,7 +38,7 @@ class AuthorBio extends MyProfileComponent
 
     public function form(Schema $schema): Schema
     {
-        $locales = app(\Happytodev\Blogr\Services\LocaleService::class)->getAvailable();
+        $locales = app(LocaleService::class)->getAvailable();
         $localeNames = $this->localeNames();
         $flags = $this->localeEmoji();
 
@@ -48,7 +51,7 @@ class AuthorBio extends MyProfileComponent
             $tabs[] = Tabs\Tab::make($locale)
                 ->label("{$flag} {$label}")
                 ->schema([
-                    \Filament\Forms\Components\MarkdownEditor::make("bio.{$locale}")
+                    MarkdownEditor::make("bio.{$locale}")
                         ->label(__('blogr::blogr.profile.bio_label', ['locale' => $label]))
                         ->maxLength(2000)
                         ->nullable()
@@ -169,7 +172,7 @@ class AuthorBio extends MyProfileComponent
                 ->title(__('blogr::blogr.profile.bio_updated'))
                 ->send();
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('AuthorBio submit error', [
+            Log::error('AuthorBio submit error', [
                 'message' => $e->getMessage(),
                 'class' => get_class($e),
                 'trace' => $e->getTraceAsString(),
@@ -201,10 +204,10 @@ class AuthorBio extends MyProfileComponent
     private function localeOptions(): array
     {
         $names = $this->localeNames();
-        $locales = app(\Happytodev\Blogr\Services\LocaleService::class)->getAvailable();
+        $locales = app(LocaleService::class)->getAvailable();
 
         return collect($locales)
-            ->mapWithKeys(fn ($l) => [$l => ($names[$l] ?? strtoupper($l)) . " ({$l})"])
+            ->mapWithKeys(fn ($l) => [$l => ($names[$l] ?? strtoupper($l))." ({$l})"])
             ->toArray();
     }
 

@@ -1,13 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Http;
+use Happytodev\Blogr\Filament\Livewire\AuthorBio;
+use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\LocalizedTestCase;
+use Jeffgreco13\FilamentBreezy\Livewire\MyProfileComponent;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-if (! class_exists(\Jeffgreco13\FilamentBreezy\Livewire\MyProfileComponent::class)) {
+if (! class_exists(MyProfileComponent::class)) {
     return;
 }
 
-uses(Happytodev\Blogr\Tests\LocalizedTestCase::class);
+uses(LocalizedTestCase::class);
 
 beforeEach(function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
@@ -17,7 +21,7 @@ beforeEach(function () {
         'libretranslate' => ['url' => 'http://localhost:5000'],
     ]);
 
-    $this->admin = \Happytodev\Blogr\Models\User::factory()->create([
+    $this->admin = User::factory()->create([
         'name' => 'Admin',
         'email' => 'admin@test.com',
         'bio' => [
@@ -30,33 +34,33 @@ beforeEach(function () {
 });
 
 it('mounts with existing bio data', function () {
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Livewire\AuthorBio::class)
+    Livewire::test(AuthorBio::class)
         ->assertSet('data.bio.en', 'Hello from the admin')
         ->assertSet('data.bio.fr', "Bonjour de la part de l'admin");
 });
 
 it('mounts with empty bio when user has none', function () {
-    $user = \Happytodev\Blogr\Models\User::factory()->create();
+    $user = User::factory()->create();
     $user->assignRole('admin');
     $this->actingAs($user);
 
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Livewire\AuthorBio::class)
+    Livewire::test(AuthorBio::class)
         ->assertSet('data.bio', ['en' => null, 'fr' => null]);
 });
 
 it('shows translate with AI button when provider is configured', function () {
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Livewire\AuthorBio::class)
+    Livewire::test(AuthorBio::class)
         ->assertSee('Translate with AI');
 });
 
 it('has bio tabs for each configured locale', function () {
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Livewire\AuthorBio::class)
+    Livewire::test(AuthorBio::class)
         ->assertSee('English')
         ->assertSee('Français');
 });
 
 it('returns only locales with content as source options', function () {
-    $component = \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Livewire\AuthorBio::class);
+    $component = Livewire::test(AuthorBio::class);
 
     $sourceOptions = $component->instance()->getSourceLocaleOptions();
 

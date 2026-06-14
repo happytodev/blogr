@@ -474,8 +474,11 @@ class InstallBreezyCommand extends Command
         $depth = 1;
         $i = $openPos;
         while ($depth > 0 && isset($content[$i])) {
-            if ($content[$i] === '[') $depth++;
-            elseif ($content[$i] === ']') $depth--;
+            if ($content[$i] === '[') {
+                $depth++;
+            } elseif ($content[$i] === ']') {
+                $depth--;
+            }
             $i++;
         }
 
