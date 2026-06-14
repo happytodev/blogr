@@ -95,13 +95,15 @@ class InstallBreezyCommand extends Command
         $themePath = resource_path('css/filament/admin/theme.css');
         $alreadyExists = File::exists($themePath);
 
-        // Call make:filament-theme to properly set up vite.config.js + panel provider
-        $this->call('make:filament-theme', [
-            'panel' => 'admin',
-            '--panel' => 'admin',
-            '--force' => true,
-            '--no-interaction' => true,
-        ]);
+        // Only call make:filament-theme if the theme CSS doesn't exist yet
+        // Never use --force to avoid overwriting AdminPanelProvider customizations
+        if (! $alreadyExists) {
+            $this->call('make:filament-theme', [
+                'panel' => 'admin',
+                '--panel' => 'admin',
+                '--no-interaction' => true,
+            ]);
+        }
 
         if ($alreadyExists) {
             $this->info('  ✅ Filament theme already configured.');
@@ -282,17 +284,47 @@ class InstallBreezyCommand extends Command
             } else {
                 $this->info('  ✅ avatarUploadComponent already present.');
             }
+
+            // Repair: remove ->imageUrl() calls (method doesn't exist in this Filament version)
+            $imageUrlPos = strpos($content, '->imageUrl(');
+            if ($imageUrlPos !== false) {
+                $closePos = $this->findMatchingParen($content, $imageUrlPos + strlen('->imageUrl('));
+                $content = substr_replace($content, '', $imageUrlPos, $closePos - $imageUrlPos + 1);
+                $modified = true;
+                $this->info('  ✅ Removed invalid ->imageUrl() call from avatarUploadComponent.');
+            }
+
+            // Add AuthorBio myProfileComponent if not present
+            if (! str_contains($content, 'AuthorBio')) {
+                $insertion = "\n                ->myProfileComponents(['author_bio' => \\Happytodev\\Blogr\\Filament\\Livewire\\AuthorBio::class])";
+
+                $pos = strpos($content, '->enableTwoFactorAuthentication');
+                if ($pos !== false) {
+                    $content = substr_replace($content, $insertion, $pos, 0);
+                } else {
+                    $pos = strpos($content, 'BreezyCore::make()');
+                    if ($pos !== false) {
+                        $closeParen = $this->findMatchingParen($content, $pos + strlen('BreezyCore::make()'));
+                        $content = substr_replace($content, $insertion, $closeParen + 1, 0);
+                    }
+                }
+                $modified = true;
+                $this->info('  ✅ AuthorBio component added to BreezyCore profile.');
+            } else {
+                $this->info('  ✅ AuthorBio component already present.');
+            }
         } else {
             // BreezyCore::make() not found — add full config
-            $breezyConfig = "BreezyCore::make()\n                ->myProfile(\n                    shouldRegisterUserMenu: true,\n                    hasAvatars: config('blogr.enable_avatar_upload', true),\n                )\n                ->avatarUploadComponent(fn (\$fileUpload) => \$fileUpload->imageEditor()->imageCropAspectRatio('1:1')->imageResizeTargetWidth('200')->imageResizeTargetHeight('200'))\n                ->enableTwoFactorAuthentication(\n                    force: false,\n                )";
+            $breezyConfig = "BreezyCore::make()\n                ->myProfile(\n                    shouldRegisterUserMenu: true,\n                    hasAvatars: config('blogr.enable_avatar_upload', true),\n                )\n                ->avatarUploadComponent(fn (\$fileUpload) => \$fileUpload->imageEditor()->imageCropAspectRatio('1:1')->imageResizeTargetWidth('200')->imageResizeTargetHeight('200'))\n                ->myProfileComponents(['author_bio' => \Happytodev\Blogr\Filament\Livewire\AuthorBio::class])\n                ->enableTwoFactorAuthentication(\n                    force: false,\n                )";
 
             if (str_contains($content, '->plugins([')) {
-                $content = preg_replace(
-                    '/(->plugins\(\[)([^\]]*?)(\]\))/s',
-                    "$1$2\n                {$breezyConfig},\n            $3",
-                    $content
-                );
-            } else {
+                $pluginsOpen = strpos($content, '->plugins([');
+                $innerOpen = $pluginsOpen + strlen('->plugins([');
+                // Find the matching closing bracket for the opening [
+                $closePos = $this->findMatchingBracket($content, $innerOpen);
+                // Insert the Breezy config just before the closing ]
+                $insertPos = $closePos;
+                $content = substr_replace($content, "\n                {$breezyConfig},\n            ", $insertPos, 0);
                 $content = preg_replace(
                     '/(->authMiddleware\(\[)/s',
                     "->plugins([\n            {$breezyConfig},\n        ])\n        $1",
@@ -368,10 +400,51 @@ class InstallBreezyCommand extends Command
                     $userContent,
                     1
                 );
-                File::put($userPath, $userContent);
+                $modified = true;
                 $this->info('  ✅ avatar_url added to User model fillable.');
             } else {
                 $this->info('  ✅ avatar_url already in User model fillable.');
+            }
+
+            // Add getFilamentAvatarUrl() if not present
+            if (! str_contains($userContent, 'getFilamentAvatarUrl')) {
+                $method = "\n\n    public function getFilamentAvatarUrl(): ?string\n    {\n        if (\$this->avatar_url) {\n            return \\Illuminate\\Support\\Facades\\Storage::disk('public')->url(\$this->avatar_url);\n        }\n\n        if (\$this->avatar) {\n            return \\Illuminate\\Support\\Facades\\Storage::disk('public')->url(\$this->avatar);\n        }\n\n        return \$this->gravatar_url;\n    }";
+
+                $userContent = preg_replace(
+                    '/\n\s*public function canAccessPanel/',
+                    "{$method}\n\n    public function canAccessPanel",
+                    $userContent,
+                    1
+                );
+                $modified = true;
+            }
+
+            // Add HasAvatar interface and import if not present
+            if (! str_contains($userContent, 'HasAvatar')) {
+                // Add import
+                if (! str_contains($userContent, 'use Filament\\Models\\Contracts\\HasAvatar;')) {
+                    $userContent = preg_replace(
+                        '/(use Filament\\\Models\\\Contracts\\\FilamentUser;)/',
+                        "$1\nuse Filament\\Models\\Contracts\\HasAvatar;",
+                        $userContent,
+                        1
+                    );
+                }
+                // Add HasAvatar to implements
+                $userContent = preg_replace(
+                    '/(implements\s+FilamentUser)/',
+                    '$1, HasAvatar',
+                    $userContent,
+                    1
+                );
+                $modified = true;
+                $this->info('  ✅ HasAvatar interface added to User model.');
+            } else {
+                $this->info('  ✅ HasAvatar already present on User model.');
+            }
+
+            if ($modified) {
+                File::put($userPath, $userContent);
             }
         } else {
             $this->warn('  ⚠️  User model not found. Add the trait manually:');
@@ -390,6 +463,19 @@ class InstallBreezyCommand extends Command
             } elseif ($content[$i] === ')') {
                 $depth--;
             }
+            $i++;
+        }
+
+        return $i - 1;
+    }
+
+    private function findMatchingBracket(string $content, int $openPos): int
+    {
+        $depth = 1;
+        $i = $openPos;
+        while ($depth > 0 && isset($content[$i])) {
+            if ($content[$i] === '[') $depth++;
+            elseif ($content[$i] === ']') $depth--;
             $i++;
         }
 

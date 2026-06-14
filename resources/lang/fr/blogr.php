@@ -106,4 +106,24 @@ return [
         'select_provider' => 'Sélectionnez un fournisseur pour voir les statistiques d\'utilisation.',
         'no_data' => 'Aucune donnée d\'utilisation pour ce mois.',
     ],
+
+    // Profile / Bio
+    'profile' => [
+        'bio_heading' => 'Biographie',
+        'bio_subheading' => 'Rédigez votre biographie d\'auteur en markdown. Supporte plusieurs langues.',
+        'bio_label' => 'Biographie (:locale)',
+        'bio_help' => 'Supporte le format Markdown (gras, italique, liens, listes, blocs de code).',
+        'bio_submit' => 'Enregistrer la biographie',
+        'bio_updated' => 'Biographie enregistrée avec succès !',
+        'translate_bio' => 'Traduire avec l\'IA',
+        'source_locale' => 'Langue source',
+        'target_locale' => 'Langue cible',
+        'select_source' => 'Sélectionnez la langue source',
+        'select_target' => 'Sélectionnez la langue cible',
+        'cancel' => 'Annuler',
+        'translate_button' => 'Traduire',
+        'no_source_bio' => 'Aucun contenu de biographie trouvé pour :locale.',
+        'bio_translated' => 'Biographie traduite en :locale.',
+        'translation_error' => 'Erreur de traduction',
+    ],
 ];

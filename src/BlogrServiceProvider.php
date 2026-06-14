@@ -262,6 +262,27 @@ class BlogrServiceProvider extends PackageServiceProvider
         // Register core Blogr as an extension in the extension registry
         $this->registerCoreExtension();
 
+        // Register Livewire components
+        // Must register with 'author_bio' name (not 'blogr.author-bio') because
+        // Breezy renders components via @livewire($component) where $component
+        // is the array key from myProfileComponents(['author_bio' => ...])
+        if (class_exists(\Livewire\Livewire::class)) {
+            \Livewire\Livewire::component('author_bio', \Happytodev\Blogr\Filament\Livewire\AuthorBio::class);
+        }
+
+        // Ensure Livewire endpoints are excluded from CSRF verification
+        // This prevents 419 "Page Expired" errors on the Breezy profile page
+        if (class_exists(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)) {
+            try {
+                \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::except([
+                    'livewire/*',
+                    'livewire/update',
+                ]);
+            } catch (\Throwable $e) {
+                // Silent fail — the bootstrap/app.php config should already handle this
+            }
+        }
+
         // Auto-repair stale published views that may contain old iframe/Google Maps patterns.
         // When users run `php artisan vendor:publish --tag=blogr-views`, the current views
         // are copied to resources/views/vendor/blogr/. These published views take precedence
