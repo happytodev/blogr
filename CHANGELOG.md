@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.17.5](https://github.com/happytodev/blogr/compare/v1.17.4...v1.17.5) - 2026-06-23
+
+### 🐛 Bug Fixes
+
+- **CSS**: rebuild with `@source` directive and corrected `@variant` syntax to include version history Tailwind classes (amber colors for drafts, dark mode variants, etc.)
+
 ## [v1.17.4](https://github.com/happytodev/blogr/compare/v1.17.3...v1.17.4) - 2026-06-23
 
 ### 🐛 Bug Fixes
