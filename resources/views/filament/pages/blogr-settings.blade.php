@@ -22,7 +22,7 @@
             {{ $this->form }}
         </div>
 
-        <div style="display: flex; justify-content: flex-end; padding-top: 64px; margin-top: 64px; border-top: 2px solid #e5e7eb;">
+        <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
             <x-filament::button
                 type="submit"
                 color="primary"
