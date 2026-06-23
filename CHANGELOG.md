@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.17.3](https://github.com/happytodev/blogr/compare/v1.17.2...v1.17.3) - 2026-06-23
+
+### 🐛 Bug Fixes
+
+- **Settings search**: revert back to inline styles (Tailwind classes are not available in Filament's pre-built CSS)
+
 ## [v1.17.2](https://github.com/happytodev/blogr/compare/v1.17.1...v1.17.2) - 2026-06-23
 
 ### 🐛 Bug Fixes
