@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.17.0](https://github.com/happytodev/blogr/compare/v1.16.0...v1.17.0) - 2026-06-23
+
+### ✨ Features
+
+- **Settings search**: add search bar with live section filtering by keyword, tab badges with match count, search term highlighting, grayed-out tabs without results, and auto-switch to first matching tab
+
 ## [v1.16.0](https://github.com/happytodev/blogr/compare/v1.15.0...v1.16.0) - 2026-06-22
 
 ### ✨ Features
