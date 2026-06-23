@@ -175,7 +175,30 @@ class BlogPostForm
                             })
                             ->columnSpanFull()
                             ->minItems(1)
-                            ->reorderable(false),
+                            ->reorderable(false)
+                            ->afterStateHydrated(function (\Filament\Forms\Components\Repeater $component): void {
+                                $livewire = $component->getLivewire();
+                                if (! method_exists($livewire, 'getRecord')) {
+                                    return;
+                                }
+                                $record = $livewire->getRecord();
+                                if ($record instanceof \Happytodev\Blogr\Models\BlogPost) {
+                                    $draft = app(\Happytodev\Blogr\Services\VersioningService::class)->getPostDraft($record);
+                                    if ($draft && isset($draft->draft_data['translations'])) {
+                                        $data = $draft->draft_data['translations'];
+                                        // Normalize JSON-encoded strings back to arrays
+                                        array_walk_recursive($data, function (&$value) {
+                                            if (is_string($value) && str_starts_with($value, '[') && str_ends_with($value, ']')) {
+                                                $decoded = json_decode($value, true);
+                                                if (is_array($decoded)) {
+                                                    $value = $decoded;
+                                                }
+                                            }
+                                        });
+                                        $component->rawState($data);
+                                    }
+                                }
+                            }),
                     ])
                     ->columnSpanFull(),
 

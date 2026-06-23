@@ -897,6 +897,8 @@ class BlogrServiceProvider extends PackageServiceProvider
             '2026_06_10_000001_add_listing_fields_to_blog_posts_and_series',
             '2026_06_11_000002_create_blogr_translation_usage_table',
             '2026_06_13_000001_add_avatar_url_to_users_table',
+            '2026_06_16_000001_create_blog_post_drafts_table',
+            '2026_06_16_000002_create_blog_post_versions_table',
         ];
 
         // Add CMS migrations if CMS is enabled
@@ -904,6 +906,8 @@ class BlogrServiceProvider extends PackageServiceProvider
             $migrations[] = '2025_10_31_000001_create_cms_pages_table';
             $migrations[] = '2025_10_31_000002_create_cms_page_translations_table';
             $migrations[] = '2026_06_11_000001_add_is_complete_to_cms_page_translations';
+            $migrations[] = '2026_06_16_000003_create_cms_page_drafts_table';
+            $migrations[] = '2026_06_16_000004_create_cms_page_versions_table';
         }
 
         return $migrations;

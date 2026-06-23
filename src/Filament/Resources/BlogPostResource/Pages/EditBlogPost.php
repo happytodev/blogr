@@ -6,43 +6,162 @@ use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
+use Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm;
+use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Services\LocaleService;
 use Happytodev\Blogr\Services\Translation\CodeBlockPreserver;
 use Happytodev\Blogr\Services\Translation\TranslationProviderFactory;
 use Happytodev\Blogr\Services\TranslationUsageService;
+use Happytodev\Blogr\Services\VersioningService;
+use Happytodev\Blogr\Traits\AutoSave;
+use Happytodev\Blogr\Models\BlogPostVersion;
 use Illuminate\Support\Str;
 
 class EditBlogPost extends EditRecord
 {
+    use AutoSave;
+
     protected static string $resource = BlogPostResource::class;
+
+    public function mount(int|string $record = ''): void
+    {
+        parent::mount($record);
+        $this->initializeAutoSave();
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        $schema = BlogPostForm::configure($schema);
+        $components = $schema->getComponents();
+        $components[] = \Filament\Schemas\Components\View::make('blogr::components.auto-save-indicator');
+
+        return $schema->components($components);
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $draft = app(VersioningService::class)->getPostDraft($this->record);
+        if ($draft && isset($draft->draft_data['translations'])) {
+            $data['translations'] = $draft->draft_data['translations'];
+        }
+
+        return $data;
+    }
+
+    public function areFormActionsSticky(): bool
+    {
+        return true;
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            Actions\Action::make('saveAndPublish')
+                ->label('Save & Publish')
+                ->icon('heroicon-o-check-circle')
+                ->color('success')
+                ->action(function () {
+                    $this->saveAndPublish();
+                }),
+            Actions\Action::make('saveAsDraft')
+                ->label('Save as Draft')
+                ->icon('heroicon-o-cloud-arrow-up')
+                ->color('gray')
+                ->action(function () {
+                    $this->saveAsDraft();
+                }),
+            $this->getCancelFormAction(),
+        ];
+    }
+
+    protected function saveAsDraft(): void
+    {
+        $data = $this->data ?? [];
+        app(VersioningService::class)->savePostDraft($this->record, $data);
+
+        $this->lastAutoSaveAt = now()->toIso8601String();
+        $this->hasUnsavedChanges = false;
+        $this->refreshDraftState();
+
+        $this->record->load('translations');
+        $this->fillForm();
+
+        Notification::make()
+            ->title('Draft saved successfully')
+            ->success()
+            ->send();
+    }
+
+    protected function saveAndPublish(): void
+    {
+        $data = $this->data ?? [];
+
+        app(VersioningService::class)->savePostDraft($this->record, $data);
+        app(VersioningService::class)->publishPostDraft($this->record, $data['translations'] ?? []);
+
+        $this->record->load('translations');
+        $this->refreshDraftState();
+        $this->fillForm();
+
+        Notification::make()
+            ->title('Post published successfully')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Override parent save() to redirect to draft for published posts.
+     * Auto-saves go to drafts. Use "Save & Publish" to publish.
+     */
+    public function save(?bool $shouldRedirect = null, bool $shouldSendNotification = true): void
+    {
+        if ($this->record->is_published) {
+            $data = $this->data ?? [];
+
+            app(VersioningService::class)->savePostDraft($this->record, $data);
+
+            $this->record->load('translations');
+
+            $this->lastAutoSaveAt = now()->toIso8601String();
+            $this->hasUnsavedChanges = false;
+            $this->refreshDraftState();
+
+            $this->fillForm();
+
+            Notification::make()
+                ->title('Draft saved')
+                ->success()
+                ->send();
+        } else {
+            parent::save($shouldRedirect, $shouldSendNotification);
+        }
+    }
 
     protected function getHeaderActions(): array
     {
         $provider = app(TranslationProviderFactory::class)->make();
+        $actions = [];
 
-        if (! $provider) {
-            return [];
-        }
+        if ($provider) {
+            $existingLocales = $this->record->translations()
+                ->pluck('locale')
+                ->toArray();
 
-        $existingLocales = $this->record->translations()
-            ->pluck('locale')
-            ->toArray();
+            $allLocales = app(LocaleService::class)->getAvailable();
 
-        $allLocales = app(LocaleService::class)->getAvailable();
+            $sourceOptions = collect($allLocales)
+                ->filter(fn ($l) => in_array($l, $existingLocales))
+                ->mapWithKeys(fn ($l) => [$l => app(LocaleService::class)->localeLabel($l)])
+                ->toArray();
 
-        $sourceOptions = collect($allLocales)
-            ->filter(fn ($l) => in_array($l, $existingLocales))
-            ->mapWithKeys(fn ($l) => [$l => app(LocaleService::class)->localeLabel($l)])
-            ->toArray();
+            $targetOptions = collect($allLocales)
+                ->mapWithKeys(fn ($l) => [$l => app(LocaleService::class)->localeLabel($l)])
+                ->toArray();
 
-        $targetOptions = collect($allLocales)
-            ->mapWithKeys(fn ($l) => [$l => app(LocaleService::class)->localeLabel($l)])
-            ->toArray();
-
-        return [
-            Actions\Action::make('translateWithAI')
+            $actions[] = Actions\Action::make('translateWithAI')
                 ->label('Translate with AI')
                 ->icon('heroicon-o-language')
                 ->color('success')
@@ -59,13 +178,112 @@ class EditBlogPost extends EditRecord
                         ->rule('different:source_locale'),
                 ])
                 ->action(function (array $data) use ($provider) {
-                    $this->translateWithAI(
-                        $provider,
-                        $data['source_locale'],
-                        $data['target_locale']
-                    );
-                }),
-        ];
+                    $this->translateWithAI($provider, $data['source_locale'], $data['target_locale']);
+                });
+        }
+
+        $actions[] = Actions\Action::make('history')
+            ->label('History')
+            ->icon('heroicon-o-clock')
+            ->color('gray')
+            ->modalContent(function () {
+                $draft = app(VersioningService::class)->getPostDraft($this->record);
+                $draftEntry = null;
+                if ($draft && isset($draft->draft_data['translations'])) {
+                    $draftTranslations = $draft->draft_data['translations'];
+                    $fieldKeys = ['title', 'slug', 'tldr', 'content', 'seo_title', 'seo_description', 'seo_keywords'];
+                    $perLocaleFields = [];
+                    $perLocalePrevious = [];
+                    $allChanges = [];
+                    $firstTitle = null;
+
+                    foreach ($draftTranslations as $key => $transData) {
+                        $locale = $transData['locale'] ?? null;
+                        if (! $locale) continue;
+                        if (! $firstTitle && $transData['title']) {
+                            $firstTitle = $transData['title'];
+                        }
+                        $draftFields = array_intersect_key($transData, array_flip($fieldKeys));
+                        $perLocaleFields[$locale] = $draftFields;
+
+                        $translation = $this->record->translations()
+                            ->where('locale', $locale)
+                            ->first();
+                        if ($translation) {
+                            $lastVersion = app(VersioningService::class)->listVersions($translation)
+                                ->sortByDesc('version_number')
+                                ->first();
+                            if ($lastVersion) {
+                                $versionFields = $lastVersion->only($fieldKeys);
+                                $perLocalePrevious[$locale] = $versionFields;
+                                $normalize = fn ($v) => json_encode(is_array($v) ? array_values($v) : $v);
+                                $localeChanges = array_keys(array_diff_assoc(
+                                    array_map($normalize, $draftFields),
+                                    array_map($normalize, $versionFields)
+                                ));
+                                $allChanges = array_merge($allChanges, $localeChanges);
+                            } else {
+                                $allChanges = array_merge($allChanges, $fieldKeys);
+                            }
+                        }
+                    }
+
+                    $draftEntry = [
+                        'type' => 'draft',
+                        'title' => $firstTitle ?? 'Untitled',
+                        'created_at' => $draft->updated_at ?? $draft->created_at,
+                        'fields' => $perLocaleFields,
+                        'previous_fields' => $perLocalePrevious,
+                        'changes' => array_unique($allChanges),
+                        'locale_fields' => true,
+                    ];
+                }
+
+                $versions = collect();
+                foreach ($this->record->translations as $translation) {
+                    $translationVersions = app(VersioningService::class)->listVersions($translation);
+                    $prevVersion = null;
+                    foreach ($translationVersions->sortBy('version_number') as $v) {
+                        $currentFields = $v->only([
+                            'title', 'slug', 'tldr', 'content',
+                            'seo_title', 'seo_description', 'seo_keywords',
+                        ]);
+                        $previousFields = $prevVersion ? $prevVersion->only([
+                            'title', 'slug', 'tldr', 'content',
+                            'seo_title', 'seo_description', 'seo_keywords',
+                        ]) : [];
+                        $changes = $prevVersion
+                            ? array_keys(array_diff_assoc($currentFields, $previousFields))
+                            : ['initial'];
+                        $versions->push([
+                            'type' => 'version',
+                            'title' => $v->title,
+                            'version_number' => $v->version_number,
+                            'version_id' => $v->id,
+                            'translation_id' => $v->blog_post_translation_id,
+                            'locale' => $translation->locale,
+                            'created_at' => $v->created_at,
+                            'fields' => $currentFields,
+                            'previous_fields' => $prevVersion ? $previousFields : null,
+                            'changes' => $changes,
+                        ]);
+                        $prevVersion = $v;
+                    }
+                }
+
+                $history = collect($draftEntry ? [$draftEntry] : [])
+                    ->concat($versions)
+                    ->sortByDesc('created_at')
+                    ->take(50);
+
+                return view('blogr::components.version-history', [
+                    'history' => $history,
+                ]);
+            })
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Close');
+
+        return $actions;
     }
 
     protected function translateWithAI($provider, string $sourceLocale, string $targetLocale): void
@@ -140,9 +358,6 @@ class EditBlogPost extends EditRecord
         }
     }
 
-    // Notification is dispatched from BlogPost model's created() hook for new posts
-    // For updates, admins don't receive notifications (as per original design)
-
     protected function mutateFormDataBeforeSave(array $data): array
     {
         if (isset($data['blog_series_id']) && isset($data['series_position'])) {
@@ -159,5 +374,66 @@ class EditBlogPost extends EditRecord
         unset($data['series_position_custom']);
 
         return $data;
+    }
+
+    public function restoreVersion(int $versionId): void
+    {
+        $version = BlogPostVersion::findOrFail($versionId);
+        $translation = $version->translation;
+        if (! $translation || ! $translation->post) {
+            return;
+        }
+
+        $post = $translation->post;
+        $draft = app(VersioningService::class)->getPostDraft($post);
+        $currentData = $draft ? $draft->draft_data : [];
+
+        $versionData = $version->only([
+            'title', 'slug', 'content', 'tldr',
+            'seo_title', 'seo_description', 'seo_keywords', 'photo',
+        ]);
+
+        // Decode JSON strings back to arrays for Filament form components
+        foreach ($versionData as $key => &$value) {
+            if (is_string($value) && str_starts_with($value, '[') && str_ends_with($value, ']')) {
+                $decoded = json_decode($value, true);
+                if (is_array($decoded)) {
+                    $value = $decoded;
+                }
+            }
+        }
+        unset($value);
+
+        $translations = $currentData['translations'] ?? [];
+        $locale = $translation->locale;
+
+        $found = false;
+        foreach ($translations as $key => $transData) {
+            if (is_array($transData) && ($transData['locale'] ?? null) === $locale) {
+                $translations[$key] = array_merge($transData, $versionData);
+                $found = true;
+                break;
+            }
+        }
+
+        if (! $found) {
+            $translations[$locale] = array_merge(
+                ['locale' => $locale],
+                $versionData
+            );
+        }
+
+        $currentData['translations'] = $translations;
+        app(VersioningService::class)->savePostDraft($post, $currentData);
+
+        $this->lastAutoSaveAt = now()->toIso8601String();
+        $this->hasUnsavedChanges = false;
+        $this->record->load('translations');
+        $this->fillForm();
+
+        Notification::make()
+            ->title("Version {$version->version_number} restored to draft")
+            ->success()
+            ->send();
     }
 }

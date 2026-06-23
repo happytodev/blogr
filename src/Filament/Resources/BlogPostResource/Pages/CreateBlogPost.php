@@ -3,14 +3,65 @@
 namespace Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Schema;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
+use Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm;
 use Happytodev\Blogr\Jobs\SendPostNotificationJob;
 use Happytodev\Blogr\Models\BlogPost;
+use Happytodev\Blogr\Services\VersioningService;
+use Happytodev\Blogr\Traits\AutoSave;
 use Illuminate\Support\Facades\Log;
 
 class CreateBlogPost extends CreateRecord
 {
+    use AutoSave;
+
     protected static string $resource = BlogPostResource::class;
+
+    public function areFormActionsSticky(): bool
+    {
+        return true;
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        $schema = BlogPostForm::configure($schema);
+        $components = $schema->getComponents();
+        $components[] = View::make('blogr::components.auto-save-indicator');
+
+        return $schema->components($components);
+    }
+
+    public function mount(): void
+    {
+        parent::mount();
+        $this->initializeAutoSave();
+    }
+
+    protected function handleRecordCreation(array $data): BlogPost
+    {
+        if ($this->record && $this->record->exists) {
+            $draft = app(VersioningService::class)->getPostDraft($this->record);
+            if ($draft) {
+                $draft->delete();
+            }
+            $this->record->update($data);
+
+            return $this->record;
+        }
+
+        return parent::handleRecordCreation($data);
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        if ($this->record && $this->record->exists) {
+            return BlogPostResource::getUrl('edit', ['record' => $this->record]);
+        }
+
+        return parent::getRedirectUrl();
+    }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {

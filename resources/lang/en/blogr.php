@@ -126,4 +126,13 @@ return [
         'bio_translated' => 'Biography translated to :locale.',
         'translation_error' => 'Translation error',
     ],
+
+    // Auto-save
+    'auto_save' => [
+        'unsaved' => 'Unsaved changes',
+        'saved_at' => 'Auto-saved at',
+        'manually_saved_at' => 'Manually saved at',
+        'saving' => 'Saving...',
+        'error' => 'Auto-save error',
+    ],
 ];
