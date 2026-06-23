@@ -42,6 +42,8 @@ class BlogrSettings extends Page
 
     public string $admin_path = 'admin';
 
+    public ?int $auto_save_interval = null;
+
     public string $translation_provider = 'none';
 
     public string $translation_libretranslate_url = '';
@@ -269,6 +271,8 @@ class BlogrSettings extends Page
     public ?array $series_default_image = null; // FileUpload expects array
 
     public ?int $series_max_visible_posts = null;
+
+    public array $series_subtitles = [];
 
     public ?bool $enable_avatar_upload = null;
 
@@ -545,6 +549,13 @@ class BlogrSettings extends Page
             : (is_array($defaultImage) ? $defaultImage : null);
 
         $this->series_max_visible_posts = $config['series']['max_visible_posts'] ?? 10;
+        $this->series_subtitles = $config['series']['subtitle'] ?? [
+            'en' => 'Browse all our blog series and learn step by step.',
+            'fr' => 'Parcourez toutes nos séries et apprenez étape par étape.',
+            'es' => 'Explore todas nuestras series y aprende paso a paso.',
+            'de' => 'Durchstöbern Sie alle unsere Serien und lernen Sie Schritt für Schritt.',
+            'pl' => 'Przeglądaj wszystkie nasze serie i ucz się krok po kroku.',
+        ];
 
         $this->enable_avatar_upload = $config['enable_avatar_upload'] ?? true;
 
@@ -633,6 +644,8 @@ class BlogrSettings extends Page
 
         // Load admin panel path
         $this->admin_path = $config['admin_path'] ?? 'admin';
+
+        $this->auto_save_interval = $config['auto_save_interval'] ?? 30;
 
         $this->translation_provider = $config['translation']['provider'] ?? 'none';
         $this->translation_libretranslate_url = $config['translation']['libretranslate']['url'] ?? 'http://localhost:5000';
@@ -920,30 +933,52 @@ class BlogrSettings extends Page
 
                             Section::make('Series Settings')
                                 ->description('Configure blog series and default images')
-                                ->schema([
-                                    Toggle::make('series_enabled')
-                                        ->label('Enable Series')
-                                        ->default(true)
-                                        ->helperText('Allow grouping blog posts into series'),
-                                    TextInput::make('series_max_visible_posts')
-                                        ->label('Max visible posts')
-                                        ->numeric()
-                                        ->minValue(1)
-                                        ->maxValue(50)
-                                        ->default(10)
-                                        ->helperText('Number of posts shown in the series list before the "show more" toggle appears. Additional posts are hidden behind a click-to-expand link.')
-                                        ->columnSpan(1),
-                                    FileUpload::make('series_default_image')
-                                        ->label('Default Series Image')
-                                        ->image()
-                                        ->disk('public')
-                                        ->directory('blogr/series')
-                                        ->visibility('public')
-                                        ->imagePreviewHeight('100')
-                                        ->default('/vendor/blogr/images/default-series.svg')
-                                        ->helperText('Upload a default image for series without a custom photo. Accepts images only.')
-                                        ->columnSpan(2),
-                                ])
+                                ->schema(function () {
+                                    $availableLocales = config('blogr.locales.available', ['en']);
+                                    $localeNames = [
+                                        'en' => 'English',
+                                        'fr' => 'Français',
+                                        'es' => 'Español',
+                                        'de' => 'Deutsch',
+                                        'pl' => 'Polski',
+                                    ];
+
+                                    $fields = [
+                                        Toggle::make('series_enabled')
+                                            ->label('Enable Series')
+                                            ->default(true)
+                                            ->helperText('Allow grouping blog posts into series'),
+                                        TextInput::make('series_max_visible_posts')
+                                            ->label('Max visible posts')
+                                            ->numeric()
+                                            ->minValue(1)
+                                            ->maxValue(50)
+                                            ->default(10)
+                                            ->helperText('Number of posts shown in the series list before the "show more" toggle appears. Additional posts are hidden behind a click-to-expand link.')
+                                            ->columnSpan(1),
+                                        FileUpload::make('series_default_image')
+                                            ->label('Default Series Image')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('blogr/series')
+                                            ->visibility('public')
+                                            ->imagePreviewHeight('100')
+                                            ->default('/vendor/blogr/images/default-series.svg')
+                                            ->helperText('Upload a default image for series without a custom photo. Accepts images only.')
+                                            ->columnSpan(2),
+                                    ];
+
+                                    foreach ($availableLocales as $locale) {
+                                        $localeName = $localeNames[$locale] ?? strtoupper($locale);
+                                        $fields[] = TextInput::make("series_subtitles.{$locale}")
+                                            ->label("Series Subtitle ({$localeName})")
+                                            ->placeholder('Browse all our blog series and learn step by step.')
+                                            ->helperText('Subtitle text displayed on the series index page.')
+                                            ->columnSpan(2);
+                                    }
+
+                                    return $fields;
+                                })
                                 ->columns(2),
 
                             Section::make('Multilingual Settings')
@@ -1082,16 +1117,16 @@ class BlogrSettings extends Page
                                 ->columns(2)
                                 ->collapsible(),
 
-                            Section::make('About Blogr')
-                                ->description('Version information and resources')
+                            Section::make('Auto-save')
+                                ->description('Configure automatic saving of blog posts and CMS pages')
                                 ->schema([
-                                    Placeholder::make('blogr_version')
-                                        ->label('Version')
-                                        ->content(fn () => Blogr::getVersion()),
-                                    Placeholder::make('blogr_releases')
-                                        ->label('Releases')
-                                        ->content(fn () => 'https://blogr.happyto.dev/en/blog/v'.Blogr::getVersion())
-                                        ->view('blogr::filament.components.version-link'),
+                                    TextInput::make('auto_save_interval')
+                                        ->label('Auto-save interval (seconds)')
+                                        ->numeric()
+                                        ->minValue(0)
+                                        ->maxValue(600)
+                                        ->default(30)
+                                        ->helperText('How often the editor auto-saves your work. Set to 0 to disable auto-save. A beforeunload warning protects against accidental navigation when there are unsaved changes.'),
                                 ])
                                 ->columns(2)
                                 ->collapsible(),
@@ -1113,6 +1148,20 @@ class BlogrSettings extends Page
 
                                             return '/'.$path;
                                         }),
+                                ])
+                                ->columns(2)
+                                ->collapsible(),
+
+                            Section::make('About Blogr')
+                                ->description('Version information and resources')
+                                ->schema([
+                                    Placeholder::make('blogr_version')
+                                        ->label('Version')
+                                        ->content(fn () => Blogr::getVersion()),
+                                    Placeholder::make('blogr_releases')
+                                        ->label('Releases')
+                                        ->content(fn () => 'https://blogr.happyto.dev/en/blog/v'.Blogr::getVersion())
+                                        ->view('blogr::filament.components.version-link'),
                                 ])
                                 ->columns(2)
                                 ->collapsible(),
@@ -2570,6 +2619,7 @@ class BlogrSettings extends Page
                 'default_image' => is_array($this->series_default_image) && ! empty($this->series_default_image)
                     ? $this->series_default_image[0]
                     : ($this->series_default_image ?? '/vendor/blogr/images/default-series.svg'),
+                'subtitle' => $this->series_subtitles ?? [],
             ],
             'toc' => [
                 'enabled' => $this->toc_enabled,
@@ -2746,8 +2796,11 @@ class BlogrSettings extends Page
 
         $data['enable_avatar_upload'] = $this->enable_avatar_upload ?? true;
 
+        $data['auto_save_interval'] = $this->auto_save_interval ?? 30;
+
         // Apply at runtime immediately
         config()->set('blogr.enable_avatar_upload', $this->enable_avatar_upload ?? true);
+        config()->set('blogr.auto_save_interval', $this->auto_save_interval ?? 30);
 
         // Log logo path for debugging
         \Log::info('BlogrSettings: Saving logo path to config', [

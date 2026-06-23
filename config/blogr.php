@@ -6,6 +6,8 @@ return [
 
     'admin_path' => env('BLOGR_ADMIN_PATH', 'admin'),  // Admin panel path
 
+    'auto_save_interval' => 30, // Auto-save interval in seconds for blog posts and CMS pages (0 = disabled)
+
     'route' => [
         'frontend' => [
             'enabled' => true,
@@ -131,6 +133,13 @@ return [
         'enabled' => true,
         'default_image' => '/vendor/blogr/images/default-series.svg', // Default image for series without photo
         'max_visible_posts' => 10, // Max posts shown in series list before "show more" toggle
+        'subtitle' => [
+            'en' => 'Browse all our blog series and learn step by step.',
+            'fr' => 'Parcourez toutes nos séries et apprenez étape par étape.',
+            'es' => 'Explore todas nuestras series y aprende paso a paso.',
+            'de' => 'Durchstöbern Sie alle unsere Serien und lernen Sie Schritt für Schritt.',
+            'pl' => 'Przeglądaj wszystkie nasze serie i ucz się krok po kroku.',
+        ],
     ],
 
     /*

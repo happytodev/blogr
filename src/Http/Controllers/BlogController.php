@@ -717,9 +717,13 @@ class BlogController
                 return $s;
             });
 
+        $subtitle = config('blogr.series.subtitle.' . $locale)
+            ?? config('blogr.series.subtitle.en')
+            ?? 'Browse all our blog series and learn step by step.';
+
         $seoData = [
             'title' => 'Blog Series - '.config('app.name'),
-            'description' => 'Browse all our blog series and learn step by step.',
+            'description' => $subtitle,
             'canonical' => config('blogr.locales.enabled')
                 ? route('blog.series.index', ['locale' => $locale])
                 : route('blog.series.index'),

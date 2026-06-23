@@ -11,7 +11,7 @@
         <!-- Page Header -->
         <div class="mb-12 text-center">
             <h1 class="text-5xl font-bold mb-4 text-gray-900 dark:text-white">Blog Series</h1>
-            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Browse all our blog series and learn step by step</p>
+            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{{ $seoData['description'] ?? config('blogr.series.subtitle.' . ($currentLocale ?? 'en'), 'Browse all our blog series and learn step by step.') }}</p>
         </div>
 
         <!-- Series Grid -->
