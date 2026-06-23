@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.17.7](https://github.com/happytodev/blogr/compare/v1.17.6...v1.17.7) - 2026-06-23
+
+### 🐛 Bug Fixes
+
+- **Version history**: add all missing amber base classes (`bg-amber-50`, `text-amber-700`, `border-amber-200`, etc.) and indigo base classes to the inline `<style>` block, making the view fully self-contained
+
 ## [v1.17.6](https://github.com/happytodev/blogr/compare/v1.17.5...v1.17.6) - 2026-06-23
 
 ### 🐛 Bug Fixes
