@@ -1,3 +1,19 @@
+<style>
+/* Version history - custom variant classes (amber is not in Filament's CSS) */
+.dark .dark\:bg-amber-900\/20 { background-color: color-mix(in srgb, #78350f 20%, transparent); }
+.dark .dark\:bg-amber-900\/10 { background-color: color-mix(in srgb, #78350f 10%, transparent); }
+.dark .dark\:bg-amber-700 { background-color: #b45309; }
+.dark .dark\:bg-amber-700\/40 { background-color: color-mix(in srgb, #b45309 40%, transparent); }
+.dark .dark\:hover\:bg-amber-900\/40:hover { background-color: color-mix(in srgb, #78350f 40%, transparent); }
+.dark .dark\:border-amber-800 { border-color: #92400e; }
+.dark .dark\:border-amber-800\/50 { border-color: color-mix(in srgb, #92400e 50%, transparent); }
+.dark .dark\:border-amber-800\/30 { border-color: color-mix(in srgb, #92400e 30%, transparent); }
+.dark .dark\:text-amber-100 { color: #fef3c7; }
+.dark .dark\:text-amber-300 { color: #fcd34d; }
+.dark .dark\:text-amber-400 { color: #fbbf24; }
+.hover\:bg-amber-100:hover { background-color: #fef3c7; }
+.dark .dark\:text-sky-400 { color: #38bdf8; }
+</style>
 <div class="space-y-3 max-h-96 overflow-y-auto">
     @forelse($history as $entry)
         @if(($entry['type'] ?? '') === 'draft')
