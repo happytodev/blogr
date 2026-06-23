@@ -50,7 +50,7 @@ it('falls back to english subtitle when locale not found', function () {
     ]]);
 
     $locale = 'pl';
-    $subtitle = config('blogr.series.subtitle.' . $locale)
+    $subtitle = config('blogr.series.subtitle.'.$locale)
         ?? config('blogr.series.subtitle.en')
         ?? 'Browse all our blog series and learn step by step.';
 
@@ -65,7 +65,7 @@ it('has readable polish subtitle', function () {
 
 it('series subtitle appears in series index seo', function () {
     $locale = 'en';
-    $subtitle = config('blogr.series.subtitle.' . $locale)
+    $subtitle = config('blogr.series.subtitle.'.$locale)
         ?? config('blogr.series.subtitle.en')
         ?? 'Browse all our blog series and learn step by step.';
 

@@ -1,12 +1,12 @@
 <?php
 
-use Happytodev\Blogr\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Workbench\App\Models\User as WorkbenchUser;
 
 use function Pest\Laravel\actingAs;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 it('shows auto-save indicator span after page load', function () {
     $user = WorkbenchUser::factory()->create([

@@ -1,12 +1,15 @@
 <?php
 
-use Happytodev\Blogr\Filament\Resources\BlogPostResource;
+use Happytodev\Blogr\Filament\Pages\BlogrSettings;
+use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\CmsTestCase;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-uses(Happytodev\Blogr\Tests\CmsTestCase::class);
+uses(CmsTestCase::class);
 
 beforeEach(function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
@@ -35,13 +38,13 @@ it('has auto_save_interval config default of 30', function () {
 });
 
 it('initializes lastAutoSaveAt on mount', function () {
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost::class, [
+    Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ])->assertSet('lastAutoSaveAt', fn ($v) => $v !== null);
 });
 
 it('detects changes via snapshot comparison', function () {
-    $component = \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost::class, [
+    $component = Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ]);
 
@@ -59,7 +62,7 @@ it('detects changes via snapshot comparison', function () {
 });
 
 it('has auto save interval field in settings', function () {
-    $response = $this->get(\Happytodev\Blogr\Filament\Pages\BlogrSettings::getUrl());
+    $response = $this->get(BlogrSettings::getUrl());
 
     $response->assertStatus(200);
     $response->assertSee('Auto-save interval');

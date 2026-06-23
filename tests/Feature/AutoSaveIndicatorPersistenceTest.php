@@ -4,9 +4,11 @@ use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Tests\CmsTestCase;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-uses(Happytodev\Blogr\Tests\CmsTestCase::class);
+uses(CmsTestCase::class);
 
 beforeEach(function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
@@ -31,13 +33,13 @@ beforeEach(function () {
 });
 
 it('sets lastAutoSaveAt on mount', function () {
-    \Livewire\Livewire::test(EditBlogPost::class, [
+    Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ])->assertSet('lastAutoSaveAt', fn ($v) => $v !== null);
 });
 
 it('keeps lastAutoSaveAt unchanged after autoSave with no changes', function () {
-    $component = \Livewire\Livewire::test(EditBlogPost::class, [
+    $component = Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ]);
 
@@ -52,7 +54,7 @@ it('keeps lastAutoSaveAt unchanged after autoSave with no changes', function () 
 });
 
 it('keeps lastAutoSaveAt after autoSave with instance data change', function () {
-    $component = \Livewire\Livewire::test(EditBlogPost::class, [
+    $component = Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ]);
 
@@ -60,7 +62,7 @@ it('keeps lastAutoSaveAt after autoSave with instance data change', function () 
     expect($tsBefore)->not->toBeNull();
 
     // Modify instance data and call autoSave
-    $component->instance()->data['default_locale'] = 'changed_' . time();
+    $component->instance()->data['default_locale'] = 'changed_'.time();
     $component->call('autoSave');
 
     // lastAutoSaveAt must persist (not become null)
@@ -69,7 +71,7 @@ it('keeps lastAutoSaveAt after autoSave with instance data change', function () 
 });
 
 it('maintains lastAutoSaveAt after autoSave with no changes', function () {
-    $component = \Livewire\Livewire::test(EditBlogPost::class, [
+    $component = Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ]);
 
@@ -86,7 +88,7 @@ it('maintains lastAutoSaveAt after autoSave with no changes', function () {
 });
 
 it('keeps lastAutoSaveAt after multiple autoSave calls', function () {
-    $component = \Livewire\Livewire::test(EditBlogPost::class, [
+    $component = Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ]);
 
@@ -98,7 +100,7 @@ it('keeps lastAutoSaveAt after multiple autoSave calls', function () {
 });
 
 it('sets lastManualSaveAt after manualSave', function () {
-    $component = \Livewire\Livewire::test(EditBlogPost::class, [
+    $component = Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ]);
 
@@ -109,7 +111,7 @@ it('sets lastManualSaveAt after manualSave', function () {
 });
 
 it('manualSave dispatches manual-saved event', function () {
-    $component = \Livewire\Livewire::test(EditBlogPost::class, [
+    $component = Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ]);
 
@@ -120,7 +122,7 @@ it('manualSave dispatches manual-saved event', function () {
 });
 
 it('manualSave calls autoSave and updates lastAutoSaveAt', function () {
-    $component = \Livewire\Livewire::test(EditBlogPost::class, [
+    $component = Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ]);
 

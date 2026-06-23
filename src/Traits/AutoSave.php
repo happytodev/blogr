@@ -4,9 +4,12 @@ namespace Happytodev\Blogr\Traits;
 
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
+use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Services\VersioningService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 trait AutoSave
 {
@@ -29,7 +32,7 @@ trait AutoSave
             : null;
         $timestamp = $draft
             ? $draft->updated_at->toIso8601String()
-            : (($record instanceof \Illuminate\Database\Eloquent\Model)
+            : (($record instanceof Model)
                 ? $record->updated_at?->toIso8601String()
                 : now()->toIso8601String());
         $this->lastAutoSaveAt = $timestamp;
@@ -69,6 +72,7 @@ trait AutoSave
                 $this->lastAutoSaveAt = now()->toIso8601String();
                 $this->hasUnsavedChanges = false;
                 $this->dispatch('auto-saved');
+
                 return;
             }
 
@@ -98,7 +102,7 @@ trait AutoSave
             } elseif (auth()->check()) {
                 $placeholder = BlogPost::create([
                     'user_id' => auth()->id(),
-                    'category_id' => $currentState['category_id'] ?? \Happytodev\Blogr\Models\Category::first()?->id ?? 1,
+                    'category_id' => $currentState['category_id'] ?? Category::first()?->id ?? 1,
                 ]);
                 if ($placeholder->exists) {
                     // Create a translation from the first translation data so the post
@@ -107,7 +111,7 @@ trait AutoSave
                     $firstKey = array_key_first($translations);
                     if ($firstKey !== null && isset($translations[$firstKey]['title'])) {
                         $title = $translations[$firstKey]['title'];
-                        $slug = $translations[$firstKey]['slug'] ?? \Illuminate\Support\Str::slug($title);
+                        $slug = $translations[$firstKey]['slug'] ?? Str::slug($title);
                         $locale = $translations[$firstKey]['locale'] ?? $currentState['default_locale'] ?? app()->getLocale();
                         $placeholder->translations()->create([
                             'locale' => $locale,

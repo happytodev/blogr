@@ -1,12 +1,16 @@
 <?php
 
+use Happytodev\Blogr\Filament\Resources\BlogPostResource;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\CreateBlogPost;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Services\VersioningService;
+use Happytodev\Blogr\Tests\CmsTestCase;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-uses(Happytodev\Blogr\Tests\CmsTestCase::class);
+uses(CmsTestCase::class);
 
 beforeEach(function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
@@ -21,23 +25,23 @@ beforeEach(function () {
 });
 
 it('mounts CreateBlogPost without error', function () {
-    $component = \Livewire\Livewire::test(CreateBlogPost::class);
+    $component = Livewire::test(CreateBlogPost::class);
 
     $component->assertStatus(200);
 });
 
 it('initializes lastAutoSaveAt on mount', function () {
-    \Livewire\Livewire::test(CreateBlogPost::class)
+    Livewire::test(CreateBlogPost::class)
         ->assertSet('lastAutoSaveAt', fn ($v) => $v !== null);
 });
 
 it('has unsaved changes set to false initially', function () {
-    \Livewire\Livewire::test(CreateBlogPost::class)
+    Livewire::test(CreateBlogPost::class)
         ->assertSet('hasUnsavedChanges', false);
 });
 
 it('detects changes via snapshot comparison', function () {
-    $component = \Livewire\Livewire::test(CreateBlogPost::class);
+    $component = Livewire::test(CreateBlogPost::class);
     $component->assertSet('hasUnsavedChanges', false);
 
     // Simulate a form change
@@ -49,7 +53,7 @@ it('detects changes via snapshot comparison', function () {
 
 it('creates placeholder BlogPost on auto-save when no record exists', function () {
     // Simulate what the autoSave method does for placeholder creation
-    $categoryId = \Happytodev\Blogr\Models\Category::first()->id ?? 1;
+    $categoryId = Category::first()->id ?? 1;
     $record = BlogPost::create([
         'user_id' => auth()->id(),
         'category_id' => $categoryId,
@@ -62,7 +66,7 @@ it('creates placeholder BlogPost on auto-save when no record exists', function (
 
     // Test that a draft can be saved for this placeholder
     $data = ['title' => 'Test', 'translations' => []];
-    $draft = app(\Happytodev\Blogr\Services\VersioningService::class)
+    $draft = app(VersioningService::class)
         ->savePostDraft($record, $data);
     expect($draft)->not->toBeNull();
     expect($draft->draft_data['title'])->toBe('Test');
@@ -79,7 +83,7 @@ it('has form actions sticky indicator component', function () {
 
 it('redirects to edit page when placeholder post exists', function () {
     // Create a placeholder post directly
-    $categoryId = \Happytodev\Blogr\Models\Category::first()->id ?? 1;
+    $categoryId = Category::first()->id ?? 1;
     $placeholder = BlogPost::create([
         'user_id' => auth()->id(),
         'category_id' => $categoryId,
@@ -87,7 +91,7 @@ it('redirects to edit page when placeholder post exists', function () {
     expect($placeholder->exists)->toBeTrue();
 
     // Verify the edit URL can be generated for this post
-    $editUrl = \Happytodev\Blogr\Filament\Resources\BlogPostResource::getUrl('edit', ['record' => $placeholder]);
+    $editUrl = BlogPostResource::getUrl('edit', ['record' => $placeholder]);
     expect($editUrl)->toContain('edit');
     expect($editUrl)->toContain((string) $placeholder->id);
 
@@ -103,7 +107,7 @@ it('has auto save interval config', function () {
 });
 
 it('sets title on placeholder post from first translation', function () {
-    $categoryId = \Happytodev\Blogr\Models\Category::first()->id ?? 1;
+    $categoryId = Category::first()->id ?? 1;
 
     // Simulate what autoSave does: create a placeholder and create a translation
     $placeholder = BlogPost::create([

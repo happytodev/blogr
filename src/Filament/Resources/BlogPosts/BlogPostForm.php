@@ -21,6 +21,7 @@ use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Services\LocaleService;
+use Happytodev\Blogr\Services\VersioningService;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
@@ -176,14 +177,14 @@ class BlogPostForm
                             ->columnSpanFull()
                             ->minItems(1)
                             ->reorderable(false)
-                            ->afterStateHydrated(function (\Filament\Forms\Components\Repeater $component): void {
+                            ->afterStateHydrated(function (Repeater $component): void {
                                 $livewire = $component->getLivewire();
                                 if (! method_exists($livewire, 'getRecord')) {
                                     return;
                                 }
                                 $record = $livewire->getRecord();
-                                if ($record instanceof \Happytodev\Blogr\Models\BlogPost) {
-                                    $draft = app(\Happytodev\Blogr\Services\VersioningService::class)->getPostDraft($record);
+                                if ($record instanceof BlogPost) {
+                                    $draft = app(VersioningService::class)->getPostDraft($record);
                                     if ($draft && isset($draft->draft_data['translations'])) {
                                         $data = $draft->draft_data['translations'];
                                         // Normalize JSON-encoded strings back to arrays

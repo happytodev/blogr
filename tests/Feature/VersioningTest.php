@@ -1,15 +1,17 @@
 <?php
 
+use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostDraft;
-use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\BlogPostVersion;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Services\VersioningService;
+use Happytodev\Blogr\Tests\CmsTestCase;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-uses(Happytodev\Blogr\Tests\CmsTestCase::class);
+uses(CmsTestCase::class);
 
 beforeEach(function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
@@ -48,7 +50,7 @@ it('creates draft for published post on auto-save', function () {
 });
 
 it('autoSave via Livewire does not modify live translations', function () {
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost::class, [
+    Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ])
         ->set('data.translations.0.title', 'Changed via Livewire')
@@ -242,7 +244,7 @@ it('stores all text fields in version', function () {
 });
 
 it('has form actions for Save & Publish, Save as Draft, Cancel', function () {
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost::class, [
+    Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ])
         ->assertSee('Save & Publish')
@@ -250,7 +252,7 @@ it('has form actions for Save & Publish, Save as Draft, Cancel', function () {
 });
 
 it('has history action in header', function () {
-    \Livewire\Livewire::test(\Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost::class, [
+    Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ])
         ->assertSee('History');

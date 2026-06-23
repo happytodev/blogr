@@ -717,7 +717,7 @@ class BlogController
                 return $s;
             });
 
-        $subtitle = config('blogr.series.subtitle.' . $locale)
+        $subtitle = config('blogr.series.subtitle.'.$locale)
             ?? config('blogr.series.subtitle.en')
             ?? 'Browse all our blog series and learn step by step.';
 

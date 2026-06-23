@@ -6,18 +6,19 @@ use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
 use Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
+use Happytodev\Blogr\Models\BlogPostVersion;
 use Happytodev\Blogr\Services\LocaleService;
 use Happytodev\Blogr\Services\Translation\CodeBlockPreserver;
 use Happytodev\Blogr\Services\Translation\TranslationProviderFactory;
 use Happytodev\Blogr\Services\TranslationUsageService;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Traits\AutoSave;
-use Happytodev\Blogr\Models\BlogPostVersion;
 use Illuminate\Support\Str;
 
 class EditBlogPost extends EditRecord
@@ -36,7 +37,7 @@ class EditBlogPost extends EditRecord
     {
         $schema = BlogPostForm::configure($schema);
         $components = $schema->getComponents();
-        $components[] = \Filament\Schemas\Components\View::make('blogr::components.auto-save-indicator');
+        $components[] = View::make('blogr::components.auto-save-indicator');
 
         return $schema->components($components);
     }
@@ -199,7 +200,9 @@ class EditBlogPost extends EditRecord
 
                     foreach ($draftTranslations as $key => $transData) {
                         $locale = $transData['locale'] ?? null;
-                        if (! $locale) continue;
+                        if (! $locale) {
+                            continue;
+                        }
                         if (! $firstTitle && $transData['title']) {
                             $firstTitle = $transData['title'];
                         }
