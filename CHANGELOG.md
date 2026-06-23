@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.17.6](https://github.com/happytodev/blogr/compare/v1.17.5...v1.17.6) - 2026-06-23
+
+### 🐛 Bug Fixes
+
+- **Version history**: add inline `<style>` block with amber/sky Tailwind variant classes directly in the view, since these custom colors are not provided by Filament's CSS and the package's built CSS is not loaded in the admin panel
+
 ## [v1.17.5](https://github.com/happytodev/blogr/compare/v1.17.4...v1.17.5) - 2026-06-23
 
 ### 🐛 Bug Fixes
