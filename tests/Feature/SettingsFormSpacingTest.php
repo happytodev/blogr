@@ -12,9 +12,8 @@ test('settings form has proper spacing between form and submit button', function
 
     $content = file_get_contents($viewPath);
 
-    // Check that the submit button container has proper spacing classes
-    expect($content)->toContain('!pt-16');
-    expect($content)->toContain('!mt-16');
+    expect($content)->toContain('padding-top: 64px');
+    expect($content)->toContain('margin-top: 64px');
 });
 
 test('settings form has visible border separator', function () {
@@ -25,10 +24,7 @@ test('settings form has visible border separator', function () {
 
     $content = file_get_contents($viewPath);
 
-    // Check that the border is visible with proper styling
-    expect($content)->toContain('border-t-2');
-    expect($content)->toContain('border-gray-200');
-    expect($content)->toContain('dark:border-gray-700');
+    expect($content)->toContain('border-top: 2px solid #e5e7eb');
 });
 
 test('settings form submit button is right-aligned', function () {
@@ -39,6 +35,5 @@ test('settings form submit button is right-aligned', function () {
 
     $content = file_get_contents($viewPath);
 
-    // Check that the button container uses flex justify-end
-    expect($content)->toContain('flex justify-end');
+    expect($content)->toContain('justify-content: flex-end');
 });
