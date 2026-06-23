@@ -9,8 +9,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-use Spatie\Permission\Models\Role;
 use Happytodev\Blogr\Models\User;
+use Spatie\Permission\Models\Role;
 
 it('has a search input for filtering settings sections', function () {
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
