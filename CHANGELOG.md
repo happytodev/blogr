@@ -2,6 +2,25 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.16.0](https://github.com/happytodev/blogr/compare/v1.15.0...v1.16.0) - 2026-06-22
+
+### ✨ Features
+
+- **Auto-save with draft/versioning**: auto-save writes to `blog_post_drafts` without touching published translations. New BlogPostDraft/Version and CmsPageDraft/Version models. History with line-by-line diff. "Save & Publish" / "Save as Draft" for posts AND CMS pages.
+- **Cmd+S / Ctrl+S**: manual save with distinct "Manually saved at" indicator.
+- **History diff**: clickable modal showing changed fields between versions, with text diff (+, −, ▲ X chars) and per-field block diff.
+- **Draft vs published diff**: current draft is compared to the last published version with the same diff rendering.
+- **Auto-save on Create page**: first auto-save creates a placeholder BlogPost with title, redirects to edit.
+- **Configurable series subtitle**: multilingual subtitle field in Settings > Series Settings.
+- **CMS page support**: auto-save, history, Cmd+S and diff also work on CMS pages.
+
+### 🐛 Bug Fixes
+
+- **Schema::getState() side-effect**: replaced with getRawState() / $this->data to prevent `saveRelationships()` from writing to live translations.
+- **Repeater fillFromRelationship()**: afterStateHydrated loads draft data after the Repeater overwrites with fillFromRelationship().
+- **Indicator DOM persistence**: ensureInDOM() re-injects the indicator element after each Livewire re-render.
+- **Array comparison for blocks**: comparison via array_values() to ignore UUID differences between draft and version.
+
 ## [v1.15.0](https://github.com/happytodev/blogr/compare/v1.14.0...v1.15.0) - 2026-06-14
 
 ### ✨ Features
