@@ -9,6 +9,27 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
+use Spatie\Permission\Models\Role;
+use Happytodev\Blogr\Models\User;
+
+it('has a search input for filtering settings sections', function () {
+    Role::create(['name' => 'admin', 'guard_name' => 'web']);
+    User::factory()->create()->assignRole('admin');
+
+    $this->actingAs(User::first());
+    $response = $this->get(BlogrSettings::getUrl());
+
+    $response->assertStatus(200);
+
+    // Search input
+    $response->assertSee('id="blogr-settings-search"', false);
+    $response->assertSee('type="search"', false);
+
+    // Tab panels rendered with class our JS queries
+    $response->assertSee('fi-sc-tabs-tab', false);
+    $response->assertSee('role="tabpanel"', false);
+});
+
 it('can render blogr settings page without errors', function () {
     // Test that the page can be instantiated
     $page = app(BlogrSettings::class);

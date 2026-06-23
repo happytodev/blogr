@@ -82,6 +82,8 @@ return [
         'saved_successfully' => 'Settings saved successfully!',
         'run_sync_command' => 'To apply the new admin panel path, run: php artisan blogr:sync-admin-path',
         'env_not_writable' => 'Warning: the .env file is not writable. Mail credentials were not saved.',
+        'search_placeholder' => 'Search settings...',
+        'no_search_results' => 'No settings match your search for ',
     ],
 
     // Feeds

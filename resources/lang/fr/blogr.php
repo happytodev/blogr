@@ -82,6 +82,8 @@ return [
         'saved_successfully' => 'Paramètres enregistrés avec succès !',
         'run_sync_command' => 'Pour appliquer le nouveau chemin d\'accès à l\'interface d\'administration, exécutez en console : php artisan blogr:sync-admin-path',
         'env_not_writable' => 'Attention : le fichier .env n\'est pas accessible en écriture. Les identifiants mail n\'ont pas été sauvegardés.',
+        'search_placeholder' => 'Rechercher dans les paramètres...',
+        'no_search_results' => 'Aucun paramètre ne correspond à votre recherche pour ',
     ],
 
     // Feeds
