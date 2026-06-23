@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.17.2](https://github.com/happytodev/blogr/compare/v1.17.1...v1.17.2) - 2026-06-23
+
+### 🐛 Bug Fixes
+
+- **Settings search**: revert inline styles back to Tailwind CSS classes (the real fix is running `vendor:publish`), update spacing tests accordingly
+
 ## [v1.17.1](https://github.com/happytodev/blogr/compare/v1.17.0...v1.17.1) - 2026-06-23
 
 ### 🐛 Bug Fixes
