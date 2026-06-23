@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.17.1](https://github.com/happytodev/blogr/compare/v1.17.0...v1.17.1) - 2026-06-23
+
+### 🐛 Bug Fixes
+
+- **Settings search**: replace Tailwind CSS classes with inline styles to fix search bar display in Filament admin panel (Tailwind utilities are not included in Filament's pre-built CSS)
+
 ## [v1.17.0](https://github.com/happytodev/blogr/compare/v1.16.0...v1.17.0) - 2026-06-23
 
 ### ✨ Features
