@@ -1,19 +1,19 @@
 <x-filament-panels::page>
-    <div style="margin-bottom: 16px;">
-        <div style="position: relative;">
-            <svg style="pointer-events: none; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: #9ca3af;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+    <div class="mb-4">
+        <div class="relative">
+            <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
             </svg>
             <input
                 type="search"
                 id="blogr-settings-search"
                 placeholder="{{ __('blogr::blogr.settings.search_placeholder') }}"
-                style="display: block; width: 100%; border-radius: 8px; border: 1px solid #d1d5db; background: #fff; padding: 8px 12px 8px 40px; font-size: 14px; line-height: 20px; color: #111827; outline: none; box-sizing: border-box;"
+                class="block w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm text-gray-900 placeholder-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-primary-400"
             />
         </div>
     </div>
 
-    <div id="blogr-no-results" style="display: none; margin-bottom: 16px; border-radius: 8px; background: #fef9c3; padding: 16px; font-size: 14px; color: #854d0e;">
+    <div id="blogr-no-results" class="mb-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 p-4 text-sm text-yellow-800 dark:text-yellow-200" style="display: none;">
         {{ __('blogr::blogr.settings.no_search_results') }}"<span id="blogr-search-term"></span>"
     </div>
 
@@ -22,7 +22,7 @@
             {{ $this->form }}
         </div>
 
-        <div style="display: flex; justify-content: flex-end; padding-top: 64px; margin-top: 64px; border-top: 2px solid #e5e7eb;">
+        <div class="flex justify-end !pt-16 !mt-16 border-t-2 border-gray-200 dark:border-gray-700" style="margin-top: 16px;">
             <x-filament::button
                 type="submit"
                 color="primary"
