@@ -80,6 +80,17 @@ composer serve                                  # Start testbench dev server
 
 The `config/blogr.php` has duplicate keys (`locales`, `cms`, `posts` are defined twice). The first occurrence takes effect for config loaded before boot; the second takes effect in some runtime paths. Be aware when reading config values.
 
+## ⚠️ CSS build requirement — ZERO TOLERANCE
+
+**Before every release, run `npm run build` BEFORE `vendor/bin/pest --parallel`.** The CSS is compiled by Tailwind v4 via Vite and only includes classes detected in the source files at build time. If view files change without rebuilding, the dist CSS will be stale and Tailwind classes won't render in production.
+
+This applies to:
+- **Every release** — `npm run build` must be the first step of the release workflow
+- **Any change to Blade files** in `resources/views/` that add or modify Tailwind classes
+- **Any change to `resources/css/index.css`**
+
+The built CSS (`resources/dist/blogr.css`) MUST be committed alongside view changes.
+
 ## CI
 
 - Runs on `ubuntu-latest`, PHP 8.4, Laravel 12.*, `prefer-stable`.
