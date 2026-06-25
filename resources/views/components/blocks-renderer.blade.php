@@ -13,8 +13,10 @@ $blocksData = $blocksData ?? [];
     $isTransitionBlock = str_starts_with($type, 'transition-');
     
     // Detect adjacent blocks for intelligent color calculations
-    $previousBlock = ($index > 0) ? $blocksData[$index - 1] : null;
-    $nextBlock = ($index < count($blocksData) - 1) ? $blocksData[$index + 1] : null;
+    // Use intval to protect against non-numeric string keys (e.g., associative array)
+    $intIndex = is_numeric($index) ? (int) $index : -1;
+    $previousBlock = ($intIndex > 0) ? $blocksData[$intIndex - 1] : null;
+    $nextBlock = ($intIndex >= 0 && $intIndex < count($blocksData) - 1) ? $blocksData[$intIndex + 1] : null;
     @endphp
     
     @if($type && view()->exists($componentView))
