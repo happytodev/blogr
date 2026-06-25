@@ -852,11 +852,8 @@ class BlogrServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
-            // AlpineComponent::make('blogr', __DIR__ . '/../resources/dist/components/blogr.js'),
-
-            // The 2 folllowing are commented out as they are not used in the current context.
-            // Css::make('blogr-styles', __DIR__ . '/../resources/dist/blogr.css'),
-            // Js::make('blogr-scripts', __DIR__ . '/../resources/dist/blogr.js'),
+            Css::make('blogr-styles', __DIR__ . '/../resources/dist/blogr.css'),
+            Js::make('blogr-scripts', __DIR__ . '/../resources/dist/blogr.js'),
         ];
     }
 
