@@ -3,7 +3,6 @@
 namespace Happytodev\Blogr;
 
 use App\Models\User;
-use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
@@ -852,8 +851,8 @@ class BlogrServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
-            Css::make('blogr-styles', __DIR__ . '/../resources/dist/blogr.css'),
-            Js::make('blogr-scripts', __DIR__ . '/../resources/dist/blogr.js'),
+            Css::make('blogr-styles', __DIR__.'/../resources/dist/blogr.css'),
+            Js::make('blogr-scripts', __DIR__.'/../resources/dist/blogr.js'),
         ];
     }
 
