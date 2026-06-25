@@ -2,6 +2,17 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.17.8](https://github.com/happytodev/blogr/compare/v1.17.7...v1.17.8) - 2026-06-25
+
+### 🐛 Bug Fixes
+
+- **Blocks renderer**: prevent `TypeError: Unsupported operand types: string - int` when blocks data uses associative array keys — use `intval()` guard for PHP 8.4 compatibility
+
+### 📝 Documentation
+
+- **AGENTS.md**: merge with external project conventions — add Resources, Code Conventions, Security Notes, Git & Branches, and Local Dev sections
+- **Skills**: add and translate 9 OpenCode skills (git-changelog-workflow, harness-evolution, merge-conflict-resolver, hotfix-cherry-pick, safe-dependency-update, sprint-isolation, issue-to-mr, owasp-critical-audit) from French to English, adapted for Blogr (GitLab → GitHub, Cursor → OpenCode, Breeze → Filament v4, `app/` → `src/`)
+
 ## [v1.17.7](https://github.com/happytodev/blogr/compare/v1.17.6...v1.17.7) - 2026-06-23
 
 ### 🐛 Bug Fixes
