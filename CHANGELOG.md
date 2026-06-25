@@ -2,6 +2,12 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [Unreleased]
+
+### 🐛 Bug Fixes
+
+- **Version history**: register built `blogr.css` in Filament's asset pipeline — remove inline `<style>` workaround that was incomplete (missing `dark:bg-indigo-900/30`, `dark:bg-indigo-900/15`) and relied on `color-mix()`
+
 ## [v1.17.8](https://github.com/happytodev/blogr/compare/v1.17.7...v1.17.8) - 2026-06-25
 
 ### 🐛 Bug Fixes
