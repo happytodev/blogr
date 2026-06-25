@@ -19,6 +19,13 @@ Without a matching test, the change is not complete.
 
 FilamentPHP v4 plugin package (`happytodev/blogr`) — a multilingual blog system for Laravel 12+.
 
+## Resources
+
+| File | Content |
+|------|---------|
+| [README.md](README.md) | Installation, prerequisites, basic commands |
+| [docs/](docs/) | Feature documentation (CMS, gradients, translations, RGPD, etc.) |
+
 ## Stack
 
 - PHP 8.3+, Laravel 12.x, FilamentPHP v4, Pest PHP 4.0, Tailwind CSS 4, Vite
@@ -39,6 +46,14 @@ npm run build                                   # Build CSS/JS via Vite
 composer test                                   # = vendor/bin/pest
 composer serve                                  # Start testbench dev server
 ```
+
+## Code Conventions
+
+- **Validation**: Use `$request->validated()`. Never trust client-provided sensitive fields (`user_id`, `is_admin`).
+- **Blade**: `{!! !!}` only for pre-sanitized HTML (e.g. block content rendered through the CMS). Always prefer `{{ }}` (escaped output).
+- **Translations**: Always use the Translation-First pattern — store translatable content in translation models, not main tables.
+- **Models**: Always eager-load translations with `Model::with('translations')`. Never use `Model::all()` alone.
+- **Services**: Import/Export services (`BlogrImportService`, `BlogrExportService`) must be wrapped in transactions with `DB::table()->insert()` for ID preservation.
 
 ## Testing quirks
 
@@ -76,6 +91,14 @@ composer serve                                  # Start testbench dev server
 - Localized routes use `SetLocale` middleware. Route pattern is nested directly (no prefix groups) to avoid Laravel parameter binding bugs.
 - CMS uses anti-collision regex against reserved slugs (blog, feed, author, category, tag, series, admin, etc.)
 
+## Security Notes
+
+- **No public registration**: User management is handled through the Filament admin panel. The package does not expose registration routes.
+- **Seeders**: Admin seeders are for local/testing dev only. Never hard-code production credentials in seeders.
+- **User content rendering**: Any user-provided HTML rendered through the block system must go through sanitization. Blocks are rendered via Blade components — avoid raw `{!! $blockContent !!}` patterns.
+- **Rate limiting**: Apply `RateLimiter` on sensitive endpoints (contact forms, comment submissions if enabled).
+- **Validation**: Always validate on the server side via Form Requests. Client-side validation is a UX enhancement, not a security control.
+
 ## Config duplicates
 
 The `config/blogr.php` has duplicate keys (`locales`, `cms`, `posts` are defined twice). The first occurrence takes effect for config loaded before boot; the second takes effect in some runtime paths. Be aware when reading config values.
@@ -91,8 +114,21 @@ This applies to:
 
 The built CSS (`resources/dist/blogr.css`) MUST be committed alongside view changes.
 
+## Git & Branches
+
+- **Feature or bugfix work**: Always work on a **dedicated branch** created from `main` — never commit directly to `main`.
+- **Branch naming**: `{type}/{description-kebab-case}` (`feat/…`, `fix/…`, `docs/…`, `chore/…`, `skill/…`). One topic per branch, no mixing unrelated feat + fix.
+- **Finishing work**: Follow the [git-changelog-workflow](.opencode/skills/git-changelog-workflow/SKILL.md) skill (analysis, CHANGELOG proposal, atomic commits, PR).
+- **Post-merge fixes**: If `main` has advanced, use `git cherry-pick` from the fix branch — see the [hotfix-cherry-pick](.opencode/skills/hotfix-cherry-pick/SKILL.md) skill.
+- **Project quality**: After each sprint, improve the quality harness via [harness-evolution](.opencode/skills/harness-evolution/SKILL.md) (tests, PHPStan, lint JS, coverage, CI, hooks).
+- **Dependencies**: For safe updates with security guardrails, use [safe-dependency-update](.opencode/skills/safe-dependency-update/SKILL.md) (72h filter, patch/minor/major, human validation).
+
 ## CI
 
 - Runs on `ubuntu-latest`, PHP 8.4, Laravel 12.*, `prefer-stable`.
 - Installs Playwright browsers before tests.
 - Test command: `vendor/bin/pest --parallel --ci`.
+
+## Local Dev
+
+See [README.md](README.md) for installation instructions and prerequisites. The package uses Testbench for local development — `composer serve` starts the workbench dev server.
