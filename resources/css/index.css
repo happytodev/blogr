@@ -20,21 +20,6 @@
 
 @variant dark (&:is(.dark *));
 
-@layer utilities {
-    .dark .dark\:bg-amber-900\/20 { background-color: color-mix(in srgb, #78350f 20%, transparent); }
-    .dark .dark\:hover\:bg-amber-900\/40:hover { background-color: color-mix(in srgb, #78350f 40%, transparent); }
-    .dark .dark\:bg-amber-700 { background-color: #b45309; }
-    .dark .dark\:bg-amber-200 { background-color: #fde68a; }
-    .dark .dark\:text-amber-100 { color: #fef3c7; }
-    .dark .dark\:text-amber-300 { color: #fcd34d; }
-    .dark .dark\:text-amber-400 { color: #fbbf24; }
-    .dark .dark\:text-amber-600 { color: #d97706; }
-    .dark .dark\:border-amber-800 { border-color: #92400e; }
-    .hover\:bg-amber-100:hover { background-color: #fef3c7; }
-    .dark .dark\:hover\:bg-amber-100:hover { background-color: #fef3c7; }
-    .dark .dark\:text-sky-400 { color: #38bdf8; }
-}
-
 /* Table of Contents Styles */
 .prose .toc {
     @apply bg-gray-50 dark:bg-gray-800/50 border-l-4 border-blue-500 dark:border-blue-400 p-4 rounded-r-lg mb-6;
