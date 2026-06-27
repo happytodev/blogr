@@ -2,6 +2,13 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.18.1](https://github.com/happytodev/blogr/compare/v1.18.0...v1.18.1) - 2026-06-27
+
+### 🐛 Bug Fixes
+
+- **Issue tracking**: add mandatory issue creation rule (bug or feature) — ensures traceability
+- **Release notes**: fix display of release notes in `question` tool — output text before asking for approval
+
 ## [v1.18.0](https://github.com/happytodev/blogr/compare/v1.17.9...v1.18.0) - 2026-06-27
 
 ### ✨ Features
