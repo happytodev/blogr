@@ -34,12 +34,66 @@ Orchestrates end-of-work on this repository: analysis → branch → CHANGELOG p
 
 ```
 Progress:
+- [ ] 0. Batch analysis — detect multi-domain changes, propose group or split
 - [ ] 1. Analyze Git state and classify changes
 - [ ] 2. Verify / create the dedicated branch
 - [ ] 3. Propose CHANGELOG entries (await validation)
 - [ ] 4. Atomic commits (await validation of the plan)
 - [ ] 5. Propose the Pull Request (await validation)
 ```
+
+---
+
+## Step 0 — Multi-change batch analysis
+
+Run **in parallel** to detect whether the working tree contains changes from multiple domains:
+
+```bash
+git diff --stat main 2>/dev/null || git status --short
+git log main..HEAD --oneline 2>/dev/null
+git branch --show-current
+```
+
+Classify all modified files by domain:
+
+| File pattern | Domain |
+|-------------|--------|
+| `src/**`, `resources/views/**`, `tests/**` | `feat` or `fix` |
+| `*.md`, `docs/**` | `docs` |
+| `.opencode/skills/**`, `AGENTS.md` | `skill` |
+| `composer.json`, `composer.lock`, `package.json`, `package-lock.json` | `chore(deps)` |
+
+If changes span **exactly one domain**, skip this step and proceed to Step 1.
+
+If changes span **multiple domains** (e.g. `feat` + `fix` + `skill`), present the user with two options:
+
+```markdown
+## Batch analysis
+
+Changes detected across {{N}} domains:
+
+| Domain | Files |
+|--------|-------|
+| feat   | ... |
+| fix    | ... |
+| skill  | ... |
+
+➡  **Option A (recommended)**: Group all into a single branch
+   Atomic commits per domain, one PR. Branch name based on the
+   dominant domain (e.g. `feat/artist-portfolio-blocks`).
+
+➡  **Option B**: Split into separate branches per domain
+   (default if changes are unrelated).
+
+Which do you prefer?
+```
+
+**Option A — Grouped branch**: Create one branch named after the dominant domain.
+Commits are ordered: `fix` commits first, then `feat`, then `docs/skill` last.
+This keeps the PR reviewable while avoiding branch proliferation.
+
+**Option B — Split**: The original behavior. Each domain gets its own branch
+and PR. Continue to Step 1 for each domain separately.
 
 ---
 
@@ -86,7 +140,8 @@ See conventions detail: [references/branch-and-commits.md](references/branch-and
 - …
 ```
 
-If multiple types coexist (e.g. `feat` + `fix`), **split into separate branches** and notify the user before continuing.
+If multiple types coexist and Step 0 was **skipped** (single domain), proceed normally.
+If Step 0 already resolved a multi-domain batch, use the agreed grouping strategy — do not re-propose splitting.
 
 ---
 
@@ -94,7 +149,7 @@ If multiple types coexist (e.g. `feat` + `fix`), **split into separate branches*
 
 1. Branch from up-to-date `main` (`git fetch origin` if network available).
 2. Name: `{type}/{description-kebab-case}` — max ~50 characters, no `--`.
-3. **One topic per branch**: no mixing unrelated feat + fix.
+3. **One topic per branch**: no mixing unrelated feat + fix **unless Step 0 grouped them**.
 
 ```bash
 git checkout main
@@ -105,6 +160,10 @@ git checkout -b feat/short-name
 If the user is already working on the correct branch, do not recreate unnecessarily.
 
 **Repository examples:** `fix/restore-blog-admin-routes`, `skill/owasp-critical-audit`, `docs/agents-md`.
+
+**For a batch branch** (Step 0 Option A): name the branch after the dominant domain.
+Example: `feat/artist-portfolio-blocks` may contain fix, feat and skill commits
+as atomic units within the same branch.
 
 ---
 
@@ -147,6 +206,7 @@ EOF
 ```
 
 4. Recommended order: code/test commits first, `docs(changelog): …` commit last (after Step 3 validation).
+   For batch branches: `fix` commits first, then `feat`, then `docs/skill` last.
 5. `git status` after each commit to verify.
 
 ### Atomic splitting
@@ -206,18 +266,6 @@ Otherwise, provide the compare URL:
 ```
 
 Return the URL of the created PR or the "New Pull Request" link.
-
----
-
-## Creating GitHub issues
-
-When the user asks to open a bug or issue:
-
-```bash
-gh issue create --label bug --title "Bug: short description" --body "..."
-gh issue comment <id> --body "Fixed in commit HASH"
-gh issue close <id>
-```
 
 ---
 
