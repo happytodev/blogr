@@ -132,6 +132,34 @@ test('carousel handles image as array from Filament upload', function () {
         ->not->toContain('Array to string conversion');
 });
 
+test('carousel renders with slides array having null entry after unset', function () {
+    $slides = [['image' => 'img1.jpg'], null, ['image' => 'img3.jpg']];
+
+    $data = ['slides' => $slides];
+
+    $html = View::make('blogr::components.blocks.carousel', ['data' => $data])->render();
+
+    expect($html)
+        ->toContain('img1.jpg')
+        ->toContain('img3.jpg');
+});
+
+test('carousel first slide is visible without Alpine.js (no display:none)', function () {
+    $data = [
+        'slides' => [
+            ['image' => 'cms-blocks/slide1.jpg', 'title' => 'First'],
+            ['image' => 'cms-blocks/slide2.jpg', 'title' => 'Second'],
+        ],
+    ];
+
+    $html = View::make('blogr::components.blocks.carousel', ['data' => $data])->render();
+
+    preg_match_all('/style="([^"]*)"/', $html, $matches);
+    $firstStyle = $matches[1][0] ?? '';
+
+    expect($firstStyle)->not->toContain('display: none');
+});
+
 test('carousel block exists in the blocks list', function () {
     $blocks = $this->translation->blocks;
 
