@@ -10,8 +10,8 @@ use Happytodev\Blogr\Models\CmsPageDraft;
 use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Models\CmsPageVersion;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\File;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -170,23 +170,47 @@ class VersioningService
     {
         if ($value instanceof TemporaryUploadedFile) {
             try {
-                $path = $value->store('cms-blocks/uploads', ['disk' => 'public']);
-                Log::debug('[BLOGR DEBUG] persisted TemporaryUploadedFile', [
-                    'original' => $value->getClientOriginalName(),
-                    'stored_at' => $path,
-                ]);
-
-                return $path;
+                return $value->store('cms-blocks/uploads', ['disk' => 'public']);
             } catch (\Throwable $e) {
-                Log::warning('[BLOGR DEBUG] failed to persist TemporaryUploadedFile', [
-                    'error' => $e->getMessage(),
-                ]);
-
                 return '';
             }
         }
 
         if (is_array($value)) {
+            // Check if this array represents a Livewire serialized TemporaryUploadedFile
+            // The Image field inside a Repeater stores files as:
+            //   ['uuid' => ['Livewire\Features\SupportFileUploads\TemporaryUploadedFile' => '/tmp/...']]
+            // After dehydrate, the format can be:
+            //   ['TemporaryUploadedFile' => '/tmp/...']
+            // or simply an array containing a value that looks like a temp file path
+            $hasSerializedFile = false;
+            foreach ($value as $k => $v) {
+                if (is_string($k) && str_contains($k, 'TemporaryUploadedFile') && is_string($v)) {
+                    try {
+                        $path = Storage::disk('public')
+                            ->putFile('cms-blocks/uploads', new File($v));
+
+                        return $path;
+                    } catch (\Throwable $e) {
+                        return '';
+                    }
+                }
+                if (is_array($v)) {
+                    foreach ($v as $innerK => $innerV) {
+                        if (is_string($innerK) && str_contains($innerK, 'TemporaryUploadedFile') && is_string($innerV)) {
+                            try {
+                                $path = Storage::disk('public')
+                                    ->putFile('cms-blocks/uploads', new File($innerV));
+
+                                return $path;
+                            } catch (\Throwable $e) {
+                                return '';
+                            }
+                        }
+                    }
+                }
+            }
+
             $result = [];
             foreach ($value as $key => $item) {
                 $result[$key] = static::walkAndPersist($item);
