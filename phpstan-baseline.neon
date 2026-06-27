@@ -1,0 +1,1927 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 7
+			path: src/BlogrServiceProvider.php
+
+		-
+			message: '#^Method Happytodev\\Blogr\\Contracts\\BlogrExtension@anonymous/BlogrServiceProvider\.php\:378\:\:getHomepage\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/BlogrServiceProvider.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: src/BlogrServiceProvider.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between mixed~''blog'' and ''blog'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/BlogrServiceProvider.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Commands/BlogrCommand.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Commands/BlogrImportCommand.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$template\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Commands/BlogrImportCommand.php
+
+		-
+			message: '#^Call to an undefined method BackedEnum\:\:label\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Commands/BlogrImportCommand.php
+
+		-
+			message: '#^Class App\\Models\\User not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Commands/BlogrInstallCommand.php
+
+		-
+			message: '#^Right side of \|\| is always false\.$#'
+			identifier: booleanOr.rightAlwaysFalse
+			count: 1
+			path: src/Commands/BlogrInstallCommand.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Commands/BlogrListTutorialsCommand.php
+
+		-
+			message: '#^Cannot access property \$email on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Commands/InstallUserManagementCommand.php
+
+		-
+			message: '#^Cannot call method hasAnyRole\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Commands/InstallUserManagementCommand.php
+
+		-
+			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Commands/MigratePostsToTranslations.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 1
+			path: src/Commands/SyncAdminPathCommand.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Filament\\Livewire\\AuthorBio\:\:\$form\.$#'
+			identifier: property.notFound
+			count: 6
+			path: src/Filament/Livewire/AuthorBio.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: src/Filament/Livewire/AuthorBio.php
+
+		-
+			message: '#^Class App\\Models\\User not found\.$#'
+			identifier: class.notFound
+			count: 2
+			path: src/Filament/Pages/Auth/EditProfile.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 4
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 3
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Parameter \#1 \$height of method Filament\\Forms\\Components\\FileUpload\:\:imageResizeTargetHeight\(\) expects Closure\|string\|null, 200 given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Parameter \#1 \$view of method Filament\\Support\\Components\\ViewComponent\:\:view\(\) expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Pages\\BlogrSettings\:\:\$admin_path \(string\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 3
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Pages\\BlogrSettings\:\:\$locales_disabled \(array\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Pages\\BlogrSettings\:\:\$series_subtitles \(array\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Pages\\BlogrSettings\:\:\$translation_azure_api_key \(string\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Pages\\BlogrSettings\:\:\$translation_azure_region \(string\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Pages\\BlogrSettings\:\:\$translation_google_api_key \(string\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Pages\\BlogrSettings\:\:\$translation_libretranslate_url \(string\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Pages\\BlogrSettings\:\:\$translation_openai_api_key \(string\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Pages\\BlogrSettings\:\:\$translation_provider \(string\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\Category model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Result of \|\| is always false\.$#'
+			identifier: booleanOr.alwaysFalse
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between int\<1, max\> and 0 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: src/Filament/Resources/BlogPostResource.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostDraft\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
+
+		-
+			message: '#^Call to function property_exists\(\) with \$this\(Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\CreateBlogPost\) and ''record'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
+
+		-
+			message: '#^Method Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\CreateBlogPost\:\:handleRecordCreation\(\) should return Happytodev\\Blogr\\Models\\BlogPost but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 2
+			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
+
+		-
+			message: '#^Parameter \#1 \$post of method Happytodev\\Blogr\\Services\\VersioningService\:\:getPostDraft\(\) expects Happytodev\\Blogr\\Models\\BlogPost, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
+
+		-
+			message: '#^Parameter \#1 \$view of static method Filament\\Schemas\\Components\\View\:\:make\(\) expects view\-string, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostDraft\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostDraft\:\:\$draft_data\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostDraft\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostVersion\:\:\$version_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$post\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Call to function is_string\(\) with null will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Call to function property_exists\(\) with \$this\(Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\EditBlogPost\) and ''record'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Cannot access property \$default_locale on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Cannot access property \$id on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Cannot access property \$is_published on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Cannot access property \$translations on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Cannot call method translations\(\) on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Parameter \#1 \$post of method Happytodev\\Blogr\\Services\\VersioningService\:\:getPostDraft\(\) expects Happytodev\\Blogr\\Models\\BlogPost, Illuminate\\Database\\Eloquent\\Model\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Parameter \#1 \$post of method Happytodev\\Blogr\\Services\\VersioningService\:\:publishPostDraft\(\) expects Happytodev\\Blogr\\Models\\BlogPost, Illuminate\\Database\\Eloquent\\Model\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Parameter \#1 \$post of method Happytodev\\Blogr\\Services\\VersioningService\:\:savePostDraft\(\) expects Happytodev\\Blogr\\Models\\BlogPost, Illuminate\\Database\\Eloquent\\Model\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Parameter \#1 \$view of static method Filament\\Schemas\\Components\\View\:\:make\(\) expects view\-string, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 2
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\EditBlogPost\\Widgets\\TranslationsWidget\:\:\$view \(view\-string\) does not accept default value of type string\.$#'
+			identifier: property.defaultValue
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost/Widgets/TranslationsWidget.php
+
+		-
+			message: '#^Call to static method make\(\) on an unknown class Filament\\Tables\\Actions\\BulkActionGroup\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/ManageBlogPostTranslations.php
+
+		-
+			message: '#^Call to static method make\(\) on an unknown class Filament\\Tables\\Actions\\DeleteAction\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/ManageBlogPostTranslations.php
+
+		-
+			message: '#^Call to static method make\(\) on an unknown class Filament\\Tables\\Actions\\DeleteBulkAction\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/ManageBlogPostTranslations.php
+
+		-
+			message: '#^Call to static method make\(\) on an unknown class Filament\\Tables\\Actions\\EditAction\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/ManageBlogPostTranslations.php
+
+		-
+			message: '#^Call to static method make\(\) on an unknown class Tables\\Actions\\CreateAction\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/ManageBlogPostTranslations.php
+
+		-
+			message: '#^Invoking callable on an unknown class Filament\\Forms\\Get\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/ManageBlogPostTranslations.php
+
+		-
+			message: '#^Parameter \$get of anonymous function has invalid type Filament\\Forms\\Get\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/ManageBlogPostTranslations.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/RelationManagers/TranslationsRelationManager.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:translations\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/RelationManagers/TranslationsRelationManager.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPosts/BlogPostForm.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/BlogPosts/BlogPostForm.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Workbench\\App\\Models\\User and ''hasRole'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 4
+			path: src/Filament/Resources/BlogPosts/BlogPostForm.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: src/Filament/Resources/BlogSeriesResource.php
+
+		-
+			message: '#^Method Happytodev\\Blogr\\Filament\\Resources\\BlogSeriesResource\:\:getNavigationBadge\(\) should return string\|null but returns int\<0, max\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Filament/Resources/BlogSeriesResource.php
+
+		-
+			message: '#^Cannot access property \$title on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Filament/Resources/BlogSeriesResource/Pages/EditBlogSeries.php
+
+		-
+			message: '#^Cannot call method posts\(\) on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Filament/Resources/BlogSeriesResource/Pages/EditBlogSeries.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>title" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Filament/Resources/BlogSeriesResource/Pages/EditBlogSeries.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/Categories/RelationManagers/TranslationsRelationManager.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:translations\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Filament/Resources/Categories/RelationManagers/TranslationsRelationManager.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Resources/Categories/Schemas/CategoryForm.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Resources/CmsPageResource.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 3
+			path: src/Filament/Resources/CmsPageResource.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>title" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: src/Filament/Resources/CmsPageResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$default_locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/CreateCmsPage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/CreateCmsPage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Resources/CmsPageResource/Pages/CreateCmsPage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$template\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/CreateCmsPage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$default_locale\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPage.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostDraft\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageVersion\:\:\$cms_page_translation_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageVersion\:\:\$version_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Call to function property_exists\(\) with \$this\(Happytodev\\Blogr\\Filament\\Resources\\CmsPageResource\\Pages\\EditCmsPageTranslation\) and ''record'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Cannot access property \$blocks on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Cannot access property \$id on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Cannot access property \$locale on Illuminate\\Database\\Eloquent\\Model\|int\<min, \-1\>\|int\<1, max\>\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Cannot access property \$locale on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 3
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Cannot access property \$page on Illuminate\\Database\\Eloquent\\Model\|int\<min, \-1\>\|int\<1, max\>\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Cannot access property \$slug on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Cannot access property \$title on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 3
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Parameter \#1 \$view of static method Filament\\Schemas\\Components\\View\:\:make\(\) expects view\-string, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>locale" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>title" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>title" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Resources/CmsPages/CmsBlockBuilder.php
+
+		-
+			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\Category model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Filament/Resources/CmsPages/CmsBlockBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Resources/Tags/RelationManagers/TranslationsRelationManager.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:translations\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Filament/Resources/Tags/RelationManagers/TranslationsRelationManager.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Filament/Resources/Tags/Schemas/TagForm.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Widgets\\QuickVisitSite\:\:\$view \(view\-string\) does not accept default value of type string\.$#'
+			identifier: property.defaultValue
+			count: 1
+			path: src/Filament/Widgets/QuickVisitSite.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Filament/Widgets/RecentBlogPosts.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: string$#'
+			identifier: match.unhandled
+			count: 1
+			path: src/Filament/Widgets/RecentBlogPosts.php
+
+		-
+			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Filament/Widgets/RecentBlogPosts.php
+
+		-
+			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Filament/Widgets/RecentBlogPosts.php
+
+		-
+			message: '#^Relation ''user'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Filament/Widgets/RecentBlogPosts.php
+
+		-
+			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Filament/Widgets/ScheduledPosts.php
+
+		-
+			message: '#^Relation ''user'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Filament/Widgets/ScheduledPosts.php
+
+		-
+			message: '#^Variable \$h might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: src/Helpers/ColorHelper.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 1
+			path: src/Helpers/ConfigHelper.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$locale\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Helpers/LinkResolver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 6
+			path: src/Helpers/LinkResolver.php
+
+		-
+			message: '#^Method Happytodev\\Blogr\\Helpers\\LinkResolver\:\:resolveBlogLink\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Helpers/LinkResolver.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$photo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Helpers/SEOHelper.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$published_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Helpers/SEOHelper.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$tags\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Helpers/SEOHelper.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Helpers/SEOHelper.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$photo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_tldr\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Class App\\Models\\User not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>title" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>tldr" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$photo\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_tldr\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$content\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$photo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_description\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_keywords\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$tldr\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$photo\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$translated_description\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$translated_slug\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$translated_title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$description\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$photo\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$seo_description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$seo_title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$photo\.$#'
+			identifier: property.notFound
+			count: 5
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$photo_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$published_at\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$reading_time\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$series\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tags\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getDefaultTranslation\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getEstimatedReadingTime\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:posts\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:shouldDisplayToc\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:translate\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:published\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Method Happytodev\\Blogr\\Http\\Controllers\\BlogController\:\:getStorageUrl\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>description" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 4
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>seo_description" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>seo_title" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>title" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 7
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>tldr" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$template\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$content\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$excerpt\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$page\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$seo_keywords\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CategoryTranslation\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\TagTranslation\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Happytodev\\Blogr\\Models\\Category\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Happytodev\\Blogr\\Models\\Tag\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Relation ''tags'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 2
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\Category model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\Tag model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Relation ''user'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Http/Controllers/RssFeedController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$is_homepage\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Call to an undefined method Happytodev\\Blogr\\Models\\CmsPage\:\:getDefaultTranslation\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Http/Controllers/SitemapController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\|Illuminate\\Database\\Eloquent\\Collection\<int, Happytodev\\Blogr\\Models\\BlogPost\>\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Jobs/SendPostNotificationJob.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\|Illuminate\\Database\\Eloquent\\Collection\<int, Happytodev\\Blogr\\Models\\BlogPost\>\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Jobs/SendPostNotificationJob.php
+
+		-
+			message: '#^Cannot access property \$id on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Jobs/SendPostNotificationJob.php
+
+		-
+			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Jobs/SendPostNotificationJob.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$blog_series_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$category\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$display_toc\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 4
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$photo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$published_at\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$series_position\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$tags\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$content\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$reading_time\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_keywords\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$tldr\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPost.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$content\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPostTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$reading_time\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPostTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogPostTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$is_featured\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogSeries.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$photo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogSeries.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$published_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogSeries.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogSeries.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogSeries.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogSeries.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/BlogSeries.php
+
+		-
+			message: '#^Method Happytodev\\Blogr\\Models\\BlogSeries\:\:getDefaultTranslation\(\) should return Happytodev\\Blogr\\Models\\BlogSeriesTranslation\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: src/Models/BlogSeries.php
+
+		-
+			message: '#^Method Happytodev\\Blogr\\Models\\BlogSeries\:\:translate\(\) should return Happytodev\\Blogr\\Models\\BlogSeriesTranslation\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: src/Models/BlogSeries.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/Category.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$default_locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/CmsPage.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/CmsPage.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$published_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/CmsPage.php
+
+		-
+			message: '#^Method Happytodev\\Blogr\\Models\\CmsPage\:\:currentTranslation\(\) should return Happytodev\\Blogr\\Models\\CmsPageTranslation\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Models/CmsPage.php
+
+		-
+			message: '#^Method Happytodev\\Blogr\\Models\\CmsPage\:\:translation\(\) should return Happytodev\\Blogr\\Models\\CmsPageTranslation\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Models/CmsPage.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$locale\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Models/CmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$meta_description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/CmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$meta_keywords\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/CmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$meta_title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/CmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/CmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/CmsPageTranslation.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/Tag.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\User\:\:\$avatar\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/User.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\User\:\:\$avatar_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/User.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\User\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Models/User.php
+
+		-
+			message: '#^Class App\\Models\\User not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Models/UserTranslation.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Observers/BlogSeriesTranslationObserver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Observers/BlogSeriesTranslationObserver.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:translations\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Observers/BlogSeriesTranslationObserver.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Policies/BlogPostPolicy.php
+
+		-
+			message: '#^Parameter \#2 \$datetime of static method DateTime\:\:createFromFormat\(\) expects string, \(int\|false\) given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Services/CmsPageBackupService.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$published_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Services/CmsPageImportExportService.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Services/CmsPageImportExportService.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$template\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Services/CmsPageImportExportService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\<mixed\>, Closure\(Happytodev\\Blogr\\Models\\CmsPageTranslation\)\: array\<mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Services/CmsPageImportExportService.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostDraft\:\:\$draft_data\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Services/VersioningService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$draft_data\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Services/VersioningService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: src/Services/VersioningService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_published\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Services/VersioningService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>is_published" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: src/Services/VersioningService.php
+
+		-
+			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: src/Services/WaveSeparatorService.php
+
+		-
+			message: '#^Trait Happytodev\\Blogr\\Traits\\HasTranslatedBio is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Traits/HasTranslatedBio.php
