@@ -1,5 +1,5 @@
 @php
-$slides = $data['slides'] ?? [];
+$slides = array_values($data['slides'] ?? []);
 $height = $data['height'] ?? 'md';
 $autoplaySpeed = $data['autoplay_speed'] ?? 5000;
 $showArrows = $data['show_arrows'] ?? true;
