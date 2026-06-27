@@ -96,7 +96,7 @@ trait AutoSave
                     if ($record->page?->is_published) {
                         app(VersioningService::class)->saveDraft($record, $currentState);
                     } else {
-                        $record->update($currentState);
+                        $record->update(VersioningService::persistUploadedFiles($currentState));
                     }
                 }
             } elseif (auth()->check()) {

@@ -12,6 +12,8 @@ use Happytodev\Blogr\Models\CmsPageVersion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class VersioningService
 {
@@ -22,6 +24,8 @@ class VersioningService
         if (! $this->isPublished($translation)) {
             return null;
         }
+
+        $formData = static::persistUploadedFiles($formData);
 
         return $this->upsertDraft($translation, $formData, $extra);
     }
@@ -63,12 +67,7 @@ class VersioningService
 
         $data = $draft->draft_data;
 
-        if (isset($data['blocks'])) {
-            Log::debug('[BLOGR DEBUG] publish blocks data', [
-                'blocks' => $data['blocks'],
-                'blocks_json' => json_encode($data['blocks']),
-            ]);
-        }
+        $data = static::persistUploadedFiles($data);
 
         $translation->update($data);
 
@@ -160,16 +159,50 @@ class VersioningService
         return $this->upsertDraft($translation, $data, $extra);
     }
 
+    // ── File persistence ──
+
+    public static function persistUploadedFiles(array $data): array
+    {
+        return static::walkAndPersist($data);
+    }
+
+    protected static function walkAndPersist($value)
+    {
+        if ($value instanceof TemporaryUploadedFile) {
+            try {
+                $path = $value->store('cms-blocks/uploads', ['disk' => 'public']);
+                Log::debug('[BLOGR DEBUG] persisted TemporaryUploadedFile', [
+                    'original' => $value->getClientOriginalName(),
+                    'stored_at' => $path,
+                ]);
+
+                return $path;
+            } catch (\Throwable $e) {
+                Log::warning('[BLOGR DEBUG] failed to persist TemporaryUploadedFile', [
+                    'error' => $e->getMessage(),
+                ]);
+
+                return '';
+            }
+        }
+
+        if (is_array($value)) {
+            $result = [];
+            foreach ($value as $key => $item) {
+                $result[$key] = static::walkAndPersist($item);
+            }
+
+            return $result;
+        }
+
+        return $value;
+    }
+
     // ── Internal ──
 
     protected function upsertDraft(Model $translation, array $data, array $extra = []): Model
     {
-        if (isset($data['blocks'])) {
-            Log::debug('[BLOGR DEBUG] upsertDraft blocks data', [
-                'blocks' => $data['blocks'],
-                'blocks_json' => json_encode($data['blocks']),
-            ]);
-        }
+        $data = static::persistUploadedFiles($data);
 
         $draftModel = $this->getDraftModel($translation);
         $fk = $this->getForeignKey($translation);

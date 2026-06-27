@@ -19,7 +19,6 @@ use Happytodev\Blogr\Services\Translation\TranslationProviderFactory;
 use Happytodev\Blogr\Services\TranslationUsageService;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Traits\AutoSave;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class EditCmsPageTranslation extends EditRecord
@@ -124,6 +123,11 @@ class EditCmsPageTranslation extends EditRecord
         }
 
         return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return VersioningService::persistUploadedFiles($data);
     }
 
     protected function authorizeAccess(): void
@@ -447,14 +451,6 @@ class EditCmsPageTranslation extends EditRecord
     public function saveAndPublish(): void
     {
         $data = $this->data ?? [];
-
-        if (isset($data['blocks'])) {
-            Log::debug('[BLOGR DEBUG] saveAndPublish form data blocks', [
-                'blocks' => $data['blocks'],
-                'blocks_json' => json_encode($data['blocks']),
-            ]);
-        }
-
         app(VersioningService::class)->saveDraft($this->record, $data);
         app(VersioningService::class)->publish($this->record);
 
@@ -473,14 +469,6 @@ class EditCmsPageTranslation extends EditRecord
     public function save(?bool $shouldRedirect = null, bool $shouldSendNotification = true): void
     {
         $data = $this->data ?? [];
-
-        if (isset($data['blocks'])) {
-            Log::debug('[BLOGR DEBUG] save() form data blocks', [
-                'is_published' => $this->record?->page->is_published ?? false,
-                'blocks' => $data['blocks'],
-                'blocks_json' => json_encode($data['blocks']),
-            ]);
-        }
 
         if ($this->record && $this->record->page?->is_published) {
             app(VersioningService::class)->saveDraft($this->record, $data);

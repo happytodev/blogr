@@ -745,12 +745,6 @@ parameters:
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
-			message: '#^Cannot access property \$page on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
-
-		-
 			message: '#^Cannot access property \$slug on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
 			identifier: property.nonObject
 			count: 2
