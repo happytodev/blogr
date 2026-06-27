@@ -56,7 +56,7 @@ enum CmsPageTemplate: string
             self::ABOUT => ['hero', 'markdown', 'team', 'timeline', 'statistics'],
             self::PRICING => ['hero', 'pricing', 'faq', 'testimonials', 'cta'],
             self::FAQ => ['hero', 'faq', 'contact_form', 'markdown'],
-            self::CUSTOM => ['hero', 'features', 'cta', 'testimonials', 'faq', 'contact_form', 'markdown', 'team', 'gallery', 'pricing', 'statistics', 'timeline', 'map', 'html'],
+            self::CUSTOM => ['hero', 'features', 'cta', 'testimonials', 'faq', 'contact_form', 'markdown', 'team', 'gallery', 'pricing', 'statistics', 'timeline', 'map', 'carousel', 'pricing_commissions', 'artist_bio'],
         };
     }
 

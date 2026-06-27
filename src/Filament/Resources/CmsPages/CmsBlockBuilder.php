@@ -1242,7 +1242,6 @@ class CmsBlockBuilder
                                     ->directory('cms-blocks/carousel')
                                     ->visibility('public')
                                     ->imageEditor()
-                                    ->required()
                                     ->columnSpan(2),
 
                                 TextInput::make('title')
@@ -1338,7 +1337,6 @@ class CmsBlockBuilder
                                     ->directory('cms-blocks/commissions')
                                     ->visibility('public')
                                     ->imageEditor()
-                                    ->required()
                                     ->columnSpan(2),
 
                                 TextInput::make('title')
