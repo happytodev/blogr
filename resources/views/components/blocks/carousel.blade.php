@@ -91,7 +91,7 @@ $heightClass = match($height) {
                 @if(!empty($slide['image']))
                 <img
                     src="{{ Storage::url($normalizeImage($slide['image'])) }}"
-                    alt="{{ $slide['title'] ?? 'Slide ' . ($index + 1) }}"
+                    alt="{{ $slide['title'] ?? 'Slide ' . ((int) $index + 1) }}"
                     class="w-full h-full object-cover"
                     loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
                 >
@@ -156,7 +156,7 @@ $heightClass = match($height) {
                 @click="goTo({{ $index }})"
                 class="w-3 h-3 rounded-full transition-all duration-300"
                 :class="currentSlide === {{ $index }} ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'"
-                aria-label="Go to slide {{ $index + 1 }}"
+                    aria-label="Go to slide {{ (int) $index + 1 }}"
             ></button>
             @endforeach
         </div>

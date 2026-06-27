@@ -106,7 +106,7 @@
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
-                                    alt="{{ $heading ?? 'Gallery image ' . ($index + 1) }}"
+                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $index + 1) }}"
                                     class="w-full h-80 object-cover {{ $imageFilterClass }}"
                                     loading="lazy"
                                 >
@@ -133,7 +133,7 @@
                         >
                             <img
                                 src="{{ Storage::url($image) }}"
-                                alt="{{ $heading ?? 'Gallery image ' . ($index + 1) }}"
+                                alt="{{ $heading ?? 'Gallery image ' . ((int) $index + 1) }}"
                                 class="w-full h-full object-cover {{ $bwHover ? $defaultFilterClass : 'transition-transform duration-300 group-hover:scale-105' }}"
                                 loading="lazy"
                             >
@@ -155,7 +155,7 @@
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
-                                    alt="{{ $heading ?? 'Gallery image ' . ($index + 1) }}"
+                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $index + 1) }}"
                                     class="w-full h-full object-cover {{ $bwHover ? $defaultFilterClass : 'transition-transform duration-300 group-hover:scale-105' }}"
                                     loading="lazy"
                                 >
@@ -181,7 +181,7 @@
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
-                                    alt="{{ $heading ?? 'Gallery image ' . ($index + 1) }}"
+                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $index + 1) }}"
                                     class="w-full h-full object-cover {{ $bwHover ? $defaultFilterClass : 'transition-transform duration-300 group-hover:scale-105' }}"
                                     loading="lazy"
                                 >
@@ -215,7 +215,7 @@
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
-                                    alt="{{ $heading ?? 'Gallery image ' . ($index + 1) }}"
+                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $index + 1) }}"
                                     class="w-full h-full object-cover {{ $bwHover ? $defaultFilterClass : 'transition-transform duration-300 group-hover:scale-105' }}"
                                     loading="lazy"
                                 >
