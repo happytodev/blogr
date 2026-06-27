@@ -9,6 +9,38 @@ Trigger phrases: "release", "tag a new version", "publish vX.Y.Z", "cut a releas
 
 ## Workflow
 
+### 0. Pre-flight check — all PRs must be merged
+
+Before any release work, verify that no open PRs target `main`:
+
+```bash
+git fetch origin main
+OPEN_PRS=$(gh pr list --base main --state open --json number,title --jq '.[] | "\(.number) \(.title)"')
+```
+
+If `$OPEN_PRS` is not empty, **abort immediately** and display:
+
+```markdown
+## ⛔ Release blocked — open PRs detected
+
+The following PRs must be merged into `main` before releasing:
+
+| # | Title |
+|---|-------|
+| 12 | feat: ... |
+| 14 | fix: ... |
+
+Options:
+1. Merge them now (`gh pr merge <number> --squash`)
+2. Cancel the release and come back later
+```
+
+**Do not proceed** until all open PRs targeting `main` are merged.
+This ensures the release captures the intended changes and avoids
+accidental version bumps with unmerged work.
+
+---
+
 ### 1. Preview changes since the last release
 
 - Run: `git log $(git describe --tags --abbrev=0)..HEAD --oneline --no-decorate`

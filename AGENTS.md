@@ -135,6 +135,41 @@ The built CSS (`resources/dist/blogr.css`) MUST be committed alongside view chan
 - **Project quality**: After each sprint, improve the quality harness via [harness-evolution](.opencode/skills/harness-evolution/SKILL.md) (tests, PHPStan, lint JS, coverage, CI, hooks).
 - **Dependencies**: For safe updates with security guardrails, use [safe-dependency-update](.opencode/skills/safe-dependency-update/SKILL.md) (72h filter, patch/minor/major, human validation).
 
+## Workflow cycle — feature/bug to release
+
+```
+User command              Skill              Action
+─────────────────────────────────────────────────────────────────────
+"fix this bug"        →  issue-to-mr        Issue → analysis → TDD
+"commit changes"      →  git-changelog      Batch analysis → branch
+                                            → CHANGELOG → commits
+                                            → PR → [optional merge]
+"release"             →  release-manager    Pre-flight (all PRs merged?)
+                                            → version bump → tag
+                                            → GitHub Release
+```
+
+### Step-by-step user commands
+
+| Phase | User says | What happens |
+|-------|-----------|-------------|
+| **Bug / feature** | `"there is a bug: …"` or `"I need a feature: …"` | `issue-to-mr` loads: creates GitHub issue, analyzes code, develops fix/feature with TDD, calls `git-changelog-workflow` |
+| **Commit** | `"commit changes"` | `git-changelog-workflow` loads: batch analysis (group or split), branch from `main`, CHANGELOG proposal, atomic commits, PR creation, optional merge |
+| **Merge** | `"merge the PR"` (optional) | `git-changelog-workflow` step 6: `gh pr merge --squash` |
+| **Release** | `"release"` or `"cut a release"` or `"tag vX.Y.Z"` | `release-manager` loads: pre-flight check (all PRs merged?), version bump, CHANGELOG, tag, GitHub Release |
+
+### Merge strategies
+
+- **Merge immediately**: After `git-changelog-workflow` creates the PR, say **"merge the PR"**. The PR is squash-merged and `main` is updated.
+- **Batch before release**: Skip merge, accumulate multiple PRs, then say **"release"**. The `release-manager` will list all open PRs and ask you to merge them before proceeding.
+- **Hybrid**: Merge some PRs immediately, let others wait. The `release-manager` pre-flight check only blocks if unmerged PRs exist.
+
+### Pre-flight gate
+
+The `release-manager` will **not** cut a release while PRs are still open
+against `main`. This prevents accidental releases with unmerged work.
+Always merge all intended PRs before running `release`.
+
 ## CI
 
 - Runs on `ubuntu-latest`, PHP 8.4, Laravel 12.*, `prefer-stable`.

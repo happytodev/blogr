@@ -269,6 +269,25 @@ Return the URL of the created PR or the "New Pull Request" link.
 
 ---
 
+## Step 6 — Merge the Pull Request (optional)
+
+After the PR is created, propose to merge it immediately:
+
+```bash
+gh pr merge $PR_NUMBER --squash --subject "type(scope): summary"
+```
+
+If `gh` is not available, provide the GitHub merge URL:
+`https://github.com/happytodev/blogr/pull/$PR_NUMBER`
+
+This step is **optional** — PRs can also be merged later as part of a
+release batch (see `release-manager`). If the user plans to accumulate
+multiple PRs before releasing, skip this step.
+
+**Do not merge without explicit user validation.**
+
+---
+
 ## Git authentication
 
 If `git push` fails with `HTTP Basic: Access denied`:
