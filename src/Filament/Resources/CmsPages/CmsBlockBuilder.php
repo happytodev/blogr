@@ -43,6 +43,9 @@ class CmsBlockBuilder
                 self::newsletterBlock(),
                 self::mapBlock(),
                 self::contactFormBlock(),
+                self::carouselBlock(),
+                self::pricingCommissionsBlock(),
+                self::artistBioBlock(),
                 self::transitionDiagonalBlock(),
                 self::blogTitleBlock(),
             ])
@@ -419,15 +422,29 @@ class CmsBlockBuilder
                             ->rows(2)
                             ->columnSpan(2),
 
+                        Select::make('display_mode')
+                            ->label(__('Display Mode'))
+                            ->options([
+                                'grid' => __('Grid (equal heights)'),
+                                'masonry' => __('Masonry (Pinterest style)'),
+                                'bento' => __('Bento Grid (Apple style)'),
+                                'horizontal' => __('Horizontal Scrolling'),
+                                'filtered' => __('Filtered Grid'),
+                            ])
+                            ->default('grid')
+                            ->live()
+                            ->columnSpan(1),
+
                         Select::make('layout')
-                            ->label(__('Layout'))
+                            ->label(__('Legacy Layout (deprecated)'))
                             ->options([
                                 'grid' => __('Grid (equal heights)'),
                                 'masonry' => __('Masonry (Pinterest style)'),
                                 'bento' => __('Bento Grid (Apple style)'),
                             ])
                             ->default('grid')
-                            ->live()
+                            ->visible(fn ($get) => ! $get('display_mode') || $get('display_mode') === 'grid' || $get('display_mode') === 'masonry' || $get('display_mode') === 'bento')
+                            ->dehydrated()
                             ->columnSpan(1),
 
                         Select::make('columns')
@@ -438,8 +455,13 @@ class CmsBlockBuilder
                                 '4' => '4',
                             ])
                             ->default('3')
-                            ->visible(fn ($get) => $get('layout') === 'grid')
+                            ->visible(fn ($get) => ($get('display_mode') ?? $get('layout')) === 'grid')
                             ->dehydrated()
+                            ->columnSpan(1),
+
+                        Toggle::make('bw_hover')
+                            ->label(__('Black & White Hover Effect'))
+                            ->default(false)
                             ->columnSpan(1),
 
                         FileUpload::make('images')
@@ -454,6 +476,21 @@ class CmsBlockBuilder
                             ->maxSize(5120)
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'])
                             ->helperText(__('For Bento Grid, first 6 images work best. Masonry works with any number.'))
+                            ->columnSpan(2),
+
+                        Repeater::make('categories')
+                            ->label(__('Filter Categories'))
+                            ->schema(fn () => [
+                                TextInput::make('name')
+                                    ->label(__('Category Name'))
+                                    ->required()
+                                    ->maxLength(255),
+                            ])
+                            ->visible(fn ($get) => $get('display_mode') === 'filtered')
+                            ->dehydrated()
+                            ->collapsible()
+                            ->itemLabel(fn (array $state) => $state['name'] ?? __('New Category'))
+                            ->defaultItems(0)
                             ->columnSpan(2),
                     ])
                     ->columns(2),
@@ -1185,6 +1222,250 @@ class CmsBlockBuilder
             ->columns(2)
             ->collapsible()
             ->collapsed();
+    }
+
+    protected static function carouselBlock(): Block
+    {
+        return Block::make(CmsBlockType::CAROUSEL->value)
+            ->label(CmsBlockType::CAROUSEL->getLabel())
+            ->icon(CmsBlockType::CAROUSEL->getIcon())
+            ->schema(fn () => [
+                Section::make(__('Content'))
+                    ->schema(fn () => [
+                        Repeater::make('slides')
+                            ->label(__('Slides'))
+                            ->schema(fn () => [
+                                FileUpload::make('image')
+                                    ->label(__('Image'))
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('cms-blocks/carousel')
+                                    ->visibility('public')
+                                    ->imageEditor()
+                                    ->required()
+                                    ->columnSpan(2),
+
+                                TextInput::make('title')
+                                    ->label(__('Title'))
+                                    ->maxLength(255)
+                                    ->columnSpan(2),
+
+                                Textarea::make('subtitle')
+                                    ->label(__('Subtitle'))
+                                    ->maxLength(500)
+                                    ->rows(2)
+                                    ->columnSpan(2),
+
+                                TextInput::make('cta_text')
+                                    ->label(__('Button Text'))
+                                    ->maxLength(50)
+                                    ->columnSpan(1),
+
+                                TextInput::make('cta_url')
+                                    ->label(__('Button URL'))
+                                    ->url()
+                                    ->columnSpan(1),
+                            ])
+                            ->columns(2)
+                            ->collapsible()
+                            ->itemLabel(fn (array $state) => $state['title'] ?? __('New Slide'))
+                            ->defaultItems(3)
+                            ->minItems(1)
+                            ->columnSpan(2),
+
+                        Select::make('height')
+                            ->label(__('Carousel Height'))
+                            ->options([
+                                'sm' => __('Small (400px)'),
+                                'md' => __('Medium (500px)'),
+                                'lg' => __('Large (600px)'),
+                                'fullscreen' => __('Fullscreen'),
+                            ])
+                            ->default('md')
+                            ->columnSpan(1),
+
+                        TextInput::make('autoplay_speed')
+                            ->label(__('Autoplay Speed (ms)'))
+                            ->numeric()
+                            ->minValue(1000)
+                            ->maxValue(15000)
+                            ->default(5000)
+                            ->suffix('ms')
+                            ->columnSpan(1),
+
+                        Toggle::make('show_arrows')
+                            ->label(__('Show Navigation Arrows'))
+                            ->default(true)
+                            ->columnSpan(1),
+
+                        Toggle::make('show_dots')
+                            ->label(__('Show Navigation Dots'))
+                            ->default(true)
+                            ->columnSpan(1),
+                    ])
+                    ->columns(2),
+
+                self::getBackgroundFields(),
+            ])
+            ->columns(1);
+    }
+
+    protected static function pricingCommissionsBlock(): Block
+    {
+        return Block::make(CmsBlockType::PRICING_COMMISSIONS->value)
+            ->label(CmsBlockType::PRICING_COMMISSIONS->getLabel())
+            ->icon(CmsBlockType::PRICING_COMMISSIONS->getIcon())
+            ->schema(fn () => [
+                Section::make(__('Content'))
+                    ->schema(fn () => [
+                        TextInput::make('heading')
+                            ->label(__('Heading'))
+                            ->maxLength(255)
+                            ->columnSpan(2),
+
+                        Textarea::make('description')
+                            ->label(__('Description'))
+                            ->rows(2)
+                            ->columnSpan(2),
+
+                        Repeater::make('items')
+                            ->label(__('Commission Items'))
+                            ->schema(fn () => [
+                                FileUpload::make('image')
+                                    ->label(__('Image'))
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('cms-blocks/commissions')
+                                    ->visibility('public')
+                                    ->imageEditor()
+                                    ->required()
+                                    ->columnSpan(2),
+
+                                TextInput::make('title')
+                                    ->label(__('Title'))
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->columnSpan(2),
+
+                                Textarea::make('description')
+                                    ->label(__('Description'))
+                                    ->rows(2)
+                                    ->maxLength(500)
+                                    ->columnSpan(2),
+
+                                TextInput::make('price')
+                                    ->label(__('Price'))
+                                    ->placeholder('50€, 50-150€, Sur devis')
+                                    ->maxLength(100)
+                                    ->columnSpan(1),
+
+                                Select::make('status')
+                                    ->label(__('Status'))
+                                    ->options([
+                                        'open' => __('Open'),
+                                        'closed' => __('Closed'),
+                                        'on_request' => __('On Request'),
+                                    ])
+                                    ->default('open')
+                                    ->columnSpan(1),
+                            ])
+                            ->columns(2)
+                            ->collapsible()
+                            ->itemLabel(fn (array $state) => $state['title'] ?? __('New Commission'))
+                            ->defaultItems(3)
+                            ->minItems(1)
+                            ->columnSpan(2),
+
+                        Select::make('layout')
+                            ->label(__('Display Layout'))
+                            ->options([
+                                'grid' => __('Grid'),
+                                'carousel' => __('Carousel'),
+                            ])
+                            ->default('carousel')
+                            ->columnSpan(1),
+                    ])
+                    ->columns(2),
+
+                self::getBackgroundFields(),
+            ])
+            ->columns(1);
+    }
+
+    protected static function artistBioBlock(): Block
+    {
+        return Block::make(CmsBlockType::ARTIST_BIO->value)
+            ->label(CmsBlockType::ARTIST_BIO->getLabel())
+            ->icon(CmsBlockType::ARTIST_BIO->getIcon())
+            ->schema(fn () => [
+                Section::make(__('Content'))
+                    ->schema(fn () => [
+                        FileUpload::make('avatar')
+                            ->label(__('Avatar'))
+                            ->image()
+                            ->disk('public')
+                            ->directory('cms-blocks/artist')
+                            ->visibility('public')
+                            ->avatar()
+                            ->imageEditor()
+                            ->columnSpan(2),
+
+                        TextInput::make('title')
+                            ->label(__('Title'))
+                            ->maxLength(255)
+                            ->columnSpan(2),
+
+                        Textarea::make('bio')
+                            ->label(__('Biography'))
+                            ->rows(4)
+                            ->maxLength(1000)
+                            ->columnSpan(2),
+
+                        Repeater::make('social_links')
+                            ->label(__('Social Links'))
+                            ->schema(fn () => [
+                                Select::make('platform')
+                                    ->label(__('Platform'))
+                                    ->options([
+                                        'twitter' => __('Twitter/X'),
+                                        'github' => __('GitHub'),
+                                        'linkedin' => __('LinkedIn'),
+                                        'facebook' => __('Facebook'),
+                                        'bluesky' => __('Bluesky'),
+                                        'youtube' => __('YouTube'),
+                                        'instagram' => __('Instagram'),
+                                        'tiktok' => __('TikTok'),
+                                        'mastodon' => __('Mastodon'),
+                                    ])
+                                    ->required()
+                                    ->columnSpan(1),
+
+                                TextInput::make('url')
+                                    ->label(__('URL'))
+                                    ->url()
+                                    ->required()
+                                    ->columnSpan(1),
+                            ])
+                            ->columns(2)
+                            ->collapsible()
+                            ->itemLabel(fn (array $state) => $state['platform'] ?? __('New Link'))
+                            ->defaultItems(0)
+                            ->columnSpan(2),
+
+                        Select::make('layout')
+                            ->label(__('Layout'))
+                            ->options([
+                                'left' => __('Avatar Left'),
+                                'center' => __('Avatar Centered'),
+                            ])
+                            ->default('left')
+                            ->columnSpan(1),
+                    ])
+                    ->columns(2),
+
+                self::getBackgroundFields(),
+            ])
+            ->columns(1);
     }
 
     protected static function waveSeparatorBlock(): Block

@@ -28,6 +28,9 @@ enum CmsBlockType: string implements HasLabel
     case TRANSITION_MARGIN = 'transition-margin';
     case TRANSITION_ANIMATION = 'transition-animation';
     case BLOG_TITLE = 'blog-title';
+    case CAROUSEL = 'carousel';
+    case PRICING_COMMISSIONS = 'pricing_commissions';
+    case ARTIST_BIO = 'artist_bio';
 
     public function getLabel(): string
     {
@@ -54,6 +57,9 @@ enum CmsBlockType: string implements HasLabel
             self::TRANSITION_MARGIN => __('Transition: Simple'),
             self::TRANSITION_ANIMATION => __('Transition: Animation'),
             self::BLOG_TITLE => __('Blog Title'),
+            self::CAROUSEL => __('Hero Carousel'),
+            self::PRICING_COMMISSIONS => __('Pricing Commissions'),
+            self::ARTIST_BIO => __('Artist Bio'),
         };
     }
 
@@ -82,6 +88,9 @@ enum CmsBlockType: string implements HasLabel
             self::TRANSITION_MARGIN => __('Simple gradient overlap transition with negative margin'),
             self::TRANSITION_ANIMATION => __('Animated transition with fade, scale or rotate effect'),
             self::BLOG_TITLE => __('Customizable blog page title section with optional display toggle'),
+            self::CAROUSEL => __('Image carousel/slider with optional title, subtitle and call-to-action per slide'),
+            self::PRICING_COMMISSIONS => __('Commission pricing showcase with images, prices and availability status'),
+            self::ARTIST_BIO => __('Artist profile with avatar, biography and social links'),
         };
     }
 
@@ -110,6 +119,9 @@ enum CmsBlockType: string implements HasLabel
             self::TRANSITION_MARGIN => 'heroicon-o-minus-small',
             self::TRANSITION_ANIMATION => 'heroicon-o-sparkles',
             self::BLOG_TITLE => 'heroicon-o-document-text',
+            self::CAROUSEL => 'heroicon-o-view-columns',
+            self::PRICING_COMMISSIONS => 'heroicon-o-shopping-bag',
+            self::ARTIST_BIO => 'heroicon-o-user-circle',
         };
     }
 }

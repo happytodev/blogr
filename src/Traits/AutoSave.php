@@ -157,6 +157,5 @@ trait AutoSave
             return $this->record;
         }
 
-        return null;
     }
 }
