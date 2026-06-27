@@ -8,7 +8,8 @@
 
     $normalizeImage = function ($image) {
         if (is_array($image)) {
-            return ($image[0] ?? null) ?: null;
+            $first = reset($image);
+            return ($first ?? null) ?: null;
         }
         return ($image ?? null) ?: null;
     };

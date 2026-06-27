@@ -1,7 +1,7 @@
 @php
 $avatar = $data['avatar'] ?? null;
 if (is_array($avatar)) {
-    $avatar = $avatar[0] ?? null;
+    $avatar = is_array($avatar) ? (reset($avatar) ?: null) : $avatar;
 }
 $title = $data['title'] ?? null;
 $bio = $data['bio'] ?? null;
