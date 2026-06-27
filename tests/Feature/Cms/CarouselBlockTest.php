@@ -160,6 +160,27 @@ test('carousel first slide is visible without Alpine.js (no display:none)', func
     expect($firstStyle)->not->toContain('display: none');
 });
 
+test('carousel handles UUID keys from Filament Repeater', function () {
+    $uuid1 = '3c5b8554-ad6a-49fe-94c6-791432c42743';
+    $uuid2 = '172e9085-71a1-4a21-b28c-f652d7bb2928';
+
+    $data = [
+        'slides' => [
+            $uuid1 => ['image' => 'cms-blocks/slide1.jpg', 'title' => 'First'],
+            $uuid2 => ['image' => 'cms-blocks/slide2.jpg', 'title' => 'Second'],
+        ],
+    ];
+
+    $html = View::make('blogr::components.blocks.carousel', ['data' => $data])->render();
+
+    expect($html)
+        ->toContain('First')
+        ->toContain('Second')
+        ->toContain('goTo(0)')
+        ->toContain('goTo(1)')
+        ->not->toContain('Invalid or unexpected token');
+});
+
 test('carousel block exists in the blocks list', function () {
     $blocks = $this->translation->blocks;
 
