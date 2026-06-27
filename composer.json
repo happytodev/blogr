@@ -32,6 +32,8 @@
     },
     "require-dev": {
         "jeffgreco13/filament-breezy": "^3.0",
+        "larastan/larastan": "^3.10",
+        "laravel/pint": "^1.29",
         "nunomaduro/collision": "^8.8",
         "orchestra/testbench": "^10.11",
         "pestphp/pest": "^4.0",
