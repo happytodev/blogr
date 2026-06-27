@@ -5,7 +5,14 @@
     $description = $data['description'] ?? null;
     $members = $data['members'] ?? [];
     $columns = $data['columns'] ?? '3';
-    
+
+    $normalizeImage = function ($image) {
+        if (is_array($image)) {
+            return $image[0] ?? '';
+        }
+        return $image ?? '';
+    };
+
     $gridCols = match($columns) {
         '2' => 'grid-cols-1 sm:grid-cols-2',
         '3' => 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
@@ -40,7 +47,7 @@
                         @if(!empty($member['photo']))
                             <div class="relative mb-4 overflow-hidden rounded-2xl aspect-square">
                                 <img 
-                                    src="{{ Storage::url($member['photo']) }}" 
+                                    src="{{ Storage::url($normalizeImage($member['photo'])) }}" 
                                     alt="{{ $member['name'] ?? 'Team member' }}"
                                     class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                     loading="lazy"

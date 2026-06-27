@@ -136,6 +136,21 @@ test('carousel block renders stored images on frontend', function () {
         ->toContain('goTo(1)');
 });
 
+test('team block handles photo as array from Filament upload', function () {
+    $data = [
+        'members' => [
+            ['photo' => ['cms-blocks/team/photo1.jpg'], 'name' => 'John'],
+        ],
+    ];
+
+    $html = view('blogr::components.blocks.team', ['data' => $data])->render();
+
+    expect($html)
+        ->toContain('John')
+        ->toContain('/storage/cms-blocks/team/photo1.jpg')
+        ->not->toContain('Array to string conversion');
+});
+
 test('carousel simulates Filament form submission data format', function () {
     $uuid1 = '3c5b8554-ad6a-49fe-94c6-791432c42743';
     $uuid2 = '172e9085-71a1-4a21-b28c-f652d7bb2928';
