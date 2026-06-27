@@ -6,9 +6,9 @@ $layout = $data['layout'] ?? 'carousel';
 
 $normalizeImage = function ($image) {
     if (is_array($image)) {
-        return $image[0] ?? '';
+        return ($image[0] ?? null) ?: null;
     }
-    return $image ?? '';
+    return ($image ?? null) ?: null;
 };
 
 $statusLabels = [
@@ -74,9 +74,9 @@ $statusColors = [
                     @foreach($items as $item)
                     <div class="snap-start flex-shrink-0 w-[300px] group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 hover:shadow-xl">
                         <div class="relative h-64 overflow-hidden">
-                            @if(!empty($item['image']))
+                            @if($img = $normalizeImage($item['image']))
                             <img
-                                src="{{ Storage::url($normalizeImage($item['image'])) }}"
+                                src="{{ Storage::url($img) }}"
                                 alt="{{ $item['title'] ?? '' }}"
                                 class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105 group-hover:grayscale"
                                 loading="lazy"
@@ -141,9 +141,9 @@ $statusColors = [
             @foreach($items as $item)
             <div class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 hover:shadow-xl">
                 <div class="relative h-64 overflow-hidden">
-                    @if(!empty($item['image']))
+                    @if($img = $normalizeImage($item['image']))
                     <img
-                        src="{{ Storage::url($normalizeImage($item['image'])) }}"
+                        src="{{ Storage::url($img) }}"
                         alt="{{ $item['title'] ?? '' }}"
                         class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105 group-hover:grayscale"
                         loading="lazy"

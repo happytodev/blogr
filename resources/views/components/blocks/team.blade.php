@@ -8,9 +8,9 @@
 
     $normalizeImage = function ($image) {
         if (is_array($image)) {
-            return $image[0] ?? '';
+            return ($image[0] ?? null) ?: null;
         }
-        return $image ?? '';
+        return ($image ?? null) ?: null;
     };
 
     $gridCols = match($columns) {
@@ -44,10 +44,10 @@
                 @foreach($members as $member)
                     <div class="group">
                         <!-- Photo -->
-                        @if(!empty($member['photo']))
+                        @if($photo = $normalizeImage($member['photo'] ?? null))
                             <div class="relative mb-4 overflow-hidden rounded-2xl aspect-square">
                                 <img 
-                                    src="{{ Storage::url($normalizeImage($member['photo'])) }}" 
+                                    src="{{ Storage::url($photo) }}" 
                                     alt="{{ $member['name'] ?? 'Team member' }}"
                                     class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                     loading="lazy"

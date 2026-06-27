@@ -1,5 +1,5 @@
 @php
-$slides = array_values($data['slides'] ?? []);
+$slides = array_values(array_filter($data['slides'] ?? [], fn($s) => $s !== null));
 $height = $data['height'] ?? 'md';
 $autoplaySpeed = $data['autoplay_speed'] ?? 5000;
 $showArrows = $data['show_arrows'] ?? true;
@@ -7,9 +7,9 @@ $showDots = $data['show_dots'] ?? true;
 
 $normalizeImage = function ($image) {
     if (is_array($image)) {
-        return $image[0] ?? '';
+        return ($image[0] ?? null) ?: null;
     }
-    return $image ?? '';
+    return ($image ?? null) ?: null;
 };
 
 $heightClass = match($height) {
@@ -27,7 +27,7 @@ $heightClass = match($height) {
         x-data="{
             currentSlide: 0,
             slides: {{ json_encode(array_map(fn($s) => [
-                'image' => !empty($s['image']) ? Storage::url($normalizeImage($s['image'])) : '',
+                'image' => ($img = $normalizeImage($s['image'])) ? Storage::url($img) : '',
                 'title' => $s['title'] ?? '',
                 'subtitle' => $s['subtitle'] ?? '',
                 'cta_text' => $s['cta_text'] ?? '',
@@ -88,9 +88,9 @@ $heightClass = match($height) {
             style="{{ $index === 0 ? '' : 'display: none;' }}"
         >
             <div class="relative w-full h-full">
-                @if(!empty($slide['image']))
+                @if($slideImg = $normalizeImage($slide['image']))
                 <img
-                    src="{{ Storage::url($normalizeImage($slide['image'])) }}"
+                    src="{{ Storage::url($slideImg) }}"
                     alt="{{ $slide['title'] ?? 'Slide ' . ((int) $index + 1) }}"
                     class="w-full h-full object-cover"
                     loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
