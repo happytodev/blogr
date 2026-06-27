@@ -1,5 +1,15 @@
 # Blogr AGENTS.md
 
+## ⚠️ Bug workflow — REQUIRED
+
+**When a user reports a bug** (error trace, unexpected behavior, regression),
+the `issue-to-mr` skill MUST be loaded BEFORE any fix is attempted.
+It orchestrates the full cycle: GitHub issue creation → code analysis →
+TDD fix → PR via `git-changelog-workflow`.
+
+This ensures every bug is traceable to a GitHub issue with reproduction
+steps, a fix commit, and a PR. Skipping this is a process error.
+
 ## ⚠️ Commit policy — ZERO TOLERANCE
 
 **NEVER commit, amend, tag, or push unless the user explicitly loads the `release-manager` skill and requests a release.** This includes bug fixes, hotfixes, and any other changes. All commits must go through the `release-manager` workflow. Violating this rule is a process error.
@@ -25,6 +35,7 @@ FilamentPHP v4 plugin package (`happytodev/blogr`) — a multilingual blog syste
 |------|---------|
 | [README.md](README.md) | Installation, prerequisites, basic commands |
 | [docs/](docs/) | Feature documentation (CMS, gradients, translations, RGPD, etc.) |
+| [artist-portfolio-audit](.opencode/skills/artist-portfolio-audit/SKILL.md) | Variance analysis for the illustrator’s portfolio website |
 
 ## Stack
 
@@ -118,6 +129,7 @@ The built CSS (`resources/dist/blogr.css`) MUST be committed alongside view chan
 
 - **Feature or bugfix work**: Always work on a **dedicated branch** created from `main` — never commit directly to `main`.
 - **Branch naming**: `{type}/{description-kebab-case}` (`feat/…`, `fix/…`, `docs/…`, `chore/…`, `skill/…`). One topic per branch, no mixing unrelated feat + fix.
+- **Batch grouping**: When the working tree contains multiple coherent changes (e.g. a feature plus its associated bug fixes), `git-changelog-workflow` will propose to group them into a single PR with atomic commits per domain, instead of splitting into separate branches. This avoids PR proliferation for closely related work.
 - **Finishing work**: Follow the [git-changelog-workflow](.opencode/skills/git-changelog-workflow/SKILL.md) skill (analysis, CHANGELOG proposal, atomic commits, PR).
 - **Post-merge fixes**: If `main` has advanced, use `git cherry-pick` from the fix branch — see the [hotfix-cherry-pick](.opencode/skills/hotfix-cherry-pick/SKILL.md) skill.
 - **Project quality**: After each sprint, improve the quality harness via [harness-evolution](.opencode/skills/harness-evolution/SKILL.md) (tests, PHPStan, lint JS, coverage, CI, hooks).

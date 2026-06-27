@@ -132,11 +132,9 @@ Rule: **always propose the highest-impact, lowest-effort gap**
 (quick win) first.
 
 Example priority order for this project:
-1. Configure Pint (add to require-dev + create pint.json)
-2. Configure PHPStan (extension installer is already allowed in composer.json)
-3. Add a GitHub Actions CI workflow with lint + static analysis jobs
-4. Set up ESLint (Prettier is already installed)
-5. Set up pre-commit hooks
+1. Set up ESLint (Prettier is already installed)
+2. Raise PHPStan level from 5 to 6+
+3. Add coverage threshold enforcement
 
 ---
 
@@ -328,12 +326,12 @@ Otherwise → done.
 
 ## Pitfalls (this repo)
 
-- Pint (`laravel/pint`) is **not** currently in `composer.json` require-dev — do not run `vendor/bin/pint --test` without adding it first. Install with `composer require --dev laravel/pint` and create a `pint.json` if needed.
-- Rust-based Pint (v2.x+) requires PHP 8.2+; this project uses PHP 8.3+, so it is compatible.
-- `larastan/larastan` is **not** in `composer.json` require-dev, but `phpstan/extension-installer` is already allowed in `composer.json` (`"allow-plugins"`). This means the project is ready for PHPStan but it hasn't been installed yet.
-- ESLint is **not** installed; only Prettier exists (in `devDependencies`). If adding ESLint, use `npm install -D eslint` and configure it.
-- No GitHub Actions workflows exist yet (`.github/workflows/` is empty or missing). First CI setup must create the directory and workflow files.
-- Coverage is **already configured** in `phpunit.xml.dist` with `./src` as the source directory and HTML/text/Clover reports — this axis is green.
+- **Pint**: `laravel/pint` is installed (v2.x+, requires PHP 8.2+). Config in `pint.json`. Run `vendor/bin/pint --test` for dry run or `vendor/bin/pint` to fix.
+- **PHPStan**: `larastan/larastan` is installed with level 5 and a baseline (`phpstan-baseline.neon` with 487 errors). Run `vendor/bin/phpstan analyse --memory-limit=1G --no-progress`.
+- **Pre-commit hooks**: Lefthook is installed (`lefthook.yml`), runs Pint + PHPStan on every `git commit`.
+- **ESLint** is **not** installed; only Prettier exists (in `devDependencies`). If adding ESLint, use `npm install -D eslint` and configure it.
+- **CI**: GitHub Actions workflows exist at `.github/workflows/run-tests.yml` and `fix-php-code-style-issues.yml`.
+- **Coverage**: already configured in `phpunit.xml.dist` with `./src` as the source directory and HTML/text/Clover reports — this axis is green.
 - This is a **Laravel package**, not a full Laravel application — do NOT use `php artisan` commands that assume a full app context. Use `vendor/bin/testbench` for Artisan-like commands and `vendor/bin/pest` for tests.
 - Test base classes vary: `TestCase` (standard), `LocalizedTestCase` (locales enabled), `CmsTestCase` (CMS + homepage), and combinations. Always check which base class a test file should extend — see AGENTS.md for details.
 - The architecture is **translation-first**: main tables hold only non-translatable fields; translations live in separate tables with `[entity_id, locale]` unique constraints. Tests must cover translation tables too.

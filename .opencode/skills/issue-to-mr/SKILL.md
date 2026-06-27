@@ -39,9 +39,9 @@ Progress:
 - [ ] 4. Generate / develop the fix or feature
 - [ ] 5. **Present modified files to the user for validation** ← mandatory human validation
 - [ ] 6. Run tests (vendor/bin/pest --parallel)
-- [ ] 7. **Present PR proposal to the user for validation** ← mandatory human validation
-- [ ] 8. Call the git-changelog workflow (branch, commits, PR)
-- [ ] 9. Close the issue with reference to commit/PR
+- [ ] 7. **Comment on issue** with status update if iteration is needed
+- [ ] 8. Call `git-changelog-workflow` (branch, commits, PR)
+- [ ] 9. **Close the issue** with reference to commit/PR
 ```
 
 ---
@@ -145,42 +145,37 @@ vendor/bin/pest --parallel
 - If feature: tests covering the new behavior
 - Feature tests must declare `uses()` individually (see AGENTS.md)
 
-## Step 6 — Mandatory PR validation
+## Step 7 — Comment on issue during iteration
 
-Before creating the PR, **present to the user**:
-
-```markdown
-## Pull request proposal
-
-**Branch:** `feat/my-feature`
-**Commits:**
-- `hash1` — type(scope): message
-- `hash2` — type(scope): message
-
-### Summary of changes
-- [List of modified files with functional impact]
-
-Do you want me to push and create the PR?
-```
-
-**Do not push or create the PR** without explicit user validation.
-
-## Step 7 — Workflow git-changelog
-
-Call the `git-changelog-workflow` skill to:
-
-1. Create the dedicated branch (from up-to-date `main`)
-2. Propose CHANGELOG entries
-3. Atomic commits (Conventional Commits, English)
-4. Push + create the GitHub PR
+If the fix requires multiple iterations or the user asks for changes,
+update the issue with a status comment:
 
 ```bash
-# After commit plan validation:
-git push -u origin HEAD
-gh pr create --base main --head "$BRANCH" --title "type(scope): summary" --body "..."
+gh issue comment $ISSUE_ID --body "Status update: $MESSAGE"
 ```
 
-## Step 7 — Close the issue
+This keeps the issue thread readable and avoids stale issues.
+
+## Step 8 — Call git-changelog-workflow
+
+Delegate all commit, branch, CHANGELOG and PR creation to `git-changelog-workflow`:
+
+```
+Load the git-changelog-workflow skill (branch → CHANGELOG → atomic commits → PR).
+```
+
+This skill handles:
+1. Batch analysis (multi-domain grouping)
+2. Dedicated branch from up-to-date `main`
+3. CHANGELOG proposal (user validation required)
+4. Atomic commits (Conventional Commits)
+5. Push + PR creation
+
+**Do not create the PR manually** — let `git-changelog-workflow` handle it.
+
+## Step 9 — Close the issue
+
+After the PR is merged, close the issue with a reference:
 
 ```bash
 gh issue comment $ISSUE_ID --body "Fixed in PR #$PR_NUMBER ($HASH)"
@@ -189,7 +184,9 @@ gh issue close $ISSUE_ID
 
 ---
 
-## Full example (bug)
+## Full examples
+
+### Bug
 
 ```markdown
 User: "the save button on blog post form does nothing"
@@ -199,18 +196,18 @@ User: "the save button on blog post form does nothing"
 3. Dev: add missing `->relationship('translations')` call + test verifying translations persist
 4. Test: `vendor/bin/pest --parallel` → 142 passed
 5. git-changelog: branch `fix/save-button`, commit, PR #12
-6. Issue closed after merge
+6. Issue closed: `gh issue close 42 --comment "Fixed in PR #12 (abc123)"`
 ```
 
-## Full example (feature)
+### Feature
 
 ```markdown
 User: "add a view counter on blog posts"
 
 1. Issue: label `feature`
-2. Analysis: modify `BlogPost` model (add `views_count` column to main table), `BlogController::show` (increment), translation not needed
+2. Analysis: modify `BlogPost` model, `BlogController::show`, migration
 3. Dev: migration, model, controller, view, test
-4. Test + PR
+4. Test + git-changelog → PR
 5. Issue closed
 ```
 
