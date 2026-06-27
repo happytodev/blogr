@@ -11,6 +11,7 @@ use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Models\CmsPageVersion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class VersioningService
 {
@@ -61,6 +62,13 @@ class VersioningService
         }
 
         $data = $draft->draft_data;
+
+        if (isset($data['blocks'])) {
+            Log::debug('[BLOGR DEBUG] publish blocks data', [
+                'blocks' => $data['blocks'],
+                'blocks_json' => json_encode($data['blocks']),
+            ]);
+        }
 
         $translation->update($data);
 
@@ -156,6 +164,13 @@ class VersioningService
 
     protected function upsertDraft(Model $translation, array $data, array $extra = []): Model
     {
+        if (isset($data['blocks'])) {
+            Log::debug('[BLOGR DEBUG] upsertDraft blocks data', [
+                'blocks' => $data['blocks'],
+                'blocks_json' => json_encode($data['blocks']),
+            ]);
+        }
+
         $draftModel = $this->getDraftModel($translation);
         $fk = $this->getForeignKey($translation);
 
