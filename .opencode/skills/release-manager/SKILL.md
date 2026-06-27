@@ -94,10 +94,10 @@ accidental version bumps with unmerged work.
 ### 4. Generate and present release notes
 
 - Use the commit log from step 1 to format as markdown with conventional commit categories (Features, Bug Fixes, Dependencies, etc.)
-- **Always display the exact CHANGELOG.md entry** that will be prepended to the file. Show it to the user first using Markdown code block so they can see the full entry before approving.
-- **Show the formatted markdown to the user using the `question` tool** with a "Looks good, proceed" option and an "Edit notes" option.
-- **Do NOT just ask "proceed?"** — display the full formatted release notes in the question so the user can review every line before approving.
-- Include a third option "Cancel" in case the user wants to abort.
+- **First output the full release notes as a text message** (not inside a question tool) so the user sees them. Use a markdown code block.
+- **Then ask for approval** using the `question` tool with a simple question like "Do you approve these release notes?" and options ["Yes, proceed", "No, cancel"].
+- **Do NOT put the release notes inside the question's description field** — the tool does not display long markdown content reliably.
+- Include a "Cancel" option in case the user wants to abort.
 - Only proceed when the user explicitly approves.
 
 ### 5. Run tests (ZERO TOLERANCE)
