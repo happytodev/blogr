@@ -12,6 +12,7 @@ use Happytodev\Blogr\Models\CmsPageVersion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\File;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -163,6 +164,16 @@ class VersioningService
 
     public static function persistUploadedFiles(array $data): array
     {
+        Log::debug('[BLOGR] persistUploadedFiles called', [
+            'keys' => array_keys($data),
+        ]);
+        if (isset($data['blocks'])) {
+            Log::debug('[BLOGR] persistUploadedFiles blocks structure', [
+                'blocks_keys' => array_keys($data['blocks']),
+                'sample' => json_encode($data['blocks'], JSON_PRETTY_PRINT),
+            ]);
+        }
+
         return static::walkAndPersist($data);
     }
 
@@ -177,6 +188,11 @@ class VersioningService
         }
 
         if (is_array($value)) {
+            Log::debug('[BLOGR] walkAndPersist checking array', [
+                'keys' => array_keys($value),
+                'has_tmp_key' => collect($value)->contains(fn ($v) => is_string($v) && str_contains($v, '/tmp/')) ? 'yes' : 'no',
+            ]);
+
             // Check if this array represents a Livewire serialized TemporaryUploadedFile
             // The Image field inside a Repeater stores files as:
             //   ['uuid' => ['Livewire\Features\SupportFileUploads\TemporaryUploadedFile' => '/tmp/...']]

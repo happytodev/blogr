@@ -10,6 +10,7 @@ use Happytodev\Blogr\Services\VersioningService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 trait AutoSave
 {
@@ -38,7 +39,8 @@ trait AutoSave
         $this->lastAutoSaveAt = $timestamp;
         $this->lastManualSaveAt = $this->hasActiveDraft ? $timestamp : null;
         try {
-            $this->savedSnapshot = md5(serialize($this->data ?? []));
+            $snapshotData = static::sanitizeForSnapshot($this->data ?? []);
+            $this->savedSnapshot = md5(serialize($snapshotData));
         } catch (\Throwable $e) {
             Log::warning('[Blogr AutoSave] initializeAutoSave failed', [
                 'error' => $e->getMessage(),
@@ -151,11 +153,22 @@ trait AutoSave
         return max(0, config('blogr.auto_save_interval', 30));
     }
 
+    protected static function sanitizeForSnapshot($value)
+    {
+        if ($value instanceof TemporaryUploadedFile) {
+            return '__FILE__';
+        }
+        if (is_array($value)) {
+            return array_map([static::class, 'sanitizeForSnapshot'], $value);
+        }
+
+        return $value;
+    }
+
     protected function getRecordForVersioning()
     {
         if (property_exists($this, 'record') && $this->record) {
             return $this->record;
         }
-
     }
 }

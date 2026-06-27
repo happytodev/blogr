@@ -451,6 +451,7 @@ class EditCmsPageTranslation extends EditRecord
     public function saveAndPublish(): void
     {
         $data = $this->data ?? [];
+        $data = VersioningService::persistUploadedFiles($data);
         app(VersioningService::class)->saveDraft($this->record, $data);
         app(VersioningService::class)->publish($this->record);
 
