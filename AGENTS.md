@@ -1,14 +1,17 @@
 # Blogr AGENTS.md
 
-## ⚠️ Bug workflow — REQUIRED
+## ⚠️ Issue creation — MANDATORY
 
-**When a user reports a bug** (error trace, unexpected behavior, regression),
-the `issue-to-mr` skill MUST be loaded BEFORE any fix is attempted.
-It orchestrates the full cycle: GitHub issue creation → code analysis →
-TDD fix → PR via `git-changelog-workflow`.
+**Every user request for a bug fix or new feature MUST trigger a GitHub
+issue before any code is written or proposed.** This ensures traceability.
 
-This ensures every bug is traceable to a GitHub issue with reproduction
-steps, a fix commit, and a PR. Skipping this is a process error.
+- User says "there is a bug" → create issue with `--label bug`
+- User says "I need a feature" → create issue with `--label feature`
+- The issue is created via `gh issue create` immediately upon understanding
+  the need
+- The issue number is referenced in all subsequent commits and PRs
+- The issue is closed when the work is merged into `main`
+- Skipping this is a process error
 
 ## ⚠️ Commit policy — ZERO TOLERANCE
 
