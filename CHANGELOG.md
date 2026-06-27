@@ -2,6 +2,33 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.18.0](https://github.com/happytodev/blogr/compare/v1.17.9...v1.18.0) - 2026-06-27
+
+### ✨ Features
+
+- **Artist portfolio blocks**: add Hero Carousel (Alpine.js slider), advanced Gallery (horizontal/filtered modes), Pricing Commissions, and Artist Bio CMS blocks
+- **Gallery**: add `display_mode` option (grid, masonry, bento, horizontal, filtered) with black & white hover effect and category filtering
+- **Reusable `<x-blogr::social-links>`** component, extracted from footer
+- **Workflow**: add batch grouping, bug workflow rules, merge step in git-changelog, pre-flight check in release-manager
+- **Quality harness**: add Pint (code style), PHPStan level 5, Lefthook pre-commit hooks
+
+### 🐛 Bug Fixes
+
+- **Carousel/Team/Pricing/Artist Bio**: fix "Array to string conversion" when Filament stores image paths as arrays inside Repeaters (`$normalizeImage` helper)
+- **Carousel**: fix "A non-numeric value encountered" (cast `$index` to int)
+- **Carousel**: show first slide before Alpine.js initialization (was invisible)
+- **Carousel**: normalize UUID keys from Filament Repeater (`array_values`)
+- **All blocks**: prevent `Storage::url('')` 404 when image path is empty
+- **File persistence**: persist Livewire `TemporaryUploadedFile` before JSON serialization (was losing file paths in Repeaters)
+- **AutoSave**: fix `serialize()` crash on `TemporaryUploadedFile` objects
+
+### 🧪 Tests
+
+- Add 4 integration tests for carousel storage, persistence, UUID keys, and rendering
+- PHPStan level 5 passes with 487 baselined errors
+- Pint code style passes (laravel preset)
+- 1200 tests total, 0 failures
+
 ## [v1.17.9](https://github.com/happytodev/blogr/compare/v1.17.8...v1.17.9) - 2026-06-25
 
 ### 🐛 Bug Fixes
