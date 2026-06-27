@@ -85,7 +85,7 @@ $heightClass = match($height) {
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
             class="absolute inset-0"
-            style="display: none;"
+            style="{{ $index === 0 ? '' : 'display: none;' }}"
         >
             <div class="relative w-full h-full">
                 @if(!empty($slide['image']))
