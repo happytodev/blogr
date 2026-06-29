@@ -343,6 +343,10 @@ return [
             'footer_bg_dark' => null,
             'footer_text' => null,
             'footer_text_dark' => null,
+            'header_brightness' => 0,
+            'header_brightness_dark' => 0,
+            'footer_brightness' => 0,
+            'footer_brightness_dark' => 0,
         ],
         'presets' => [
             'magenta' => [
@@ -374,6 +378,8 @@ return [
                 'header_text' => null, 'header_text_dark' => null,
                 'footer_bg' => null, 'footer_bg_dark' => null,
                 'footer_text' => null, 'footer_text_dark' => null,
+                'header_brightness' => 0, 'header_brightness_dark' => 0,
+                'footer_brightness' => 0, 'footer_brightness_dark' => 0,
             ],
             'ocean' => [
                 'label' => 'Ocean Blue',
@@ -404,6 +410,8 @@ return [
                 'header_text' => null, 'header_text_dark' => null,
                 'footer_bg' => null, 'footer_bg_dark' => null,
                 'footer_text' => null, 'footer_text_dark' => null,
+                'header_brightness' => 0, 'header_brightness_dark' => 0,
+                'footer_brightness' => 0, 'footer_brightness_dark' => 0,
             ],
             'emerald' => [
                 'label' => 'Emerald Green',
@@ -434,6 +442,8 @@ return [
                 'header_text' => null, 'header_text_dark' => null,
                 'footer_bg' => null, 'footer_bg_dark' => null,
                 'footer_text' => null, 'footer_text_dark' => null,
+                'header_brightness' => 0, 'header_brightness_dark' => 0,
+                'footer_brightness' => 0, 'footer_brightness_dark' => 0,
             ],
             'sunset' => [
                 'label' => 'Sunset Orange',
@@ -464,6 +474,8 @@ return [
                 'header_text' => null, 'header_text_dark' => null,
                 'footer_bg' => null, 'footer_bg_dark' => null,
                 'footer_text' => null, 'footer_text_dark' => null,
+                'header_brightness' => 0, 'header_brightness_dark' => 0,
+                'footer_brightness' => 0, 'footer_brightness_dark' => 0,
             ],
             'slate' => [
                 'label' => 'Slate (minimal)',
@@ -494,6 +506,8 @@ return [
                 'header_text' => null, 'header_text_dark' => null,
                 'footer_bg' => null, 'footer_bg_dark' => null,
                 'footer_text' => null, 'footer_text_dark' => null,
+                'header_brightness' => 0, 'header_brightness_dark' => 0,
+                'footer_brightness' => 0, 'footer_brightness_dark' => 0,
             ],
         ],
     ],

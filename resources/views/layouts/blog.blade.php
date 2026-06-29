@@ -90,6 +90,29 @@
         $fbgDark = config('blogr.ui.theme.footer_bg_dark');
         $ftxt = config('blogr.ui.theme.footer_text');
         $ftxtDark = config('blogr.ui.theme.footer_text_dark');
+
+        // Apply brightness sliders (-10 to +10) to header/footer bg
+        $hBright = (int) config('blogr.ui.theme.header_brightness', 0);
+        $hBrightDark = (int) config('blogr.ui.theme.header_brightness_dark', 0);
+        $fBright = (int) config('blogr.ui.theme.footer_brightness', 0);
+        $fBrightDark = (int) config('blogr.ui.theme.footer_brightness_dark', 0);
+
+        if ($hBright !== 0) {
+            $base = $hbg ?: config('blogr.ui.theme.bg_color', '#ffffff');
+            $hbg = \Happytodev\Blogr\Helpers\ColorHelper::adjustBrightness($base, $hBright);
+        }
+        if ($hBrightDark !== 0) {
+            $base = $hbgDark ?: config('blogr.ui.theme.bg_color_dark', '#111827');
+            $hbgDark = \Happytodev\Blogr\Helpers\ColorHelper::adjustBrightness($base, $hBrightDark);
+        }
+        if ($fBright !== 0) {
+            $base = $fbg ?: config('blogr.ui.theme.bg_color', '#ffffff');
+            $fbg = \Happytodev\Blogr\Helpers\ColorHelper::adjustBrightness($base, $fBright);
+        }
+        if ($fBrightDark !== 0) {
+            $base = $fbgDark ?: config('blogr.ui.theme.bg_color_dark', '#111827');
+            $fbgDark = \Happytodev\Blogr\Helpers\ColorHelper::adjustBrightness($base, $fBrightDark);
+        }
     @endphp
 
     @if($resolvedFont)

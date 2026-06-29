@@ -11,6 +11,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -301,6 +302,15 @@ class BlogrSettings extends Page
 
     public ?string $theme_footer_text_dark = null;
 
+    // Header & Footer brightness sliders (-10 to +10, 0 = auto)
+    public int $header_brightness = 0;
+
+    public int $header_brightness_dark = 0;
+
+    public int $footer_brightness = 0;
+
+    public int $footer_brightness_dark = 0;
+
     public ?string $reading_time_text_format = null;
 
     public ?string $reading_time_text_en = null;
@@ -589,6 +599,7 @@ class BlogrSettings extends Page
         $this->theme_testimonial_text = $config['ui']['theme']['testimonial_text'] ?? '#374151';
         $this->theme_testimonial_text_dark = $config['ui']['theme']['testimonial_text_dark'] ?? '#d1d5db';
         $this->font_family = $config['ui']['theme']['font_family'] ?? 'Instrument Sans';
+        $this->font_preview = $this->font_family;
         $this->font_custom_name = $config['ui']['theme']['font_custom_name'] ?? null;
         $this->font_custom_url = $config['ui']['theme']['font_custom_url'] ?? null;
         $this->font_custom_google = $config['ui']['theme']['font_custom_google'] ?? null;
@@ -600,6 +611,10 @@ class BlogrSettings extends Page
         $this->theme_footer_bg_dark = $config['ui']['theme']['footer_bg_dark'] ?? null;
         $this->theme_footer_text = $config['ui']['theme']['footer_text'] ?? null;
         $this->theme_footer_text_dark = $config['ui']['theme']['footer_text_dark'] ?? null;
+        $this->header_brightness = $config['ui']['theme']['header_brightness'] ?? 0;
+        $this->header_brightness_dark = $config['ui']['theme']['header_brightness_dark'] ?? 0;
+        $this->footer_brightness = $config['ui']['theme']['footer_brightness'] ?? 0;
+        $this->footer_brightness_dark = $config['ui']['theme']['footer_brightness_dark'] ?? 0;
 
         // Load reading time text format (supports both string and array formats)
         $textFormat = $config['reading_time']['text_format'] ?? 'Reading time: {time}';
@@ -1683,6 +1698,29 @@ class BlogrSettings extends Page
                                     ColorPicker::make('theme_footer_text_dark')
                                         ->label('Footer Text (Dark Mode)')
                                         ->nullable()
+                                        ->columnSpan(1),
+
+                                    Slider::make('header_brightness')
+                                        ->label('Header brightness (Light Mode)')
+                                        ->minValue(-10)->maxValue(10)->default(0)
+                                        ->extraAttributes(['x-on:dblclick' => '$wire.set(\'header_brightness\', 0)'])
+                                        ->helperText('Negative = darker, positive = lighter. Double-click to reset to 0 (auto).')
+                                        ->columnSpan(1),
+                                    Slider::make('header_brightness_dark')
+                                        ->label('Header brightness (Dark Mode)')
+                                        ->minValue(-10)->maxValue(10)->default(0)
+                                        ->extraAttributes(['x-on:dblclick' => '$wire.set(\'header_brightness_dark\', 0)'])
+                                        ->columnSpan(1),
+
+                                    Slider::make('footer_brightness')
+                                        ->label('Footer brightness (Light Mode)')
+                                        ->minValue(-10)->maxValue(10)->default(0)
+                                        ->extraAttributes(['x-on:dblclick' => '$wire.set(\'footer_brightness\', 0)'])
+                                        ->columnSpan(1),
+                                    Slider::make('footer_brightness_dark')
+                                        ->label('Footer brightness (Dark Mode)')
+                                        ->minValue(-10)->maxValue(10)->default(0)
+                                        ->extraAttributes(['x-on:dblclick' => '$wire.set(\'footer_brightness_dark\', 0)'])
                                         ->columnSpan(1),
                                 ])
                                 ->columns(2),
@@ -3084,6 +3122,10 @@ class BlogrSettings extends Page
                     'footer_bg_dark' => $this->theme_footer_bg_dark,
                     'footer_text' => $this->theme_footer_text,
                     'footer_text_dark' => $this->theme_footer_text_dark,
+                    'header_brightness' => $this->header_brightness,
+                    'header_brightness_dark' => $this->header_brightness_dark,
+                    'footer_brightness' => $this->footer_brightness,
+                    'footer_brightness_dark' => $this->footer_brightness_dark,
                     'preset' => $this->theme_preset ?? '',
                 ],
                 'appearance' => [
