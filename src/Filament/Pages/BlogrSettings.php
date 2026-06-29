@@ -1621,16 +1621,14 @@ class BlogrSettings extends Page
                                             'system' => 'System default',
                                         ])
                                         ->searchable()
-                                        ->default('Instrument Sans')
                                         ->live()
                                         ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state))
                                         ->helperText('Choose a Google Font from the list, or pick "Custom" to upload your own.')
                                         ->columnSpan(2),
 
                                     TextInput::make('font_preview')
-                                        ->label('Font Preview (save to see on frontend)')
-                                        ->default('Instrument Sans')
-                                        ->disabled()
+                                        ->label('Font Preview')
+                                        ->extraAttributes(['readonly' => true])
                                         ->dehydrated(false)
                                         ->columnSpan(2),
 
@@ -3276,9 +3274,19 @@ class BlogrSettings extends Page
             ->send();
 
         // Re-hydrate form with fresh config values so UI reflects saved state immediately
-        $fresh = config('blogr', []);
-        $this->font_family = $fresh['ui']['theme']['font_family'] ?? 'Instrument Sans';
-        $this->font_preview = $this->font_family;
+        $logFont = config('blogr.ui.theme.font_family', 'N/A');
+        $logPreview = $this->font_preview;
+        \Log::debug('BlogrSettings.save re-hydrate', [
+            'font_family (from config)' => $logFont,
+            'font_preview (before mount)' => $logPreview,
+        ]);
+
+        $this->mount();
+
+        \Log::debug('BlogrSettings.save after mount', [
+            'font_family (property)' => $this->font_family,
+            'font_preview (property)' => $this->font_preview,
+        ]);
     }
 
     private function updateConfigFile(array $data): void
