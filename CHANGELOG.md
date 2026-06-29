@@ -4,26 +4,40 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.19.0](https://github.com/happytodev/blogr/compare/v1.18.1...v1.19.0) - 2026-06-29
+
 ### ✨ Features
 
-- **Theme**: add brand color system (background, buttons, text, highlights) with 8 ColorPickers in Appearance settings + dark mode variants
+- **Theme**: add configurable base font size (12–24px) with fluid `clamp()` for responsive typography (Typography section in BlogrSettings)
+- **Theme**: add header/footer brightness sliders with double-click reset
+- **Theme**: add full brand color system (background, buttons, text, highlights) with 8 ColorPickers and dark mode variants
 - **Theme**: add testimonial card colors (background + quote text) configurable in Appearance settings
 - **Links**: add LinkTypeRegistry for plugin-provided link types (Portfolio, Commissions) with optgroup in CMS link selector
 - **Blocks**: add responsive height classes to carousel (mobile/tablet/desktop breakpoints)
-- **Blocks**: add image shape options to Artist Bio block (circle, square, rounded square, rectangle, rounded rectangle, full)
-- **Blocks**: add responsive image width selector to Artist Bio block (25%–75%)
+- **Blocks**: add image shape and responsive width options to Artist Bio block
 - **Icons**: add Discord, Ko-fi, FurAffinity, VGen, Substack social link SVGs
 - **CMS**: add `registerLinkTypes()` method to BlogrExtension interface with RegistersLinkTypes trait
 
 ### 🐛 Bug Fixes
 
+- **Font config**: drop hardcoded weight axis for custom Google Fonts (fixes fonts like Molle that don't support all weights)
+- **Font config**: preserve `:ital@1` axis in Google Fonts URL, strip from CSS font-family
+- **Font config**: escape single quotes and backslashes in config file generator (prevents ParseError with values like "Samiki's Art")
+- **Font config**: update in-memory config after file write (Select no longer reverts to previous value on save)
+- **Font config**: fix font preview sync, save refresh, and frontend font loading reliability
+- **Font config**: add `!important` to body font-family inline style
 - **Blocks**: fix gallery `openLightbox(index)` using UUID keys instead of numeric `$loop->index`
 - **Blocks**: fix "Array to string conversion" when testimonial photo is stored as array
 - **Versioning**: prevent creating empty versions when only Filament UUIDs changed
-- **Version diff**: strip UUID noise from comparisons (Repeater keys, FileUpload keys)
+- **Version diff**: strip UUID noise from comparisons
 - **Layout**: remove hardcoded `bg-white dark:bg-gray-900` from CMS templates — use CSS custom properties instead
 - **Layout**: fix prose typography colors not respecting brand color CSS variables
-- **Version diff**: add missing `dark:` color variants for new value text
+
+### 🧪 Tests
+
+- **Theme**: add tests for font size base setting (config, mount, save, file syntax, blade output)
+- **Theme**: add tests for brightness slider persistence
+- **Settings**: add test for config:clear skip in testing environment
 
 ## [v1.18.1](https://github.com/happytodev/blogr/compare/v1.18.0...v1.18.1) - 2026-06-27
 
