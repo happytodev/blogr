@@ -7,11 +7,42 @@
     $successMessage = $data['success_message'] ?? __('Thank you! Your message has been sent.');
     $toEmail = $data['to_email'] ?? config('blogr.contact.to_email', '');
     $uniqueId = 'contact-form-' . uniqid();
+
+    $image = $data['image'] ?? '';
+    $imageAlt = $data['image_alt'] ?? '';
+    $imagePosition = $data['image_position'] ?? 'right';
+    $imageWidth = (int)($data['image_width'] ?? 50);
+
+    $hasImage = !empty($image);
+
+    if ($hasImage) {
+        $gridCols = match($imageWidth) {
+            25, 75 => 'lg:grid-cols-4',
+            default => 'lg:grid-cols-2',
+        };
+
+        $formColSpan = match($imageWidth) {
+            25 => 'lg:col-span-3',
+            75 => 'lg:col-span-1',
+            default => 'lg:col-span-1',
+        };
+
+        $imageColSpan = match($imageWidth) {
+            25 => 'lg:col-span-1',
+            75 => 'lg:col-span-3',
+            default => 'lg:col-span-1',
+        };
+    }
+
+    $imagePath = $image;
+    if ($imagePath && !str_starts_with($imagePath, 'storage/')) {
+        $imagePath = 'storage/' . $imagePath;
+    }
 @endphp
 
 <div id="contact-form">
     <x-blogr::background-wrapper :data="$data">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         @if($heading || $subtitle)
             <div class="text-center mb-10">
                 @if($heading)
@@ -25,6 +56,23 @@
                     </p>
                 @endif
             </div>
+        @endif
+
+        @if($hasImage)
+            <div class="grid grid-cols-1 {{ $gridCols }} gap-8 lg:gap-12">
+                @if($imagePosition === 'left')
+                    {{-- Image first in DOM → stacks above form on mobile --}}
+                    <div class="{{ $imageColSpan }}">
+                        <img src="{{ asset($imagePath) }}"
+                             alt="{{ $imageAlt }}"
+                             class="w-full h-auto rounded-2xl shadow-lg object-cover"
+                             loading="lazy">
+                    </div>
+                    <div class="{{ $formColSpan }}">
+                @else
+                    {{-- Form first in DOM → stacks above image on mobile --}}
+                    <div class="{{ $formColSpan }}">
+                @endif
         @endif
 
         <div id="{{ $uniqueId }}" x-data="contactForm({
@@ -114,6 +162,21 @@
                 </template>
             </form>
         </div>
+
+        @if($hasImage)
+            @if($imagePosition === 'left')
+                    </div>
+            @else
+                    </div>
+                    <div class="{{ $imageColSpan }}">
+                        <img src="{{ asset($imagePath) }}"
+                             alt="{{ $imageAlt }}"
+                             class="w-full h-auto rounded-2xl shadow-lg object-cover"
+                             loading="lazy">
+                    </div>
+            @endif
+            </div>
+        @endif
     </div>
 
     <script>
