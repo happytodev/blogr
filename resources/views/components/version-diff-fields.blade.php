@@ -1,3 +1,26 @@
+@php
+    $stripUuidKeys = function ($data) use (&$stripUuidKeys) {
+        if (!is_array($data)) return $data;
+
+        // FileUpload wrapper: {uuid: "path"} → "path"
+        $keys = array_keys($data);
+        if (count($data) === 1 && preg_match('/^[a-f0-9-]{36}$/', (string) $keys[0]) && is_string($data[$keys[0]])) {
+            return $data[$keys[0]];
+        }
+
+        // Repeater items with all-UUID keys: {uuid: {...}, uuid: {...}} → [{...}, {...}]
+        if (!array_is_list($data)) {
+            $allUuid = array_reduce($keys, fn ($c, $k) => $c && preg_match('/^[a-f0-9-]{36}$/', (string) $k), true);
+            if ($allUuid) {
+                return array_values(array_map($stripUuidKeys, $data));
+            }
+        }
+
+        // Recurse
+        return array_map($stripUuidKeys, $data);
+    };
+@endphp
+
 @if($key === 'blocks')
     @php
         $oldBlocks = is_array($oldVal) ? $oldVal : (json_decode($oldVal, true) ?? []);
@@ -26,7 +49,7 @@
                     <span class="font-medium">−</span>
                     <span>Block #{{ $i + 1 }} <span class="bg-red-100 dark:bg-red-900/30 px-1 rounded">{{ $oldType }}</span> removed</span>
                 </div>
-            @elseif(json_encode($oldB) !== json_encode($newB))
+            @elseif(json_encode($stripUuidKeys($oldB)) !== json_encode($stripUuidKeys($newB)))
                 @php
                     $oldData = $oldB['data'] ?? [];
                     $newData = $newB['data'] ?? [];
@@ -34,11 +57,12 @@
                     foreach (array_keys($oldData + $newData) as $k) {
                         $oldV = $oldData[$k] ?? null;
                         $newV = $newData[$k] ?? null;
-                        if (json_encode($oldV) !== json_encode($newV)) {
-                            $dataChanges[$k] = ['old' => $oldV, 'new' => $newV];
+                        if (json_encode($stripUuidKeys($oldV)) !== json_encode($stripUuidKeys($newV))) {
+                            $dataChanges[$k] = ['old' => $stripUuidKeys($oldV), 'new' => $stripUuidKeys($newV)];
                         }
                     }
                 @endphp
+                @if(!empty($dataChanges))
                 <div class="border border-indigo-200 dark:border-indigo-800/40 rounded-md overflow-hidden">
                     <div class="bg-indigo-50 dark:bg-indigo-900/15 px-2 py-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 border-b border-indigo-200 dark:border-indigo-800/40">
                         Block #{{ $i + 1 }} ({{ $newType }})
@@ -48,14 +72,16 @@
                             @php
                                 $oldV = $vals['old'] ?? '';
                                 $newV = $vals['new'] ?? '';
-                                $isLong = mb_strlen((string)$oldV) > $LONG_TEXT_THRESHOLD || mb_strlen((string)$newV) > $LONG_TEXT_THRESHOLD;
+                                $oldVStr = is_array($oldV) ? json_encode($oldV, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : (string) $oldV;
+                                $newVStr = is_array($newV) ? json_encode($newV, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : (string) $newV;
+                                $isLong = mb_strlen($oldVStr) > $LONG_TEXT_THRESHOLD || mb_strlen($newVStr) > $LONG_TEXT_THRESHOLD;
                             @endphp
                             <div>
                                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-0.5">{{ $fieldName }}</p>
                                 @if($isLong)
                                     @php
-                                        $oldLines = preg_split('/\R/', (string)$oldV);
-                                        $newLines = preg_split('/\R/', (string)$newV);
+                                        $oldLines = preg_split('/\R/', $oldVStr);
+                                        $newLines = preg_split('/\R/', $newVStr);
                                         $maxOld = count($oldLines);
                                         $maxNew = count($newLines);
                                         $maxLines = max($maxOld, $maxNew);
@@ -69,7 +95,7 @@
                                     @endphp
                                     <div class="rounded overflow-hidden border border-gray-200 dark:border-gray-600">
                                         <div class="bg-gray-50 dark:bg-gray-800/60 px-2 py-0.5 text-xs text-gray-400 border-b border-gray-200 dark:border-gray-600">
-                                            @php $diff = mb_strlen((string)$newV) - mb_strlen((string)$oldV); @endphp
+                                            @php $diff = mb_strlen($newVStr) - mb_strlen($oldVStr); @endphp
                                             {{ $diff >= 0 ? '▲' : '▼' }} {{ abs($diff) }} chars
                                             @if($maxOld !== $maxNew)
                                                 · {{ $maxNew - $maxOld >= 0 ? '+' : '' }}{{ $maxNew - $maxOld }} lines
@@ -98,15 +124,16 @@
                                     </div>
                                 @else
                                     <div class="grid grid-cols-[1fr_auto_1fr] gap-2 items-center text-xs mt-0.5">
-                                        <span class="text-gray-400 line-through truncate">{{ Str::limit((string)$oldV, 50) }}</span>
-                                        <span class="text-gray-300 font-mono">→</span>
-                                        <span class="text-gray-800 truncate">{{ Str::limit((string)$newV, 50) }}</span>
+                                        <span class="text-gray-400 dark:text-gray-500 line-through truncate">{{ Str::limit($oldVStr, 50) }}</span>
+                                        <span class="text-gray-300 dark:text-gray-500 font-mono">→</span>
+                                        <span class="text-gray-800 dark:text-gray-200 truncate">{{ Str::limit($newVStr, 50) }}</span>
                                     </div>
                                 @endif
                             </div>
                         @endforeach
                     </div>
                 </div>
+            @endif
             @endif
         @endfor
     </div>

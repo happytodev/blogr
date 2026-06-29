@@ -4,6 +4,7 @@ namespace Happytodev\Blogr\Helpers;
 
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CmsPage;
+use Happytodev\Blogr\Services\LinkTypeRegistry;
 
 /**
  * Resolve dynamic links based on link type and reference IDs
@@ -30,13 +31,19 @@ class LinkResolver
     ): ?string {
         $linkType = $data[$linkTypeKey] ?? 'external';
 
-        return match ($linkType) {
+        $url = match ($linkType) {
             'external' => $data[$urlKey] ?? null,
             'blog' => self::resolveBlogLink(),
             'category' => self::resolveCategoryLink($data[$categoryIdKey] ?? null),
             'cms_page' => self::resolveCmsPageLink($data[$cmsPageIdKey] ?? null),
             default => null,
         };
+
+        if ($url !== null) {
+            return $url;
+        }
+
+        return app(LinkTypeRegistry::class)->resolve($linkType);
     }
 
     /**

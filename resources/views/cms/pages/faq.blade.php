@@ -11,7 +11,7 @@
 @endsection
 
 @section('content')
-<div class="bg-white dark:bg-gray-900 min-h-screen">
+<div class="min-h-screen">
     <!-- Page Header -->
     <div class="bg-gradient-to-b from-green-50 to-white dark:from-gray-800 dark:to-gray-900 border-b border-gray-200 dark:border-gray-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

@@ -26,6 +26,7 @@ use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Services\BlogrExportService;
 use Happytodev\Blogr\Services\BlogrImportService;
+use Happytodev\Blogr\Services\LinkTypeRegistry;
 use Happytodev\Blogr\Services\LocaleService;
 use Happytodev\Blogr\Services\TranslationUsageService;
 use Illuminate\Support\Arr;
@@ -69,6 +70,18 @@ class BlogrSettings extends Page
             'tag_bg_dark' => '#48b00d',
             'author_bg' => '#f2e2f9',
             'author_bg_dark' => '#9b0ab8',
+            'bg_color' => '#ffffff',
+            'bg_color_dark' => '#111827',
+            'btn_color' => '#c20be5',
+            'btn_color_dark' => '#e166fa',
+            'text_color' => '#1f2937',
+            'text_color_dark' => '#f3f4f6',
+            'highlight_color' => '#c20be5',
+            'highlight_color_dark' => '#e166fa',
+            'testimonial_bg' => '#ffffff',
+            'testimonial_bg_dark' => '#1f2937',
+            'testimonial_text' => '#374151',
+            'testimonial_text_dark' => '#d1d5db',
         ],
         'ocean' => [
             'label' => 'Ocean Blue',
@@ -82,6 +95,18 @@ class BlogrSettings extends Page
             'tag_bg_dark' => '#92400e',
             'author_bg' => '#e0f2fe',
             'author_bg_dark' => '#075985',
+            'bg_color' => '#ffffff',
+            'bg_color_dark' => '#0f172a',
+            'btn_color' => '#2563eb',
+            'btn_color_dark' => '#60a5fa',
+            'text_color' => '#1e293b',
+            'text_color_dark' => '#f1f5f9',
+            'highlight_color' => '#2563eb',
+            'highlight_color_dark' => '#60a5fa',
+            'testimonial_bg' => '#ffffff',
+            'testimonial_bg_dark' => '#1e3a5f',
+            'testimonial_text' => '#1e293b',
+            'testimonial_text_dark' => '#bfdbfe',
         ],
         'emerald' => [
             'label' => 'Emerald Green',
@@ -95,6 +120,18 @@ class BlogrSettings extends Page
             'tag_bg_dark' => '#78350f',
             'author_bg' => '#ecfdf5',
             'author_bg_dark' => '#065f46',
+            'bg_color' => '#ffffff',
+            'bg_color_dark' => '#022c22',
+            'btn_color' => '#059669',
+            'btn_color_dark' => '#34d399',
+            'text_color' => '#1c1917',
+            'text_color_dark' => '#f5f5f4',
+            'highlight_color' => '#059669',
+            'highlight_color_dark' => '#34d399',
+            'testimonial_bg' => '#ffffff',
+            'testimonial_bg_dark' => '#064e3b',
+            'testimonial_text' => '#1c1917',
+            'testimonial_text_dark' => '#a7f3d0',
         ],
         'sunset' => [
             'label' => 'Sunset Orange',
@@ -108,6 +145,18 @@ class BlogrSettings extends Page
             'tag_bg_dark' => '#831843',
             'author_bg' => '#ffedd5',
             'author_bg_dark' => '#9a3412',
+            'bg_color' => '#ffffff',
+            'bg_color_dark' => '#1c1917',
+            'btn_color' => '#ea580c',
+            'btn_color_dark' => '#fb923c',
+            'text_color' => '#1c1917',
+            'text_color_dark' => '#fafaf9',
+            'highlight_color' => '#ea580c',
+            'highlight_color_dark' => '#fb923c',
+            'testimonial_bg' => '#ffffff',
+            'testimonial_bg_dark' => '#7c2d12',
+            'testimonial_text' => '#1c1917',
+            'testimonial_text_dark' => '#fed7aa',
         ],
         'slate' => [
             'label' => 'Slate (minimal)',
@@ -121,6 +170,18 @@ class BlogrSettings extends Page
             'tag_bg_dark' => '#334155',
             'author_bg' => '#f8fafc',
             'author_bg_dark' => '#0f172a',
+            'bg_color' => '#ffffff',
+            'bg_color_dark' => '#0f172a',
+            'btn_color' => '#475569',
+            'btn_color_dark' => '#94a3b8',
+            'text_color' => '#1e293b',
+            'text_color_dark' => '#f1f5f9',
+            'highlight_color' => '#475569',
+            'highlight_color_dark' => '#94a3b8',
+            'testimonial_bg' => '#ffffff',
+            'testimonial_bg_dark' => '#1e293b',
+            'testimonial_text' => '#1e293b',
+            'testimonial_text_dark' => '#cbd5e1',
         ],
     ];
 
@@ -181,6 +242,31 @@ class BlogrSettings extends Page
     public ?string $theme_author_bg = null;
 
     public ?string $theme_author_bg_dark = null;
+
+    // Brand colors — background, buttons, text, highlights
+    public ?string $theme_bg_color = null;
+
+    public ?string $theme_bg_color_dark = null;
+
+    public ?string $theme_btn_color = null;
+
+    public ?string $theme_btn_color_dark = null;
+
+    public ?string $theme_text_color = null;
+
+    public ?string $theme_text_color_dark = null;
+
+    public ?string $theme_highlight_color = null;
+
+    public ?string $theme_highlight_color_dark = null;
+
+    public ?string $theme_testimonial_bg = null;
+
+    public ?string $theme_testimonial_bg_dark = null;
+
+    public ?string $theme_testimonial_text = null;
+
+    public ?string $theme_testimonial_text_dark = null;
 
     public ?string $reading_time_text_format = null;
 
@@ -456,6 +542,20 @@ class BlogrSettings extends Page
         $this->theme_author_bg = $config['ui']['theme']['author_bg'] ?? '#fef3c7';
         $this->theme_author_bg_dark = $config['ui']['theme']['author_bg_dark'] ?? '#78350f';
 
+        // Brand colors
+        $this->theme_bg_color = $config['ui']['theme']['bg_color'] ?? '#ffffff';
+        $this->theme_bg_color_dark = $config['ui']['theme']['bg_color_dark'] ?? '#111827';
+        $this->theme_btn_color = $config['ui']['theme']['btn_color'] ?? '#c20be5';
+        $this->theme_btn_color_dark = $config['ui']['theme']['btn_color_dark'] ?? '#e166fa';
+        $this->theme_text_color = $config['ui']['theme']['text_color'] ?? '#1f2937';
+        $this->theme_text_color_dark = $config['ui']['theme']['text_color_dark'] ?? '#f3f4f6';
+        $this->theme_highlight_color = $config['ui']['theme']['highlight_color'] ?? '#c20be5';
+        $this->theme_highlight_color_dark = $config['ui']['theme']['highlight_color_dark'] ?? '#e166fa';
+        $this->theme_testimonial_bg = $config['ui']['theme']['testimonial_bg'] ?? '#ffffff';
+        $this->theme_testimonial_bg_dark = $config['ui']['theme']['testimonial_bg_dark'] ?? '#1f2937';
+        $this->theme_testimonial_text = $config['ui']['theme']['testimonial_text'] ?? '#374151';
+        $this->theme_testimonial_text_dark = $config['ui']['theme']['testimonial_text_dark'] ?? '#d1d5db';
+
         // Load reading time text format (supports both string and array formats)
         $textFormat = $config['reading_time']['text_format'] ?? 'Reading time: {time}';
         $availableLocales = $config['locales']['available'] ?? ['en'];
@@ -658,7 +758,6 @@ class BlogrSettings extends Page
     public function updated($name, $value): void
     {
         match ($name) {
-            'theme_preset' => $this->applyThemePreset($value),
             'locales_auto_detect' => $this->autoDetectLocales($value),
             default => null,
         };
@@ -666,6 +765,10 @@ class BlogrSettings extends Page
 
     public function updatedThemePreset(?string $value): void
     {
+        if (! $value || ! isset(self::THEME_PRESETS[$value])) {
+            return;
+        }
+
         $this->applyThemePreset($value);
     }
 
@@ -698,6 +801,18 @@ class BlogrSettings extends Page
         $this->theme_tag_bg_dark = $colors['tag_bg_dark'];
         $this->theme_author_bg = $colors['author_bg'];
         $this->theme_author_bg_dark = $colors['author_bg_dark'];
+        $this->theme_bg_color = $colors['bg_color'];
+        $this->theme_bg_color_dark = $colors['bg_color_dark'];
+        $this->theme_btn_color = $colors['btn_color'];
+        $this->theme_btn_color_dark = $colors['btn_color_dark'];
+        $this->theme_text_color = $colors['text_color'];
+        $this->theme_text_color_dark = $colors['text_color_dark'];
+        $this->theme_highlight_color = $colors['highlight_color'];
+        $this->theme_highlight_color_dark = $colors['highlight_color_dark'];
+        $this->theme_testimonial_bg = $colors['testimonial_bg'];
+        $this->theme_testimonial_bg_dark = $colors['testimonial_bg_dark'];
+        $this->theme_testimonial_text = $colors['testimonial_text'];
+        $this->theme_testimonial_text_dark = $colors['testimonial_text_dark'];
     }
 
     public function getFormSchema(): array
@@ -1353,6 +1468,62 @@ class BlogrSettings extends Page
                                         ->label('Author Bio (Dark Mode)')
                                         ->default('#78350f')
                                         ->columnSpan(1),
+
+                                    // Brand Colors
+                                    ColorPicker::make('theme_bg_color')
+                                        ->label('Page Background (Light Mode)')
+                                        ->default('#ffffff')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_bg_color_dark')
+                                        ->label('Page Background (Dark Mode)')
+                                        ->default('#111827')
+                                        ->columnSpan(1),
+
+                                    ColorPicker::make('theme_btn_color')
+                                        ->label('Buttons (Light Mode)')
+                                        ->default('#c20be5')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_btn_color_dark')
+                                        ->label('Buttons (Dark Mode)')
+                                        ->default('#e166fa')
+                                        ->columnSpan(1),
+
+                                    ColorPicker::make('theme_text_color')
+                                        ->label('Text (Light Mode)')
+                                        ->default('#1f2937')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_text_color_dark')
+                                        ->label('Text (Dark Mode)')
+                                        ->default('#f3f4f6')
+                                        ->columnSpan(1),
+
+                                    ColorPicker::make('theme_highlight_color')
+                                        ->label('Highlights (Light Mode)')
+                                        ->default('#c20be5')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_highlight_color_dark')
+                                        ->label('Highlights (Dark Mode)')
+                                        ->default('#e166fa')
+                                        ->columnSpan(1),
+
+                                    // Testimonial Card Colors
+                                    ColorPicker::make('theme_testimonial_bg')
+                                        ->label('Testimonial Card BG (Light Mode)')
+                                        ->default('#ffffff')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_testimonial_bg_dark')
+                                        ->label('Testimonial Card BG (Dark Mode)')
+                                        ->default('#1f2937')
+                                        ->columnSpan(1),
+
+                                    ColorPicker::make('theme_testimonial_text')
+                                        ->label('Testimonial Quote Text (Light Mode)')
+                                        ->default('#374151')
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_testimonial_text_dark')
+                                        ->label('Testimonial Quote Text (Dark Mode)')
+                                        ->default('#d1d5db')
+                                        ->columnSpan(1),
                                 ])
                                 ->columns(2),
 
@@ -1660,13 +1831,23 @@ class BlogrSettings extends Page
 
                                             Select::make('type')
                                                 ->label('Link Type')
-                                                ->options([
-                                                    'external' => 'External URL',
-                                                    'blog' => 'Blog Home',
-                                                    'category' => 'Category',
-                                                    'cms_page' => 'CMS Page',
-                                                    'megamenu' => 'Mega Menu (with sub-items)',
-                                                ])
+                                                ->options(function () {
+                                                    $options = [
+                                                        'external' => 'External URL',
+                                                        'blog' => 'Blog Home',
+                                                        'category' => 'Category',
+                                                        'cms_page' => 'CMS Page',
+                                                        'megamenu' => 'Mega Menu (with sub-items)',
+                                                    ];
+
+                                                    $pluginOptions = app(LinkTypeRegistry::class)->getOptions();
+
+                                                    if (! empty($pluginOptions)) {
+                                                        $options['Plugins'] = $pluginOptions;
+                                                    }
+
+                                                    return $options;
+                                                })
                                                 ->default('external')
                                                 ->live()
                                                 ->required()
@@ -2719,6 +2900,18 @@ class BlogrSettings extends Page
                     'tag_bg_dark' => $this->theme_tag_bg_dark,
                     'author_bg' => $this->theme_author_bg,
                     'author_bg_dark' => $this->theme_author_bg_dark,
+                    'bg_color' => $this->theme_bg_color,
+                    'bg_color_dark' => $this->theme_bg_color_dark,
+                    'btn_color' => $this->theme_btn_color,
+                    'btn_color_dark' => $this->theme_btn_color_dark,
+                    'text_color' => $this->theme_text_color,
+                    'text_color_dark' => $this->theme_text_color_dark,
+                    'highlight_color' => $this->theme_highlight_color,
+                    'highlight_color_dark' => $this->theme_highlight_color_dark,
+                    'testimonial_bg' => $this->theme_testimonial_bg,
+                    'testimonial_bg_dark' => $this->theme_testimonial_bg_dark,
+                    'testimonial_text' => $this->theme_testimonial_text,
+                    'testimonial_text_dark' => $this->theme_testimonial_text_dark,
                     'preset' => $this->theme_preset ?? '',
                 ],
                 'appearance' => [

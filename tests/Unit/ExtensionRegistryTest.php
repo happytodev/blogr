@@ -3,6 +3,7 @@
 use Happytodev\Blogr\Contracts\BlogrExtension;
 use Happytodev\Blogr\Filament\Pages\Plugins;
 use Happytodev\Blogr\Services\ExtensionRegistry;
+use Happytodev\Blogr\Services\LinkTypeRegistry;
 
 // ─── BlogrExtension INTERFACE ─────────────────────────
 
@@ -22,6 +23,7 @@ test('BlogrExtension interface has required methods', function () {
     expect($methodNames)->toContain('getAuthor');
     expect($methodNames)->toContain('getHomepage');
     expect($methodNames)->toContain('getDependencies');
+    expect($methodNames)->toContain('registerLinkTypes');
 });
 
 // ─── EXTENSION REGISTRY ───────────────────────────────
@@ -65,6 +67,8 @@ test('ExtensionRegistry can register and retrieve extensions', function () {
         {
             return [];
         }
+
+        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
     };
 
     $registry->register($extension);
@@ -120,6 +124,8 @@ test('ExtensionRegistry can list all extensions', function () {
         {
             return [];
         }
+
+        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
     };
 
     $ext2 = new class implements BlogrExtension
@@ -156,8 +162,10 @@ test('ExtensionRegistry can list all extensions', function () {
 
         public function getDependencies(): array
         {
-            return ['ext-one'];
+            return [];
         }
+
+        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
     };
 
     $registry->register($ext1);
@@ -211,6 +219,8 @@ test('ExtensionRegistry can count extensions', function () {
         {
             return [];
         }
+
+        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
     };
 
     $registry->register($ext);
@@ -256,6 +266,8 @@ test('registering extension with same id overwrites previous', function () {
         {
             return [];
         }
+
+        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
     };
 
     $ext2 = new class implements BlogrExtension
@@ -294,6 +306,8 @@ test('registering extension with same id overwrites previous', function () {
         {
             return [];
         }
+
+        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
     };
 
     $registry->register($ext1);
@@ -340,6 +354,8 @@ test('extension can have dependencies', function () {
         {
             return ['blogr-core', 'blogr-gdpr'];
         }
+
+        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
     };
 
     expect($ext->getDependencies())->toBe(['blogr-core', 'blogr-gdpr']);
@@ -382,6 +398,8 @@ test('extension can have null homepage', function () {
         {
             return [];
         }
+
+        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
     };
 
     expect($ext->getHomepage())->toBeNull();
@@ -521,6 +539,8 @@ test('registering extension auto-creates enabled state', function () {
         {
             return [];
         }
+
+        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
     };
 
     $registry->register($ext);
@@ -567,6 +587,8 @@ test('toggleExtension in Plugins page toggles state for non-core extensions', fu
         {
             return [];
         }
+
+        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
     };
 
     $registry->register($ext);
@@ -629,6 +651,8 @@ test('toggling non-core extension twice restores enabled', function () {
         {
             return [];
         }
+
+        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
     };
 
     $registry->register($ext);

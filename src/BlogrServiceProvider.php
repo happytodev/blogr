@@ -20,6 +20,7 @@ use Happytodev\Blogr\Commands\InstallBreezyCommand;
 use Happytodev\Blogr\Commands\InstallUserManagementCommand;
 use Happytodev\Blogr\Commands\MigratePostsToTranslations;
 use Happytodev\Blogr\Commands\SyncAdminPathCommand;
+use Happytodev\Blogr\Concerns\RegistersLinkTypes;
 use Happytodev\Blogr\Contracts\BlogrExtension;
 use Happytodev\Blogr\Filament\Livewire\AuthorBio;
 use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
@@ -42,6 +43,7 @@ use Happytodev\Blogr\Observers\BlogSeriesTranslationObserver;
 use Happytodev\Blogr\Policies\BlogPostPolicy;
 use Happytodev\Blogr\Policies\UserPolicy;
 use Happytodev\Blogr\Services\ExtensionRegistry;
+use Happytodev\Blogr\Services\LinkTypeRegistry;
 use Happytodev\Blogr\Services\LocaleService;
 use Happytodev\Blogr\Testing\TestsBlogr;
 use Illuminate\Filesystem\Filesystem;
@@ -112,6 +114,9 @@ class BlogrServiceProvider extends PackageServiceProvider
 
         // Register extension registry
         $this->app->singleton(ExtensionRegistry::class);
+
+        // Register link type registry
+        $this->app->singleton(LinkTypeRegistry::class);
     }
 
     public function packageBooted(): void
@@ -295,6 +300,16 @@ class BlogrServiceProvider extends PackageServiceProvider
         if (app()->runningInConsole()) {
             $this->repairStalePublishedViews();
         }
+
+        // Register link types from all enabled extensions
+        $this->app->booted(function (): void {
+            $registry = $this->app->make(LinkTypeRegistry::class);
+            $extensions = $this->app->make(ExtensionRegistry::class)->getEnabled();
+
+            foreach ($extensions as $extension) {
+                $extension->registerLinkTypes($registry);
+            }
+        });
     }
 
     protected function repairStalePublishedViews(): void
@@ -377,6 +392,8 @@ class BlogrServiceProvider extends PackageServiceProvider
 
         $registry->register(new class implements BlogrExtension
         {
+            use RegistersLinkTypes;
+
             public function getId(): string
             {
                 return 'blogr-core';

@@ -122,7 +122,9 @@ test('artist bio renders left layout', function () {
     $html = View::make('blogr::components.blocks.artist_bio', ['data' => $translation->blocks[0]['data']])->render();
 
     expect($html)
-        ->toContain('md:flex-row');
+        ->toContain('flex-direction: row;')
+        ->toContain('bio-img')
+        ->toContain('bio-text');
 });
 
 test('artist bio renders social links via social-links component', function () {

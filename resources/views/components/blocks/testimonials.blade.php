@@ -10,7 +10,7 @@ $gridClasses = $fullWidth
     ? 'grid grid-cols-1 gap-8 max-w-4xl mx-auto' 
     : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8';
 
-$quoteTextSize = $fullWidth ? 'text-xl' : 'text-gray-700';
+$quoteTextSize = $fullWidth ? 'text-xl' : 'text-base';
 $cardPadding = $fullWidth ? 'p-10' : 'p-8';
 @endphp
 
@@ -24,10 +24,11 @@ $cardPadding = $fullWidth ? 'p-10' : 'p-8';
         
         <div class="{{ $gridClasses }}">
             @foreach($items as $item)
-                <div class="bg-white dark:bg-gray-900 rounded-xl {{ $cardPadding }} shadow-lg">
+                <div class="testimonial-card rounded-xl {{ $cardPadding }} shadow-lg">
                     <div class="flex items-center mb-4">
                         @if(!empty($item['photo']))
-                            <img src="{{ asset('storage/' . $item['photo']) }}" 
+                            @php $photo = is_array($item['photo']) ? (reset($item['photo']) ?? '') : $item['photo']; @endphp
+                            <img src="{{ asset('storage/' . $photo) }}" 
                                  alt="{{ $item['name'] }}" 
                                  class="{{ $fullWidth ? 'w-20 h-20' : 'w-16 h-16' }} rounded-full object-cover mr-4">
                         @endif
@@ -43,8 +44,8 @@ $cardPadding = $fullWidth ? 'p-10' : 'p-8';
                         </div>
                     </div>
                     
-                    <blockquote class="{{ $quoteTextSize }} dark:text-gray-300 mb-4">
-                        "{{ $item['quote'] }}"
+                    <blockquote class="{{ $quoteTextSize }} mb-4">
+                        {{ $item['quote'] }}
                     </blockquote>
                     
                     @if(!empty($item['rating']) && $item['rating'] > 0)
