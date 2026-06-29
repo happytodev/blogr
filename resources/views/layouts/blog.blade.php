@@ -67,9 +67,43 @@
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    @php
+        $fontFamily = config('blogr.ui.theme.font_family', 'Instrument Sans');
+        $fontCustomName = config('blogr.ui.theme.font_custom_name');
+        $fontCustomUrl = config('blogr.ui.theme.font_custom_url');
+
+        $hbg = config('blogr.ui.theme.header_bg');
+        $hbgDark = config('blogr.ui.theme.header_bg_dark');
+        $htxt = config('blogr.ui.theme.header_text');
+        $htxtDark = config('blogr.ui.theme.header_text_dark');
+        $fbg = config('blogr.ui.theme.footer_bg');
+        $fbgDark = config('blogr.ui.theme.footer_bg_dark');
+        $ftxt = config('blogr.ui.theme.footer_text');
+        $ftxtDark = config('blogr.ui.theme.footer_text_dark');
+    @endphp
+
+    @if($fontFamily && $fontFamily !== 'custom' && $fontFamily !== 'system')
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family={{ urlencode($fontFamily) }}:wght@400;500;600;700&display=swap" rel="stylesheet">
+    @endif
+
+    @if($fontCustomUrl && $fontCustomName)
+    <style>
+        @font-face {
+            font-family: '{{ $fontCustomName }}';
+            src: url('{{ Storage::url($fontCustomUrl) }}') format('woff2');
+            font-weight: 400 700;
+            font-display: swap;
+        }
+    </style>
+    @endif
+
     <!-- Color System CSS Variables -->
     <style>
         :root {
+            --font-family: @if($fontFamily === 'custom' && $fontCustomName)'{{ $fontCustomName }}' @elseif($fontFamily && $fontFamily !== 'custom' && $fontFamily !== 'system')'{{ $fontFamily }}' @else'Instrument Sans' @endif;
+
             /* Primary Colors */
             --color-primary: {{ config('blogr.ui.theme.primary_color', '#c20be5') }};
             --color-primary-dark: {{ config('blogr.ui.theme.primary_color_dark', '#9b0ab8') }};
@@ -109,6 +143,16 @@
             --color-testimonial-bg-dark: {{ config('blogr.ui.theme.testimonial_bg_dark', '#1f2937') }};
             --color-testimonial-text: {{ config('blogr.ui.theme.testimonial_text', '#374151') }};
             --color-testimonial-text-dark: {{ config('blogr.ui.theme.testimonial_text_dark', '#d1d5db') }};
+
+            /* Header & Footer — user-set color, or auto from bg */
+            --color-header-bg: {{ $hbg ?: 'var(--color-bg)' }};
+            --color-header-bg-dark: {{ $hbgDark ?: 'var(--color-bg-dark)' }};
+            --color-header-text: {{ $htxt ?: 'var(--color-text)' }};
+            --color-header-text-dark: {{ $htxtDark ?: 'var(--color-text-dark)' }};
+            --color-footer-bg: {{ $fbg ?: 'var(--color-bg)' }};
+            --color-footer-bg-dark: {{ $fbgDark ?: 'var(--color-bg-dark)' }};
+            --color-footer-text: {{ $ftxt ?: 'var(--color-text)' }};
+            --color-footer-text-dark: {{ $ftxtDark ?: 'var(--color-text-dark)' }};
             
             /* Prose (markdown) — align with brand colors */
             --tw-prose-body: var(--color-text);

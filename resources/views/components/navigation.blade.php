@@ -87,7 +87,7 @@
     }
 @endphp
 
-<nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 {{ config('blogr.ui.navigation.sticky', true) ? 'sticky top-0 z-50' : '' }} transition-colors duration-200" 
+<nav style="background-color: var(--color-header-bg);" class="border-b border-gray-200 dark:border-gray-700 {{ config('blogr.ui.navigation.sticky', true) ? 'sticky top-0 z-50' : '' }} transition-colors duration-200" 
      x-data="{ mobileMenuOpen: false, openMegaMenu: null }">
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">

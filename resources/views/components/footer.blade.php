@@ -1,5 +1,5 @@
 @if(config('blogr.ui.footer.enabled', true))
-<footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mt-auto transition-colors duration-200">
+<footer style="background-color: var(--color-footer-bg);" class="border-t border-gray-200 dark:border-gray-700 mt-auto transition-colors duration-200">
     <div class="container mx-auto px-4 py-8">
         <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <!-- Footer Text -->

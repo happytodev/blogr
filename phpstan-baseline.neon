@@ -133,6 +133,24 @@ parameters:
 			path: src/Filament/Pages/BlogrSettings.php
 
 		-
+			message: '#^Offset ''font_custom_name'' on array\{label\: ''Emerald Green'', primary_color\: ''\#059669'', primary_color_dark\: ''\#34d399'', primary_color_hover\: ''\#047857'', primary_color_hover_dark\: ''\#6ee7b7'', category_bg\: ''\#d1fae5'', category_bg_dark\: ''\#064e3b'', tag_bg\: ''\#fef3c7'', \.\.\.\}\|array\{label\: ''Magenta \(default\)'', primary_color\: ''\#c20be5'', primary_color_dark\: ''\#e166fa'', primary_color_hover\: ''\#d946ef'', primary_color_hover_dark\: ''\#e49df2'', category_bg\: ''\#e0f2fe'', category_bg_dark\: ''\#0c4a6e'', tag_bg\: ''\#68fc12'', \.\.\.\}\|array\{label\: ''Ocean Blue'', primary_color\: ''\#2563eb'', primary_color_dark\: ''\#60a5fa'', primary_color_hover\: ''\#1d4ed8'', primary_color_hover_dark\: ''\#93c5fd'', category_bg\: ''\#dbeafe'', category_bg_dark\: ''\#1e3a5f'', tag_bg\: ''\#fde68a'', \.\.\.\}\|array\{label\: ''Slate \(minimal\)'', primary_color\: ''\#475569'', primary_color_dark\: ''\#94a3b8'', primary_color_hover\: ''\#334155'', primary_color_hover_dark\: ''\#cbd5e1'', category_bg\: ''\#f1f5f9'', category_bg_dark\: ''\#1e293b'', tag_bg\: ''\#e2e8f0'', \.\.\.\}\|array\{label\: ''Sunset Orange'', primary_color\: ''\#ea580c'', primary_color_dark\: ''\#fb923c'', primary_color_hover\: ''\#c2410c'', primary_color_hover_dark\: ''\#fdba74'', category_bg\: ''\#fff7ed'', category_bg_dark\: ''\#7c2d12'', tag_bg\: ''\#fce7f3'', \.\.\.\} on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Offset ''font_custom_url'' on array\{label\: ''Emerald Green'', primary_color\: ''\#059669'', primary_color_dark\: ''\#34d399'', primary_color_hover\: ''\#047857'', primary_color_hover_dark\: ''\#6ee7b7'', category_bg\: ''\#d1fae5'', category_bg_dark\: ''\#064e3b'', tag_bg\: ''\#fef3c7'', \.\.\.\}\|array\{label\: ''Magenta \(default\)'', primary_color\: ''\#c20be5'', primary_color_dark\: ''\#e166fa'', primary_color_hover\: ''\#d946ef'', primary_color_hover_dark\: ''\#e49df2'', category_bg\: ''\#e0f2fe'', category_bg_dark\: ''\#0c4a6e'', tag_bg\: ''\#68fc12'', \.\.\.\}\|array\{label\: ''Ocean Blue'', primary_color\: ''\#2563eb'', primary_color_dark\: ''\#60a5fa'', primary_color_hover\: ''\#1d4ed8'', primary_color_hover_dark\: ''\#93c5fd'', category_bg\: ''\#dbeafe'', category_bg_dark\: ''\#1e3a5f'', tag_bg\: ''\#fde68a'', \.\.\.\}\|array\{label\: ''Slate \(minimal\)'', primary_color\: ''\#475569'', primary_color_dark\: ''\#94a3b8'', primary_color_hover\: ''\#334155'', primary_color_hover_dark\: ''\#cbd5e1'', category_bg\: ''\#f1f5f9'', category_bg_dark\: ''\#1e293b'', tag_bg\: ''\#e2e8f0'', \.\.\.\}\|array\{label\: ''Sunset Orange'', primary_color\: ''\#ea580c'', primary_color_dark\: ''\#fb923c'', primary_color_hover\: ''\#c2410c'', primary_color_hover_dark\: ''\#fdba74'', category_bg\: ''\#fff7ed'', category_bg_dark\: ''\#7c2d12'', tag_bg\: ''\#fce7f3'', \.\.\.\} on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Offset ''font_family'' on array\{label\: ''Emerald Green'', primary_color\: ''\#059669'', primary_color_dark\: ''\#34d399'', primary_color_hover\: ''\#047857'', primary_color_hover_dark\: ''\#6ee7b7'', category_bg\: ''\#d1fae5'', category_bg_dark\: ''\#064e3b'', tag_bg\: ''\#fef3c7'', \.\.\.\}\|array\{label\: ''Magenta \(default\)'', primary_color\: ''\#c20be5'', primary_color_dark\: ''\#e166fa'', primary_color_hover\: ''\#d946ef'', primary_color_hover_dark\: ''\#e49df2'', category_bg\: ''\#e0f2fe'', category_bg_dark\: ''\#0c4a6e'', tag_bg\: ''\#68fc12'', \.\.\.\}\|array\{label\: ''Ocean Blue'', primary_color\: ''\#2563eb'', primary_color_dark\: ''\#60a5fa'', primary_color_hover\: ''\#1d4ed8'', primary_color_hover_dark\: ''\#93c5fd'', category_bg\: ''\#dbeafe'', category_bg_dark\: ''\#1e3a5f'', tag_bg\: ''\#fde68a'', \.\.\.\}\|array\{label\: ''Slate \(minimal\)'', primary_color\: ''\#475569'', primary_color_dark\: ''\#94a3b8'', primary_color_hover\: ''\#334155'', primary_color_hover_dark\: ''\#cbd5e1'', category_bg\: ''\#f1f5f9'', category_bg_dark\: ''\#1e293b'', tag_bg\: ''\#e2e8f0'', \.\.\.\}\|array\{label\: ''Sunset Orange'', primary_color\: ''\#ea580c'', primary_color_dark\: ''\#fb923c'', primary_color_hover\: ''\#c2410c'', primary_color_hover_dark\: ''\#fdba74'', category_bg\: ''\#fff7ed'', category_bg_dark\: ''\#7c2d12'', tag_bg\: ''\#fce7f3'', \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
 			message: '#^Parameter \#1 \$height of method Filament\\Forms\\Components\\FileUpload\:\:imageResizeTargetHeight\(\) expects Closure\|string\|null, 200 given\.$#'
 			identifier: argument.type
 			count: 1
