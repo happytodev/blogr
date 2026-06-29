@@ -4,6 +4,11 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 📝 Documentation
+
+- **AGENTS.md**: strengthen TDD requirement with explicit RED/GREEN phases, anti-false-positive gate, regression test commitment, and commit body conventions
+- **Skills**: update `issue-to-mr` with step-by-step TDD (RED → GREEN), naming conventions, and anti-regression gate; update `git-changelog-workflow` and `branch-and-commits.md` with required `Regression test:` / `Feature test:` body in commit messages
+
 ## [v1.20.0](https://github.com/happytodev/blogr/compare/v1.19.0...v1.20.0) - 2026-06-29
 
 ### ✨ Features

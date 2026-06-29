@@ -102,12 +102,35 @@ ls src/Filament/Resources/
 
 **Deliverable:** summary of files to modify with estimated scope.
 
-## Step 4 — Development
+## Step 4 — Development: TDD (RED → GREEN)
 
 1. Start from up-to-date `main`: `git checkout main && git pull origin main`
 2. Ensure `vendor/bin/pest --parallel` passes before any modification
-3. Make changes following project conventions (see AGENTS.md)
-4. For bugs, write a test that reproduces the error before fixing
+
+### Step 4a — RED phase (mandatory before any implementation)
+
+1. Write the **test** that proves the bug exists or validates the feature behaviour
+2. Naming convention:
+   - **Bug fix**: `regression_<issue_number>_<description>` (e.g. `regression_42_save_button_does_nothing`)
+   - **Feature**: `feature_<description>` (e.g. `feature_view_counter_increments_on_show`)
+3. Run the test **alone** to confirm it fails:
+   ```bash
+   vendor/bin/pest --filter <test_name>
+   ```
+4. A passing test at this stage means the test does not adequately detect the problem — rewrite it
+
+### Step 4b — GREEN phase (implementation)
+
+1. Implement the fix or feature following project conventions (see AGENTS.md)
+2. Run the test again to confirm it passes:
+   ```bash
+   vendor/bin/pest --filter <test_name>
+   ```
+3. **Anti-false-positive gate**: Comment out the new implementation code and re-run the test — it must **fail** again. If it still passes, the test is a false positive; rewrite it before proceeding
+4. Run the full suite to confirm no regressions:
+   ```bash
+   vendor/bin/pest --parallel
+   ```
 
 ### Quick conventions (see AGENTS.md)
 
@@ -120,7 +143,7 @@ ls src/Filament/Resources/
 - **Config**: read from `config('blogr.*')`. Be aware of duplicate keys in `config/blogr.php`.
 - **Validation**: always `$request->validated()`, never trust client input.
 
-## Step 4b — Mandatory human validation
+## Step 4c — Mandatory human validation
 
 Before any commit, **present to the user** the modified files for validation:
 
@@ -141,9 +164,10 @@ vendor/bin/pest --parallel
 
 **Criteria:**
 - No regressions (all existing tests pass)
-- If bug: at least one test that reproduces the case and passes after fix
-- If feature: tests covering the new behavior
+- If bug: at least one `regression_<issue_number>_<description>` test that reproduces the case and passes after fix
+- If feature: `feature_<description>` tests covering the expected behaviour
 - Feature tests must declare `uses()` individually (see AGENTS.md)
+- **Anti-regression gate**: The regression test becomes part of the permanent test suite. Any future re-introduction of the bug will be caught by `vendor/bin/pest --parallel` on CI
 
 ## Step 7 — Comment on issue during iteration
 
@@ -193,10 +217,12 @@ User: "the save button on blog post form does nothing"
 
 1. Issue created: `gh issue create --label bug --title "fix: blog post save button has no effect" --body "…"`
 2. Analysis: `src/Filament/Resources/BlogPosts/BlogPostForm.php` — the `Repeater` translations field is missing `->relationship('translations')`
-3. Dev: add missing `->relationship('translations')` call + test verifying translations persist
-4. Test: `vendor/bin/pest --parallel` → 142 passed
-5. git-changelog: branch `fix/save-button`, commit, PR #12
-6. Issue closed: `gh issue close 42 --comment "Fixed in PR #12 (abc123)"`
+3. RED phase: write `regression_42_save_button_has_no_effect` test → `vendor/bin/pest --filter regression_42` → fails (RED ✓)
+4. GREEN phase: add missing `->relationship('translations')` → test passes (GREEN ✓)
+5. Anti-false-positive: comment out `->relationship()`, test fails again (regression detected)
+6. Full suite: `vendor/bin/pest --parallel` → 142 passed
+7. git-changelog: branch `fix/save-button`, commit with body `Regression test: #42`, PR #12
+8. Issue closed: `gh issue close 42 --comment "Fixed in PR #12 (abc123)"`
 ```
 
 ### Feature
@@ -206,9 +232,11 @@ User: "add a view counter on blog posts"
 
 1. Issue: label `feature`
 2. Analysis: modify `BlogPost` model, `BlogController::show`, migration
-3. Dev: migration, model, controller, view, test
-4. Test + git-changelog → PR
-5. Issue closed
+3. RED phase: write `feature_view_counter_increments_on_show` test → fails (RED ✓)
+4. GREEN phase: migration, model, controller, view → test passes (GREEN ✓)
+5. Full suite: `vendor/bin/pest --parallel` → all pass
+6. git-changelog: branch `feat/view-counter`, commit with body `Feature test: view_counter_increments_on_show`, PR #13
+7. Issue closed
 ```
 
 ## Commit policy

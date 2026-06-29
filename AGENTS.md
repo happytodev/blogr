@@ -19,14 +19,40 @@ issue before any code is written or proposed.** This ensures traceability.
 
 ## ⚠️ TDD requirement — ZERO TOLERANCE
 
-**Every bug fix and every feature addition MUST be driven by tests written first (TDD).** Before writing implementation code, write the test that proves the bug exists or the feature works. Run the test to confirm it fails, implement the fix/feature, then run the test again to confirm it passes.
+**Every bug fix and every feature addition MUST be driven by tests written first (TDD).** Before writing implementation code, write the test that proves the bug exists or the feature works. Run the test to confirm it fails (RED), implement the fix/feature (GREEN), then run the test again to confirm it passes.
 
 This applies to:
 - **Bug fixes**: Write a test that reproduces the bug (fails before fix, passes after)
 - **New features**: Write tests covering the expected behavior before implementing
 - **Admin UI changes**: At minimum, add a syntax check test that catches parse errors
 
-Without a matching test, the change is not complete.
+### Naming convention
+
+- **Bug regression tests**: `regression_<issue_number>_<description>` (e.g. `regression_42_save_button_does_nothing`)
+- **Feature tests**: `feature_<description>` (e.g. `feature_view_counter_increments_on_show`)
+
+### RED phase (mandatory before any implementation)
+
+1. Write the test that proves the bug exists or validates the expected feature behavior
+2. Run `vendor/bin/pest --filter <test_name>` — confirm it **fails** (RED)
+3. This proves the test detects the problem
+
+### GREEN phase
+
+1. Implement the fix or feature
+2. Run `vendor/bin/pest --filter <test_name>` — confirm it **passes** (GREEN)
+3. **Anti-false-positive gate**: Comment out the new implementation code and re-run the test — it must fail again. If it still passes, the test is a false positive and must be rewritten
+
+### Regression test commitment
+
+A regression test becomes part of the **permanent test suite**. It runs on every `vendor/bin/pest --parallel` execution and on CI. Any future re-introduction of the bug will be caught immediately.
+
+### Commit message convention
+
+- **Bug fixes**: Commit body MUST include `Regression test: #<issue_number>`
+- **New features**: Commit body MUST include `Feature test: <description>`
+
+Without a matching test and without this convention, the change is not complete.
 
 ## Project
 
