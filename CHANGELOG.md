@@ -4,6 +4,24 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ Features
+
+- **Plugins**: add `getSettingsUrl()` and `registerExtension()` to `BlogrExtension` interface (replaces `register()` — renamed to avoid `FilamentPlugin` collision)
+- **Plugins**: add settings gear icon ⚙️ on each plugin card, linked to `getSettingsUrl()` when defined
+- **Plugins**: add Community Plugins discovery section — parses `README.md` plugins table with GitHub/GitLab links
+- **Plugins**: filter out already-installed plugins from community listing by repo name or homepage URL
+- **Plugins**: add "Develop a Plugin" section with link to developing guide
+- **Docs**: add `## Developing Plugins` section to README with interface reference, registration, and lifecycle
+
+### 🐛 Fixed
+
+- **Plugins**: fix enable/disable toggles having no effect — `register(Panel)` now queries `blogr_extension_states` directly (bypasses singleton timing issue)
+- **Plugins**: fix `RouteNotFoundException` when toggling a plugin on — `getSettingsUrl()` catches missing routes gracefully
+- **Plugins**: fix `loadedFromDb` flag in `ExtensionRegistry::loadStatesIfNeeded()` being set before DB query
+- **Plugins**: prevent auto-resolution of throwaway `ExtensionRegistry` instance when called before singleton registration
+- **Artist/Comms/GDPR**: add `shouldRegisterNavigation()` to settings pages — navigation respects enable/disable state
+- **Artist/Comms/GDPR**: move `$panel->plugin()` registration to `register()` phase so routes exist before navigation rendering
+
 ## [v1.19.0](https://github.com/happytodev/blogr/compare/v1.18.1...v1.19.0) - 2026-06-29
 
 ### ✨ Features

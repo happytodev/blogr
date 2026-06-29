@@ -3,5 +3,9 @@ pre-commit:
     commands:
         pint:
             run: vendor/bin/pint --test
+            env:
+                PATH: "{@path}:/opt/homebrew/Cellar/php@8.4/8.4.20/bin"
         phpstan:
             run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+            env:
+                PATH: "{@path}:/opt/homebrew/Cellar/php@8.4/8.4.20/bin"
