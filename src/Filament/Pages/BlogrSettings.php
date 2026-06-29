@@ -3274,19 +3274,7 @@ class BlogrSettings extends Page
             ->send();
 
         // Re-hydrate form with fresh config values so UI reflects saved state immediately
-        $logFont = config('blogr.ui.theme.font_family', 'N/A');
-        $logPreview = $this->font_preview;
-        \Log::debug('BlogrSettings.save re-hydrate', [
-            'font_family (from config)' => $logFont,
-            'font_preview (before mount)' => $logPreview,
-        ]);
-
         $this->mount();
-
-        \Log::debug('BlogrSettings.save after mount', [
-            'font_family (property)' => $this->font_family,
-            'font_preview (property)' => $this->font_preview,
-        ]);
     }
 
     private function updateConfigFile(array $data): void
@@ -3313,6 +3301,9 @@ class BlogrSettings extends Page
 
         // Write to file
         File::put($configPath, $content);
+
+        // Also update in-memory config so current request sees the new values
+        config()->set('blogr', $updatedConfig);
     }
 
     /**
