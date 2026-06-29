@@ -2,6 +2,8 @@
 
 namespace Happytodev\Blogr\Contracts;
 
+use Happytodev\Blogr\Services\LinkTypeRegistry;
+
 interface BlogrExtension
 {
     /**
@@ -40,4 +42,9 @@ interface BlogrExtension
      * @return string[]
      */
     public function getDependencies(): array;
+
+    /**
+     * Register link types for the navigation & CMS link selector.
+     */
+    public function registerLinkTypes(LinkTypeRegistry $registry): void;
 }

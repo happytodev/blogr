@@ -77,6 +77,11 @@
                     break;
             }
             
+            // Fallback to plugin-registered link types
+            if ($url === '#' && ($pluginUrl = app(\Happytodev\Blogr\Services\LinkTypeRegistry::class)->resolve($item['type'] ?? ''))) {
+                $url = $pluginUrl;
+            }
+            
             return ['url' => $url, 'isActive' => $isActive];
         }
     }

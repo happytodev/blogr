@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CmsPage;
+use Happytodev\Blogr\Services\LinkTypeRegistry;
 
 /**
  * Trait for reusable link selection fields across forms
@@ -30,6 +31,12 @@ trait LinkFieldsTrait
         $options['category'] = 'Category';
         $options['cms_page'] = 'CMS Page';
 
+        $pluginOptions = app(LinkTypeRegistry::class)->getOptions();
+
+        if (! empty($pluginOptions)) {
+            $options['Plugins'] = $pluginOptions;
+        }
+
         return Select::make($fieldName)
             ->label('Link Type')
             ->options($options)
@@ -37,6 +44,16 @@ trait LinkFieldsTrait
             ->live()
             ->required()
             ->columnSpan(1);
+    }
+
+    /**
+     * Check if a link type is registered by a plugin (resolved automatically).
+     */
+    public static function isPluginLinkType(string|Get $linkType): bool
+    {
+        $key = $linkType instanceof Get ? $linkType('link_type') : $linkType;
+
+        return $key !== null && app(LinkTypeRegistry::class)->has($key);
     }
 
     /**
@@ -105,6 +122,19 @@ trait LinkFieldsTrait
     }
 
     /**
+     * Get automatic plugin URL text field (just shows the resolved URL).
+     */
+    public static function getPluginUrlField(string $fieldName = 'plugin_url', string $linkTypeFieldName = 'link_type'): TextInput
+    {
+        return TextInput::make($fieldName)
+            ->label('URL')
+            ->disabled()
+            ->dehydrated(false)
+            ->visible(fn (Get $get) => self::isPluginLinkType($get($linkTypeFieldName)))
+            ->columnSpan(1);
+    }
+
+    /**
      * Get all link fields as schema array for use in forms
      *
      * @param  string  $linkTypeFieldName  Name of the link_type field
@@ -125,6 +155,7 @@ trait LinkFieldsTrait
             self::getExternalUrlField($urlFieldName, $linkTypeFieldName),
             self::getCategoryField($categoryIdFieldName, $linkTypeFieldName),
             self::getCmsPageField($cmsPageIdFieldName, $linkTypeFieldName),
+            self::getPluginUrlField('plugin_url', $linkTypeFieldName),
         ];
     }
 }
