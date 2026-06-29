@@ -100,13 +100,14 @@
                 <div class="overflow-x-auto pb-4 -mx-4 px-4">
                     <div class="flex gap-6 snap-x snap-mandatory">
                         @foreach($images as $index => $image)
+                            @php $idx = $loop->index; @endphp
                             <div
-                                @click="openLightbox({{ $index }})"
+                                @click="openLightbox({{ $idx }})"
                                 class="snap-start flex-shrink-0 w-[70vw] sm:w-[50vw] lg:w-[40vw] xl:w-[30vw] relative overflow-hidden rounded-lg cursor-pointer group"
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
-                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $index + 1) }}"
+                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $idx + 1) }}"
                                     class="w-full h-80 object-cover {{ $imageFilterClass }}"
                                     loading="lazy"
                                 >
@@ -124,16 +125,17 @@
                 <div class="grid {{ $gridCols }} gap-4">
                     @foreach($images as $index => $image)
                         @php
+                            $idx = $loop->index;
                             $cat = $imageCategories[$index] ?? '';
                         @endphp
                         <div
                             x-show="activeFilter === 'all' || activeFilter === '{{ $cat }}'"
-                            @click="openLightbox({{ $index }})"
+                            @click="openLightbox({{ $idx }})"
                             class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group"
                         >
                             <img
                                 src="{{ Storage::url($image) }}"
-                                alt="{{ $heading ?? 'Gallery image ' . ((int) $index + 1) }}"
+                                alt="{{ $heading ?? 'Gallery image ' . ((int) $idx + 1) }}"
                                 class="w-full h-full object-cover {{ $bwHover ? $defaultFilterClass : 'transition-transform duration-300 group-hover:scale-105' }}"
                                 loading="lazy"
                             >
@@ -149,13 +151,14 @@
                 @elseif($layout === 'grid')
                     <div class="grid {{ $gridCols }} gap-4">
                         @foreach($images as $index => $image)
+                            @php $idx = $loop->index; @endphp
                             <div
-                                @click="openLightbox({{ $index }})"
+                                @click="openLightbox({{ $idx }})"
                                 class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group"
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
-                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $index + 1) }}"
+                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $idx + 1) }}"
                                     class="w-full h-full object-cover {{ $bwHover ? $defaultFilterClass : 'transition-transform duration-300 group-hover:scale-105' }}"
                                     loading="lazy"
                                 >
@@ -172,16 +175,17 @@
                     <div class="grid {{ $gridCols }} gap-4">
                         @foreach($images as $index => $image)
                             @php
+                                $idx = $loop->index;
                                 $aspectClasses = ['aspect-square', 'aspect-[3/4]', 'aspect-[4/3]', 'aspect-[3/4]', 'aspect-square', 'aspect-[4/3]'];
-                                $aspectClass = $aspectClasses[$index % count($aspectClasses)];
+                                $aspectClass = $aspectClasses[$idx % count($aspectClasses)];
                             @endphp
                             <div
-                                @click="openLightbox({{ $index }})"
+                                @click="openLightbox({{ $idx }})"
                                 class="relative {{ $aspectClass }} overflow-hidden rounded-lg cursor-pointer group"
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
-                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $index + 1) }}"
+                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $idx + 1) }}"
                                     class="w-full h-full object-cover {{ $bwHover ? $defaultFilterClass : 'transition-transform duration-300 group-hover:scale-105' }}"
                                     loading="lazy"
                                 >
@@ -198,6 +202,7 @@
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 auto-rows-[200px]">
                         @foreach($images as $index => $image)
                             @php
+                                $idx = $loop->index;
                                 $pattern = [
                                     'col-span-2 row-span-2',
                                     'col-span-1 row-span-1',
@@ -206,16 +211,16 @@
                                     'col-span-1 row-span-1',
                                     'col-span-2 row-span-1',
                                 ];
-                                $spanClass = $pattern[$index % count($pattern)] ?? 'col-span-1 row-span-1';
+                                $spanClass = $pattern[$idx % count($pattern)] ?? 'col-span-1 row-span-1';
                             @endphp
 
                             <div
-                                @click="openLightbox({{ $index }})"
+                                @click="openLightbox({{ $idx }})"
                                 class="relative {{ $spanClass }} overflow-hidden rounded-lg cursor-pointer group"
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
-                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $index + 1) }}"
+                                    alt="{{ $heading ?? 'Gallery image ' . ((int) $idx + 1) }}"
                                     class="w-full h-full object-cover {{ $bwHover ? $defaultFilterClass : 'transition-transform duration-300 group-hover:scale-105' }}"
                                     loading="lazy"
                                 >

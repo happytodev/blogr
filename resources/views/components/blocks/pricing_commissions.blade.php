@@ -74,7 +74,7 @@ $statusColors = [
                 <div class="flex gap-6">
                     @foreach($items as $item)
                     <div class="snap-start flex-shrink-0 w-[300px] group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 hover:shadow-xl">
-                        <div class="relative h-64 overflow-hidden">
+                        <div class="relative h-48 sm:h-56 lg:h-64 overflow-hidden">
                             @if($img = $normalizeImage($item['image']))
                             <img
                                 src="{{ Storage::url($img) }}"

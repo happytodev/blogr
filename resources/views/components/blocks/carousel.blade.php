@@ -13,14 +13,30 @@ $normalizeImage = function ($image) {
     return ($image ?? null) ?: null;
 };
 
-$heightClass = match($height) {
-    'sm' => 'h-[400px]',
-    'md' => 'h-[500px]',
-    'lg' => 'h-[600px]',
-    'fullscreen' => 'h-screen',
-    default => 'h-[500px]',
+$heights = match($height) {
+    'sm' => ['base' => '250px', 'sm' => '350px', 'md' => '450px'],
+    'md' => ['base' => '300px', 'sm' => '400px', 'md' => '500px'],
+    'lg' => ['base' => '350px', 'sm' => '500px', 'md' => '600px'],
+    'fullscreen' => ['base' => '100dvh', 'sm' => '100dvh', 'md' => '100dvh'],
+    default => ['base' => '300px', 'sm' => '400px', 'md' => '500px'],
 };
+
+$heightClass = match($height) {
+    'sm' => 'h-[250px] sm:h-[350px] md:h-[450px]',
+    'md' => 'h-[300px] sm:h-[400px] md:h-[500px]',
+    'lg' => 'h-[350px] sm:h-[500px] md:h-[600px]',
+    'fullscreen' => 'h-[100dvh]',
+    default => 'h-[300px] sm:h-[400px] md:h-[500px]',
+};
+
+$carouselId = 'carousel-' . md5(serialize($slides));
 @endphp
+
+<style>
+#{{ $carouselId }} { min-height: {{ $heights['base'] }}; }
+@media (min-width: 640px) { #{{ $carouselId }} { min-height: {{ $heights['sm'] }}; } }
+@media (min-width: 768px) { #{{ $carouselId }} { min-height: {{ $heights['md'] }}; } }
+</style>
 
 @if(count($slides) > 0)
 <x-blogr::background-wrapper :data="$data">
@@ -74,6 +90,7 @@ $heightClass = match($height) {
         }"
         x-on:mouseenter="stopAutoplay()"
         x-on:mouseleave="startAutoplay()"
+        id="{{ $carouselId }}"
         class="relative {{ $heightClass }} overflow-hidden"
     >
         @foreach($slides as $index => $slide)

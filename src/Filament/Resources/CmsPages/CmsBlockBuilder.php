@@ -553,9 +553,12 @@ class CmsBlockBuilder
                                     ->maxLength(255)
                                     ->columnSpan(1),
 
-                                Textarea::make('bio')
+                                MarkdownEditor::make('bio')
                                     ->label(__('Bio'))
-                                    ->rows(3)
+                                    ->toolbarButtons([
+                                        'bold', 'italic', 'link', 'bulletList',
+                                        'orderedList', 'blockquote', 'codeBlock',
+                                    ])
                                     ->columnSpan(2),
 
                                 TextInput::make('linkedin')
@@ -1413,10 +1416,12 @@ class CmsBlockBuilder
                             ->maxLength(255)
                             ->columnSpan(2),
 
-                        Textarea::make('bio')
+                        MarkdownEditor::make('bio')
                             ->label(__('Biography'))
-                            ->rows(4)
-                            ->maxLength(1000)
+                            ->toolbarButtons([
+                                'bold', 'italic', 'link', 'bulletList',
+                                'orderedList', 'blockquote', 'codeBlock',
+                            ])
                             ->columnSpan(2),
 
                         Repeater::make('social_links')
@@ -1434,6 +1439,11 @@ class CmsBlockBuilder
                                         'instagram' => __('Instagram'),
                                         'tiktok' => __('TikTok'),
                                         'mastodon' => __('Mastodon'),
+                                        'discord' => __('Discord'),
+                                        'kofi' => __('Ko-fi'),
+                                        'substack' => __('Newsletter (Substack)'),
+                                        'furaffinity' => __('FurAffinity'),
+                                        'vgen' => __('VGen'),
                                     ])
                                     ->required()
                                     ->columnSpan(1),
@@ -1453,10 +1463,40 @@ class CmsBlockBuilder
                         Select::make('layout')
                             ->label(__('Layout'))
                             ->options([
-                                'left' => __('Avatar Left'),
-                                'center' => __('Avatar Centered'),
+                                'left' => __('Image Left'),
+                                'right' => __('Image Right'),
+                                'center' => __('Image Centered Above Text'),
                             ])
                             ->default('left')
+                            ->live()
+                            ->columnSpan(1),
+
+                        Select::make('image_width')
+                            ->label(__('Image width'))
+                            ->options([
+                                '1/4' => '25% (1/4)',
+                                '1/3' => '33% (1/3)',
+                                '5/12' => '42% (5/12)',
+                                '1/2' => '50% (1/2)',
+                                '7/12' => '58% (7/12)',
+                                '2/3' => '66% (2/3)',
+                                '3/4' => '75% (3/4)',
+                            ])
+                            ->default('5/12')
+                            ->visible(fn (callable $get) => $get('layout') !== 'center')
+                            ->columnSpan(1),
+
+                        Select::make('image_style')
+                            ->label(__('Image shape'))
+                            ->options([
+                                'circle' => __('Circle'),
+                                'square' => __('Square'),
+                                'rounded_square' => __('Rounded Square'),
+                                'rectangle' => __('Rectangle'),
+                                'rounded_rectangle' => __('Rounded Rectangle'),
+                                'full' => __('Full (no crop)'),
+                            ])
+                            ->default('circle')
                             ->columnSpan(1),
                     ])
                     ->columns(2),
