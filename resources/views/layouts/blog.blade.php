@@ -184,11 +184,13 @@
         body {
             background-color: var(--color-bg);
             color: var(--color-text);
+            font-family: var(--font-family), ui-sans-serif, system-ui, sans-serif;
             transition: background-color 0.3s, color 0.3s;
         }
         .dark body {
             background-color: var(--color-bg-dark);
             color: var(--color-text-dark);
+            font-family: var(--font-family), ui-sans-serif, system-ui, sans-serif;
         }
 
         .dark {

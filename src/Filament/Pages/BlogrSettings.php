@@ -1609,28 +1609,12 @@ class BlogrSettings extends Page
                                         ->default('Instrument Sans')
                                         ->live()
                                         ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state))
-                                        ->afterStateUpdatedJs(<<<'JS'
-                                            const font = $state;
-                                            if (font && font !== 'custom' && font !== 'system') {
-                                                const id = 'blogr-font-preview';
-                                                if (!document.getElementById(id)) {
-                                                    const link = document.createElement('link');
-                                                    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@400;500;600;700&display=swap`;
-                                                    link.rel = 'stylesheet';
-                                                    link.id = id;
-                                                    document.head.appendChild(link);
-                                                }
-                                                const el = document.getElementById('blogr-font-preview-text');
-                                                if (el) el.style.fontFamily = `"${font}", sans-serif`;
-                                            }
-                                        JS)
-                                        ->helperText('Choose a Google Font from the list, or pick "Custom" to upload your own. Preview updates immediately below.')
+                                        ->helperText('Choose a Google Font from the list, or pick "Custom" to upload your own.')
                                         ->columnSpan(2),
 
                                     TextInput::make('font_preview')
-                                        ->label('Font Preview')
-                                        ->default('AaBbCcDdEeFfGg 123 — The quick brown fox')
-                                        ->extraAttributes(['id' => 'blogr-font-preview-text'])
+                                        ->label('Font Preview (save to see on frontend)')
+                                        ->default('Instrument Sans')
                                         ->disabled()
                                         ->dehydrated(false)
                                         ->columnSpan(2),
@@ -3247,7 +3231,9 @@ class BlogrSettings extends Page
             ->send();
 
         // Re-hydrate form with fresh config values so UI reflects saved state immediately
-        $this->mount();
+        $fresh = config('blogr', []);
+        $this->font_family = $fresh['ui']['theme']['font_family'] ?? 'Instrument Sans';
+        $this->font_preview = $this->font_family;
     }
 
     private function updateConfigFile(array $data): void
