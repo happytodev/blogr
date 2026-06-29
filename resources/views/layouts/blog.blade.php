@@ -144,15 +144,15 @@
             --color-testimonial-text: {{ config('blogr.ui.theme.testimonial_text', '#374151') }};
             --color-testimonial-text-dark: {{ config('blogr.ui.theme.testimonial_text_dark', '#d1d5db') }};
 
-            /* Header & Footer — raw user values (null = empty, auto-fallback below) */
-            --_header-bg: {{ $hbg }};
-            --_header-bg-dark: {{ $hbgDark }};
-            --_header-text: {{ $htxt }};
-            --_header-text-dark: {{ $htxtDark }};
-            --_footer-bg: {{ $fbg }};
-            --_footer-bg-dark: {{ $fbgDark }};
-            --_footer-text: {{ $ftxt }};
-            --_footer-text-dark: {{ $ftxtDark }};
+            /* Header & Footer — raw user values (only set if user provided) */
+            @if($hbg)--_header-bg: {{ $hbg }};@endif
+            @if($hbgDark)--_header-bg-dark: {{ $hbgDark }};@endif
+            @if($htxt)--_header-text: {{ $htxt }};@endif
+            @if($htxtDark)--_header-text-dark: {{ $htxtDark }};@endif
+            @if($fbg)--_footer-bg: {{ $fbg }};@endif
+            @if($fbgDark)--_footer-bg-dark: {{ $fbgDark }};@endif
+            @if($ftxt)--_footer-text: {{ $ftxt }};@endif
+            @if($ftxtDark)--_footer-text-dark: {{ $ftxtDark }};@endif
 
             /* Computed header/footer colors — switch with .dark */
             --color-header-bg: var(--_header-bg, var(--color-bg));
