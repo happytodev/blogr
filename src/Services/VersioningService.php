@@ -69,9 +69,19 @@ class VersioningService
 
         $data = static::persistUploadedFiles($data);
 
-        $translation->update($data);
+        // Only publish if data has actually changed (after normalizing UUID noise)
+        $versionModel = $this->getVersionModel($translation);
+        $lastVersion = $versionModel::where($this->getForeignKey($translation), $translation->id)
+            ->orderBy('version_number', 'desc')
+            ->first();
 
-        $this->createVersion($translation, $data, $extra);
+        if (! $lastVersion || ! static::dataMatches($data, $lastVersion, $versionModel)) {
+            $translation->update($data);
+            $this->createVersion($translation, $data, $extra);
+        } else {
+            $translation->update($data);
+        }
+
         $draft->delete();
 
         return $translation->fresh();
@@ -237,18 +247,89 @@ class VersioningService
         );
     }
 
-    protected function createVersion(Model $translation, array $data, array $extra = []): Model
+    protected function createVersion(Model $translation, array $data, array $extra = []): ?Model
     {
         $versionModel = $this->getVersionModel($translation);
         $fk = $this->getForeignKey($translation);
 
-        $maxVersion = $versionModel::where($fk, $translation->id)->max('version_number') ?? 0;
+        $normalize = function (array $d) use ($versionModel, $fk): string {
+            $fillable = (new $versionModel)->getFillable();
+            $relevant = array_intersect_key($d, array_flip($fillable));
+            unset($relevant[$fk], $relevant['version_number']);
+
+            try {
+                $result = static::stripUuidKeys($relevant);
+            } catch (\Throwable $e) {
+                return json_encode($relevant);
+            }
+
+            return json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        };
+
+        $newNormalized = $normalize(array_merge($data, $extra));
+
+        $lastVersion = $versionModel::where($fk, $translation->id)
+            ->orderBy('version_number', 'desc')
+            ->first();
+
+        if ($lastVersion && $normalize($lastVersion->toArray()) === $newNormalized) {
+            return $lastVersion;
+        }
+
+        $translationId = $translation->getKey();
+        $maxVersion = $versionModel::where($fk, $translationId)->max('version_number') ?? 0;
 
         return $versionModel::create([
-            $fk => $translation->id,
+            $fk => $translationId,
             'version_number' => $maxVersion + 1,
             ...array_merge($data, $extra),
         ]);
+    }
+
+    public static function dataMatches(array $newData, Model $lastVersion, string $versionModel): bool
+    {
+        $fillable = (new $versionModel)->getFillable();
+        $fk = str_contains($versionModel, 'BlogPost') ? 'blog_post_translation_id' : 'cms_page_translation_id';
+
+        // Use only keys present in BOTH the fillable array AND the new data
+        $keys = array_intersect(array_keys($newData), $fillable);
+        $keys = array_values(array_diff($keys, [$fk, 'version_number']));
+
+        $normalize = function (array $data) use ($keys): string {
+            $relevant = [];
+            foreach ($keys as $k) {
+                if (array_key_exists($k, $data)) {
+                    $relevant[$k] = $data[$k];
+                }
+            }
+
+            return json_encode(static::stripUuidKeys($relevant), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        };
+
+        return $normalize($newData) === $normalize($lastVersion->toArray());
+    }
+
+    public static function stripUuidKeys($data)
+    {
+        if (! is_array($data)) {
+            return $data;
+        }
+
+        $keys = array_keys($data);
+        $isUuidKey = fn ($k) => is_string($k) && preg_match('/^[a-f0-9-]{36}$/', $k);
+
+        if (count($data) === 1 && $isUuidKey($keys[0]) && is_string($data[$keys[0]])) {
+            return $data[$keys[0]];
+        }
+
+        if (! array_is_list($data)) {
+            $allUuid = array_reduce($keys, fn ($c, $k) => $c && $isUuidKey($k), true);
+            if ($allUuid) {
+                return array_values(array_map([static::class, 'stripUuidKeys'], $data));
+            }
+        }
+
+        return array_map([static::class, 'stripUuidKeys'], $data);
     }
 
     protected function isPublished(Model $translation): bool

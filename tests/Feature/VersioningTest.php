@@ -5,6 +5,8 @@ use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostDraft;
 use Happytodev\Blogr\Models\BlogPostVersion;
 use Happytodev\Blogr\Models\Category;
+use Happytodev\Blogr\Models\CmsPage;
+use Happytodev\Blogr\Models\CmsPageVersion;
 use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Tests\CmsTestCase;
@@ -256,4 +258,68 @@ it('has history action in header', function () {
         'record' => $this->post->id,
     ])
         ->assertSee('History');
+});
+
+// ── CMS page publish: no version created when data unchanged ──
+
+it('does not create a version when publishing identical content', function () {
+    $page = CmsPage::factory()->create([
+        'is_published' => true,
+        'published_at' => now(),
+    ]);
+    $translation = $page->translations()->create([
+        'locale' => 'en',
+        'title' => 'Test Page',
+        'slug' => 'test-page',
+        'blocks' => [
+            '550e8400-e29b-41d4-a716-446655440000' => [
+                'type' => 'test_block',
+                'data' => [
+                    'title' => 'Hello',
+                    'body' => 'World',
+                ],
+            ],
+        ],
+    ]);
+
+    $service = app(VersioningService::class);
+
+    // First publish: saves draft → creates version v1
+    $service->saveDraft($translation, [
+        'title' => 'Test Page',
+        'slug' => 'test-page',
+        'blocks' => [
+            '550e8400-e29b-41d4-a716-446655440000' => [
+                'type' => 'test_block',
+                'data' => [
+                    'title' => 'Hello',
+                    'body' => 'World',
+                ],
+            ],
+        ],
+    ]);
+    $service->publish($translation);
+
+    $versions = CmsPageVersion::where('cms_page_translation_id', $translation->id)->get();
+    expect($versions)->toHaveCount(1);
+
+    // Second publish with IDENTICAL data (only UUIDs differ) → should NOT create v2
+    $service->saveDraft($translation, [
+        'title' => 'Test Page',
+        'slug' => 'test-page',
+        'blocks' => [
+            '660e8400-e29b-41d4-a716-446655440001' => [
+                'type' => 'test_block',
+                'data' => [
+                    'title' => 'Hello',
+                    'body' => 'World',
+                ],
+            ],
+        ],
+    ]);
+    $service->publish($translation);
+
+    $versions->fresh();
+    $versions = CmsPageVersion::where('cms_page_translation_id', $translation->id)->get();
+    expect($versions)->toHaveCount(1);
 });
