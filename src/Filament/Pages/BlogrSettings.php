@@ -285,6 +285,8 @@ class BlogrSettings extends Page
 
     public string $font_preview = 'Instrument Sans';
 
+    public int $font_size_base = 16;
+
     // Header & Footer colors (nullable = auto)
     public ?string $theme_header_bg = null;
 
@@ -603,6 +605,7 @@ class BlogrSettings extends Page
         $this->font_custom_name = $config['ui']['theme']['font_custom_name'] ?? null;
         $this->font_custom_url = $config['ui']['theme']['font_custom_url'] ?? null;
         $this->font_custom_google = $config['ui']['theme']['font_custom_google'] ?? null;
+        $this->font_size_base = $config['ui']['theme']['font_size_base'] ?? 16;
         $this->theme_header_bg = $config['ui']['theme']['header_bg'] ?? null;
         $this->theme_header_bg_dark = $config['ui']['theme']['header_bg_dark'] ?? null;
         $this->theme_header_text = $config['ui']['theme']['header_text'] ?? null;
@@ -1630,6 +1633,13 @@ class BlogrSettings extends Page
                                         ->label('Font Preview')
                                         ->extraAttributes(['readonly' => true])
                                         ->dehydrated(false)
+                                        ->columnSpan(2),
+
+                                    Slider::make('font_size_base')
+                                        ->label('Base Font Size (px)')
+                                        ->minValue(12)->maxValue(24)->default(16)->step(1)
+                                        ->extraAttributes(['x-on:dblclick' => '$wire.set(\'font_size_base\', 16)'])
+                                        ->helperText('Base font size in pixels (12–24). Double-click to reset to 16. Responsive via clamp() — grows smoothly on wider screens.')
                                         ->columnSpan(2),
 
                                     TextInput::make('font_custom_name')
@@ -3112,6 +3122,7 @@ class BlogrSettings extends Page
                     'font_custom_name' => $this->font_custom_name,
                     'font_custom_url' => $this->font_custom_url,
                     'font_custom_google' => $this->font_custom_google,
+                    'font_size_base' => $this->font_size_base,
                     'header_bg' => $this->theme_header_bg,
                     'header_bg_dark' => $this->theme_header_bg_dark,
                     'header_text' => $this->theme_header_text,

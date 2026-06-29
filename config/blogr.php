@@ -334,6 +334,7 @@ return [
             'font_custom_name' => null,
             'font_custom_url' => null,
             'font_custom_google' => null,
+            'font_size_base' => 16,
             // Header & Footer colors (null = auto from bg_color)
             'header_bg' => null,
             'header_bg_dark' => null,

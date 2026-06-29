@@ -85,6 +85,8 @@
         // Strip axis parameters (e.g. :ital@1) for CSS font-family usage
         $fontFamilyCss = $resolvedFont ? explode(':', $resolvedFont)[0] : null;
 
+        $fontSizeBase = config('blogr.ui.theme.font_size_base', 16);
+
         $hbg = config('blogr.ui.theme.header_bg');
         $hbgDark = config('blogr.ui.theme.header_bg_dark');
         $htxt = config('blogr.ui.theme.header_text');
@@ -143,6 +145,7 @@
     <style>
         :root {
             --font-family: '{{ $fontFamilyCss ?? 'Instrument Sans' }}';
+            --font-size-base: {{ $fontSizeBase }};
 
             /* Primary Colors */
             --color-primary: {{ config('blogr.ui.theme.primary_color', '#c20be5') }};
@@ -209,6 +212,10 @@
             --tw-prose-quotes: var(--color-text);
             --tw-prose-quote-borders: var(--color-highlight);
             --tw-prose-hr: var(--color-text);
+        }
+
+        html {
+            font-size: clamp({{ max($fontSizeBase - 2, 12) }}px, calc({{ $fontSizeBase }}px + 0.3vw), {{ min($fontSizeBase + 4, 28) }}px);
         }
 
         body {

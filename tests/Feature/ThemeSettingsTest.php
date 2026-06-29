@@ -143,6 +143,53 @@ test('brightness sliders save and reload correctly', function () {
     expect($fresh->footer_brightness_dark)->toBe(7);
 });
 
+// ── Font size ──
+
+test('font_size_base defaults to 16 when not in config', function () {
+    $settings = new BlogrSettings;
+    $reflection = new ReflectionClass($settings);
+    $method = $reflection->getMethod('mount');
+    $method->invoke($settings);
+
+    expect($settings->font_size_base)->toBe(16);
+});
+
+test('font_size_base is loaded from config on mount', function () {
+    config(['blogr.ui.theme.font_size_base' => 18]);
+
+    $settings = new BlogrSettings;
+    $reflection = new ReflectionClass($settings);
+    $method = $reflection->getMethod('mount');
+    $method->invoke($settings);
+
+    expect($settings->font_size_base)->toBe(18);
+});
+
+test('font_size_base is persisted after save', function () {
+    $settings = new BlogrSettings;
+    $settings->font_size_base = 20;
+
+    $settings->save();
+
+    expect(config('blogr.ui.theme.font_size_base'))->toBe(20);
+});
+
+test('font_size_base is saved in config file syntax', function () {
+    $configPath = __DIR__.'/../../config/blogr.php';
+    $content = file_get_contents($configPath);
+
+    expect($content)->toContain("'font_size_base'");
+});
+
+test('blade layout contains font-size CSS variable and clamp', function () {
+    $viewPath = __DIR__.'/../../resources/views/layouts/blog.blade.php';
+    $content = file_get_contents($viewPath);
+
+    expect($content)->toContain('--font-size-base:');
+    expect($content)->toContain('clamp(');
+    expect($content)->toContain('font_size_base');
+});
+
 test('save persists all font keys and brightness to config', function () {
     $settings = new BlogrSettings;
     $settings->font_family = 'Figtree';
