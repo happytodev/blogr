@@ -118,7 +118,7 @@
     @if($fontFamily === 'custom' && $fontCustomGoogle)
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family={{ urlencode($fontCustomGoogle) }}&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family={{ str_replace(' ', '+', $fontCustomGoogle) }}&display=swap" rel="stylesheet">
     @elseif($resolvedFont)
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

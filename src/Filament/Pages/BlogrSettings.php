@@ -1653,7 +1653,7 @@ class BlogrSettings extends Page
                                         ->label('Custom Google Font Name')
                                         ->placeholder('Outfit')
                                         ->visible(fn (callable $get) => $get('font_family') === 'custom')
-                                        ->helperText('Enter ANY Google Font name (e.g. "Outfit", "Bebas Neue"). The font will be loaded automatically from Google Fonts.')
+                                        ->helperText('Enter ANY Google Font name (e.g. "Outfit", "Bebas Neue"). Add axis parameters if needed, e.g. "Molle:ital@1" for italic-only fonts.')
                                         ->columnSpan(2),
                                 ])
                                 ->columns(2),
