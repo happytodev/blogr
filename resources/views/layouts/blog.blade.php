@@ -71,6 +71,16 @@
         $fontFamily = config('blogr.ui.theme.font_family', 'Instrument Sans');
         $fontCustomName = config('blogr.ui.theme.font_custom_name');
         $fontCustomUrl = config('blogr.ui.theme.font_custom_url');
+        $fontCustomGoogle = config('blogr.ui.theme.font_custom_google');
+
+        // Resolve actual font name for display and Google Fonts URL
+        $resolvedFont = match (true) {
+            $fontFamily === 'custom' && $fontCustomGoogle => $fontCustomGoogle,
+            $fontFamily === 'custom' && $fontCustomName => $fontCustomName,
+            $fontFamily === 'custom' => 'Instrument Sans',
+            $fontFamily === 'system' => null,
+            default => $fontFamily,
+        };
 
         $hbg = config('blogr.ui.theme.header_bg');
         $hbgDark = config('blogr.ui.theme.header_bg_dark');
@@ -82,10 +92,10 @@
         $ftxtDark = config('blogr.ui.theme.footer_text_dark');
     @endphp
 
-    @if($fontFamily && $fontFamily !== 'custom' && $fontFamily !== 'system')
+    @if($resolvedFont)
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family={{ urlencode($fontFamily) }}:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family={{ urlencode($resolvedFont) }}:wght@400;500;600;700&display=swap" rel="stylesheet">
     @endif
 
     @if($fontCustomUrl && $fontCustomName)
@@ -102,7 +112,7 @@
     <!-- Color System CSS Variables -->
     <style>
         :root {
-            --font-family: @if($fontFamily === 'custom' && $fontCustomName)'{{ $fontCustomName }}' @elseif($fontFamily && $fontFamily !== 'custom' && $fontFamily !== 'system')'{{ $fontFamily }}' @else'Instrument Sans' @endif;
+            --font-family: '{{ $resolvedFont ?? 'Instrument Sans' }}';
 
             /* Primary Colors */
             --color-primary: {{ config('blogr.ui.theme.primary_color', '#c20be5') }};

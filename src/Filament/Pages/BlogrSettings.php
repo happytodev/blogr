@@ -280,6 +280,10 @@ class BlogrSettings extends Page
 
     public ?string $font_custom_url = null;
 
+    public ?string $font_custom_google = null;
+
+    public string $font_preview = 'Instrument Sans';
+
     // Header & Footer colors (nullable = auto)
     public ?string $theme_header_bg = null;
 
@@ -587,6 +591,7 @@ class BlogrSettings extends Page
         $this->font_family = $config['ui']['theme']['font_family'] ?? 'Instrument Sans';
         $this->font_custom_name = $config['ui']['theme']['font_custom_name'] ?? null;
         $this->font_custom_url = $config['ui']['theme']['font_custom_url'] ?? null;
+        $this->font_custom_google = $config['ui']['theme']['font_custom_google'] ?? null;
         $this->theme_header_bg = $config['ui']['theme']['header_bg'] ?? null;
         $this->theme_header_bg_dark = $config['ui']['theme']['header_bg_dark'] ?? null;
         $this->theme_header_text = $config['ui']['theme']['header_text'] ?? null;
@@ -1575,44 +1580,44 @@ class BlogrSettings extends Page
                                 ->schema([
                                     Select::make('font_family')
                                         ->label('Font Family')
-                                        ->options(function () {
-                                            $fonts = [
-                                                'Instrument Sans' => 'Instrument Sans',
-                                                'Inter' => 'Inter',
-                                                'Figtree' => 'Figtree',
-                                                'Plus Jakarta Sans' => 'Plus Jakarta Sans',
-                                                'DM Sans' => 'DM Sans',
-                                                'Outfit' => 'Outfit',
-                                                'Onest' => 'Onest',
-                                                'Manrope' => 'Manrope',
-                                                'Lexend' => 'Lexend',
-                                                'Sora' => 'Sora',
-                                                'Public Sans' => 'Public Sans',
-                                                'Space Grotesk' => 'Space Grotesk',
-                                                'Fraunces' => 'Fraunces',
-                                                'Source Serif 4' => 'Source Serif 4',
-                                                'Lora' => 'Lora',
-                                                'Merriweather' => 'Merriweather',
-                                                'Playfair Display' => 'Playfair Display',
-                                                'PT Serif' => 'PT Serif',
-                                                'JetBrains Mono' => 'JetBrains Mono',
-                                                'Fira Code' => 'Fira Code',
-                                                'DM Mono' => 'DM Mono',
-                                                'custom' => 'Custom (upload .woff2 or enter name)',
-                                                'system' => 'System default',
-                                            ];
-
-                                            return array_map(fn ($name, $key) => $key === 'custom' || $key === 'system'
-                                                ? $name
-                                                : "<span style='font-family: \"{$key}\", sans-serif; font-size: 14px;'>{$name}</span>",
-                                                $fonts, array_keys($fonts)
-                                            );
-                                        })
-                                        ->allowHtml()
+                                        ->options([
+                                            'Instrument Sans' => 'Instrument Sans',
+                                            'Inter' => 'Inter',
+                                            'Figtree' => 'Figtree',
+                                            'Plus Jakarta Sans' => 'Plus Jakarta Sans',
+                                            'DM Sans' => 'DM Sans',
+                                            'Outfit' => 'Outfit',
+                                            'Onest' => 'Onest',
+                                            'Manrope' => 'Manrope',
+                                            'Lexend' => 'Lexend',
+                                            'Sora' => 'Sora',
+                                            'Public Sans' => 'Public Sans',
+                                            'Space Grotesk' => 'Space Grotesk',
+                                            'Fraunces' => 'Fraunces',
+                                            'Source Serif 4' => 'Source Serif 4',
+                                            'Lora' => 'Lora',
+                                            'Merriweather' => 'Merriweather',
+                                            'Playfair Display' => 'Playfair Display',
+                                            'PT Serif' => 'PT Serif',
+                                            'JetBrains Mono' => 'JetBrains Mono',
+                                            'Fira Code' => 'Fira Code',
+                                            'DM Mono' => 'DM Mono',
+                                            'custom' => 'Custom (upload .woff2 or enter name)',
+                                            'system' => 'System default',
+                                        ])
                                         ->searchable()
                                         ->default('Instrument Sans')
                                         ->live()
-                                        ->helperText('Choose a Google Font from the list, or pick "Custom" to upload your own. Search by typing the font name.')
+                                        ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state))
+                                        ->helperText('Choose a Google Font from the list, or pick "Custom" to upload your own. Use the preview below to see how it looks on the frontend.')
+                                        ->columnSpan(2),
+
+                                    TextInput::make('font_preview')
+                                        ->label('Font Preview')
+                                        ->default('The quick brown fox jumps over the lazy dog. 1234567890')
+                                        ->disabled()
+                                        ->dehydrated(false)
+                                        ->helperText('Preview of the selected font family (visible on saved page).')
                                         ->columnSpan(2),
 
                                     TextInput::make('font_custom_name')
@@ -3071,6 +3076,7 @@ class BlogrSettings extends Page
                     'font_family' => $this->font_family ?? 'Instrument Sans',
                     'font_custom_name' => $this->font_custom_name,
                     'font_custom_url' => $this->font_custom_url,
+                    'font_custom_google' => $this->font_custom_google,
                     'header_bg' => $this->theme_header_bg,
                     'header_bg_dark' => $this->theme_header_bg_dark,
                     'header_text' => $this->theme_header_text,
