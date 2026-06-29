@@ -82,6 +82,7 @@ class BlogrSettings extends Page
             'testimonial_bg_dark' => '#1f2937',
             'testimonial_text' => '#374151',
             'testimonial_text_dark' => '#d1d5db',
+            'font_family' => 'Instrument Sans',
         ],
         'ocean' => [
             'label' => 'Ocean Blue',
@@ -107,6 +108,7 @@ class BlogrSettings extends Page
             'testimonial_bg_dark' => '#1e3a5f',
             'testimonial_text' => '#1e293b',
             'testimonial_text_dark' => '#bfdbfe',
+            'font_family' => 'Instrument Sans',
         ],
         'emerald' => [
             'label' => 'Emerald Green',
@@ -132,6 +134,7 @@ class BlogrSettings extends Page
             'testimonial_bg_dark' => '#064e3b',
             'testimonial_text' => '#1c1917',
             'testimonial_text_dark' => '#a7f3d0',
+            'font_family' => 'Instrument Sans',
         ],
         'sunset' => [
             'label' => 'Sunset Orange',
@@ -157,6 +160,7 @@ class BlogrSettings extends Page
             'testimonial_bg_dark' => '#7c2d12',
             'testimonial_text' => '#1c1917',
             'testimonial_text_dark' => '#fed7aa',
+            'font_family' => 'Instrument Sans',
         ],
         'slate' => [
             'label' => 'Slate (minimal)',
@@ -182,6 +186,7 @@ class BlogrSettings extends Page
             'testimonial_bg_dark' => '#1e293b',
             'testimonial_text' => '#1e293b',
             'testimonial_text_dark' => '#cbd5e1',
+            'font_family' => 'Instrument Sans',
         ],
     ];
 
@@ -267,6 +272,34 @@ class BlogrSettings extends Page
     public ?string $theme_testimonial_text = null;
 
     public ?string $theme_testimonial_text_dark = null;
+
+    // Font settings
+    public ?string $font_family = null;
+
+    public ?string $font_custom_name = null;
+
+    public ?string $font_custom_url = null;
+
+    public ?string $font_custom_google = null;
+
+    public string $font_preview = 'Instrument Sans';
+
+    // Header & Footer colors (nullable = auto)
+    public ?string $theme_header_bg = null;
+
+    public ?string $theme_header_bg_dark = null;
+
+    public ?string $theme_header_text = null;
+
+    public ?string $theme_header_text_dark = null;
+
+    public ?string $theme_footer_bg = null;
+
+    public ?string $theme_footer_bg_dark = null;
+
+    public ?string $theme_footer_text = null;
+
+    public ?string $theme_footer_text_dark = null;
 
     public ?string $reading_time_text_format = null;
 
@@ -555,6 +588,18 @@ class BlogrSettings extends Page
         $this->theme_testimonial_bg_dark = $config['ui']['theme']['testimonial_bg_dark'] ?? '#1f2937';
         $this->theme_testimonial_text = $config['ui']['theme']['testimonial_text'] ?? '#374151';
         $this->theme_testimonial_text_dark = $config['ui']['theme']['testimonial_text_dark'] ?? '#d1d5db';
+        $this->font_family = $config['ui']['theme']['font_family'] ?? 'Instrument Sans';
+        $this->font_custom_name = $config['ui']['theme']['font_custom_name'] ?? null;
+        $this->font_custom_url = $config['ui']['theme']['font_custom_url'] ?? null;
+        $this->font_custom_google = $config['ui']['theme']['font_custom_google'] ?? null;
+        $this->theme_header_bg = $config['ui']['theme']['header_bg'] ?? null;
+        $this->theme_header_bg_dark = $config['ui']['theme']['header_bg_dark'] ?? null;
+        $this->theme_header_text = $config['ui']['theme']['header_text'] ?? null;
+        $this->theme_header_text_dark = $config['ui']['theme']['header_text_dark'] ?? null;
+        $this->theme_footer_bg = $config['ui']['theme']['footer_bg'] ?? null;
+        $this->theme_footer_bg_dark = $config['ui']['theme']['footer_bg_dark'] ?? null;
+        $this->theme_footer_text = $config['ui']['theme']['footer_text'] ?? null;
+        $this->theme_footer_text_dark = $config['ui']['theme']['footer_text_dark'] ?? null;
 
         // Load reading time text format (supports both string and array formats)
         $textFormat = $config['reading_time']['text_format'] ?? 'Reading time: {time}';
@@ -813,6 +858,9 @@ class BlogrSettings extends Page
         $this->theme_testimonial_bg_dark = $colors['testimonial_bg_dark'];
         $this->theme_testimonial_text = $colors['testimonial_text'];
         $this->theme_testimonial_text_dark = $colors['testimonial_text_dark'];
+        $this->font_family = $colors['font_family'] ?? 'Instrument Sans';
+        $this->font_custom_name = $colors['font_custom_name'] ?? null;
+        $this->font_custom_url = $colors['font_custom_url'] ?? null;
     }
 
     public function getFormSchema(): array
@@ -1523,6 +1571,134 @@ class BlogrSettings extends Page
                                     ColorPicker::make('theme_testimonial_text_dark')
                                         ->label('Testimonial Quote Text (Dark Mode)')
                                         ->default('#d1d5db')
+                                        ->columnSpan(1),
+                                ])
+                                ->columns(2),
+
+                            Section::make('Typography')
+                                ->description('Choose the font family for your blog')
+                                ->schema([
+                                    Select::make('font_family')
+                                        ->label('Font Family')
+                                        ->options([
+                                            'Instrument Sans' => 'Instrument Sans',
+                                            'Inter' => 'Inter',
+                                            'Figtree' => 'Figtree',
+                                            'Plus Jakarta Sans' => 'Plus Jakarta Sans',
+                                            'DM Sans' => 'DM Sans',
+                                            'Outfit' => 'Outfit',
+                                            'Onest' => 'Onest',
+                                            'Manrope' => 'Manrope',
+                                            'Lexend' => 'Lexend',
+                                            'Sora' => 'Sora',
+                                            'Public Sans' => 'Public Sans',
+                                            'Space Grotesk' => 'Space Grotesk',
+                                            'Fraunces' => 'Fraunces',
+                                            'Source Serif 4' => 'Source Serif 4',
+                                            'Lora' => 'Lora',
+                                            'Merriweather' => 'Merriweather',
+                                            'Playfair Display' => 'Playfair Display',
+                                            'PT Serif' => 'PT Serif',
+                                            'JetBrains Mono' => 'JetBrains Mono',
+                                            'Fira Code' => 'Fira Code',
+                                            'DM Mono' => 'DM Mono',
+                                            'custom' => 'Custom (upload .woff2 or enter name)',
+                                            'system' => 'System default',
+                                        ])
+                                        ->searchable()
+                                        ->default('Instrument Sans')
+                                        ->live()
+                                        ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state))
+                                        ->afterStateUpdatedJs(<<<'JS'
+                                            const font = $state;
+                                            if (font && font !== 'custom' && font !== 'system') {
+                                                const id = 'blogr-font-preview';
+                                                if (!document.getElementById(id)) {
+                                                    const link = document.createElement('link');
+                                                    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(font)}:wght@400;500;600;700&display=swap`;
+                                                    link.rel = 'stylesheet';
+                                                    link.id = id;
+                                                    document.head.appendChild(link);
+                                                }
+                                                const el = document.getElementById('blogr-font-preview-text');
+                                                if (el) el.style.fontFamily = `"${font}", sans-serif`;
+                                            }
+                                        JS)
+                                        ->helperText('Choose a Google Font from the list, or pick "Custom" to upload your own. Preview updates immediately below.')
+                                        ->columnSpan(2),
+
+                                    TextInput::make('font_preview')
+                                        ->label('Font Preview')
+                                        ->default('AaBbCcDdEeFfGg 123 — The quick brown fox')
+                                        ->extraAttributes(['id' => 'blogr-font-preview-text'])
+                                        ->disabled()
+                                        ->dehydrated(false)
+                                        ->columnSpan(2),
+
+                                    TextInput::make('font_custom_name')
+                                        ->label('Custom Font Name')
+                                        ->placeholder('MyFont')
+                                        ->visible(fn (callable $get) => $get('font_family') === 'custom')
+                                        ->helperText('The name of your custom font (used in CSS font-family).')
+                                        ->columnSpan(1),
+
+                                    FileUpload::make('font_custom_url')
+                                        ->label('Custom Font File (.woff2)')
+                                        ->disk('public')
+                                        ->directory('blogr/fonts')
+                                        ->visibility('public')
+                                        ->acceptedFileTypes(['font/woff2', 'application/octet-stream'])
+                                        ->visible(fn (callable $get) => $get('font_family') === 'custom')
+                                        ->helperText('Upload a .woff2 file, or leave empty and just enter a Google Font name above.')
+                                        ->columnSpan(1),
+
+                                    TextInput::make('font_custom_google')
+                                        ->label('Custom Google Font Name')
+                                        ->placeholder('Outfit')
+                                        ->visible(fn (callable $get) => $get('font_family') === 'custom')
+                                        ->helperText('Enter ANY Google Font name (e.g. "Outfit", "Bebas Neue"). The font will be loaded automatically from Google Fonts.')
+                                        ->columnSpan(2),
+                                ])
+                                ->columns(2),
+
+                            Section::make('Header & Footer Colors')
+                                ->description('Customize the header/navigation and footer backgrounds. Leave empty to auto-match the page background color.')
+                                ->schema([
+                                    ColorPicker::make('theme_header_bg')
+                                        ->label('Header Background (Light Mode)')
+                                        ->helperText('Leave empty to use page background')
+                                        ->nullable()
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_header_bg_dark')
+                                        ->label('Header Background (Dark Mode)')
+                                        ->nullable()
+                                        ->columnSpan(1),
+
+                                    ColorPicker::make('theme_header_text')
+                                        ->label('Header Text (Light Mode)')
+                                        ->nullable()
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_header_text_dark')
+                                        ->label('Header Text (Dark Mode)')
+                                        ->nullable()
+                                        ->columnSpan(1),
+
+                                    ColorPicker::make('theme_footer_bg')
+                                        ->label('Footer Background (Light Mode)')
+                                        ->nullable()
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_footer_bg_dark')
+                                        ->label('Footer Background (Dark Mode)')
+                                        ->nullable()
+                                        ->columnSpan(1),
+
+                                    ColorPicker::make('theme_footer_text')
+                                        ->label('Footer Text (Light Mode)')
+                                        ->nullable()
+                                        ->columnSpan(1),
+                                    ColorPicker::make('theme_footer_text_dark')
+                                        ->label('Footer Text (Dark Mode)')
+                                        ->nullable()
                                         ->columnSpan(1),
                                 ])
                                 ->columns(2),
@@ -2912,6 +3088,18 @@ class BlogrSettings extends Page
                     'testimonial_bg_dark' => $this->theme_testimonial_bg_dark,
                     'testimonial_text' => $this->theme_testimonial_text,
                     'testimonial_text_dark' => $this->theme_testimonial_text_dark,
+                    'font_family' => $this->font_family ?? 'Instrument Sans',
+                    'font_custom_name' => $this->font_custom_name,
+                    'font_custom_url' => $this->font_custom_url,
+                    'font_custom_google' => $this->font_custom_google,
+                    'header_bg' => $this->theme_header_bg,
+                    'header_bg_dark' => $this->theme_header_bg_dark,
+                    'header_text' => $this->theme_header_text,
+                    'header_text_dark' => $this->theme_header_text_dark,
+                    'footer_bg' => $this->theme_footer_bg,
+                    'footer_bg_dark' => $this->theme_footer_bg_dark,
+                    'footer_text' => $this->theme_footer_text,
+                    'footer_text_dark' => $this->theme_footer_text_dark,
                     'preset' => $this->theme_preset ?? '',
                 ],
                 'appearance' => [
@@ -3057,6 +3245,9 @@ class BlogrSettings extends Page
             ->success()
             ->body($body)
             ->send();
+
+        // Re-hydrate form with fresh config values so UI reflects saved state immediately
+        $this->mount();
     }
 
     private function updateConfigFile(array $data): void

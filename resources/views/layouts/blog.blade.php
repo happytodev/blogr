@@ -67,9 +67,53 @@
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    @php
+        $fontFamily = config('blogr.ui.theme.font_family', 'Instrument Sans');
+        $fontCustomName = config('blogr.ui.theme.font_custom_name');
+        $fontCustomUrl = config('blogr.ui.theme.font_custom_url');
+        $fontCustomGoogle = config('blogr.ui.theme.font_custom_google');
+
+        // Resolve actual font name for display and Google Fonts URL
+        $resolvedFont = match (true) {
+            $fontFamily === 'custom' && $fontCustomGoogle => $fontCustomGoogle,
+            $fontFamily === 'custom' && $fontCustomName => $fontCustomName,
+            $fontFamily === 'custom' => 'Instrument Sans',
+            $fontFamily === 'system' => null,
+            default => $fontFamily,
+        };
+
+        $hbg = config('blogr.ui.theme.header_bg');
+        $hbgDark = config('blogr.ui.theme.header_bg_dark');
+        $htxt = config('blogr.ui.theme.header_text');
+        $htxtDark = config('blogr.ui.theme.header_text_dark');
+        $fbg = config('blogr.ui.theme.footer_bg');
+        $fbgDark = config('blogr.ui.theme.footer_bg_dark');
+        $ftxt = config('blogr.ui.theme.footer_text');
+        $ftxtDark = config('blogr.ui.theme.footer_text_dark');
+    @endphp
+
+    @if($resolvedFont)
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family={{ urlencode($resolvedFont) }}:wght@400;500;600;700&display=swap" rel="stylesheet">
+    @endif
+
+    @if($fontCustomUrl && $fontCustomName)
+    <style>
+        @font-face {
+            font-family: '{{ $fontCustomName }}';
+            src: url('{{ Storage::url($fontCustomUrl) }}') format('woff2');
+            font-weight: 400 700;
+            font-display: swap;
+        }
+    </style>
+    @endif
+
     <!-- Color System CSS Variables -->
     <style>
         :root {
+            --font-family: '{{ $resolvedFont ?? 'Instrument Sans' }}';
+
             /* Primary Colors */
             --color-primary: {{ config('blogr.ui.theme.primary_color', '#c20be5') }};
             --color-primary-dark: {{ config('blogr.ui.theme.primary_color_dark', '#9b0ab8') }};
@@ -109,6 +153,22 @@
             --color-testimonial-bg-dark: {{ config('blogr.ui.theme.testimonial_bg_dark', '#1f2937') }};
             --color-testimonial-text: {{ config('blogr.ui.theme.testimonial_text', '#374151') }};
             --color-testimonial-text-dark: {{ config('blogr.ui.theme.testimonial_text_dark', '#d1d5db') }};
+
+            /* Header & Footer — raw user values (only set if user provided) */
+            @if($hbg)--_header-bg: {{ $hbg }};@endif
+            @if($hbgDark)--_header-bg-dark: {{ $hbgDark }};@endif
+            @if($htxt)--_header-text: {{ $htxt }};@endif
+            @if($htxtDark)--_header-text-dark: {{ $htxtDark }};@endif
+            @if($fbg)--_footer-bg: {{ $fbg }};@endif
+            @if($fbgDark)--_footer-bg-dark: {{ $fbgDark }};@endif
+            @if($ftxt)--_footer-text: {{ $ftxt }};@endif
+            @if($ftxtDark)--_footer-text-dark: {{ $ftxtDark }};@endif
+
+            /* Computed header/footer colors — switch with .dark */
+            --color-header-bg: var(--_header-bg, var(--color-bg));
+            --color-header-text: var(--_header-text, var(--color-text));
+            --color-footer-bg: var(--_footer-bg, var(--color-bg));
+            --color-footer-text: var(--_footer-text, var(--color-text));
             
             /* Prose (markdown) — align with brand colors */
             --tw-prose-body: var(--color-text);
@@ -129,6 +189,13 @@
         .dark body {
             background-color: var(--color-bg-dark);
             color: var(--color-text-dark);
+        }
+
+        .dark {
+            --color-header-bg: var(--_header-bg-dark, var(--color-bg-dark));
+            --color-header-text: var(--_header-text-dark, var(--color-text-dark));
+            --color-footer-bg: var(--_footer-bg-dark, var(--color-bg-dark));
+            --color-footer-text: var(--_footer-text-dark, var(--color-text-dark));
         }
 
         .testimonial-card {
@@ -194,7 +261,7 @@
     </script>
 </head>
 
-<body class="text-gray-900 dark:text-gray-100 transition-colors duration-200">
+<body class="font-sans text-gray-900 dark:text-gray-100 transition-colors duration-200">
     @stack('body-start')
 
     <div class="min-h-screen flex flex-col">
