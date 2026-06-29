@@ -3360,7 +3360,8 @@ class BlogrSettings extends Page
             if (is_int($key)) {
                 $result .= $this->valueToString($value);
             } else {
-                $result .= "'{$key}' => ";
+                $escapedKey = str_replace(['\\', "'"], ['\\\\', "\\'"], $key);
+                $result .= "'{$escapedKey}' => ";
                 $result .= $this->valueToString($value, $indent);
             }
 
@@ -3387,7 +3388,10 @@ class BlogrSettings extends Page
         } elseif (is_null($value)) {
             return 'null';
         } elseif (is_string($value)) {
-            return "'{$value}'";
+            // Escape single quotes and backslashes for valid PHP syntax
+            $escaped = str_replace(['\\', "'"], ['\\\\', "\\'"], $value);
+
+            return "'{$escaped}'";
         } else {
             return (string) $value;
         }
