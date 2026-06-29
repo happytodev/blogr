@@ -82,6 +82,9 @@
             default => $fontFamily,
         };
 
+        // Strip axis parameters (e.g. :ital@1) for CSS font-family usage
+        $fontFamilyCss = $resolvedFont ? explode(':', $resolvedFont)[0] : null;
+
         $hbg = config('blogr.ui.theme.header_bg');
         $hbgDark = config('blogr.ui.theme.header_bg_dark');
         $htxt = config('blogr.ui.theme.header_text');
@@ -139,7 +142,7 @@
     <!-- Color System CSS Variables -->
     <style>
         :root {
-            --font-family: '{{ $resolvedFont ?? 'Instrument Sans' }}';
+            --font-family: '{{ $fontFamilyCss ?? 'Instrument Sans' }}';
 
             /* Primary Colors */
             --color-primary: {{ config('blogr.ui.theme.primary_color', '#c20be5') }};
@@ -290,7 +293,7 @@
     </script>
 </head>
 
-<body class="font-sans text-gray-900 dark:text-gray-100 transition-colors duration-200" style="font-family: '{{ $resolvedFont ?? 'Instrument Sans' }}', ui-sans-serif, system-ui, sans-serif !important;">
+<body class="font-sans text-gray-900 dark:text-gray-100 transition-colors duration-200" style="font-family: '{{ $fontFamilyCss ?? 'Instrument Sans' }}', ui-sans-serif, system-ui, sans-serif !important;">
     @stack('body-start')
 
     <div class="min-h-screen flex flex-col">
