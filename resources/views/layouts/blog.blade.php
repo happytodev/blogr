@@ -263,7 +263,7 @@
     </script>
 </head>
 
-<body class="font-sans text-gray-900 dark:text-gray-100 transition-colors duration-200" style="font-family: '{{ $resolvedFont ?? 'Instrument Sans' }}', ui-sans-serif, system-ui, sans-serif;">
+<body class="font-sans text-gray-900 dark:text-gray-100 transition-colors duration-200" style="font-family: '{{ $resolvedFont ?? 'Instrument Sans' }}', ui-sans-serif, system-ui, sans-serif !important;">
     @stack('body-start')
 
     <div class="min-h-screen flex flex-col">
