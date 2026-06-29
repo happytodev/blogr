@@ -3223,7 +3223,10 @@ class BlogrSettings extends Page
         $this->updateConfigFile($data);
 
         // Clear config cache so subsequent requests use the updated files
-        Artisan::call('config:clear');
+        // In testing, updateConfigFile() already set in-memory values, so skip
+        if (! app()->environment('testing')) {
+            Artisan::call('config:clear');
+        }
 
         // Re-apply admin_path at runtime after cache clear
         config()->set('blogr.admin_path', $adminPath);

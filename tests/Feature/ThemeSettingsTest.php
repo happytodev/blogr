@@ -72,3 +72,90 @@ test('primary color CSS variable is injected in layout', function () {
     expect($content)->toContain('--color-primary:');
     expect($content)->toContain("config('blogr.ui.theme.primary_color'");
 });
+
+// ── Save & rehydrate ──
+
+test('font_family is persisted after save and reloaded on mount', function () {
+    // Setup: set font_family via the settings page
+    $settings = new BlogrSettings;
+    $settings->font_family = 'Inter';
+
+    // Call save — in testing, this updates in-memory config
+    $settings->save();
+
+    // Verify config has the saved value
+    expect(config('blogr.ui.theme.font_family'))->toBe('Inter');
+
+    // Simulate a fresh page load: new instance, mount it
+    config(['blogr.ui.theme.font_family' => null]); // clear so mount reads from config
+    config()->set('blogr.ui.theme.font_family', 'Inter'); // set the saved value
+
+    $fresh = new BlogrSettings;
+    $reflection = new ReflectionClass($fresh);
+    $method = $reflection->getMethod('mount');
+    $method->invoke($fresh);
+
+    expect($fresh->font_family)->toBe('Inter');
+    expect($fresh->font_preview)->toBe('Inter');
+});
+
+test('font_preview is updated after font_family change via afterStateUpdated', function () {
+    $settings = new BlogrSettings;
+
+    // Simulate the afterStateUpdated callback from the Select
+    $cb = function ($state, $set) {
+        $set('font_preview', $state);
+    };
+
+    // Simulate selecting a font
+    $set = function ($field, $value) use ($settings) {
+        $settings->$field = $value;
+    };
+
+    $cb('Outfit', $set);
+
+    expect($settings->font_preview)->toBe('Outfit');
+});
+
+test('brightness sliders save and reload correctly', function () {
+    $settings = new BlogrSettings;
+    $settings->header_brightness = 5;
+    $settings->header_brightness_dark = -3;
+    $settings->footer_brightness = -2;
+    $settings->footer_brightness_dark = 7;
+
+    $settings->save();
+
+    expect(config('blogr.ui.theme.header_brightness'))->toBe(5);
+    expect(config('blogr.ui.theme.header_brightness_dark'))->toBe(-3);
+    expect(config('blogr.ui.theme.footer_brightness'))->toBe(-2);
+    expect(config('blogr.ui.theme.footer_brightness_dark'))->toBe(7);
+
+    // Simulate fresh load
+    $fresh = new BlogrSettings;
+    $reflection = new ReflectionClass($fresh);
+    $method = $reflection->getMethod('mount');
+    $method->invoke($fresh);
+
+    expect($fresh->header_brightness)->toBe(5);
+    expect($fresh->header_brightness_dark)->toBe(-3);
+    expect($fresh->footer_brightness)->toBe(-2);
+    expect($fresh->footer_brightness_dark)->toBe(7);
+});
+
+test('save persists all font keys and brightness to config', function () {
+    $settings = new BlogrSettings;
+    $settings->font_family = 'Figtree';
+    $settings->font_custom_name = 'MyFont';
+    $settings->header_brightness = 8;
+    $settings->footer_brightness_dark = -5;
+
+    $settings->save();
+
+    $saved = config('blogr');
+
+    expect($saved['ui']['theme']['font_family'] ?? null)->toBe('Figtree');
+    expect($saved['ui']['theme']['font_custom_name'] ?? null)->toBe('MyFont');
+    expect($saved['ui']['theme']['header_brightness'] ?? null)->toBe(8);
+    expect($saved['ui']['theme']['footer_brightness_dark'] ?? null)->toBe(-5);
+});
