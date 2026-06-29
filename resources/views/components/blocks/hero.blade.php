@@ -6,6 +6,9 @@ use Happytodev\Blogr\Helpers\LinkResolver;
 $title = $data['title'] ?? '';
 $subtitle = $data['subtitle'] ?? '';
 $image = $data['image'] ?? '';
+if (is_array($image)) {
+    $image = !empty($image) ? (string) reset($image) : '';
+}
 $ctaText = $data['cta_text'] ?? '';
 $ctaUrl = LinkResolver::resolve($data, 'cta_link_type', 'cta_url', 'cta_category_id', 'cta_cms_page_id');
 

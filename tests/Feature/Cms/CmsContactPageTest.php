@@ -390,6 +390,33 @@ test('contact_form block renders image_alt text', function () {
     expect($html)->toContain('Modern office building with reception area');
 });
 
+test('contact_form block does not crash when image is a non-empty array', function () {
+    $data = [
+        'heading' => 'Contact',
+        'image' => ['cms-blocks/contact/photo.jpg'],
+        'image_alt' => 'Office photo',
+        'image_width' => 50,
+        'image_position' => 'right',
+    ];
+
+    $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
+
+    expect($html)->toContain('Office photo');
+});
+
+test('contact_form block does not crash when image is an empty array', function () {
+    $data = [
+        'heading' => 'Contact',
+        'image' => [],
+        'image_width' => 50,
+        'image_position' => 'right',
+    ];
+
+    $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
+
+    expect($html)->toContain('Contact');
+});
+
 // ──────────────────────────────────────────────
 // Features block — no chat, X + Bluesky
 // ──────────────────────────────────────────────
