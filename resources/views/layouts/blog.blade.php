@@ -261,7 +261,7 @@
     </script>
 </head>
 
-<body class="text-gray-900 dark:text-gray-100 transition-colors duration-200">
+<body class="font-sans text-gray-900 dark:text-gray-100 transition-colors duration-200">
     @stack('body-start')
 
     <div class="min-h-screen flex flex-col">
