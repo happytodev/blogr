@@ -135,3 +135,35 @@ test('hero renders without button when both cta_text and url are missing', funct
         ->toContain('Just text, no button')
         ->not->toContain('<a');
 });
+
+test('hero with top position renders image behind text as full-bleed background', function () {
+    $html = View::make('blogr::components.blocks.hero', ['data' => [
+        'title' => 'Welcome',
+        'image' => 'test.jpg',
+        'image_position' => 'top',
+        'image_max_width' => 'max-w-full',
+    ]])->render();
+
+    expect($html)
+        ->toContain('absolute inset-0')
+        ->toContain('w-full h-full object-cover')
+        ->toContain('storage/test.jpg')
+        ->toContain('bg-gradient-to-b')
+        ->toContain('Welcome')
+        ->not->toContain('max-width: ');
+});
+
+test('hero with top position respects image max width constraint', function () {
+    $html = View::make('blogr::components.blocks.hero', ['data' => [
+        'title' => 'Welcome',
+        'image' => 'test.jpg',
+        'image_position' => 'top',
+        'image_max_width' => 'max-w-sm',
+    ]])->render();
+
+    expect($html)
+        ->toContain('absolute inset-0')
+        ->toContain('max-width: 384px')
+        ->toContain('margin-left: auto; margin-right: auto')
+        ->toContain('Welcome');
+});

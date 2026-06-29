@@ -39,6 +39,26 @@ test('it can create a page with hero block in translation', function () {
     expect($translation->blocks[0]['data']['title'])->toBe('Welcome to Our Platform');
 });
 
+test('hero block renders without crash when image is a non-empty array', function () {
+    $html = view('blogr::components.blocks.hero', ['data' => [
+        'title' => 'Hero',
+        'image' => ['cms-blocks/hero/photo.jpg'],
+        'image_position' => 'right',
+    ]])->render();
+
+    expect($html)->toContain('Hero');
+});
+
+test('hero block renders without crash when image is an empty array', function () {
+    $html = view('blogr::components.blocks.hero', ['data' => [
+        'title' => 'Hero',
+        'image' => [],
+        'image_position' => 'right',
+    ]])->render();
+
+    expect($html)->toContain('Hero');
+});
+
 test('it can create a page with features block in translation', function () {
     $page = CmsPage::create([
         'slug' => 'landing-features',
