@@ -11,7 +11,7 @@
 @endsection
 
 @section('content')
-<div class="bg-white dark:bg-gray-900 min-h-screen">
+<div class="min-h-screen">
     <!-- Blocks Section (Custom blocks) -->
     @if(isset($blocks) && !empty($blocks))
         <x-blogr::blocks-renderer :blocks="$blocks" />

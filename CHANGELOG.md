@@ -2,6 +2,29 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [Unreleased]
+
+### ✨ Features
+
+- **Theme**: add brand color system (background, buttons, text, highlights) with 8 ColorPickers in Appearance settings + dark mode variants
+- **Theme**: add testimonial card colors (background + quote text) configurable in Appearance settings
+- **Links**: add LinkTypeRegistry for plugin-provided link types (Portfolio, Commissions) with optgroup in CMS link selector
+- **Blocks**: add responsive height classes to carousel (mobile/tablet/desktop breakpoints)
+- **Blocks**: add image shape options to Artist Bio block (circle, square, rounded square, rectangle, rounded rectangle, full)
+- **Blocks**: add responsive image width selector to Artist Bio block (25%–75%)
+- **Icons**: add Discord, Ko-fi, FurAffinity, VGen, Substack social link SVGs
+- **CMS**: add `registerLinkTypes()` method to BlogrExtension interface with RegistersLinkTypes trait
+
+### 🐛 Bug Fixes
+
+- **Blocks**: fix gallery `openLightbox(index)` using UUID keys instead of numeric `$loop->index`
+- **Blocks**: fix "Array to string conversion" when testimonial photo is stored as array
+- **Versioning**: prevent creating empty versions when only Filament UUIDs changed
+- **Version diff**: strip UUID noise from comparisons (Repeater keys, FileUpload keys)
+- **Layout**: remove hardcoded `bg-white dark:bg-gray-900` from CMS templates — use CSS custom properties instead
+- **Layout**: fix prose typography colors not respecting brand color CSS variables
+- **Version diff**: add missing `dark:` color variants for new value text
+
 ## [v1.18.1](https://github.com/happytodev/blogr/compare/v1.18.0...v1.18.1) - 2026-06-27
 
 ### 🐛 Bug Fixes
