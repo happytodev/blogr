@@ -93,6 +93,65 @@
             /* Author Colors */
             --color-author-bg: {{ config('blogr.ui.theme.author_bg', '#fef3c7') }};
             --color-author-bg-dark: {{ config('blogr.ui.theme.author_bg_dark', '#78350f') }};
+            
+            /* Brand Colors — background, buttons, text, highlights */
+            --color-bg: {{ config('blogr.ui.theme.bg_color', '#ffffff') }};
+            --color-bg-dark: {{ config('blogr.ui.theme.bg_color_dark', '#111827') }};
+            --color-btn: {{ config('blogr.ui.theme.btn_color', '#c20be5') }};
+            --color-btn-dark: {{ config('blogr.ui.theme.btn_color_dark', '#e166fa') }};
+            --color-text: {{ config('blogr.ui.theme.text_color', '#1f2937') }};
+            --color-text-dark: {{ config('blogr.ui.theme.text_color_dark', '#f3f4f6') }};
+            --color-highlight: {{ config('blogr.ui.theme.highlight_color', '#c20be5') }};
+            --color-highlight-dark: {{ config('blogr.ui.theme.highlight_color_dark', '#e166fa') }};
+            
+            /* Testimonial card colors */
+            --color-testimonial-bg: {{ config('blogr.ui.theme.testimonial_bg', '#ffffff') }};
+            --color-testimonial-bg-dark: {{ config('blogr.ui.theme.testimonial_bg_dark', '#1f2937') }};
+            --color-testimonial-text: {{ config('blogr.ui.theme.testimonial_text', '#374151') }};
+            --color-testimonial-text-dark: {{ config('blogr.ui.theme.testimonial_text_dark', '#d1d5db') }};
+            
+            /* Prose (markdown) — align with brand colors */
+            --tw-prose-body: var(--color-text);
+            --tw-prose-headings: var(--color-text);
+            --tw-prose-links: var(--color-highlight);
+            --tw-prose-bold: var(--color-text);
+            --tw-prose-code: var(--color-text);
+            --tw-prose-quotes: var(--color-text);
+            --tw-prose-quote-borders: var(--color-highlight);
+            --tw-prose-hr: var(--color-text);
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark body {
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-dark);
+        }
+
+        .testimonial-card {
+            background-color: var(--color-testimonial-bg);
+            color: var(--color-testimonial-text);
+        }
+        .dark .testimonial-card {
+            background-color: var(--color-testimonial-bg-dark);
+            color: var(--color-testimonial-text-dark);
+        }
+
+        .dark .prose,
+        .dark .prose-lg,
+        .dark .prose-sm,
+        .dark .prose-xl {
+            --tw-prose-body: var(--color-text-dark);
+            --tw-prose-headings: var(--color-text-dark);
+            --tw-prose-links: var(--color-highlight-dark);
+            --tw-prose-bold: var(--color-text-dark);
+            --tw-prose-code: var(--color-text-dark);
+            --tw-prose-quotes: var(--color-text-dark);
+            --tw-prose-quote-borders: var(--color-highlight-dark);
+            --tw-prose-hr: var(--color-text-dark);
         }
     </style>
 
@@ -135,7 +194,7 @@
     </script>
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+<body class="text-gray-900 dark:text-gray-100 transition-colors duration-200">
     @stack('body-start')
 
     <div class="min-h-screen flex flex-col">
