@@ -99,8 +99,6 @@ class ExtensionRegistry
             return;
         }
 
-        $this->loadedFromDb = true;
-
         if (! $this->hasDbTable()) {
             return;
         }
@@ -113,6 +111,8 @@ class ExtensionRegistry
                 ->map(fn () => true)
                 ->toArray();
         });
+
+        $this->loadedFromDb = true;
     }
 
     protected function hasDbTable(): bool
