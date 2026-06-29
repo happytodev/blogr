@@ -40,6 +40,8 @@ Progress:
 - [ ] 3. Propose CHANGELOG entries (await validation)
 - [ ] 4. Atomic commits (await validation of the plan)
 - [ ] 5. Propose the Pull Request (await validation)
+- [ ] 6. Merge the Pull Request (await validation)
+- [ ] 7. Post-merge cleanup — switch to main, pull, delete branch
 ```
 
 ---
@@ -285,6 +287,39 @@ release batch (see `release-manager`). If the user plans to accumulate
 multiple PRs before releasing, skip this step.
 
 **Do not merge without explicit user validation.**
+
+## Step 7 — Post-merge cleanup (required after merge)
+
+After the PR is merged, switch back to `main` and update the local repository:
+
+```bash
+# Fetch the latest main with the merged changes
+git fetch origin main
+
+# Switch back to main
+git checkout main
+
+# Merge or rebase to catch up with the remote
+git pull origin main
+
+# Delete the local feature branch (optional but recommended)
+git branch -D $BRANCH_NAME
+```
+
+**Important:** If the branch has additional commits pushed *after* the PR was merged
+(which can happen when fixes are pushed post-merge), the branch will still be ahead
+of `main`. Those commits should be delivered via a **new PR** rather than force-pushing
+the already-merged branch.
+
+If the working tree has uncommitted changes that would be overwritten by the checkout,
+stash them first:
+
+```bash
+git stash
+git checkout main
+git pull origin main
+git stash pop
+```
 
 ---
 
