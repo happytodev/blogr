@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.20.0](https://github.com/happytodev/blogr/compare/v1.19.0...v1.20.0) - 2026-06-29
+
 ### ✨ Features
 
 - **Plugins**: add `getSettingsUrl()` and `registerExtension()` to `BlogrExtension` interface (replaces `register()` — renamed to avoid `FilamentPlugin` collision)
