@@ -144,15 +144,21 @@
             --color-testimonial-text: {{ config('blogr.ui.theme.testimonial_text', '#374151') }};
             --color-testimonial-text-dark: {{ config('blogr.ui.theme.testimonial_text_dark', '#d1d5db') }};
 
-            /* Header & Footer — user-set color, or auto from bg */
-            --color-header-bg: {{ $hbg ?: 'var(--color-bg)' }};
-            --color-header-bg-dark: {{ $hbgDark ?: 'var(--color-bg-dark)' }};
-            --color-header-text: {{ $htxt ?: 'var(--color-text)' }};
-            --color-header-text-dark: {{ $htxtDark ?: 'var(--color-text-dark)' }};
-            --color-footer-bg: {{ $fbg ?: 'var(--color-bg)' }};
-            --color-footer-bg-dark: {{ $fbgDark ?: 'var(--color-bg-dark)' }};
-            --color-footer-text: {{ $ftxt ?: 'var(--color-text)' }};
-            --color-footer-text-dark: {{ $ftxtDark ?: 'var(--color-text-dark)' }};
+            /* Header & Footer — raw user values (null = empty, auto-fallback below) */
+            --_header-bg: {{ $hbg }};
+            --_header-bg-dark: {{ $hbgDark }};
+            --_header-text: {{ $htxt }};
+            --_header-text-dark: {{ $htxtDark }};
+            --_footer-bg: {{ $fbg }};
+            --_footer-bg-dark: {{ $fbgDark }};
+            --_footer-text: {{ $ftxt }};
+            --_footer-text-dark: {{ $ftxtDark }};
+
+            /* Computed header/footer colors — switch with .dark */
+            --color-header-bg: var(--_header-bg, var(--color-bg));
+            --color-header-text: var(--_header-text, var(--color-text));
+            --color-footer-bg: var(--_footer-bg, var(--color-bg));
+            --color-footer-text: var(--_footer-text, var(--color-text));
             
             /* Prose (markdown) — align with brand colors */
             --tw-prose-body: var(--color-text);
@@ -173,6 +179,13 @@
         .dark body {
             background-color: var(--color-bg-dark);
             color: var(--color-text-dark);
+        }
+
+        .dark {
+            --color-header-bg: var(--_header-bg-dark, var(--color-bg-dark));
+            --color-header-text: var(--_header-text-dark, var(--color-text-dark));
+            --color-footer-bg: var(--_footer-bg-dark, var(--color-bg-dark));
+            --color-footer-text: var(--_footer-text-dark, var(--color-text-dark));
         }
 
         .testimonial-card {
