@@ -7,12 +7,6 @@ parameters:
 			path: src/BlogrServiceProvider.php
 
 		-
-			message: '#^Method Happytodev\\Blogr\\Contracts\\BlogrExtension@anonymous/BlogrServiceProvider\.php\:393\:\:getHomepage\(\) never returns null so it can be removed from the return type\.$#'
-			identifier: return.unusedType
-			count: 1
-			path: src/BlogrServiceProvider.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1

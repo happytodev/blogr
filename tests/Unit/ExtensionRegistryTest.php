@@ -1,9 +1,9 @@
 <?php
 
+use Happytodev\Blogr\Concerns\RegistersLinkTypes;
 use Happytodev\Blogr\Contracts\BlogrExtension;
 use Happytodev\Blogr\Filament\Pages\Plugins;
 use Happytodev\Blogr\Services\ExtensionRegistry;
-use Happytodev\Blogr\Services\LinkTypeRegistry;
 
 // ─── BlogrExtension INTERFACE ─────────────────────────
 
@@ -23,6 +23,8 @@ test('BlogrExtension interface has required methods', function () {
     expect($methodNames)->toContain('getAuthor');
     expect($methodNames)->toContain('getHomepage');
     expect($methodNames)->toContain('getDependencies');
+    expect($methodNames)->toContain('getSettingsUrl');
+    expect($methodNames)->toContain('registerExtension');
     expect($methodNames)->toContain('registerLinkTypes');
 });
 
@@ -68,7 +70,7 @@ test('ExtensionRegistry can register and retrieve extensions', function () {
             return [];
         }
 
-        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+        use RegistersLinkTypes;
     };
 
     $registry->register($extension);
@@ -125,7 +127,7 @@ test('ExtensionRegistry can list all extensions', function () {
             return [];
         }
 
-        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+        use RegistersLinkTypes;
     };
 
     $ext2 = new class implements BlogrExtension
@@ -165,7 +167,7 @@ test('ExtensionRegistry can list all extensions', function () {
             return [];
         }
 
-        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+        use RegistersLinkTypes;
     };
 
     $registry->register($ext1);
@@ -220,7 +222,7 @@ test('ExtensionRegistry can count extensions', function () {
             return [];
         }
 
-        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+        use RegistersLinkTypes;
     };
 
     $registry->register($ext);
@@ -267,7 +269,7 @@ test('registering extension with same id overwrites previous', function () {
             return [];
         }
 
-        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+        use RegistersLinkTypes;
     };
 
     $ext2 = new class implements BlogrExtension
@@ -307,7 +309,7 @@ test('registering extension with same id overwrites previous', function () {
             return [];
         }
 
-        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+        use RegistersLinkTypes;
     };
 
     $registry->register($ext1);
@@ -355,7 +357,7 @@ test('extension can have dependencies', function () {
             return ['blogr-core', 'blogr-gdpr'];
         }
 
-        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+        use RegistersLinkTypes;
     };
 
     expect($ext->getDependencies())->toBe(['blogr-core', 'blogr-gdpr']);
@@ -399,7 +401,7 @@ test('extension can have null homepage', function () {
             return [];
         }
 
-        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+        use RegistersLinkTypes;
     };
 
     expect($ext->getHomepage())->toBeNull();
@@ -540,7 +542,7 @@ test('registering extension auto-creates enabled state', function () {
             return [];
         }
 
-        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+        use RegistersLinkTypes;
     };
 
     $registry->register($ext);
@@ -588,7 +590,7 @@ test('toggleExtension in Plugins page toggles state for non-core extensions', fu
             return [];
         }
 
-        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+        use RegistersLinkTypes;
     };
 
     $registry->register($ext);
@@ -652,7 +654,7 @@ test('toggling non-core extension twice restores enabled', function () {
             return [];
         }
 
-        public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+        use RegistersLinkTypes;
     };
 
     $registry->register($ext);
@@ -663,4 +665,234 @@ test('toggling non-core extension twice restores enabled', function () {
 
     $page->toggleExtension('ext-three');
     expect($registry->isEnabled('ext-three'))->toBeTrue();
+});
+
+// ─── LIFECYCLE: register / boot / getSettingsUrl ──────
+
+test('getSettingsUrl returns null by default', function () {
+    $ext = new class implements BlogrExtension
+    {
+        use RegistersLinkTypes;
+
+        public function getId(): string
+        {
+            return 'settings-test';
+        }
+
+        public function getName(): string
+        {
+            return 'Settings Test';
+        }
+
+        public function getDescription(): string
+        {
+            return '';
+        }
+
+        public function getVersion(): string
+        {
+            return '1.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'Dev';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
+    };
+
+    expect($ext->getSettingsUrl())->toBeNull();
+});
+
+test('registerExtension is called on enabled extensions', function () {
+    $registry = app(ExtensionRegistry::class);
+
+    $tracker = new stdClass;
+    $tracker->registerCalled = false;
+
+    $ext = new class($tracker) implements BlogrExtension
+    {
+        use RegistersLinkTypes;
+
+        public function __construct(private stdClass $tracker) {}
+
+        public function getId(): string
+        {
+            return 'lifecycle-track';
+        }
+
+        public function getName(): string
+        {
+            return 'Lifecycle Track';
+        }
+
+        public function getDescription(): string
+        {
+            return '';
+        }
+
+        public function getVersion(): string
+        {
+            return '1.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'Dev';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
+
+        public function registerExtension(ExtensionRegistry $registry): void
+        {
+            $this->tracker->registerCalled = true;
+        }
+    };
+
+    $registry->register($ext);
+
+    // Simulate the app->booted() lifecycle from BlogrServiceProvider
+    foreach ($registry->getEnabled() as $ext) {
+        $ext->registerExtension($registry);
+    }
+
+    expect($tracker->registerCalled)->toBeTrue();
+});
+
+test('registerExtension is NOT called on disabled extensions', function () {
+    $registry = app(ExtensionRegistry::class);
+
+    $tracker = new stdClass;
+    $tracker->registerCalled = false;
+
+    $ext = new class($tracker) implements BlogrExtension
+    {
+        use RegistersLinkTypes;
+
+        public function __construct(private stdClass $tracker) {}
+
+        public function getId(): string
+        {
+            return 'lifecycle-disabled';
+        }
+
+        public function getName(): string
+        {
+            return 'Lifecycle Disabled';
+        }
+
+        public function getDescription(): string
+        {
+            return '';
+        }
+
+        public function getVersion(): string
+        {
+            return '1.0.0';
+        }
+
+        public function getAuthor(): string
+        {
+            return 'Dev';
+        }
+
+        public function getHomepage(): ?string
+        {
+            return null;
+        }
+
+        public function getDependencies(): array
+        {
+            return [];
+        }
+
+        public function registerExtension(ExtensionRegistry $registry): void
+        {
+            $this->tracker->registerCalled = true;
+        }
+    };
+
+    $registry->register($ext);
+    $registry->disable('lifecycle-disabled');
+
+    // Only enabled extensions should have register called
+    foreach ($registry->getEnabled() as $ext) {
+        $ext->registerExtension($registry);
+    }
+
+    expect($tracker->registerCalled)->toBeFalse();
+
+    $registry->enable('lifecycle-disabled');
+});
+
+// ─── COMMUNITY PLUGIN DISCOVERY ─────────────────────
+
+test('parsePluginTable extracts plugins from markdown', function () {
+    $page = new Plugins;
+
+    $reflection = new ReflectionMethod($page, 'parsePluginTable');
+    $reflection->setAccessible(true);
+
+    $markdown = <<<'MD'
+## Plugins
+
+| Plugin | Description | Repository |
+|--------|-------------|------------|
+| GDPR | Cookie consent, privacy, data export | [happytodev/blogr-gdpr](https://github.com/happytodev/blogr-gdpr) |
+| SEO | Search engine optimization | [happytodev/blogr-seo](https://github.com/happytodev/blogr-seo) |
+
+## Next Section
+MD;
+
+    $result = $reflection->invoke($page, $markdown);
+
+    expect($result)->toHaveCount(2);
+    expect($result[0]['name'])->toBe('GDPR');
+    expect($result[0]['description'])->toBe('Cookie consent, privacy, data export');
+    expect($result[0]['url'])->toBe('https://github.com/happytodev/blogr-gdpr');
+    expect($result[1]['name'])->toBe('SEO');
+    expect($result[1]['url'])->toBe('https://github.com/happytodev/blogr-seo');
+});
+
+test('parsePluginTable returns empty array when no plugins section', function () {
+    $page = new Plugins;
+
+    $reflection = new ReflectionMethod($page, 'parsePluginTable');
+    $reflection->setAccessible(true);
+
+    $markdown = "# Just a normal readme\n\nNo plugins here.\n";
+
+    $result = $reflection->invoke($page, $markdown);
+
+    expect($result)->toBe([]);
+});
+
+test('parsePluginTable returns empty array for empty table', function () {
+    $page = new Plugins;
+
+    $reflection = new ReflectionMethod($page, 'parsePluginTable');
+    $reflection->setAccessible(true);
+
+    $markdown = "## Plugins\n\n| Plugin | Description | Repository |\n|--------|-------------|------------|\n";
+
+    $result = $reflection->invoke($page, $markdown);
+
+    expect($result)->toBe([]);
 });

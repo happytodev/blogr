@@ -22,7 +22,7 @@ class BlockTranslator
         'blog_posts' => ['heading'],
         'blog-title' => ['title', 'description'],
         'map' => ['heading', 'subtitle', 'tagline'],
-        'contact_form' => ['heading', 'subtitle', 'submit_text', 'success_message'],
+        'contact_form' => ['heading', 'subtitle', 'submit_text', 'success_message', 'image_alt'],
     ];
 
     public function __construct(protected TranslationProvider $provider) {}

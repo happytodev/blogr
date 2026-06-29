@@ -435,17 +435,74 @@ After installation:
 
 ---
 
-## 🔒 GDPR Plugin
+## Plugins
 
-Add full GDPR compliance to your Blogr site with the official [Blogr GDPR](https://github.com/happytodev/blogr-gdpr) plugin:
+| Plugin | Description | Repository |
+|--------|-------------|------------|
+| GDPR | Cookie consent, privacy policy, data export & erasure | [happytodev/blogr-gdpr](https://github.com/happytodev/blogr-gdpr) |
+| Comments | Threaded comments with moderation, voting, anti-spam, and email notifications | [happytodev/blogr-comments](https://github.com/happytodev/blogr-comments) |
+| Artist Portfolio | Artist portfolio with artwork management, portfolio pages, and commission showcase | [happytodev/blogr-artist](https://github.com/happytodev/blogr-artist) |
 
-[![blogr-gdpr](https://img.shields.io/packagist/v/happytodev/blogr-gdpr.svg?style=flat-square&label=blogr-gdpr)](https://packagist.org/packages/happytodev/blogr-gdpr) [![GDPR Tests](https://img.shields.io/github/actions/workflow/status/happytodev/blogr-gdpr/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/happytodev/blogr-gdpr/actions)
+---
 
-Cookie consent, privacy policy, data export & erasure — install in one command:
+## Developing Plugins
 
-```bash
-composer require happytodev/blogr-gdpr
+Blogr plugins are Composer packages that implement the `Happytodev\Blogr\Contracts\BlogrExtension` interface.
+
+### Quick start
+
+Create a new package and implement the interface:
+
+```php
+use Happytodev\Blogr\Contracts\BlogrExtension;
+use Happytodev\Blogr\Services\ExtensionRegistry;
+use Happytodev\Blogr\Services\LinkTypeRegistry;
+
+class MyPlugin implements BlogrExtension
+{
+    public function getId(): string { return 'my-plugin'; }
+    public function getName(): string { return 'My Plugin'; }
+    public function getDescription(): string { return 'What it does.'; }
+    public function getVersion(): string { return '1.0.0'; }
+    public function getAuthor(): string { return 'Your Name'; }
+    public function getHomepage(): ?string { return 'https://github.com/you/my-plugin'; }
+    public function getDependencies(): array { return ['blogr-core']; }
+    public function getSettingsUrl(): ?string { return null; }
+    public function registerExtension(ExtensionRegistry $registry): void {}
+    public function registerLinkTypes(LinkTypeRegistry $registry): void {}
+}
 ```
+
+### Registration
+
+In your package's service provider, register the extension:
+
+```php
+public function packageBooted(): void
+{
+    if ($this->app->has(\Happytodev\Blogr\Services\ExtensionRegistry::class)) {
+        $this->app->make(\Happytodev\Blogr\Services\ExtensionRegistry::class)
+            ->register(new MyPlugin);
+    }
+}
+```
+
+The extension then appears in the **Plugins** admin page where users can enable/disable it.
+
+### Linking to settings
+
+If your plugin has a Filament settings page, return its URL from `getSettingsUrl()` — a ⚙️ icon will appear next to the plugin toggle:
+
+```php
+public function getSettingsUrl(): ?string
+{
+    return MySettings::getUrl();
+}
+```
+
+### Lifecycle
+
+When the extension is enabled, `registerExtension()` is called during the application boot cycle. Use it to register routes, Livewire components, or other features conditionally.
 
 ---
 

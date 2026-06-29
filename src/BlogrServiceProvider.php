@@ -23,6 +23,7 @@ use Happytodev\Blogr\Commands\SyncAdminPathCommand;
 use Happytodev\Blogr\Concerns\RegistersLinkTypes;
 use Happytodev\Blogr\Contracts\BlogrExtension;
 use Happytodev\Blogr\Filament\Livewire\AuthorBio;
+use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
 use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
 use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
@@ -301,13 +302,17 @@ class BlogrServiceProvider extends PackageServiceProvider
             $this->repairStalePublishedViews();
         }
 
-        // Register link types from all enabled extensions
+        // Register enabled extensions and their link types
         $this->app->booted(function (): void {
-            $registry = $this->app->make(LinkTypeRegistry::class);
-            $extensions = $this->app->make(ExtensionRegistry::class)->getEnabled();
+            $extensionRegistry = $this->app->make(ExtensionRegistry::class);
+            $linkTypeRegistry = $this->app->make(LinkTypeRegistry::class);
 
-            foreach ($extensions as $extension) {
-                $extension->registerLinkTypes($registry);
+            foreach ($extensionRegistry->getEnabled() as $extension) {
+                $extension->registerExtension($extensionRegistry);
+            }
+
+            foreach ($extensionRegistry->getEnabled() as $extension) {
+                $extension->registerLinkTypes($linkTypeRegistry);
             }
         });
     }
@@ -419,7 +424,7 @@ class BlogrServiceProvider extends PackageServiceProvider
                 return 'HappyToDev';
             }
 
-            public function getHomepage(): ?string
+            public function getHomepage(): string
             {
                 return 'https://github.com/happytodev/blogr';
             }
@@ -427,6 +432,11 @@ class BlogrServiceProvider extends PackageServiceProvider
             public function getDependencies(): array
             {
                 return [];
+            }
+
+            public function getSettingsUrl(): string
+            {
+                return BlogrSettings::getUrl();
             }
         });
     }

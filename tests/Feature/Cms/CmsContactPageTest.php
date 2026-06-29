@@ -266,6 +266,131 @@ test('contact_form block has light and dark mode colors', function () {
 });
 
 // ──────────────────────────────────────────────
+// Contact form block — image layout
+// ──────────────────────────────────────────────
+
+test('contact_form block builder has image fields in source', function () {
+    $path = projectRoot().'/src/Filament/Resources/CmsPages/CmsBlockBuilder.php';
+    $content = file_get_contents($path);
+
+    // The contactFormBlock method must define the 4 new fields
+    expect($content)->toMatch('/FileUpload::make\(\'image\'\)/');
+    expect($content)->toMatch('/TextInput::make\(\'image_alt\'\)/');
+    expect($content)->toMatch('/Select::make\(\'image_position\'\)/');
+    expect($content)->toMatch('/Select::make\(\'image_width\'\)/');
+});
+
+test('contact_form block renders without error when image is absent', function () {
+    $data = [
+        'heading' => 'Contact',
+        'submit_text' => 'Send',
+        'success_message' => 'Thanks!',
+    ];
+
+    $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
+
+    // Form must still render normally
+    expect($html)->toContain('bg-indigo-600');
+    expect($html)->toContain('text-white');
+    // No image-related grid class when image is absent
+    expect($html)->not->toContain('lg:grid-cols-2');
+    expect($html)->not->toContain('lg:grid-cols-4');
+});
+
+test('contact_form block renders image when image is set', function () {
+    $data = [
+        'heading' => 'Contact',
+        'submit_text' => 'Send',
+        'success_message' => 'Thanks!',
+        'image' => 'cms-blocks/contact/photo.jpg',
+        'image_alt' => 'Our office',
+        'image_width' => 50,
+        'image_position' => 'right',
+    ];
+
+    $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
+
+    expect($html)->toContain('Our office');
+    expect($html)->toContain('lg:grid-cols-2');
+});
+
+test('contact_form block respects image_position left (image first in DOM)', function () {
+    $data = [
+        'heading' => 'Contact',
+        'image' => 'cms-blocks/contact/photo.jpg',
+        'image_alt' => 'Office',
+        'image_width' => 50,
+        'image_position' => 'left',
+    ];
+
+    $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
+
+    // Image alt text should appear before any form input when image is left
+    $officePos = strpos($html, 'Office');
+    $indigoPos = strpos($html, 'bg-indigo-600');
+    expect($officePos)->not->toBeFalse();
+    expect($indigoPos)->not->toBeFalse();
+    expect($officePos)->toBeLessThan($indigoPos);
+});
+
+test('contact_form block renders image_50 with grid-cols-2', function () {
+    $data = [
+        'image' => 'cms-blocks/contact/photo.jpg',
+        'image_alt' => 'Office',
+        'image_width' => 50,
+        'image_position' => 'right',
+    ];
+
+    $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
+
+    expect($html)->toContain('lg:grid-cols-2');
+    expect($html)->not->toContain('lg:grid-cols-4');
+});
+
+test('contact_form block renders image_width 25 with col-span-3 form', function () {
+    $data = [
+        'image' => 'cms-blocks/contact/photo.jpg',
+        'image_alt' => 'Office',
+        'image_width' => 25,
+        'image_position' => 'right',
+    ];
+
+    $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
+
+    expect($html)->toContain('lg:grid-cols-4');
+    expect($html)->toContain('lg:col-span-3');
+    expect($html)->toContain('lg:col-span-1');
+});
+
+test('contact_form block renders image_width 75 with col-span-3 image', function () {
+    $data = [
+        'image' => 'cms-blocks/contact/photo.jpg',
+        'image_alt' => 'Office',
+        'image_width' => 75,
+        'image_position' => 'right',
+    ];
+
+    $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
+
+    expect($html)->toContain('lg:grid-cols-4');
+    expect($html)->toContain('lg:col-span-1');
+    expect($html)->toContain('lg:col-span-3');
+});
+
+test('contact_form block renders image_alt text', function () {
+    $data = [
+        'image' => 'cms-blocks/contact/photo.jpg',
+        'image_alt' => 'Modern office building with reception area',
+        'image_width' => 50,
+        'image_position' => 'right',
+    ];
+
+    $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
+
+    expect($html)->toContain('Modern office building with reception area');
+});
+
+// ──────────────────────────────────────────────
 // Features block — no chat, X + Bluesky
 // ──────────────────────────────────────────────
 

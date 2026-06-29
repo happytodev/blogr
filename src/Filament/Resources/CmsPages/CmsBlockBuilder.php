@@ -1053,6 +1053,40 @@ class CmsBlockBuilder
                             ->label(__('Send To Email (leave empty for site default)'))
                             ->email()
                             ->columnSpan(2),
+
+                        FileUpload::make('image')
+                            ->label(__('Side Image'))
+                            ->image()
+                            ->disk('public')
+                            ->directory('cms-blocks/contact')
+                            ->visibility('public')
+                            ->imageEditor()
+                            ->helperText(__('Appears alongside the contact form in a two-column layout'))
+                            ->columnSpan(2),
+
+                        TextInput::make('image_alt')
+                            ->label(__('Image Alt Text'))
+                            ->maxLength(255)
+                            ->columnSpan(1),
+
+                        Select::make('image_position')
+                            ->label(__('Image Position'))
+                            ->options([
+                                'right' => __('Right (form left, image right)'),
+                                'left' => __('Left (image left, form right)'),
+                            ])
+                            ->default('right')
+                            ->columnSpan(1),
+
+                        Select::make('image_width')
+                            ->label(__('Image Width'))
+                            ->options([
+                                25 => '25%',
+                                50 => '50%',
+                                75 => '75%',
+                            ])
+                            ->default(50)
+                            ->columnSpan(1),
                     ])
                     ->columns(2),
 
