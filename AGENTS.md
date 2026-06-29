@@ -40,6 +40,29 @@ FilamentPHP v4 plugin package (`happytodev/blogr`) — a multilingual blog syste
 | [docs/](docs/) | Feature documentation (CMS, gradients, translations, RGPD, etc.) |
 | [artist-portfolio-audit](.opencode/skills/artist-portfolio-audit/SKILL.md) | Variance analysis for the illustrator’s portfolio website |
 
+## Shell Environment
+
+PHP/Composer binaries are installed via Homebrew at `/opt/homebrew/bin/`.
+Node/npm is installed via nvm at `~/.nvm/versions/node/*/bin/`.
+The opencode shell may not include these directories in `PATH` automatically.
+Always ensure it is set before running any PHP, Composer, or Node commands:
+
+```bash
+export PATH="/opt/homebrew/bin:$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node/)/bin:$PATH"
+```
+
+Or use the full path directly (e.g. `/opt/homebrew/bin/php vendor/bin/pest`).
+
+Alternatively, prefix commands with the full path (e.g. `/opt/homebrew/bin/php vendor/bin/pest`).
+
+If the PHP runtime has Xdebug enabled without coverage mode (`xdebug.mode=develop`),
+Pest will warn about missing coverage and may bail out (due to `failOnWarning` in
+`phpunit.xml.dist`). Set `XDEBUG_MODE=coverage` before running tests:
+
+```bash
+export PATH="/opt/homebrew/bin:$PATH" && XDEBUG_MODE=coverage vendor/bin/pest --parallel
+```
+
 ## Stack
 
 - PHP 8.3+, Laravel 12.x, FilamentPHP v4, Pest PHP 4.0, Tailwind CSS 4, Vite
