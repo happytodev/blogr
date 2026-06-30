@@ -22,34 +22,44 @@ class CmsBlockBuilder
 {
     use LinkFieldsTrait;
 
+    public static function getSortedBlockDefinitions(): array
+    {
+        $blocks = [
+            self::heroBlock(),
+            self::featuresBlock(),
+            self::testimonialsBlock(),
+            self::ctaBlock(),
+            self::contentBlock(),
+            self::faqBlock(),
+            self::galleryBlock(),
+            self::teamBlock(),
+            self::pricingBlock(),
+            self::blogPostsBlock(),
+            self::statsBlock(),
+            self::timelineBlock(),
+            self::videoBlock(),
+            self::newsletterBlock(),
+            self::mapBlock(),
+            self::contactFormBlock(),
+            self::carouselBlock(),
+            self::pricingCommissionsBlock(),
+            self::artistBioBlock(),
+            self::transitionDiagonalBlock(),
+            self::blogTitleBlock(),
+        ];
+
+        usort($blocks, fn (Block $a, Block $b) => strcmp($a->getLabel(), $b->getLabel()));
+
+        return $blocks;
+    }
+
     public static function make(): Builder
     {
         return Builder::make('blocks')
             ->label(__('Content Blocks'))
-            ->blocks([
-                self::heroBlock(),
-                self::featuresBlock(),
-                self::testimonialsBlock(),
-                self::ctaBlock(),
-                self::contentBlock(),
-                self::faqBlock(),
-                self::galleryBlock(),
-                self::teamBlock(),
-                self::pricingBlock(),
-                self::blogPostsBlock(),
-                self::statsBlock(),
-                self::timelineBlock(),
-                self::videoBlock(),
-                self::newsletterBlock(),
-                self::mapBlock(),
-                self::contactFormBlock(),
-                self::carouselBlock(),
-                self::pricingCommissionsBlock(),
-                self::artistBioBlock(),
-                self::transitionDiagonalBlock(),
-                self::blogTitleBlock(),
-            ])
+            ->blocks(self::getSortedBlockDefinitions())
             ->collapsible()
+            ->collapsed()
             ->blockNumbers(false)
             ->lazy()
             ->columnSpanFull();
