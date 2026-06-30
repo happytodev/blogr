@@ -735,7 +735,7 @@ parameters:
 		-
 			message: '#^Cannot access property \$id on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
 			identifier: property.nonObject
-			count: 1
+			count: 2
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
@@ -1339,6 +1339,36 @@ parameters:
 			path: src/Http/Controllers/CmsPageController.php
 
 		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$content\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$excerpt\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$seo_keywords\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$content\.$#'
 			identifier: property.notFound
 			count: 2
@@ -1363,9 +1393,21 @@ parameters:
 			path: src/Http/Controllers/CmsPageController.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$template\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
 			identifier: property.notFound
 			count: 4
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:availableLocales\(\)\.$#'
+			identifier: method.notFound
+			count: 1
 			path: src/Http/Controllers/CmsPageController.php
 
 		-

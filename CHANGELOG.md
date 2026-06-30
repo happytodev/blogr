@@ -4,6 +4,11 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ Features
+
+- **CMS**: preview mode with signed URL (30 min) to view draft state of a page before publishing
+- **CMS**: blocks can now be hidden/shown directly from the block header — hidden blocks are skipped in the front-end render (no HTML output)
+
 ### 🐛 Fixed
 
 - **Tests**: eliminate all 57 skipped tests — add missing `uses(TestCase::class)`, convert Livewire auth-page tests to HTTP/model-level, remove obsolete browser tests, fix fragile assertions
@@ -31,6 +36,7 @@ All notable changes to `blogr` will be documented in this file.
 - **CMS**: Content Blocks section is now expanded by default when editing a page translation
 - **CMS**: blocks are now collapsed by default to make navigation easier
 - **CMS**: block types are now sorted alphabetically in the add-block picker
+- **Blocks**: `isPluginLinkType()` no longer throws a TypeError when `link_type` is null (e.g. "Select one" state)
 
 ### 🧪 Tests
 

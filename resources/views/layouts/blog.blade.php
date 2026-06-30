@@ -303,6 +303,13 @@
 <body class="font-sans text-gray-900 dark:text-gray-100 transition-colors duration-200" style="font-family: '{{ $fontFamilyCss ?? 'Instrument Sans' }}', ui-sans-serif, system-ui, sans-serif !important;">
     @stack('body-start')
 
+    @if($preview ?? false)
+        <div style="position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #ea580c; color: white; text-align: center; padding: 8px 16px; font-size: 14px; font-weight: 600;">
+            🔍 PREVIEW — Draft mode &middot; changes not published
+        </div>
+        <div style="margin-top: 40px;"></div>
+    @endif
+
     <div class="min-h-screen flex flex-col">
         <!-- Navigation -->
         @if(config('blogr.ui.navigation.enabled', true))
