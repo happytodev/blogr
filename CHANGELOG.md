@@ -2,7 +2,7 @@
 
 All notable changes to `blogr` will be documented in this file.
 
-## [Unreleased]
+## [v1.22.0](https://github.com/happytodev/blogr/compare/v1.21.0...v1.22.0) - 2026-06-30
 
 ### ✨ Features
 
@@ -30,6 +30,8 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Tests**: remove 2 obsolete browser test files (replaced by feature tests)
 - **Tests**: remove 3 tests that already exist in `tests/Localized/FrontendTranslationsTest`
+
+## [Unreleased]
 
 ## [v1.21.0](https://github.com/happytodev/blogr/compare/v1.20.0...v1.21.0) - 2026-06-30
 
