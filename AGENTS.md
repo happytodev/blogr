@@ -70,6 +70,7 @@ FilamentPHP v4 plugin package (`happytodev/blogr`) — a multilingual blog syste
 
 PHP/Composer binaries are installed via Homebrew at `/opt/homebrew/bin/`.
 Node/npm is installed via nvm at `~/.nvm/versions/node/*/bin/`.
+GitHub CLI (`gh`) is also at `/opt/homebrew/bin/gh`.
 The opencode shell may not include these directories in `PATH` automatically.
 Always ensure it is set before running any PHP, Composer, or Node commands:
 
