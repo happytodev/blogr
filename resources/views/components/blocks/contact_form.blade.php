@@ -19,6 +19,11 @@
 
     $hasImage = !empty($image);
 
+    $formBgColor = $data['form_background_color'] ?? null;
+    $formBgColorDark = $data['form_background_color_dark'] ?? null;
+    $buttonColor = $data['button_color'] ?? '#4f46e5';
+    $buttonColorDark = $data['button_color_dark'] ?? '#4f46e5';
+
     if ($hasImage) {
         $gridCols = match($imageWidth) {
             25, 75 => 'lg:grid-cols-4',
@@ -65,7 +70,6 @@
         @if($hasImage)
             <div class="grid grid-cols-1 {{ $gridCols }} gap-8 lg:gap-12">
                 @if($imagePosition === 'left')
-                    {{-- Image first in DOM → stacks above form on mobile --}}
                     <div class="{{ $imageColSpan }}">
                         <img src="{{ asset($imagePath) }}"
                              alt="{{ $imageAlt }}"
@@ -74,15 +78,68 @@
                     </div>
                     <div class="{{ $formColSpan }}">
                 @else
-                    {{-- Form first in DOM → stacks above image on mobile --}}
                     <div class="{{ $formColSpan }}">
                 @endif
         @endif
 
-        <div id="{{ $uniqueId }}" x-data="contactForm({
+        <div id="{{ $uniqueId }}" x-data="{
+            name: '',
+            email: '',
+            subject: '',
+            message: '',
+            loading: false,
+            submitted: false,
+            success: false,
+            statusMessage: '',
             successMessage: '{{ addslashes($successMessage) }}',
             toEmail: '{{ $toEmail }}',
-        })" class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
+            gdprConsent: false,
+            consentTouched: false,
+            submit() {
+                if (this.loading) return;
+                this.loading = true;
+                this.submitted = false;
+
+                fetch('{{ route("blogr.cms.contact.submit") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=\'csrf-token\']')?.getAttribute('content') || '',
+                    },
+                    body: JSON.stringify({
+                        name: this.name,
+                        email: this.email,
+                        subject: this.subject,
+                        message: this.message,
+                        to_email: this.toEmail,
+                    }),
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        this.name = '';
+                        this.email = '';
+                        this.subject = '';
+                        this.message = '';
+                        this.success = true;
+                        this.statusMessage = this.successMessage;
+                    } else {
+                        this.success = false;
+                        this.statusMessage = data.message || 'An error occurred. Please try again.';
+                    }
+                    this.submitted = true;
+                }.bind(this))
+                .catch(function() {
+                    this.success = false;
+                    this.statusMessage = 'Network error. Please try again.';
+                    this.submitted = true;
+                }.bind(this))
+                .finally(function() {
+                    this.loading = false;
+                }.bind(this));
+            },
+        }" class="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 sm:p-8"
+             @if($formBgColor) style="background-color: {{ $formBgColor }};" @endif>
             <form @submit.prevent="submit" class="space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
@@ -148,14 +205,15 @@
                         type="submit"
                         :disabled="loading"
                         class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold !text-white shadow-lg transition-all duration-200"
-                        :class="loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl active:scale-[0.98]'"
+                        :class="loading ? 'bg-gray-400 cursor-not-allowed' : 'hover:shadow-xl active:scale-[0.98]'"
+                        style="background-color: {{ $buttonColor }};"
                     >
                         <svg x-show="loading" class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span x-show="!loading">{{ $submitText }}</span>
-                        <span x-show="loading">{{ __('Sending...') }}</span>
+                        <span :class="{'hidden': loading}">{{ $submitText }}</span>
+                        <span x-show="loading" class="hidden">{{ __('Sending...') }}</span>
                     </button>
                 </div>
 
@@ -183,65 +241,19 @@
         @endif
     </div>
 
-    <script>
-        document.addEventListener('alpine:init', function() {
-            Alpine.data('contactForm', function(config) {
-                return {
-                    name: '',
-                    email: '',
-                    subject: '',
-                    message: '',
-                    loading: false,
-                    submitted: false,
-                    success: false,
-                    statusMessage: '',
-                    submit: function() {
-                        var self = this;
-                        if (self.loading) return;
-                        self.loading = true;
-                        self.submitted = false;
-
-                        fetch('{{ route("blogr.cms.contact.submit") }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                            },
-                            body: JSON.stringify({
-                                name: self.name,
-                                email: self.email,
-                                subject: self.subject,
-                                message: self.message,
-                                to_email: config.toEmail,
-                            }),
-                        })
-                        .then(function(r) { return r.json(); })
-                        .then(function(data) {
-                            if (data.success) {
-                                self.name = '';
-                                self.email = '';
-                                self.subject = '';
-                                self.message = '';
-                                self.success = true;
-                                self.statusMessage = config.successMessage;
-                            } else {
-                                self.success = false;
-                                self.statusMessage = data.message || 'An error occurred. Please try again.';
-                            }
-                            self.submitted = true;
-                        })
-                        .catch(function() {
-                            self.success = false;
-                            self.statusMessage = 'Network error. Please try again.';
-                            self.submitted = true;
-                        })
-                        .finally(function() {
-                            self.loading = false;
-                        });
-                    },
-                };
-            });
-        });
-    </script>
+    @if($formBgColorDark || $buttonColorDark)
+        <style>
+            @if($formBgColorDark)
+            .dark #{{ $uniqueId }} {
+                background-color: {{ $formBgColorDark }} !important;
+            }
+            @endif
+            @if($buttonColorDark)
+            .dark #{{ $uniqueId }} button[type="submit"] {
+                background-color: {{ $buttonColorDark }} !important;
+            }
+            @endif
+        </style>
+    @endif
 </x-blogr::background-wrapper>
 </div>
