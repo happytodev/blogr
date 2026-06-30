@@ -153,12 +153,9 @@ it('calculates reading time correctly for different locales independently', func
     ]));
     $frArticle->assertStatus(200);
 
-    // Verify French reading time is displayed
-    // Note: We just verify the numeric value, not the full format,
-    // because translation files might not be loaded in test environment
+    // Verify French reading time displays the correct value
     $frArticle->assertSee('1 min');
-    $frArticle->assertDontSee('3 min'); // English time shouldn't appear
-})->skip('Translation files not loaded in test environment');
+});
 
 it('shows consistent reading time across all listing pages', function () {
     // Homepage

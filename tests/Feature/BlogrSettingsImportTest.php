@@ -135,16 +135,17 @@ it('import service imports ZIP file with media', function () {
 });
 
 it('only allows admin users to access settings page', function () {
-    expect(BlogrSettings::canAccess())->toBeTrue();
-})->skip('Requires Filament bindings - BlogrSettings::canAccess() uses Filament::auth()');
+    $this->actingAs($this->admin);
+
+    $this->get(BlogrSettings::getUrl())->assertSuccessful();
+});
 
 it('denies non-admin users access to settings page', function () {
-    // Create a non-admin user
     $user = User::factory()->create();
-    actingAs($user);
+    $this->actingAs($user);
 
-    expect(BlogrSettings::canAccess())->toBeFalse();
-})->skip('Requires Filament bindings - BlogrSettings::canAccess() uses Filament::auth()');
+    $this->get(BlogrSettings::getUrl())->assertForbidden();
+});
 
 it('updates existing categories instead of failing on duplicate', function () {
     // Create an existing category

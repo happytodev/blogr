@@ -105,7 +105,6 @@ class EditCmsPageTranslation extends EditRecord
                     CmsBlockBuilder::make(),
                 ])
                 ->collapsible()
-                ->collapsed()
                 ->columnSpan(2),
 
             View::make('blogr::components.auto-save-indicator'),

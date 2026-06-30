@@ -46,13 +46,28 @@ Optional body: context and motivation.
 Examples for this project: `admin`, `cms`, `blog`, `auth`, `changelog`, `skill`,
 `seo`, `translations`, `import-export`, `extension-manager`.
 
+### Body conventions
+
+- **`fix:` commits** MUST include `Regression test: #<issue_number>` in the body
+- **`feat:` commits** MUST include `Feature test: <description>` in the body
+
 ### Examples from history
 
 ```
-docs(skill): add OWASP critical audit skill
 fix(blog): strip duplicate H1 from demo post bodies
-docs(changelog): document sprints 3 through 7
+
+Regression test: #23
+```
+
+```
 feat(admin): add status filter on post list
+
+Feature test: status_filter_shows_only_published_posts
+```
+
+```
+docs(skill): add OWASP critical audit skill
+docs(changelog): document sprints 3 through 7
 feat(cms): add per-translation block editing
 fix(seo): generate canonical URL from translation slug
 ```

@@ -1,6 +1,7 @@
 <?php
 
 use Happytodev\Blogr\Enums\CmsPageTemplate;
+use Happytodev\Blogr\Filament\Resources\CmsPages\CmsBlockBuilder;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Tests\CmsTestCase;
 
@@ -546,4 +547,19 @@ test('it can render team block', function () {
     expect($view)->toContain('Jane Smith');
     expect($view)->toContain('CTO');
     expect($view)->toContain('linkedin.com/in/johndoe');
+});
+
+test('blocks are collapsed by default in CmsBlockBuilder', function () {
+    $builder = CmsBlockBuilder::make();
+
+    expect($builder->isCollapsed())->toBeTrue();
+});
+
+test('blocks are sorted alphabetically by label in CmsBlockBuilder', function () {
+    $blocks = CmsBlockBuilder::getSortedBlockDefinitions();
+    $labels = array_map(fn ($block) => $block->getLabel(), $blocks);
+    $sortedLabels = $labels;
+    sort($sortedLabels);
+
+    expect($labels)->toBe($sortedLabels);
 });

@@ -12,6 +12,7 @@
     if (is_array($image)) {
         $image = !empty($image) ? (string) reset($image) : '';
     }
+
     $imageAlt = $data['image_alt'] ?? '';
     $imagePosition = $data['image_position'] ?? 'right';
     $imageWidth = (int)($data['image_width'] ?? 50);

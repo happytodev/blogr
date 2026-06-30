@@ -196,13 +196,17 @@ Read `CHANGELOG.md` at root. Format: [Keep a Changelog](https://keepachangelog.c
 3. For each commit:
    - `git add` only the batch files
    - [Conventional Commits](https://www.conventionalcommits.org/) message: `type(scope): imperative summary`
-   - Optional body: the *why*, not the line-by-line *what*
+   - **Body conventions** (required when applicable):
+     - `fix:` commits MUST include `Regression test: #<issue_number>` in the body
+     - `feat:` commits MUST include `Feature test: <description>` in the body
+   - Additional body context: the *why*, not the line-by-line *what*
 
 ```bash
 git add path/file1 path/file2
 git commit -m "$(cat <<'EOF'
-feat(blog): add published_at scopes to BlogPost model
+fix(blog): restore save button on post form
 
+Regression test: #42
 EOF
 )"
 ```

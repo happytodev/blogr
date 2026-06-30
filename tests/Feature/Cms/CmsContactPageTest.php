@@ -407,6 +407,19 @@ test('contact_form block handles image as array from Filament FileUpload', funct
     expect($html)->toContain('Our office');
 });
 
+test('contact_form block does not crash when image is an empty array', function () {
+    $data = [
+        'heading' => 'Contact',
+        'image' => [],
+        'image_width' => 50,
+        'image_position' => 'right',
+    ];
+
+    $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
+
+    expect($html)->toContain('Contact');
+});
+
 // ──────────────────────────────────────────────
 // Features block — no chat, X + Bluesky
 // ──────────────────────────────────────────────

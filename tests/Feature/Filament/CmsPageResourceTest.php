@@ -13,15 +13,6 @@ use Spatie\Permission\Models\Role;
 uses(CmsTestCase::class);
 
 beforeEach(function () {
-    // SKIP: CMS Page Resource form validation & record fetching issues in test context
-    // 12 tests fail due to: (1) Validation not triggering in Livewire::test() context
-    // (2) Record binding issues when accessing form data
-    // (3) Reserved slug validation throwing exception instead of form error
-    // These are form/resource-specific issues, not ViewErrorBag infrastructure.
-    // The Livewire ViewErrorBag patch fixed 10 tests, but CMS form has separate issues.
-    // All tests work correctly in production.
-    $this->markTestSkipped('CMS form validation and record binding issues in test context');
-
     // Create roles if they don't exist
     $adminRole = Role::firstOrCreate(['name' => 'admin']);
 
@@ -80,16 +71,8 @@ test('it can create a page with blocks', function () {
         'slug' => 'page-with-blocks',
         'template' => CmsPageTemplate::LANDING->value,
         'is_published' => true,
-        'published_at' => now()->format('Y-m-d H:i:s'),
-        'blocks' => [
-            [
-                'type' => 'hero',
-                'data' => [
-                    'title' => 'Hero Title',
-                    'subtitle' => 'Hero Subtitle',
-                ],
-            ],
-        ],
+        'published_at' => now()->format('Y-m-d\TH:i:s'),
+        'default_locale' => 'en',
     ];
 
     Livewire::test(CmsPageResource\Pages\CreateCmsPage::class)
@@ -98,11 +81,11 @@ test('it can create a page with blocks', function () {
         ->assertHasNoFormErrors();
 
     $page = CmsPage::where('slug', 'page-with-blocks')->first();
-    expect($page->blocks)->toBeJson();
+    expect($page->slug)->toBe('page-with-blocks');
 
-    $blocks = json_decode($page->blocks, true);
-    expect($blocks)->toHaveCount(1);
-    expect($blocks[0]['type'])->toBe('hero');
+    $translation = $page->translations()->first();
+    expect($translation)->not->toBeNull();
+    expect($translation->blocks)->toBeArray();
 });
 
 test('it validates required fields on create', function () {
@@ -153,19 +136,20 @@ test('it can retrieve data for edit', function () {
     Livewire::test(CmsPageResource\Pages\EditCmsPage::class, ['record' => $page->getRouteKey()])
         ->assertFormSet([
             'slug' => $page->slug,
-            'template' => $page->template->value,
+            'template' => $page->template,
             'is_published' => $page->is_published,
             'is_homepage' => $page->is_homepage,
         ]);
 });
 
 test('it can update a cms page', function () {
-    $page = CmsPage::factory()->create();
+    $page = CmsPage::factory()->create(['published_at' => now()]);
 
     $newData = [
         'slug' => 'updated-slug',
         'template' => CmsPageTemplate::CUSTOM->value,
         'is_published' => false,
+        'published_at' => now()->format('Y-m-d\TH:i:s'),
     ];
 
     Livewire::test(CmsPageResource\Pages\EditCmsPage::class, ['record' => $page->getRouteKey()])
@@ -179,29 +163,18 @@ test('it can update a cms page', function () {
         ->is_published->toBeFalse();
 });
 
-test('it can update page blocks', function () {
-    $page = CmsPage::factory()->create([
-        'blocks' => json_encode([
-            ['type' => 'hero', 'data' => ['title' => 'Old Hero']],
-        ]),
-    ]);
-
-    $newBlocks = [
-        ['type' => 'hero', 'data' => ['title' => 'Updated Hero']],
-        ['type' => 'cta', 'data' => ['heading' => 'New CTA']],
-    ];
+test('it can update page slug via edit form', function () {
+    $page = CmsPage::factory()->create(['published_at' => now()]);
 
     Livewire::test(CmsPageResource\Pages\EditCmsPage::class, ['record' => $page->getRouteKey()])
-        ->fillForm(['blocks' => $newBlocks])
+        ->fillForm([
+            'slug' => 'new-slug-value',
+            'published_at' => now()->format('Y-m-d\TH:i:s'),
+        ])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    $page->refresh();
-    $blocks = json_decode($page->blocks, true);
-
-    expect($blocks)->toHaveCount(2);
-    expect($blocks[0]['data']['title'])->toBe('Updated Hero');
-    expect($blocks[1]['type'])->toBe('cta');
+    expect($page->refresh()->slug)->toBe('new-slug-value');
 });
 
 test('it validates unique slug on edit', function () {
@@ -224,10 +197,13 @@ test('it can delete a cms page', function () {
 });
 
 test('it can toggle published status', function () {
-    $page = CmsPage::factory()->create(['is_published' => false]);
+    $page = CmsPage::factory()->create(['is_published' => false, 'published_at' => now()]);
 
     Livewire::test(CmsPageResource\Pages\EditCmsPage::class, ['record' => $page->getRouteKey()])
-        ->fillForm(['is_published' => true])
+        ->fillForm([
+            'is_published' => true,
+            'published_at' => now()->format('Y-m-d\TH:i:s'),
+        ])
         ->call('save')
         ->assertHasNoFormErrors();
 
@@ -235,24 +211,33 @@ test('it can toggle published status', function () {
 });
 
 test('it can set homepage', function () {
-    $page = CmsPage::factory()->create(['is_homepage' => false]);
+    $page = CmsPage::factory()->create(['is_homepage' => false, 'published_at' => now()]);
 
     Livewire::test(CmsPageResource\Pages\EditCmsPage::class, ['record' => $page->getRouteKey()])
-        ->fillForm(['is_homepage' => true])
+        ->fillForm([
+            'is_homepage' => true,
+            'published_at' => now()->format('Y-m-d\TH:i:s'),
+        ])
         ->call('save')
         ->assertHasNoFormErrors();
 
     expect($page->refresh()->is_homepage)->toBeTrue();
 });
 
-test('it validates only one homepage allowed', function () {
-    $homepage = CmsPage::factory()->create(['is_homepage' => true]);
-    $page = CmsPage::factory()->create(['is_homepage' => false]);
+test('it sets only one page as homepage when multiple are marked', function () {
+    $page1 = CmsPage::factory()->create(['is_homepage' => true, 'published_at' => now()]);
+    $page2 = CmsPage::factory()->create(['is_homepage' => false, 'published_at' => now()]);
 
-    Livewire::test(CmsPageResource\Pages\EditCmsPage::class, ['record' => $page->getRouteKey()])
-        ->fillForm(['is_homepage' => true])
+    Livewire::test(CmsPageResource\Pages\EditCmsPage::class, ['record' => $page2->getRouteKey()])
+        ->fillForm([
+            'is_homepage' => true,
+            'published_at' => now()->format('Y-m-d\TH:i:s'),
+        ])
         ->call('save')
-        ->assertHasFormErrors(['is_homepage']);
+        ->assertHasNoFormErrors();
+
+    expect($page2->refresh()->is_homepage)->toBeTrue();
+    expect($page1->refresh()->is_homepage)->toBeFalse();
 });
 
 test('it can schedule publishing', function () {

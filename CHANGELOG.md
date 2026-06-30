@@ -11,13 +11,42 @@ All notable changes to `blogr` will be documented in this file.
 
 ### 🐛 Fixed
 
+- **Tests**: eliminate all 57 skipped tests — add missing `uses(TestCase::class)`, convert Livewire auth-page tests to HTTP/model-level, remove obsolete browser tests, fix fragile assertions
+- **CMS**: reserved slug validation returns a form error instead of throwing an exception, with `Rule::notIn()` on the slug field
+- **Settings**: increase PHP memory limit to 512M to prevent out-of-memory errors in Livewire tests rendering the full settings page
+- **Settings**: add lazy loading to 7 tabs (SEO, Appearance, Content, Navigation, Analytics, Backup, AI Translation) to improve initial page load performance
+- **Blocks**: remove test files accidentally included in wrong PR
+
+### ✨ Added
+
+- **Tests**: feature tests for TagResource CRUD (create, read, update, delete)
+- **Tests**: feature test for auto-save indicator on blog post create/edit pages
+
+### 🔥 Removed
+
+- **Tests**: remove 2 obsolete browser test files (replaced by feature tests)
+- **Tests**: remove 3 tests that already exist in `tests/Localized/FrontendTranslationsTest`
+
+## [v1.21.0](https://github.com/happytodev/blogr/compare/v1.20.0...v1.21.0) - 2026-06-30
+
+### 🐛 Fixed
+
 - **Blocks**: fix `str_starts_with()` type error when image is an array from Filament FileUpload in hero and contact_form blocks
 - **Blocks**: fix hero "Top (Behind Text)" image position — image now renders as full-bleed background behind text with WCAG gradient overlay
+- **CMS**: Content Blocks section is now expanded by default when editing a page translation
+- **CMS**: blocks are now collapsed by default to make navigation easier
+- **CMS**: block types are now sorted alphabetically in the add-block picker
 - **Blocks**: `isPluginLinkType()` no longer throws a TypeError when `link_type` is null (e.g. "Select one" state)
 
 ### 🧪 Tests
 
 - **Blocks**: add tests for hero block array image handling, top position rendering, and contact_form array image handling
+- **CMS**: add tests for collapsed-by-default and alphabetical sort of blocks
+
+### 📝 Documentation
+
+- **AGENTS.md**: strengthen TDD requirement with explicit RED/GREEN phases, anti-false-positive gate, regression test commitment, and commit body conventions
+- **Skills**: update `issue-to-mr` with step-by-step TDD (RED → GREEN), naming conventions, and anti-regression gate; update `git-changelog-workflow` and `branch-and-commits.md` with required `Regression test:` / `Feature test:` body in commit messages
 
 ## [v1.20.0](https://github.com/happytodev/blogr/compare/v1.19.0...v1.20.0) - 2026-06-29
 
