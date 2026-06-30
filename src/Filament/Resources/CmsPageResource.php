@@ -17,6 +17,7 @@ use Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages\EditCmsPageTransla
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Services\LocaleService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rule;
 
 class CmsPageResource extends Resource
 {
@@ -60,6 +61,7 @@ class CmsPageResource extends Resource
                             ->label(__('Slug'))
                             ->required()
                             ->unique(ignoreRecord: true)
+                            ->rule(Rule::notIn(config('blogr.cms.reserved_slugs', [])))
                             ->helperText(__('URL de la page (ex: a-propos, contact)'))
                             ->maxLength(255)
                             ->columnSpan(2),
