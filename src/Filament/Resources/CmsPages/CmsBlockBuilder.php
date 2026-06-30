@@ -2,16 +2,19 @@
 
 namespace Happytodev\Blogr\Filament\Resources\CmsPages;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -51,8 +54,13 @@ class CmsBlockBuilder
             ])
             ->collapsible()
             ->blockNumbers(false)
+            ->cloneable()
             ->lazy()
-            ->columnSpanFull();
+            ->columnSpanFull()
+            ->extraItemActions([
+                self::toggleVisibilityAction(),
+                self::copyBlockAction(),
+            ]);
     }
 
     protected static function heroBlock(): Block
@@ -1103,6 +1111,9 @@ class CmsBlockBuilder
         return Section::make(__('Background'))
             ->description(__('Configure the block background for light and dark modes'))
             ->schema(fn () => [
+                Hidden::make('hidden')
+                    ->default(false),
+
                 Group::make()
                     ->schema(fn () => [
                         Tabs::make('background_mode')
@@ -1259,6 +1270,63 @@ class CmsBlockBuilder
             ->columns(2)
             ->collapsible()
             ->collapsed();
+    }
+
+    protected static function toggleVisibilityAction(): Action
+    {
+        return Action::make('toggleVisibility')
+            ->icon(function (array $arguments, Builder $component): string {
+                $state = $component->getRawState();
+                $hidden = $state[$arguments['item']]['data']['hidden'] ?? false;
+
+                return $hidden ? 'heroicon-o-eye-slash' : 'heroicon-o-eye';
+            })
+            ->color(function (array $arguments, Builder $component): string {
+                $state = $component->getRawState();
+                $hidden = $state[$arguments['item']]['data']['hidden'] ?? false;
+
+                return $hidden ? 'warning' : 'gray';
+            })
+            ->label(function (array $arguments, Builder $component): string {
+                $state = $component->getRawState();
+                $hidden = $state[$arguments['item']]['data']['hidden'] ?? false;
+
+                return $hidden ? __('Show this block') : __('Hide this block');
+            })
+            ->action(function (array $arguments, Builder $component): void {
+                $itemKey = $arguments['item'];
+                $state = $component->getRawState();
+
+                if (! isset($state[$itemKey]['data'])) {
+                    return;
+                }
+
+                $state[$itemKey]['data']['hidden'] = ! ($state[$itemKey]['data']['hidden'] ?? false);
+                $component->rawState($state);
+                $component->callAfterStateUpdated();
+            });
+    }
+
+    protected static function copyBlockAction(): Action
+    {
+        return Action::make('copyBlock')
+            ->icon('heroicon-o-clipboard')
+            ->label(__('Copy this block'))
+            ->action(function (array $arguments, Builder $component): void {
+                $state = $component->getRawState();
+                $itemKey = $arguments['item'];
+                $block = $state[$itemKey] ?? null;
+
+                if (! $block) {
+                    return;
+                }
+
+                session()->put('blogr_cms_block_clipboard', $block);
+                Notification::make()
+                    ->title(__('Block copied to clipboard'))
+                    ->success()
+                    ->send();
+            });
     }
 
     protected static function carouselBlock(): Block
@@ -1649,6 +1717,9 @@ class CmsBlockBuilder
             ->label(CmsBlockType::TRANSITION_DIAGONAL->getLabel())
             ->icon(CmsBlockType::TRANSITION_DIAGONAL->getIcon())
             ->schema(fn () => [
+                Hidden::make('hidden')
+                    ->default(false),
+
                 Section::make(__('⚠️ Important'))
                     ->description(__('Transitions work best when the NEXT block has a solid background color (not a gradient). If the next block has a gradient, the transition may not render as expected.'))
                     ->schema(fn () => []),
