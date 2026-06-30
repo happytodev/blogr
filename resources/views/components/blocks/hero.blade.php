@@ -52,37 +52,50 @@ $layoutClass = match($imagePosition) {
     'right' => 'flex-row',
     default => 'flex-col', // top
 };
+
+$isTopBackground = $imagePosition === 'top' && $imagePath;
+$imageWidthStyle = $imageMaxWidth !== 'max-w-full' ? "max-width: {$imageMaxWidthPx}; margin-left: auto; margin-right: auto; left: 0; right: 0;" : '';
 @endphp
 
 <x-blogr::background-wrapper :data="$data">
+    @if($isTopBackground)
+        <div class="absolute inset-0 z-0 overflow-hidden"
+             @if($imageWidthStyle) style="{{ $imageWidthStyle }}" @endif>
+            <img src="{{ asset($imagePath) }}"
+                 alt="{{ $title }}"
+                 class="w-full h-full object-cover"
+                 loading="lazy">
+        </div>
+        <div class="absolute inset-0 z-[1] bg-gradient-to-b from-black/10 via-black/30 to-black/60"></div>
+    @endif
+
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
         <div class="flex {{ $layoutClass }} gap-12">
-            {{-- Image Section --}}
-            @if($imagePath)
-                <div class="{{ $imagePosition === 'top' ? 'w-full flex justify-center px-4' : 'w-1/3 flex-shrink-0' }}">
-                    <img src="{{ asset($imagePath) }}" 
-                         alt="{{ $title }}" 
-                         class="rounded-lg shadow-2xl {{ $imagePosition === 'top' ? 'h-auto object-cover' : 'w-full h-auto object-cover' }}"
-                         style="{{ $imagePosition === 'top' ? 'max-width: ' . $imageMaxWidthPx . '; width: 100%;' : '' }}"
+            {{-- Image Section (side positions only) --}}
+            @if($imagePath && $imagePosition !== 'top')
+                <div class="w-1/3 flex-shrink-0">
+                    <img src="{{ asset($imagePath) }}"
+                         alt="{{ $title }}"
+                         class="w-full h-auto object-cover rounded-lg shadow-2xl"
                          loading="lazy">
                 </div>
             @endif
 
             {{-- Text Content --}}
-            <div class="{{ $imagePosition === 'top' ? 'w-full' : 'flex-1' }} flex flex-col {{ $alignmentClass }} justify-center space-y-8">
+            <div class="{{ $imagePosition !== 'top' ? 'flex-1' : 'w-full' }} flex flex-col {{ $alignmentClass }} justify-center space-y-8">
                 <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-white dark:text-white drop-shadow-lg">
                     {{ $title }}
                 </h1>
-                
+
                 @if($subtitle)
                     <p class="subtitle text-xl sm:text-2xl text-white dark:text-white drop-shadow-md">
                         {{ $subtitle }}
                     </p>
                 @endif
-                
+
                 @if($showButton)
                     <div class="pt-4 {{ $alignment === 'center' ? 'flex justify-center' : ($alignment === 'left' ? '' : 'flex justify-end') }}">
-                        <a href="{{ $ctaUrl }}" 
+                        <a href="{{ $ctaUrl }}"
                            class="inline-flex items-center px-8 py-4 bg-white text-blue-600 dark:bg-gray-900 dark:text-blue-400 rounded-lg font-semibold text-lg hover:scale-105 transition-transform duration-200 shadow-xl">
                             {{ $ctaText }}
                             <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

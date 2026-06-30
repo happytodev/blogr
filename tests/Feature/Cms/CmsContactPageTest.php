@@ -390,18 +390,21 @@ test('contact_form block renders image_alt text', function () {
     expect($html)->toContain('Modern office building with reception area');
 });
 
-test('contact_form block does not crash when image is a non-empty array', function () {
+test('contact_form block handles image as array from Filament FileUpload', function () {
     $data = [
         'heading' => 'Contact',
+        'submit_text' => 'Send',
+        'success_message' => 'Thanks!',
         'image' => ['cms-blocks/contact/photo.jpg'],
-        'image_alt' => 'Office photo',
+        'image_alt' => 'Our office',
         'image_width' => 50,
         'image_position' => 'right',
     ];
 
     $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
 
-    expect($html)->toContain('Office photo');
+    expect($html)->toContain('storage/cms-blocks/contact/photo.jpg');
+    expect($html)->toContain('Our office');
 });
 
 test('contact_form block does not crash when image is an empty array', function () {
