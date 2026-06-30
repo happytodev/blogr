@@ -16,6 +16,8 @@ All notable changes to `blogr` will be documented in this file.
 - **Settings**: increase PHP memory limit to 512M to prevent out-of-memory errors in Livewire tests rendering the full settings page
 - **Settings**: add lazy loading to 7 tabs (SEO, Appearance, Content, Navigation, Analytics, Backup, AI Translation) to improve initial page load performance
 - **Blocks**: remove test files accidentally included in wrong PR
+- **Blocks**: override light mode background with theme dark color when `background_type_dark` is "none" — fixes white background appearing in dark mode
+- **Theme**: add `background-color` on `<main>` so transparent blocks properly inherit the theme's default background
 
 ### ✨ Added
 
