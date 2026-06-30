@@ -15,6 +15,9 @@
     cacheDirectory=".phpunit.cache"
     backupStaticProperties="false"
 >
+    <php>
+        <ini name="memory_limit" value="256M"/>
+    </php>
     <testsuites>
         <testsuite name="Happytodev Test Suite">
             <directory>tests</directory>

@@ -6,6 +6,12 @@ All notable changes to `blogr` will be documented in this file.
 
 ### 🐛 Fixed
 
+- **Blocks**: remove test files accidentally included in wrong PR
+
+## [v1.21.0](https://github.com/happytodev/blogr/compare/v1.20.0...v1.21.0) - 2026-06-30
+
+### 🐛 Fixed
+
 - **Blocks**: fix `str_starts_with()` type error when image is an array from Filament FileUpload in hero and contact_form blocks
 - **Blocks**: fix hero "Top (Behind Text)" image position — image now renders as full-bleed background behind text with WCAG gradient overlay
 - **CMS**: Content Blocks section is now expanded by default when editing a page translation
