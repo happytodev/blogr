@@ -1353,6 +1353,7 @@ class BlogrSettings extends Page
                     // ========================================
                     Tabs\Tab::make('SEO')
                         ->icon('heroicon-o-magnifying-glass')
+                        ->lazy()
                         ->schema([
                             Section::make('SEO Settings')
                                 ->description('Search engine optimization configuration')
@@ -1436,6 +1437,7 @@ class BlogrSettings extends Page
                     // ========================================
                     Tabs\Tab::make('Appearance')
                         ->icon('heroicon-o-paint-brush')
+                        ->lazy()
                         ->schema([
                             Section::make('Theme Settings')
                                 ->description('Configure theme colors and appearance')
@@ -1821,6 +1823,7 @@ class BlogrSettings extends Page
                     // ========================================
                     Tabs\Tab::make('Content')
                         ->icon('heroicon-o-document-text')
+                        ->lazy()
                         ->schema([
                             Section::make('Table of Contents')
                                 ->description('Table of contents configuration for blog posts')
@@ -1935,6 +1938,7 @@ class BlogrSettings extends Page
                     // ========================================
                     Tabs\Tab::make('Navigation')
                         ->icon('heroicon-o-bars-3')
+                        ->lazy()
                         ->schema([
                             Section::make('Navigation Bar')
                                 ->description('Configure the top navigation bar appearance and behavior')
@@ -2295,6 +2299,7 @@ class BlogrSettings extends Page
                     // ========================================
                     Tabs\Tab::make('Analytics')
                         ->icon('heroicon-o-chart-bar')
+                        ->lazy()
                         ->schema([
                             Section::make('Web Analytics Configuration')
                                 ->description('Configure your web analytics provider to track visitor statistics')
@@ -2426,6 +2431,7 @@ class BlogrSettings extends Page
                     // ========================================
                     Tabs\Tab::make('Backup')
                         ->icon('heroicon-o-cloud-arrow-up')
+                        ->lazy()
                         ->schema([
                             Section::make('Export Blogr Data')
                                 ->description('Export all your blog posts, series, categories, and tags to a JSON or ZIP file')
@@ -2775,6 +2781,7 @@ class BlogrSettings extends Page
                     // ========================================
                     Tabs\Tab::make('AI Translation')
                         ->icon('heroicon-o-language')
+                        ->lazy()
                         ->schema([
                             Placeholder::make('translation_usage_recap')
                                 ->label('Monthly Usage')

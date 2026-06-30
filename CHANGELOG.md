@@ -6,6 +6,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ### 🐛 Fixed
 
+- **Settings**: increase PHP memory limit to 512M to prevent out-of-memory errors in Livewire tests rendering the full settings page
+- **Settings**: add lazy loading to 7 tabs (SEO, Appearance, Content, Navigation, Analytics, Backup, AI Translation) to improve initial page load performance
 - **Blocks**: remove test files accidentally included in wrong PR
 
 ## [v1.21.0](https://github.com/happytodev/blogr/compare/v1.20.0...v1.21.0) - 2026-06-30
