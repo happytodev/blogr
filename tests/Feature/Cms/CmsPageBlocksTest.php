@@ -1,6 +1,7 @@
 <?php
 
 use Happytodev\Blogr\Enums\CmsPageTemplate;
+use Happytodev\Blogr\Filament\Resources\CmsPages\CmsBlockBuilder;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Tests\CmsTestCase;
 
@@ -37,6 +38,26 @@ test('it can create a page with hero block in translation', function () {
     expect($translation->blocks)->toHaveCount(1);
     expect($translation->blocks[0]['type'])->toBe('hero');
     expect($translation->blocks[0]['data']['title'])->toBe('Welcome to Our Platform');
+});
+
+test('hero block renders without crash when image is a non-empty array', function () {
+    $html = view('blogr::components.blocks.hero', ['data' => [
+        'title' => 'Hero',
+        'image' => ['cms-blocks/hero/photo.jpg'],
+        'image_position' => 'right',
+    ]])->render();
+
+    expect($html)->toContain('Hero');
+});
+
+test('hero block renders without crash when image is an empty array', function () {
+    $html = view('blogr::components.blocks.hero', ['data' => [
+        'title' => 'Hero',
+        'image' => [],
+        'image_position' => 'right',
+    ]])->render();
+
+    expect($html)->toContain('Hero');
 });
 
 test('it can create a page with features block in translation', function () {
@@ -526,4 +547,19 @@ test('it can render team block', function () {
     expect($view)->toContain('Jane Smith');
     expect($view)->toContain('CTO');
     expect($view)->toContain('linkedin.com/in/johndoe');
+});
+
+test('blocks are collapsed by default in CmsBlockBuilder', function () {
+    $builder = CmsBlockBuilder::make();
+
+    expect($builder->isCollapsed())->toBeTrue();
+});
+
+test('blocks are sorted alphabetically by label in CmsBlockBuilder', function () {
+    $blocks = CmsBlockBuilder::getSortedBlockDefinitions();
+    $labels = array_map(fn ($block) => $block->getLabel(), $blocks);
+    $sortedLabels = $labels;
+    sort($sortedLabels);
+
+    expect($labels)->toBe($sortedLabels);
 });
