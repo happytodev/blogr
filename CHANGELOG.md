@@ -23,15 +23,55 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Contact form**: form card background and submit button colors are now configurable via the admin UI (Form Styling section) — leave empty for transparent/inherit
 - **Contact form**: Alpine.js component migrated from `Alpine.data()` registration to inline `x-data` — fixes console errors in Filament CMS preview
+
+## [Unreleased]
+
+### ✨ Added
+
+- **Dashboard**: 5 new widgets — category distribution doughnut, weekly activity bar chart, series overview, CMS overview, SEO checklist
+- **Dashboard**: widget picker in Settings → Dashboard to enable/disable widgets
+- **Dashboard**: edit action on recent posts table to open post editor
+- **Dashboard**: column toggling and filters (status, category, date range) on recent posts table
+- **Dashboard**: reading time column on recent posts table
+
+### 🎨 Changed
+
+- **Dashboard**: improve layout with variable column spans (BlogPostsChart 2/3, BlogReadingStats 1/3, ScheduledPosts 1/2)
+- **Dashboard**: BlogStatsOverview shows 8 stats (added series, CMS pages), cached 5 min, displayed 4 per row
+- **Dashboard**: BlogPostsChart shows both created and published series with separate colors
+- **Dashboard**: BlogReadingStats now cached 5 min, labels shortened
+- **Dashboard**: Scheduled Posts heading shows live count
+- **Dashboard**: compact stat cards with 4 columns per row
+
+### 🔥 Removed
+
+- **Dashboard**: remove QuickVisitSite widget (redundant with left nav "View Website" link)
+
+### 🐛 Fixed
+
+- **PHPStan**: raise analysis level from 5 to 9, regenerate baseline
+
 - **Tests**: feature tests for TagResource CRUD (create, read, update, delete)
 - **Tests**: feature test for auto-save indicator on blog post create/edit pages
 
 ### 🔥 Removed
 
+- **Dashboard**: remove QuickVisitSite widget (redundant with left nav "View Website" link)
 - **Tests**: remove 2 obsolete browser test files (replaced by feature tests)
 - **Tests**: remove 3 tests that already exist in `tests/Localized/FrontendTranslationsTest`
 
+<<<<<<< HEAD
 ## [Unreleased]
+=======
+### 🎨 Changed
+
+- **Dashboard**: improve layout with variable column spans (BlogPostsChart 2/3, BlogReadingStats 1/3, ScheduledPosts 1/2)
+- **Dashboard**: BlogStatsOverview shows 8 stats (added series, CMS pages), cached 5 min, displayed 4 per row
+- **Dashboard**: BlogPostsChart shows both created and published series with separate colors
+- **Dashboard**: BlogReadingStats now cached 5 min, labels shortened
+- **Dashboard**: Scheduled Posts heading shows live count
+- **Dashboard**: compact stat cards with 4 columns per row
+>>>>>>> 06a5405 (feat(dashboard): add new widgets, improve layout, add edit/filters)
 
 ## [v1.21.0](https://github.com/happytodev/blogr/compare/v1.20.0...v1.21.0) - 2026-06-30
 

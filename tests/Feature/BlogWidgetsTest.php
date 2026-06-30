@@ -118,10 +118,9 @@ it('blog posts chart returns correct data structure', function () {
     $reflection = new ReflectionClass($chartWidget);
     $columnSpanProperty = $reflection->getProperty('columnSpan');
     $columnSpanProperty->setAccessible(true);
-    expect($columnSpanProperty->getValue($chartWidget))->toBe('full');
+    expect($columnSpanProperty->getValue($chartWidget))->toBe('2/3');
 
     // Test that the widget can be instantiated without errors
-    // (we can't directly test getData() as it's protected, but we can test the widget structure)
     expect(method_exists($chartWidget, 'getData'))->toBeTrue();
     expect(method_exists($chartWidget, 'getType'))->toBeTrue();
 
@@ -180,16 +179,18 @@ it('blog stats overview calculates correct statistics', function () {
     $getStatsMethod->setAccessible(true);
     $stats = $getStatsMethod->invoke($widget);
 
-    // Test that we have the expected number of stats
-    expect(count($stats))->toBe(6);
+    // Test that we have the expected number of stats (now 8: +Series, +CMS Pages)
+    expect(count($stats))->toBe(8);
 
     // Test specific stat values - adjust expectations based on actual data
     expect($stats[0]->getValue())->toBeGreaterThanOrEqual(3); // Total Posts
-    expect($stats[1]->getValue())->toBeGreaterThanOrEqual(2); // Published Posts (including scheduled)
+    expect($stats[1]->getValue())->toBeGreaterThanOrEqual(2); // Published Posts
     expect($stats[2]->getValue())->toBeGreaterThanOrEqual(1); // Draft Posts
     expect($stats[3]->getValue())->toBeGreaterThanOrEqual(1); // Scheduled Posts
     expect($stats[4]->getValue())->toBeGreaterThanOrEqual(1); // Categories
     expect($stats[5]->getValue())->toBeGreaterThanOrEqual(1); // Tags
+    expect($stats[6]->getValue())->toBeGreaterThanOrEqual(0); // Series
+    expect($stats[7]->getValue())->toBeGreaterThanOrEqual(0); // CMS Pages
 });
 
 it('recent blog posts widget queries correctly', function () {
@@ -326,10 +327,10 @@ it('blog reading stats calculates reading times correctly', function () {
     expect(count($stats))->toBe(4);
 
     // Test that stats contain expected data
-    expect($stats[0]->getLabel())->toBe('Average Reading Time');
-    expect($stats[1]->getLabel())->toBe('Short Posts (< 1 min)');
-    expect($stats[2]->getLabel())->toBe('Medium Posts (1-5 min)');
-    expect($stats[3]->getLabel())->toBe('Long Posts (> 5 min)');
+    expect($stats[0]->getLabel())->toBe('Avg Reading Time');
+    expect($stats[1]->getLabel())->toBe('Short (< 1 min)');
+    expect($stats[2]->getLabel())->toBe('Medium (1-5 min)');
+    expect($stats[3]->getLabel())->toBe('Long (> 5 min)');
 
     // Test that we have at least one post in each category
     $shortPostsCount = (int) $stats[1]->getValue();
@@ -356,10 +357,15 @@ it('blog posts chart handles empty data', function () {
     expect($data)->toHaveKey('datasets');
     expect($data)->toHaveKey('labels');
     expect(count($data['labels']))->toBe(12); // 12 months
+    expect(count($data['datasets']))->toBe(2); // Created + Published datasets
     expect(count($data['datasets'][0]['data']))->toBe(12); // 12 data points
+    expect(count($data['datasets'][1]['data']))->toBe(12); // 12 data points
 
     // All data points should be 0
     foreach ($data['datasets'][0]['data'] as $value) {
+        expect($value)->toBe(0);
+    }
+    foreach ($data['datasets'][1]['data'] as $value) {
         expect($value)->toBe(0);
     }
 });
@@ -377,8 +383,8 @@ it('blog stats overview handles empty data', function () {
     $getStatsMethod->setAccessible(true);
     $stats = $getStatsMethod->invoke($widget);
 
-    // Should return valid stats even with no data
-    expect(count($stats))->toBe(6);
+    // Should return valid stats even with no data (now 8: +Series, +CMS Pages)
+    expect(count($stats))->toBe(8);
 
     // In test environment, there might be existing data, so we just check that stats are returned
     foreach ($stats as $stat) {

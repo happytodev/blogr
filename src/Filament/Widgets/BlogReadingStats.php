@@ -5,25 +5,24 @@ namespace Happytodev\Blogr\Filament\Widgets;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Happytodev\Blogr\Models\BlogPost;
+use Illuminate\Support\Facades\Cache;
 
 class BlogReadingStats extends BaseWidget
 {
     protected function getStats(): array
     {
-        // Get posts with reading time data
-        $postsWithReadingTime = BlogPost::where('is_published', true)->get();
+        $stats = Cache::remember('blogr_reading_stats', 300, function () {
+            $posts = BlogPost::where('is_published', true)->get();
 
-        $totalReadingTime = 0;
-        $averageReadingTime = 0;
-        $shortPosts = 0; // < 1 minute
-        $mediumPosts = 0; // 1-5 minutes
-        $longPosts = 0; // > 5 minutes
+            $totalReadingTime = 0;
+            $count = $posts->count();
+            $shortPosts = 0;
+            $mediumPosts = 0;
+            $longPosts = 0;
 
-        if ($postsWithReadingTime->isNotEmpty()) {
-            foreach ($postsWithReadingTime as $post) {
+            foreach ($posts as $post) {
                 $readingTime = $post->getEstimatedReadingTime();
 
-                // Extract numeric value from reading time string
                 if (preg_match('/(\d+)/', $readingTime, $matches)) {
                     $minutes = (int) $matches[1];
                     $totalReadingTime += $minutes;
@@ -38,26 +37,31 @@ class BlogReadingStats extends BaseWidget
                 }
             }
 
-            $averageReadingTime = round($totalReadingTime / $postsWithReadingTime->count(), 1);
-        }
+            return [
+                'average' => $count > 0 ? round($totalReadingTime / $count, 1) : 0,
+                'short' => $shortPosts,
+                'medium' => $mediumPosts,
+                'long' => $longPosts,
+            ];
+        });
 
         return [
-            Stat::make('Average Reading Time', $averageReadingTime.' min')
+            Stat::make('Avg Reading Time', $stats['average'].' min')
                 ->description('Per blog post')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('primary'),
 
-            Stat::make('Short Posts (< 1 min)', $shortPosts)
+            Stat::make('Short (< 1 min)', $stats['short'])
                 ->description('Quick reads')
                 ->descriptionIcon('heroicon-m-bolt')
                 ->color('success'),
 
-            Stat::make('Medium Posts (1-5 min)', $mediumPosts)
+            Stat::make('Medium (1-5 min)', $stats['medium'])
                 ->description('Standard length')
                 ->descriptionIcon('heroicon-m-document-text')
                 ->color('warning'),
 
-            Stat::make('Long Posts (> 5 min)', $longPosts)
+            Stat::make('Long (> 5 min)', $stats['long'])
                 ->description('In-depth content')
                 ->descriptionIcon('heroicon-m-book-open')
                 ->color('info'),

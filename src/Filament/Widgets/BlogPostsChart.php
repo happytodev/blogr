@@ -8,38 +8,52 @@ use Illuminate\Support\Carbon;
 
 class BlogPostsChart extends ChartWidget
 {
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = '2/3';
 
     protected function getData(): array
     {
-        $data = collect();
+        $months = collect();
+        $createdData = collect();
+        $publishedData = collect();
 
-        // Get data for the last 12 months
         for ($i = 11; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $monthName = $date->format('M Y');
+            $months->push($date->format('M Y'));
 
-            $count = BlogPost::whereYear('created_at', $date->year)
-                ->whereMonth('created_at', $date->month)
-                ->count();
+            $createdData->push(
+                BlogPost::whereYear('created_at', $date->year)
+                    ->whereMonth('created_at', $date->month)
+                    ->count()
+            );
 
-            $data->push([
-                'month' => $monthName,
-                'count' => $count,
-            ]);
+            $publishedData->push(
+                BlogPost::where('is_published', true)
+                    ->whereYear('published_at', $date->year)
+                    ->whereMonth('published_at', $date->month)
+                    ->count()
+            );
         }
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Blog Posts Created',
-                    'data' => $data->pluck('count')->toArray(),
+                    'label' => 'Created',
+                    'data' => $createdData->toArray(),
                     'borderColor' => 'rgb(59, 130, 246)',
                     'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
                     'fill' => true,
+                    'tension' => 0.3,
+                ],
+                [
+                    'label' => 'Published',
+                    'data' => $publishedData->toArray(),
+                    'borderColor' => 'rgb(16, 185, 129)',
+                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
+                    'fill' => true,
+                    'tension' => 0.3,
                 ],
             ],
-            'labels' => $data->pluck('month')->toArray(),
+            'labels' => $months->toArray(),
         ];
     }
 
@@ -53,7 +67,7 @@ class BlogPostsChart extends ChartWidget
         return [
             'plugins' => [
                 'legend' => [
-                    'display' => true,
+                    'position' => 'top',
                 ],
             ],
             'scales' => [

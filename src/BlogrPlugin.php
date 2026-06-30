@@ -12,12 +12,7 @@ use Happytodev\Blogr\Filament\Resources\BlogSeriesResource;
 use Happytodev\Blogr\Filament\Resources\Categories\CategoryResource;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource;
 use Happytodev\Blogr\Filament\Resources\Tags\TagResource;
-use Happytodev\Blogr\Filament\Widgets\BlogPostsChart;
-use Happytodev\Blogr\Filament\Widgets\BlogReadingStats;
-use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
-use Happytodev\Blogr\Filament\Widgets\QuickVisitSite;
-use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;
-use Happytodev\Blogr\Filament\Widgets\ScheduledPosts;
+use Happytodev\Blogr\Filament\Widgets\CmsStatsOverview;
 
 class BlogrPlugin implements Plugin
 {
@@ -47,14 +42,13 @@ class BlogrPlugin implements Plugin
             Plugins::class,
         ]);
 
-        $panel->widgets([
-            BlogStatsOverview::class,
-            QuickVisitSite::class,
-            RecentBlogPosts::class,
-            ScheduledPosts::class,
-            BlogPostsChart::class,
-            BlogReadingStats::class,
-        ]);
+        $widgets = BlogrWidgets::enabled();
+
+        if (config('blogr.cms.enabled', false)) {
+            $widgets[] = CmsStatsOverview::class;
+        }
+
+        $panel->widgets($widgets);
 
         // Add a navigation item to quickly view the website
         $panel->navigationItems([
