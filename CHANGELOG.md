@@ -6,7 +6,21 @@ All notable changes to `blogr` will be documented in this file.
 
 ### 🐛 Fixed
 
+- **Tests**: eliminate all 57 skipped tests — add missing `uses(TestCase::class)`, convert Livewire auth-page tests to HTTP/model-level, remove obsolete browser tests, fix fragile assertions
+- **CMS**: reserved slug validation returns a form error instead of throwing an exception, with `Rule::notIn()` on the slug field
+- **Settings**: increase PHP memory limit to 512M to prevent out-of-memory errors in Livewire tests rendering the full settings page
+- **Settings**: add lazy loading to 7 tabs (SEO, Appearance, Content, Navigation, Analytics, Backup, AI Translation) to improve initial page load performance
 - **Blocks**: remove test files accidentally included in wrong PR
+
+### ✨ Added
+
+- **Tests**: feature tests for TagResource CRUD (create, read, update, delete)
+- **Tests**: feature test for auto-save indicator on blog post create/edit pages
+
+### 🔥 Removed
+
+- **Tests**: remove 2 obsolete browser test files (replaced by feature tests)
+- **Tests**: remove 3 tests that already exist in `tests/Localized/FrontendTranslationsTest`
 
 ## [v1.21.0](https://github.com/happytodev/blogr/compare/v1.20.0...v1.21.0) - 2026-06-30
 

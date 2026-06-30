@@ -41,21 +41,6 @@ it('can display a blog post without locales enabled', function () {
     $response->assertSee('Original content');
 });
 
-it('can display a blog post with locales enabled', function () {
-    // NOTE: This test has been moved to FrontendTranslationsWithLocalesTest.php
-    // which uses LocalizedBlogTestCase to properly configure locales before boot
-})->skip('Moved to FrontendTranslationsWithLocalesTest');
-
-it('can display translated post in French', function () {
-    // NOTE: This test has been moved to FrontendTranslationsWithLocalesTest.php
-    // which uses LocalizedBlogTestCase to properly configure locales before boot
-})->skip('Moved to FrontendTranslationsWithLocalesTest');
-
-it('provides translations for language switcher', function () {
-    // NOTE: This test has been moved to FrontendTranslationsWithLocalesTest.php
-    // which uses LocalizedBlogTestCase to properly configure locales before boot
-})->skip('Moved to FrontendTranslationsWithLocalesTest');
-
 it('returns 404 for missing translation', function () {
     config(['blogr.locales.enabled' => true]);
     config(['blogr.locales.default' => 'en']);
