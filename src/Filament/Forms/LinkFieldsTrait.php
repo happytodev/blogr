@@ -49,8 +49,12 @@ trait LinkFieldsTrait
     /**
      * Check if a link type is registered by a plugin (resolved automatically).
      */
-    public static function isPluginLinkType(string|Get $linkType): bool
+    public static function isPluginLinkType(string|Get|null $linkType): bool
     {
+        if ($linkType === null) {
+            return false;
+        }
+
         $key = $linkType instanceof Get ? $linkType('link_type') : $linkType;
 
         return $key !== null && app(LinkTypeRegistry::class)->has($key);
