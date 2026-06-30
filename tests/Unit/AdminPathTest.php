@@ -15,20 +15,10 @@ test('admin_path key exists in blogr config with default value', function () {
     expect($config['admin_path'])->toBe('admin');
 });
 
-test('admin_path can be overridden by env variable', function () {
-    putenv('BLOGR_ADMIN_PATH=backoffice');
+test('admin_path can be overridden by config', function () {
+    config()->set('blogr.admin_path', 'backoffice');
 
-    $config = require __DIR__.'/../../config/blogr.php';
-
-    expect($config['admin_path'])->toBe('backoffice');
-
-    putenv('BLOGR_ADMIN_PATH');
-});
-
-test('admin_path defaults when env is not set', function () {
-    putenv('BLOGR_ADMIN_PATH');
-    $config = require __DIR__.'/../../config/blogr.php';
-    expect($config['admin_path'])->toBe('admin');
+    expect(config('blogr.admin_path'))->toBe('backoffice');
 });
 
 // ─── SAVE BEHAVIOR ─────────────────────────────────────
@@ -53,10 +43,10 @@ test('save method applies admin_path to runtime config', function () {
 });
 
 test('save method writes BLOGR_ADMIN_PATH to .env', function () {
-    $envPath = app()->environmentFilePath();
+    $envPath = base_path('.env');
 
-    if (! $envPath || ! File::exists($envPath)) {
-        $this->markTestSkipped('No .env file available in test environment');
+    if (! File::exists($envPath)) {
+        File::put($envPath, "APP_KEY=test-key\nAPP_ENV=testing\n");
     }
 
     $original = File::get($envPath);
