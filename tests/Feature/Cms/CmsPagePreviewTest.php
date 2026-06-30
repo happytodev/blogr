@@ -2,7 +2,6 @@
 
 use Happytodev\Blogr\Enums\CmsPageTemplate;
 use Happytodev\Blogr\Models\CmsPage;
-use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Tests\CmsTestCase;
 use Illuminate\Support\Facades\URL;
@@ -82,7 +81,7 @@ test('preview with invalid signature returns 403', function () {
         'blocks' => [],
     ]);
 
-    $response = $this->get('/_preview/cms/' . $translation->id . '?signature=invalid');
+    $response = $this->get('/_preview/cms/'.$translation->id.'?signature=invalid');
 
     $response->assertStatus(403);
 });

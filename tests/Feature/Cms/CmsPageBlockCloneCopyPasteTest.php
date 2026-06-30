@@ -1,6 +1,5 @@
 <?php
 
-use Happytodev\Blogr\Filament\Resources\CmsPageResource;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource\Pages\EditCmsPageTranslation;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;

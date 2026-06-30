@@ -1,5 +1,7 @@
 <?php
 
+use Happytodev\Blogr\Enums\CmsPageTemplate;
+use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Tests\CmsTestCase;
 
 uses(CmsTestCase::class)->group('cms');
@@ -75,9 +77,9 @@ test('block with invalid URL in data renders without validation crash', function
 });
 
 test('hidden block on a rendered CMS page does not appear in HTML', function () {
-    $page = \Happytodev\Blogr\Models\CmsPage::create([
+    $page = CmsPage::create([
         'slug' => 'visibility-test',
-        'template' => \Happytodev\Blogr\Enums\CmsPageTemplate::LANDING,
+        'template' => CmsPageTemplate::LANDING,
         'is_published' => true,
         'published_at' => now(),
     ]);
