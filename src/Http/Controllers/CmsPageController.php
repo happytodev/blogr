@@ -4,6 +4,7 @@ namespace Happytodev\Blogr\Http\Controllers;
 
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
+use Happytodev\Blogr\Services\VersioningService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\App;
@@ -192,6 +193,55 @@ class CmsPageController extends Controller
             'seoTitle' => $translation->seo_title ?? $translation->title,
             'seoDescription' => $translation->seo_description ?? $translation->excerpt,
             'seoKeywords' => $translation->seo_keywords,
+        ]);
+    }
+
+    /**
+     * Preview a CMS page with draft data (signed URL required)
+     *
+     * @param  int  $translationId  The CmsPageTranslation ID
+     * @return View
+     */
+    public function preview(Request $request, int $translationId)
+    {
+        /** @var CmsPageTranslation|null $translation */
+        $translation = CmsPageTranslation::with('page.translations')->findOrFail($translationId);
+
+        $page = $translation->page;
+
+        $currentLocale = $translation->locale;
+
+        if (config('blogr.locales.enabled', false)) {
+            App::setLocale($currentLocale);
+        }
+
+        $draft = app(VersioningService::class)->getDraft($translation);
+
+        $title = $translation->title;
+        $content = $translation->content;
+        $blocks = $translation->blocks ?? [];
+
+        if ($draft && isset($draft->draft_data)) {
+            $draftData = $draft->draft_data;
+            $title = $draftData['title'] ?? $title;
+            $content = $draftData['content'] ?? $content;
+            $blocks = $draftData['blocks'] ?? $blocks;
+        }
+
+        return view($this->getViewForTemplate($page->template->value), [
+            'page' => $page,
+            'translation' => $translation,
+            'title' => $title,
+            'content' => $content,
+            'blocks' => $blocks,
+            'template' => $page->template,
+            'locale' => $currentLocale,
+            'currentLocale' => $currentLocale,
+            'availableLocales' => $page->availableLocales(),
+            'seoTitle' => $title,
+            'seoDescription' => $translation->seo_description ?? $translation->excerpt,
+            'seoKeywords' => $translation->seo_keywords,
+            'preview' => true,
         ]);
     }
 

@@ -763,6 +763,13 @@ class BlogrServiceProvider extends PackageServiceProvider
         $router = $this->app['router'];
 
         // ==============================================
+        // 0. PREVIEW ROUTE (signed URL, no locale needed)
+        // ==============================================
+        $router->get('_preview/cms/{translationId}', [CmsPageController::class, 'preview'])
+            ->middleware(array_merge($middleware, ['signed']))
+            ->name('cms.page.preview');
+
+        // ==============================================
         // 1. HOMEPAGE ROUTES (always at / or /{locale})
         // ==============================================
         // Check if CMS is configured as homepage

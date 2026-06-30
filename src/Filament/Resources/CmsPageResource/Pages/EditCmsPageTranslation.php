@@ -19,6 +19,7 @@ use Happytodev\Blogr\Services\Translation\TranslationProviderFactory;
 use Happytodev\Blogr\Services\TranslationUsageService;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Traits\AutoSave;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class EditCmsPageTranslation extends EditRecord
@@ -173,6 +174,31 @@ class EditCmsPageTranslation extends EditRecord
                 });
         }
 
+        $actions[] = Actions\Action::make('pasteBlock')
+            ->label(__('Paste block'))
+            ->icon('heroicon-o-clipboard-document-list')
+            ->color('success')
+            ->visible(fn () => session()->has('blogr_cms_block_clipboard'))
+            ->action(function () {
+                $clipboard = session()->get('blogr_cms_block_clipboard');
+
+                if (! $clipboard) {
+                    return;
+                }
+
+                $blocks = $this->data['blocks'] ?? [];
+                $key = (string) Str::uuid();
+                $blocks[$key] = $clipboard;
+                $this->data['blocks'] = $blocks;
+
+                session()->forget('blogr_cms_block_clipboard');
+
+                Notification::make()
+                    ->title(__('Block pasted'))
+                    ->success()
+                    ->send();
+            });
+
         $actions[] = Actions\Action::make('history')
             ->label('History')
             ->icon('heroicon-o-clock')
@@ -253,6 +279,17 @@ class EditCmsPageTranslation extends EditRecord
             })
             ->modalSubmitAction(false)
             ->modalCancelActionLabel('Close');
+
+        $actions[] = Actions\Action::make('preview')
+            ->label('Preview')
+            ->icon('heroicon-o-eye')
+            ->color('info')
+            ->url(fn () => URL::signedRoute(
+                'cms.page.preview',
+                ['translationId' => $this->record->id],
+                now()->addMinutes(30),
+            ))
+            ->openUrlInNewTab();
 
         return $actions;
     }
