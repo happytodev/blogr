@@ -230,6 +230,14 @@
             font-family: var(--font-family), ui-sans-serif, system-ui, sans-serif;
         }
 
+        main {
+            background-color: var(--color-bg);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark main {
+            background-color: var(--color-bg-dark);
+        }
+
         .dark {
             --color-header-bg: var(--_header-bg-dark, var(--color-bg-dark));
             --color-header-text: var(--_header-text-dark, var(--color-text-dark));
