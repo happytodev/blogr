@@ -1108,6 +1108,33 @@ class CmsBlockBuilder
                     ])
                     ->columns(2),
 
+                Section::make(__('Form Styling'))
+                    ->description(__('Customize the contact form card and button appearance. Leave form background empty to use the page background.'))
+                    ->schema(fn () => [
+                        ColorPicker::make('form_background_color')
+                            ->label(__('Form Card Background (Light)'))
+                            ->helperText(__('Leave empty for transparent (inherits page background)'))
+                            ->columnSpan(1),
+
+                        ColorPicker::make('form_background_color_dark')
+                            ->label(__('Form Card Background (Dark)'))
+                            ->helperText(__('Leave empty to inherit dark page background'))
+                            ->columnSpan(1),
+
+                        ColorPicker::make('button_color')
+                            ->label(__('Submit Button Color (Light)'))
+                            ->default('#4f46e5')
+                            ->columnSpan(1),
+
+                        ColorPicker::make('button_color_dark')
+                            ->label(__('Submit Button Color (Dark)'))
+                            ->default('#4f46e5')
+                            ->columnSpan(1),
+                    ])
+                    ->columns(2)
+                    ->collapsible()
+                    ->collapsed(),
+
                 self::getBackgroundFields(),
             ])
             ->columns(1);
