@@ -280,6 +280,28 @@ test('contact_form block builder has image fields in source', function () {
     expect($content)->toMatch('/Select::make\(\'image_width\'\)/');
 });
 
+test('feature_251_contact_form_card_colors_are_configurable', function () {
+    $data = [
+        'heading' => 'Contact',
+        'submit_text' => 'Send',
+        'success_message' => 'Thanks!',
+        'form_background_color' => '#ff0000',
+        'form_background_color_dark' => '#cc0000',
+        'button_color' => '#00ff00',
+        'button_color_dark' => '#00cc00',
+    ];
+
+    $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
+
+    // Form card should use inline style instead of bg-white
+    expect($html)->toMatch('/style="[^"]*background-color:\s*#ff0000[^"]*"/');
+    // Button should use inline style instead of bg-indigo-600
+    expect($html)->toMatch('/style="[^"]*background-color:\s*#00ff00[^"]*"/');
+    // Default hardcoded classes should NOT be present
+    expect($html)->not->toContain('bg-indigo-600');
+    expect($html)->not->toContain('bg-white dark:bg-gray-800');
+});
+
 test('contact_form block renders without error when image is absent', function () {
     $data = [
         'heading' => 'Contact',
@@ -290,9 +312,8 @@ test('contact_form block renders without error when image is absent', function (
     $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
 
     // Form must still render normally
-    expect($html)->toContain('bg-indigo-600');
     expect($html)->toContain('text-white');
-    // No image-related grid class when image is absent
+    expect($html)->toContain('rounded-2xl');
     expect($html)->not->toContain('lg:grid-cols-2');
     expect($html)->not->toContain('lg:grid-cols-4');
 });
@@ -325,12 +346,12 @@ test('contact_form block respects image_position left (image first in DOM)', fun
 
     $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
 
-    // Image alt text should appear before any form input when image is left
+    // Image alt text should appear before the submit button when image is left
     $officePos = strpos($html, 'Office');
-    $indigoPos = strpos($html, 'bg-indigo-600');
+    $submitPos = strpos($html, 'Send Message');
     expect($officePos)->not->toBeFalse();
-    expect($indigoPos)->not->toBeFalse();
-    expect($officePos)->toBeLessThan($indigoPos);
+    expect($submitPos)->not->toBeFalse();
+    expect($officePos)->toBeLessThan($submitPos);
 });
 
 test('contact_form block renders image_50 with grid-cols-2', function () {
@@ -546,8 +567,8 @@ test('contact form submit button has visible light-mode background (not transpar
 
     // Button must have text-white
     expect($content)->toMatch('/text-white/');
-    // Must reference a standard Tailwind color (indigo) — not primary-* which needs @theme
-    expect($content)->toMatch('/bg-indigo-600/');
+    // Button must use inline style for background color (configurable, not hardcoded)
+    expect($content)->toMatch('/background-color/');
 });
 
 // ──────────────────────────────────────────────
@@ -734,9 +755,11 @@ test('contact form blade view has proper dark mode label contrast', function () 
 
     // Labels should have proper dark mode contrast
     expect($content)->toMatch('/dark:text-gray-300/');
-    expect($content)->toMatch('/dark:bg-gray-800/');
+    // Input fields still use dark:bg-gray-700
     expect($content)->toMatch('/dark:bg-gray-700/');
     expect($content)->toMatch('/dark:border-gray-600/');
+    // Form card background is now configurable (not hardcoded dark:bg-gray-800)
+    expect($content)->toMatch('/form_background_color_dark/');
 });
 
 test('contact form blade view uses Alpine.js for form handling', function () {
@@ -744,8 +767,8 @@ test('contact form blade view uses Alpine.js for form handling', function () {
     $content = file_get_contents($path);
 
     expect($content)->toContain('x-data');
-    expect($content)->toContain('alpine:init');
-    expect($content)->toContain('Alpine.data');
+    expect($content)->toContain('x-model');
+    expect($content)->toContain('submit()');
 });
 
 // ──────────────────────────────────────────────
@@ -871,7 +894,7 @@ test('rendered contact form has visible submit button in light mode', function (
 
     $html = view('blogr::components.blocks.contact_form', ['data' => $data])->render();
 
-    // Button must have bg-indigo-600 class (standard Tailwind color, works without @theme)
-    expect($html)->toContain('bg-indigo-600');
+    // Button must have visible non-transparent background via inline style
     expect($html)->toContain('text-white');
+    expect($html)->toMatch('/style="[^"]*background-color:\s*#[0-9a-f]{6}[^"]*"/');
 });
