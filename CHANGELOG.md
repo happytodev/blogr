@@ -4,10 +4,16 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ Features
+
+- **CMS**: preview mode with signed URL (30 min) to view draft state of a page before publishing
+- **CMS**: blocks can now be hidden/shown directly from the block header — hidden blocks are skipped in the front-end render (no HTML output)
+
 ### 🐛 Fixed
 
 - **Blocks**: fix `str_starts_with()` type error when image is an array from Filament FileUpload in hero and contact_form blocks
 - **Blocks**: fix hero "Top (Behind Text)" image position — image now renders as full-bleed background behind text with WCAG gradient overlay
+- **Blocks**: `isPluginLinkType()` no longer throws a TypeError when `link_type` is null (e.g. "Select one" state)
 
 ### 🧪 Tests
 
