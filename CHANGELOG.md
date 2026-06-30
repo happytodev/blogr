@@ -19,6 +19,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ### ✨ Added
 
+- **Contact form**: form card background and submit button colors are now configurable via the admin UI (Form Styling section) — leave empty for transparent/inherit
+- **Contact form**: Alpine.js component migrated from `Alpine.data()` registration to inline `x-data` — fixes console errors in Filament CMS preview
 - **Tests**: feature tests for TagResource CRUD (create, read, update, delete)
 - **Tests**: feature test for auto-save indicator on blog post create/edit pages
 
