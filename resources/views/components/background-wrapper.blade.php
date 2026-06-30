@@ -97,7 +97,12 @@
     }
     
     // Build dark mode styles
-    if ($backgroundTypeDark && $backgroundTypeDark !== 'none') {
+    if ($backgroundTypeDark === 'none') {
+        // Override light mode background with theme dark when dark mode is active
+        if (!empty($styles)) {
+            $darkStyles[] = "background-color: var(--color-bg-dark)";
+        }
+    } elseif ($backgroundTypeDark && $backgroundTypeDark !== 'none') {
         if ($backgroundTypeDark === 'color' && isset($data['background_color_dark'])) {
             $opacity = ($data['background_opacity_dark'] ?? 100) / 100;
             $color = $data['background_color_dark'];
