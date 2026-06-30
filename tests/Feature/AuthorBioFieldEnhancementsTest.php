@@ -4,10 +4,8 @@ use Happytodev\Blogr\Tests\TestCase;
 
 uses(TestCase::class);
 
-use Happytodev\Blogr\Filament\Pages\Auth\EditProfile;
 use Happytodev\Blogr\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Livewire\Livewire;
 
 beforeEach(function () {
     $this->user = User::create([
@@ -27,16 +25,12 @@ test('bio field accepts extended length up to 2000 characters', function () {
     expect(strlen($longBio))->toBeGreaterThan(1500)
         ->and(strlen($longBio))->toBeLessThanOrEqual(2000);
 
-    Livewire::test(EditProfile::class)
-        ->fillForm([
-            'bio.en' => $longBio,
-        ])
-        ->call('save')
-        ->assertHasNoErrors();
+    $this->user->bio = ['en' => $longBio];
+    $this->user->save();
 
     $this->user->refresh();
     expect($this->user->bio['en'])->toBe($longBio);
-})->skip('Requires Livewire bindings - EditProfile Livewire component');
+});
 
 test('bio field uses MarkdownEditor component instead of Textarea', function () {
     // Test by checking the source code uses MarkdownEditor
@@ -83,16 +77,12 @@ I'm a **passionate** developer who loves:
 Check out my [website](https://example.com)!
 MD;
 
-    Livewire::test(EditProfile::class)
-        ->fillForm([
-            'bio.en' => $markdownBio,
-        ])
-        ->call('save')
-        ->assertHasNoErrors();
+    $this->user->bio = ['en' => $markdownBio];
+    $this->user->save();
 
     $this->user->refresh();
     expect($this->user->bio['en'])->toBe($markdownBio)
         ->and($this->user->bio['en'])->toContain('# About Me')
         ->and($this->user->bio['en'])->toContain('**passionate**')
         ->and($this->user->bio['en'])->toContain('[website]');
-})->skip('Requires Livewire bindings - EditProfile Livewire component');
+});
