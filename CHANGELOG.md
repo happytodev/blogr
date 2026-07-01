@@ -4,7 +4,9 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
-No unreleased changes yet.
+### 🐛 Fixed
+
+- **CMS**: deleting a block now requires confirmation to prevent accidental removals (#254)
 
 ## [v1.23.0](https://github.com/happytodev/blogr/compare/v1.22.0...v1.23.0) - 2026-07-01
 
