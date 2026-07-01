@@ -22,6 +22,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Utilities\Get;
 use Happytodev\Blogr\Blogr;
+use Happytodev\Blogr\BlogrWidgets;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\User;
@@ -536,6 +537,9 @@ class BlogrSettings extends Page
     // Theme Preset
     public ?string $theme_preset = null;
 
+    // Dashboard Widgets
+    public array $dashboard_widgets = [];
+
     // Import/Export
     public array $import_file = [];
 
@@ -804,6 +808,9 @@ class BlogrSettings extends Page
 
         // Load theme preset (no preset = custom)
         $this->theme_preset = $config['ui']['theme']['preset'] ?? '';
+
+        // Load dashboard widget configuration
+        $this->dashboard_widgets = $config['dashboard_widgets'] ?? [];
 
         // Load admin panel path
         $this->admin_path = $config['admin_path'] ?? 'admin';
@@ -1346,6 +1353,27 @@ class BlogrSettings extends Page
                                 ])
                                 ->columns(2)
                                 ->collapsible(),
+                        ]),
+
+                    // ========================================
+                    // DASHBOARD TAB
+                    // ========================================
+                    Tabs\Tab::make('Dashboard')
+                        ->icon('heroicon-o-home')
+                        ->schema([
+                            Section::make('Widget Configuration')
+                                ->description('Choose which widgets appear on your admin dashboard')
+                                ->schema([
+                                    CheckboxList::make('dashboard_widgets')
+                                        ->label('Dashboard Widgets')
+                                        ->options(BlogrWidgets::widgetOptions())
+                                        ->helperText('Select the widgets you want to display on the dashboard. Leave unchecked to show the default core widgets (Stats Overview, Recent Posts, Scheduled Posts).')
+                                        ->columns(2)
+                                        ->columnSpanFull(),
+                                    Placeholder::make('dashboard_cache_info')
+                                        ->label('Note')
+                                        ->content('Dashboard statistics are cached for 5 minutes. To refresh immediately, clear the cache from the Backup tab or run php artisan cache:clear.'),
+                                ]),
                         ]),
 
                     // ========================================
@@ -3216,6 +3244,8 @@ class BlogrSettings extends Page
                 ],
             ],
         ];
+
+        $data['dashboard_widgets'] = $this->dashboard_widgets ?? [];
 
         $data['enable_avatar_upload'] = $this->enable_avatar_upload ?? true;
 

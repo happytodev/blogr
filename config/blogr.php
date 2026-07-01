@@ -788,4 +788,27 @@ return [
     |
     */
     'enable_avatar_upload' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard Widgets Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Choose which widgets appear on the admin dashboard.
+    | Leave empty to show all available widgets.
+    | Set specific widget class names to show only those.
+    |
+    */
+    'dashboard_widgets' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard Cache Duration
+    |--------------------------------------------------------------------------
+    |
+    | How long (in seconds) to cache dashboard statistics before refreshing.
+    | Default: 300 seconds (5 minutes). Set to 0 to disable caching.
+    |
+    */
+    'dashboard_cache_duration' => 300,
 ];

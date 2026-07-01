@@ -9,9 +9,19 @@ use Happytodev\Blogr\Models\BlogPost;
 
 class ScheduledPosts extends BaseWidget
 {
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = '1/2';
 
     protected static ?string $heading = 'Scheduled Posts';
+
+    public static function getHeading(): string
+    {
+        $count = BlogPost::where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '>', now())
+            ->count();
+
+        return 'Scheduled Posts ('.$count.')';
+    }
 
     public function table(Table $table): Table
     {
