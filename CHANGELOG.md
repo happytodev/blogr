@@ -2,6 +2,37 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [Unreleased]
+
+No unreleased changes yet.
+
+## [v1.23.0](https://github.com/happytodev/blogr/compare/v1.22.0...v1.23.0) - 2026-07-01
+
+### ✨ Added
+
+- **Dashboard**: 5 new widgets — category distribution doughnut, weekly activity bar chart, series overview, CMS overview, SEO checklist
+- **Dashboard**: widget picker in Settings → Dashboard to enable/disable widgets
+- **Dashboard**: edit action on recent posts table to open post editor
+- **Dashboard**: column toggling and filters (status, category, date range) on recent posts table
+- **Dashboard**: reading time column on recent posts table
+
+### 🎨 Changed
+
+- **Dashboard**: improve layout with variable column spans (BlogPostsChart 2/3, BlogReadingStats 1/3, ScheduledPosts 1/2)
+- **Dashboard**: BlogStatsOverview shows 8 stats (added series, CMS pages), cached 5 min, displayed 4 per row
+- **Dashboard**: BlogPostsChart shows both created and published series with separate colors
+- **Dashboard**: BlogReadingStats now cached 5 min, labels shortened
+- **Dashboard**: Scheduled Posts heading shows live count
+- **Dashboard**: compact stat cards with 4 columns per row
+
+### 🔥 Removed
+
+- **Dashboard**: remove QuickVisitSite widget (redundant with left nav "View Website" link)
+
+### 🐛 Fixed
+
+- **PHPStan**: raise analysis level from 5 to 9, regenerate baseline
+
 ## [v1.22.0](https://github.com/happytodev/blogr/compare/v1.21.0...v1.22.0) - 2026-06-30
 
 ### ✨ Features
