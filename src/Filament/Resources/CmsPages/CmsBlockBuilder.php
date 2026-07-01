@@ -70,7 +70,8 @@ class CmsBlockBuilder
             ->extraItemActions([
                 self::toggleVisibilityAction(),
                 self::copyBlockAction(),
-            ]);
+            ])
+            ->deleteAction(fn (Action $action) => $action->requiresConfirmation());
     }
 
     protected static function heroBlock(): Block
