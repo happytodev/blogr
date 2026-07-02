@@ -159,7 +159,7 @@ it('publishes post via VersioningService', function () {
     expect($this->translation->title)->toBe('Published Title');
 });
 
-// ── Save as Draft ──
+// ── Save Draft ──
 
 it('save as draft keeps live translation unchanged', function () {
     app(VersioningService::class)->savePostDraft($this->post, [
@@ -245,12 +245,12 @@ it('stores all text fields in version', function () {
         ->and($version->seo_keywords)->toBe('kw1, kw2');
 });
 
-it('has form actions for Save & Publish, Save as Draft, Cancel', function () {
+it('has form actions for Save & Publish, Save Draft, Cancel', function () {
     Livewire::test(EditBlogPost::class, [
         'record' => $this->post->id,
     ])
         ->assertSee('Save & Publish')
-        ->assertSee('Save as Draft');
+        ->assertSee('Save Draft');
 });
 
 it('has history action in header', function () {

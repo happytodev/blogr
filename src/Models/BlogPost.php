@@ -25,6 +25,7 @@ class BlogPost extends Model
         'is_published',
         'is_listed',
         'published_at',
+        'unpublish_at',
         'category_id',
         'blog_series_id',
         'series_position',
@@ -42,6 +43,7 @@ class BlogPost extends Model
 
     protected $casts = [
         'published_at' => 'datetime',
+        'unpublish_at' => 'datetime',
         'is_published' => 'boolean',
         'is_listed' => 'boolean',
         'display_toc' => 'boolean',
@@ -159,7 +161,19 @@ class BlogPost extends Model
     // Check if the post is currently published (either immediate or scheduled time reached)
     public function isCurrentlyPublished()
     {
-        return $this->is_published && (! $this->published_at || $this->published_at->isPast());
+        if (! $this->is_published) {
+            return false;
+        }
+
+        if ($this->published_at && $this->published_at->isFuture()) {
+            return false;
+        }
+
+        if ($this->unpublish_at && $this->unpublish_at->isPast()) {
+            return false;
+        }
+
+        return true;
     }
 
     // Scope: published posts only
@@ -168,6 +182,9 @@ class BlogPost extends Model
         return $query->where('is_published', true)
             ->where(function ($q) {
                 $q->whereNull('published_at')->orWhere('published_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('unpublish_at')->orWhere('unpublish_at', '>', now());
             });
     }
 
@@ -185,6 +202,10 @@ class BlogPost extends Model
     public function getPublicationStatus()
     {
         if (! $this->is_published) {
+            return 'draft';
+        }
+
+        if ($this->unpublish_at && $this->unpublish_at->isPast()) {
             return 'draft';
         }
 

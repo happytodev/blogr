@@ -68,11 +68,22 @@ class EditBlogPost extends EditRecord
                     $this->saveAndPublish();
                 }),
             Actions\Action::make('saveAsDraft')
-                ->label('Save as Draft')
+                ->label('Save Draft')
                 ->icon('heroicon-o-cloud-arrow-up')
                 ->color('gray')
                 ->action(function () {
                     $this->saveAsDraft();
+                }),
+            Actions\Action::make('unpublish')
+                ->label('Unpublish')
+                ->icon('heroicon-o-arrow-uturn-down')
+                ->color('danger')
+                ->visible(fn () => $this->record && $this->record->is_published)
+                ->requiresConfirmation()
+                ->modalHeading('Unpublish post')
+                ->modalDescription('This will unpublish the post immediately. It will no longer be visible on the frontend.')
+                ->action(function () {
+                    $this->unpublish();
                 }),
             $this->getCancelFormAction(),
         ];
@@ -81,6 +92,13 @@ class EditBlogPost extends EditRecord
     protected function saveAsDraft(): void
     {
         $data = $this->data ?? [];
+
+        $data = $this->mutateFormDataBeforeSave($data);
+
+        /** @var BlogPost $record */
+        $record = $this->record;
+        $record->update($data);
+
         app(VersioningService::class)->savePostDraft($this->record, $data);
 
         $this->lastAutoSaveAt = now()->toIso8601String();
@@ -90,8 +108,28 @@ class EditBlogPost extends EditRecord
         $this->record->load('translations');
         $this->fillForm();
 
+        $label = $record->is_published ? 'Draft saved' : 'Draft saved successfully';
+
         Notification::make()
-            ->title('Draft saved successfully')
+            ->title($label)
+            ->success()
+            ->send();
+    }
+
+    protected function unpublish(): void
+    {
+        /** @var BlogPost $record */
+        $record = $this->record;
+        $record->update([
+            'is_published' => false,
+            'published_at' => null,
+        ]);
+
+        $this->record->load('translations');
+        $this->fillForm();
+
+        Notification::make()
+            ->title('Post unpublished successfully')
             ->success()
             ->send();
     }
