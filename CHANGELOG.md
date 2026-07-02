@@ -4,6 +4,11 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 🐛 Fixed
+
+- **Blog posts**: auto-save no longer publishes draft content to the frontend (#260)
+- **Blog posts**: "Save & Publish" action now correctly sets the post as published (#260)
+
 ## [v1.23.1](https://github.com/happytodev/blogr/compare/v1.23.0...v1.23.1) - 2026-07-02
 
 ### 🐛 Fixed
