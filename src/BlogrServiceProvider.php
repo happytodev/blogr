@@ -8,6 +8,7 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
+use Happytodev\Blogr\Commands\BlogrCheckUnpublishCommand;
 use Happytodev\Blogr\Commands\BlogrCommand;
 use Happytodev\Blogr\Commands\BlogrExportCommand;
 use Happytodev\Blogr\Commands\BlogrImportCommand;
@@ -92,6 +93,7 @@ class BlogrServiceProvider extends PackageServiceProvider
         // Register commands
         $package->hasCommands([
             BlogrCommand::class,
+            BlogrCheckUnpublishCommand::class,
             BlogrInstallCommand::class,
             SyncAdminPathCommand::class,
             InstallBreezyCommand::class,
@@ -314,6 +316,10 @@ class BlogrServiceProvider extends PackageServiceProvider
             foreach ($extensionRegistry->getEnabled() as $extension) {
                 $extension->registerLinkTypes($linkTypeRegistry);
             }
+        });
+
+        $this->callAfterResolving('orchestra.schedule', function ($schedule) {
+            $schedule->command('blogr:check-unpublish')->everyMinute();
         });
     }
 
@@ -929,6 +935,7 @@ class BlogrServiceProvider extends PackageServiceProvider
             '2026_06_13_000001_add_avatar_url_to_users_table',
             '2026_06_16_000001_create_blog_post_drafts_table',
             '2026_06_16_000002_create_blog_post_versions_table',
+            '2026_06_17_000001_add_unpublish_at_to_blog_posts',
         ];
 
         // Add CMS migrations if CMS is enabled

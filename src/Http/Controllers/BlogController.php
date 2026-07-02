@@ -56,11 +56,7 @@ class BlogController
                 'translations', // Load all translations for photo fallback
             ])
             ->orderBy('published_at', 'desc')
-            ->where('is_published', true)
-            ->where(function ($query) {
-                $query->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
-            })
+            ->published()
             ->visibleOnIndex()
             ->paginate(config('blogr.posts_per_page', 10))
             ->through(function ($post) use ($locale) {
@@ -215,6 +211,10 @@ class BlogController
         }
 
         if ($post->published_at && $post->published_at->isFuture()) {
+            abort(404);
+        }
+
+        if ($post->unpublish_at && $post->unpublish_at->isPast()) {
             abort(404);
         }
 
@@ -531,11 +531,7 @@ class BlogController
             },
         ])
             ->where('category_id', $category->id)
-            ->where('is_published', true)
-            ->where(function ($query) {
-                $query->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
-            })
+            ->published()
             ->visibleOnIndex()
             ->orderBy('published_at', 'desc')
             ->paginate(config('blogr.posts_per_page', 10))
@@ -630,11 +626,7 @@ class BlogController
                     $query->where('locale', $currentLocale);
                 },
             ])
-            ->where('is_published', true)
-            ->where(function ($query) {
-                $query->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
-            })
+            ->published()
             ->visibleOnIndex()
             ->orderBy('published_at', 'desc')
             ->take(config('blogr.posts_per_page', 10))

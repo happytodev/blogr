@@ -4,6 +4,16 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 🐛 Fixed
+
+- **Blog posts**: "Save Draft" now correctly persists the `is_published` toggle (#262)
+- **Blog posts**: "Unpublish" action added with confirmation modal (#262)
+
+### ✨ Added
+
+- **Blog posts**: `unpublish_at` field for scheduled automatic unpublishing (#262)
+- **Command**: `blogr:check-unpublish` Artisan command to auto-unpublish posts (#262)
+
 ## [v1.23.2](https://github.com/happytodev/blogr/compare/v1.23.1...v1.23.2) - 2026-07-02
 
 ### 🐛 Fixed

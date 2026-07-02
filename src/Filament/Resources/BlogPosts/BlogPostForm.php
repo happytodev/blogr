@@ -436,6 +436,13 @@ class BlogPostForm
                             ->visible(fn () => Filament::auth()->user() && method_exists(Filament::auth()->user(), 'hasRole') ? Filament::auth()->user()->hasRole('admin') : false)
                             ->helperText('Leave empty for immediate publication, or set a future date to schedule publication.'),
 
+                        DateTimePicker::make('unpublish_at')
+                            ->label('Unpublish Date')
+                            ->nullable()
+                            ->live()
+                            ->visible(fn () => Filament::auth()->user() && method_exists(Filament::auth()->user(), 'hasRole') ? Filament::auth()->user()->hasRole('admin') : false)
+                            ->helperText('Set a date and time after which the post will no longer be visible on the frontend.'),
+
                         Select::make('default_locale')
                             ->label('Default Language')
                             ->options(function () {
