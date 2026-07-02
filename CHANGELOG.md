@@ -4,6 +4,10 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 📝 Documentation
+
+- **README**: rewrite with current features, fix test count (1,266), remove obsolete roadmap and duplicate install instructions
+
 ### 🐛 Fixed
 
 - **CMS**: deleting a block now requires confirmation to prevent accidental removals (#254)
