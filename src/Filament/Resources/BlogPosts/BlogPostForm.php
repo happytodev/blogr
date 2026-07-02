@@ -67,6 +67,7 @@ class BlogPostForm
                                 TextInput::make('slug')
                                     ->label('Slug')
                                     ->required()
+                                    ->unique(ignoreRecord: true)
                                     ->maxLength(255)
                                     ->helperText('URL-friendly version of the title')
                                     ->columnSpan(2),
