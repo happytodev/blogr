@@ -327,7 +327,7 @@ Each block supports 5 background types (none, solid, gradient, image, pattern), 
 
 ---
 
-## 🔌 Plugins & Extensions
+## Plugins
 
 Blogr supports third-party plugins via the `BlogrExtension` interface. Plugins can register routes, Livewire components, custom link types, and settings pages.
 
@@ -360,7 +360,11 @@ public function packageBooted(): void
 }
 ```
 
-Known community plugins include GDPR, Comments, and Artist Portfolio packages.
+| Plugin | Description | Repository |
+|--------|-------------|------------|
+| GDPR | Cookie consent, privacy policy, data export and erasure | [happytodev/blogr-gdpr](https://github.com/happytodev/blogr-gdpr) |
+| Comments | Threaded comments with moderation, voting, anti-spam, and email notifications | [happytodev/blogr-comments](https://github.com/happytodev/blogr-comments) |
+| Artist Portfolio | Artist portfolio with artwork management, portfolio pages, and commission showcase | [happytodev/blogr-artist](https://github.com/happytodev/blogr-artist) |
 
 ---
 
