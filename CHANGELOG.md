@@ -10,6 +10,7 @@ All notable changes to `blogr` will be documented in this file.
 
 ### 🐛 Fixed
 
+- **Blog posts**: slug duplicate validation now shows a validation error instead of a 500 error (#258)
 - **CMS**: deleting a block now requires confirmation to prevent accidental removals (#254)
 
 ## [v1.23.0](https://github.com/happytodev/blogr/compare/v1.22.0...v1.23.0) - 2026-07-01
