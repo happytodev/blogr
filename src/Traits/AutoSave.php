@@ -82,12 +82,7 @@ trait AutoSave
 
             if ($record && $record->exists) {
                 if ($record instanceof BlogPost) {
-                    if ($record->is_published) {
-                        $draft = app(VersioningService::class)->savePostDraft($record, $currentState);
-                    } else {
-                        app(VersioningService::class)->savePostDraft($record, $currentState);
-                        app(VersioningService::class)->publishPostDraft($record, $currentState['translations'] ?? []);
-                    }
+                    app(VersioningService::class)->savePostDraft($record, $currentState);
                 } elseif ($record instanceof BlogPostTranslation) {
                     if ($record->post?->is_published) {
                         app(VersioningService::class)->saveDraft($record, $currentState);

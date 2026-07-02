@@ -100,6 +100,13 @@ class EditBlogPost extends EditRecord
     {
         $data = $this->data ?? [];
 
+        $data = $this->mutateFormDataBeforeSave($data);
+        $data['is_published'] = true;
+
+        /** @var BlogPost $record */
+        $record = $this->record;
+        $record->update($data);
+
         app(VersioningService::class)->savePostDraft($this->record, $data);
         app(VersioningService::class)->publishPostDraft($this->record, $data['translations'] ?? []);
 

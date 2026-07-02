@@ -4,14 +4,17 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
-### 📝 Documentation
-
-- **README**: rewrite with current features, fix test count (1,266), remove obsolete roadmap and duplicate install instructions
+## [v1.23.1](https://github.com/happytodev/blogr/compare/v1.23.0...v1.23.1) - 2026-07-02
 
 ### 🐛 Fixed
 
 - **Blog posts**: slug duplicate validation now shows a validation error instead of a 500 error (#258)
 - **CMS**: deleting a block now requires confirmation to prevent accidental removals (#254)
+- **README**: restore community plugin table for admin panel parser
+
+### 📝 Documentation
+
+- **README**: rewrite with current features, fix test count (1,266), remove obsolete roadmap and duplicate install instructions
 
 ## [v1.23.0](https://github.com/happytodev/blogr/compare/v1.22.0...v1.23.0) - 2026-07-01
 
