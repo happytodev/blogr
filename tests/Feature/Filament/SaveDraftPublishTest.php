@@ -4,7 +4,6 @@ use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
-use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Tests\CmsTestCase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
