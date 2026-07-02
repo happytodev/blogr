@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.23.3](https://github.com/happytodev/blogr/compare/v1.23.2...v1.23.3) - 2026-07-02
+
 ### 🐛 Fixed
 
 - **Blog posts**: "Save Draft" now correctly persists the `is_published` toggle (#262)
