@@ -38,10 +38,12 @@ test('regression_266_general_photo_preserved_after_save_and_publish', function (
 
     // Open edit, call saveAndPublish without changing anything
     $component = Livewire::test(EditBlogPost::class, ['record' => $this->post->id]);
+    $instance = $component->instance();
+    $instance->data['photo'] = $this->post->photo;
 
     $reflection = new ReflectionMethod(EditBlogPost::class, 'saveAndPublish');
     $reflection->setAccessible(true);
-    $reflection->invoke($component->instance());
+    $reflection->invoke($instance);
 
     $this->post->refresh();
     expect($this->post->photo)->toBe('blog-photos/general-image.jpg');
@@ -53,10 +55,12 @@ test('regression_266_translation_photo_preserved_after_save_and_publish', functi
     $translation->update(['photo' => 'blog-photos/translation-image.jpg']);
 
     $component = Livewire::test(EditBlogPost::class, ['record' => $this->post->id]);
+    $instance = $component->instance();
+    $instance->data['photo'] = $this->post->photo;
 
     $reflection = new ReflectionMethod(EditBlogPost::class, 'saveAndPublish');
     $reflection->setAccessible(true);
-    $reflection->invoke($component->instance());
+    $reflection->invoke($instance);
 
     $translation->refresh();
     expect($translation->photo)->toBe('blog-photos/translation-image.jpg');
@@ -93,10 +97,12 @@ test('regression_266_all_three_photos_preserved_after_save_and_publish', functio
     ]);
 
     $component = Livewire::test(EditBlogPost::class, ['record' => $this->post->id]);
+    $instance = $component->instance();
+    $instance->data['photo'] = $this->post->photo;
 
     $reflection = new ReflectionMethod(EditBlogPost::class, 'saveAndPublish');
     $reflection->setAccessible(true);
-    $reflection->invoke($component->instance());
+    $reflection->invoke($instance);
 
     $this->post->refresh();
     expect($this->post->photo)->toBe('blog-photos/general.jpg');

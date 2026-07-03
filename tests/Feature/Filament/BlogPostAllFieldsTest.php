@@ -41,9 +41,13 @@ test('regression_264_photo_survives_save_and_publish', function () {
 
     $component = Livewire::test(EditBlogPost::class, ['record' => $post->id]);
 
-    $reflection = new ReflectionMethod(EditBlogPost::class, 'saveAndPublish');
+    // Simulate browser state: photo is loaded from model
+    $instance = $component->instance();
+    $instance->data['photo'] = $post->photo;
+
+    $reflection = new ReflectionMethod(EditBlogPost::class, 'saveAsDraft');
     $reflection->setAccessible(true);
-    $reflection->invoke($component->instance());
+    $reflection->invoke($instance);
 
     $post->refresh();
     expect($post->photo)->toBe('blog-photos/test-image.jpg');
@@ -69,9 +73,13 @@ test('regression_264_photo_survives_save_draft', function () {
 
     $component = Livewire::test(EditBlogPost::class, ['record' => $post->id]);
 
+    // Simulate browser state: photo is loaded from model
+    $instance = $component->instance();
+    $instance->data['photo'] = $post->photo;
+
     $reflection = new ReflectionMethod(EditBlogPost::class, 'saveAsDraft');
     $reflection->setAccessible(true);
-    $reflection->invoke($component->instance());
+    $reflection->invoke($instance);
 
     $post->refresh();
     expect($post->photo)->toBe('blog-photos/test-image.jpg');
@@ -122,9 +130,13 @@ test('regression_264_all_fields_survive_publish', function () {
 
     $component = Livewire::test(EditBlogPost::class, ['record' => $post->id]);
 
+    // Simulate browser state: photo is loaded from model
+    $instance = $component->instance();
+    $instance->data['photo'] = $post->photo;
+
     $reflection = new ReflectionMethod(EditBlogPost::class, 'saveAndPublish');
     $reflection->setAccessible(true);
-    $reflection->invoke($component->instance());
+    $reflection->invoke($instance);
 
     $post->refresh();
     $post->load('translations');

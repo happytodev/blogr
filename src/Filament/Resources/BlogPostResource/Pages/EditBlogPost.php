@@ -139,6 +139,9 @@ class EditBlogPost extends EditRecord
     {
         $data = $this->data ?? [];
 
+        // Handle X button: [] + model has photo → user removed it
+        $data = $this->handlePhotoDeletions($data);
+
         $data = $this->mutateFormDataBeforeSave($data);
 
         // Persist uploaded files before saving to model and draft
@@ -186,6 +189,9 @@ class EditBlogPost extends EditRecord
     protected function saveAndPublish(): void
     {
         $data = $this->data ?? [];
+
+        // Handle X button: [] + model has photo → user removed it
+        $data = $this->handlePhotoDeletions($data);
 
         $data = $this->mutateFormDataBeforeSave($data);
 
@@ -513,8 +519,8 @@ class EditBlogPost extends EditRecord
             return $data;
         }
 
-        // Empty array or null → remove so existing DB value is preserved
-        if ((is_array($value) && empty($value)) || is_null($value)) {
+        // Empty array → remove so existing DB value is preserved
+        if (is_array($value) && empty($value)) {
             unset($data[$field]);
         }
         // Array with one element → extract the string path
@@ -527,11 +533,27 @@ class EditBlogPost extends EditRecord
         // Just return the value unchanged — persistUploadedFiles() in savePostDraft() handles it.
         elseif (is_array($value) && count($value) === 1) {
         }
-        // Non-string value (TemporaryUploadedFile, unsaved FileUpload state, etc.)
+        // Non-string non-null value (TemporaryUploadedFile, unsaved FileUpload state, etc.)
         // → remove to preserve existing DB value
-        elseif (! is_string($value)) {
+        // null means user clicked X → let pass through for deletion handling
+        elseif (! is_string($value) && $value !== null) {
             unset($data[$field]);
         }
+
+        return $data;
+    }
+
+    protected function handlePhotoDeletions(array $data): array
+    {
+        // FileUpload sends [] when user clicks X → delete if model has a photo
+        if (array_key_exists('photo', $data) && is_array($data['photo']) && empty($data['photo'])) {
+            if ($this->record && $this->record->photo !== null) {
+                $data['photo'] = null;
+            } else {
+                unset($data['photo']);
+            }
+        }
+        // Translation photos handled by publishPostDraft
 
         return $data;
     }
