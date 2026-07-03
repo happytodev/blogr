@@ -4,6 +4,7 @@ use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Tests\CmsTestCase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
@@ -45,6 +46,24 @@ test('regression_265_corrupted_translation_photo_does_not_crash', function () {
     $component = Livewire::test(EditBlogPost::class, ['record' => $this->post->id]);
     $component->assertStatus(200);
     // No TypeError should occur — page loads successfully
+});
+
+test('regression_265_corrupted_photo_in_draft_does_not_crash', function () {
+    // Simulate a draft with corrupted photo data (PHP array in draft JSON)
+    app(VersioningService::class)->savePostDraft($this->post, [
+        'translations' => [
+            [
+                'locale' => 'en',
+                'title' => 'Draft with bad photo',
+                'slug' => 'draft-bad-photo',
+                'content' => 'Test',
+                'photo' => [],
+            ],
+        ],
+    ]);
+
+    $component = Livewire::test(EditBlogPost::class, ['record' => $this->post->id]);
+    $component->assertStatus(200);
 });
 
 test('regression_265_upload_new_photo_after_corruption', function () {

@@ -188,19 +188,35 @@ class BlogPostForm
                                     $draft = app(VersioningService::class)->getPostDraft($record);
                                     if ($draft && isset($draft->draft_data['translations'])) {
                                         $data = $draft->draft_data['translations'];
-                                        // Normalize JSON-encoded strings back to arrays
-                                        // Skip 'photo' fields — they must remain strings for FileUpload
-                                        array_walk_recursive($data, function (&$value, $key) {
-                                            if (is_string($key) && $key === 'photo') {
-                                                return;
-                                            }
-                                            if (is_string($value) && str_starts_with($value, '[') && str_ends_with($value, ']')) {
-                                                $decoded = json_decode($value, true);
-                                                if (is_array($decoded)) {
-                                                    $value = $decoded;
+                                        // Normalize per-translation photo fields
+                                        // (draft may contain PHP arrays instead of strings)
+                                        foreach ($data as $tk => $translation) {
+                                            if (isset($translation['photo'])) {
+                                                $photo = $translation['photo'];
+                                                if (is_array($photo)) {
+                                                    $data[$tk]['photo'] = ! empty($photo) && is_string($photo[array_key_first($photo)])
+                                                        ? $photo[array_key_first($photo)]
+                                                        : null;
+                                                } elseif (is_string($photo) && str_starts_with($photo, '[') && str_ends_with($photo, ']')) {
+                                                    $decoded = json_decode($photo, true);
+                                                    $data[$tk]['photo'] = is_array($decoded) && ! empty($decoded) && is_string($decoded[array_key_first($decoded)])
+                                                        ? $decoded[array_key_first($decoded)]
+                                                        : null;
                                                 }
                                             }
-                                        });
+                                            // Normalize other JSON-encoded strings back to arrays
+                                            foreach ($translation as $field => $value) {
+                                                if ($field === 'photo') {
+                                                    continue;
+                                                }
+                                                if (is_string($value) && str_starts_with($value, '[') && str_ends_with($value, ']')) {
+                                                    $decoded = json_decode($value, true);
+                                                    if (is_array($decoded)) {
+                                                        $data[$tk][$field] = $decoded;
+                                                    }
+                                                }
+                                            }
+                                        }
                                         $component->rawState($data);
                                     }
                                 }
