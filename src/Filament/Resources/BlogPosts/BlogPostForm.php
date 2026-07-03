@@ -189,7 +189,11 @@ class BlogPostForm
                                     if ($draft && isset($draft->draft_data['translations'])) {
                                         $data = $draft->draft_data['translations'];
                                         // Normalize JSON-encoded strings back to arrays
-                                        array_walk_recursive($data, function (&$value) {
+                                        // Skip 'photo' fields — they must remain strings for FileUpload
+                                        array_walk_recursive($data, function (&$value, $key) {
+                                            if (is_string($key) && $key === 'photo') {
+                                                return;
+                                            }
                                             if (is_string($value) && str_starts_with($value, '[') && str_ends_with($value, ']')) {
                                                 $decoded = json_decode($value, true);
                                                 if (is_array($decoded)) {

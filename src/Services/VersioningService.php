@@ -114,6 +114,12 @@ class VersioningService
                 ]));
 
                 // Convert arrays to strings for storage
+                // photo is a single-file Upload — extract string path from arrays
+                if (isset($versionData['photo'])) {
+                    if (is_array($versionData['photo'])) {
+                        $versionData['photo'] = $versionData['photo'][0] ?? null;
+                    }
+                }
                 array_walk($versionData, function (&$value) {
                     if (is_array($value)) {
                         $value = json_encode($value);

@@ -421,6 +421,35 @@ class EditBlogPost extends EditRecord
         }
         unset($data['series_position_custom']);
 
+        // Normalize photo fields — FileUpload may return an array
+        $data = static::normalizePhotoField($data, 'photo');
+
+        if (isset($data['translations']) && is_array($data['translations'])) {
+            foreach ($data['translations'] as $key => $translation) {
+                $data['translations'][$key] = static::normalizePhotoField($translation, 'photo');
+            }
+        }
+
+        return $data;
+    }
+
+    protected static function normalizePhotoField(array $data, string $field): array
+    {
+        if (! array_key_exists($field, $data)) {
+            return $data;
+        }
+
+        $value = $data[$field];
+
+        // Empty array → remove so existing DB value is preserved
+        if (is_array($value) && empty($value)) {
+            unset($data[$field]);
+        }
+        // Array with one element → extract the string path
+        elseif (is_array($value) && count($value) === 1 && is_string($value[0])) {
+            $data[$field] = $value[0];
+        }
+
         return $data;
     }
 
