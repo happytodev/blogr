@@ -81,18 +81,12 @@ class EditBlogPost extends EditRecord
         if (isset($data['translations']) && is_array($data['translations'])) {
             foreach ($data['translations'] as $key => $translation) {
                 $data['translations'][$key] = static::normalizePhotoField($translation, 'photo');
-                // FileUpload expects array format ['path.jpg'], not a bare string
+                // Translation FileUpload is inside a Repeater — expects array format
                 $photo = $data['translations'][$key]['photo'] ?? null;
                 if (is_string($photo)) {
                     $data['translations'][$key]['photo'] = [$photo];
                 }
             }
-        }
-
-        // Same for main photo
-        $mainPhoto = $data['photo'] ?? null;
-        if (is_string($mainPhoto)) {
-            $data['photo'] = [$mainPhoto];
         }
 
         return $data;
@@ -144,6 +138,27 @@ class EditBlogPost extends EditRecord
         // Persist uploaded files before saving to model and draft
         $data = VersioningService::persistUploadedFiles($data, 'blog-photos');
 
+        // If main photo is null and model has one → user clicked X → delete
+        if (array_key_exists('photo', $data) && is_null($data['photo'])) {
+            if ($this->record && $this->record->photo !== null) {
+                $data['photo'] = null;
+            } else {
+                unset($data['photo']);
+            }
+        }
+        // Same for translations
+        foreach ($data['translations'] ?? [] as $key => $translation) {
+            if (array_key_exists('photo', $translation) && is_null($translation['photo'])) {
+                $locale = $translation['locale'] ?? null;
+                $currentTrans = $locale ? $this->record->translations()->where('locale', $locale)->first() : null;
+                if ($currentTrans && $currentTrans->photo !== null) {
+                    $data['translations'][$key]['photo'] = null;
+                } else {
+                    unset($data['translations'][$key]['photo']);
+                }
+            }
+        }
+
         /** @var BlogPost $record */
         $record = $this->record;
         $record->update($data);
@@ -192,20 +207,27 @@ class EditBlogPost extends EditRecord
         // Persist uploaded files before saving to model and draft
         $data = VersioningService::persistUploadedFiles($data, 'blog-photos');
 
-        $data['is_published'] = true;
+        // If main photo is null and model has one → user clicked X → delete
+        if (array_key_exists('photo', $data) && is_null($data['photo'])) {
+            if ($this->record && $this->record->photo !== null) {
+                $data['photo'] = null;
+            } else {
+                unset($data['photo']);
+            }
+        }
+        // Same for translations
+        foreach ($data['translations'] ?? [] as $key => $translation) {
+            if (array_key_exists('photo', $translation) && is_null($translation['photo'])) {
+                $locale = $translation['locale'] ?? null;
+                $currentTrans = $locale ? $this->record->translations()->where('locale', $locale)->first() : null;
+                if ($currentTrans && $currentTrans->photo !== null) {
+                    $data['translations'][$key]['photo'] = null;
+                } else {
+                    unset($data['translations'][$key]['photo']);
+                }
+            }
+        }
 
-        /** @var BlogPost $record */
-        $record = $this->record;
-        $record->update($data);
-
-        app(VersioningService::class)->savePostDraft($this->record, $data);
-        app(VersioningService::class)->publishPostDraft($this->record, $data['translations'] ?? []);
-
-        $this->record->load('translations');
-        $this->refreshDraftState();
-        $this->fillForm();
-
-        $data = $this->mutateFormDataBeforeSave($data);
         $data['is_published'] = true;
 
         /** @var BlogPost $record */
@@ -527,8 +549,8 @@ class EditBlogPost extends EditRecord
             return $data;
         }
 
-        // Empty array or null → remove so existing DB value is preserved
-        if ((is_array($value) && empty($value)) || is_null($value)) {
+        // Empty array → remove so existing DB value is preserved
+        if (is_array($value) && empty($value)) {
             unset($data[$field]);
         }
         // Array with one element → extract the string path
@@ -543,7 +565,8 @@ class EditBlogPost extends EditRecord
         }
         // Non-string value (TemporaryUploadedFile, unsaved FileUpload state, etc.)
         // → remove to preserve existing DB value
-        elseif (! is_string($value)) {
+        // null means user clicked X on FileUpload → let pass through for deletion handling
+        elseif (! is_string($value) && $value !== null) {
             unset($data[$field]);
         }
 

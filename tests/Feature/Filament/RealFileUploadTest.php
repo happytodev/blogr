@@ -53,6 +53,43 @@ test('regression_268_real_upload_flow', function () {
     expect($translation->photo)->toBe('blog-photos/translation-image.jpg');
 });
 
+test('regression_273_x_button_deletes_main_photo', function () {
+    // Post has a photo
+    $this->post->update(['photo' => 'blog-photos/existing-image.jpg']);
+
+    $component = Livewire::test(EditBlogPost::class, ['record' => $this->post->id]);
+    $instance = $component->instance();
+
+    // User clicked X on FilePond → null value (non-multiple FileUpload)
+    $instance->data['photo'] = null;
+
+    $reflection = new ReflectionMethod(EditBlogPost::class, 'saveAndPublish');
+    $reflection->setAccessible(true);
+    $reflection->invoke($instance);
+
+    $this->post->refresh();
+    expect($this->post->photo)->toBeNull();
+});
+
+test('regression_273_x_button_preserves_when_never_had_photo', function () {
+    // Post has NO photo
+    $this->post->update(['photo' => null]);
+
+    $component = Livewire::test(EditBlogPost::class, ['record' => $this->post->id]);
+    $instance = $component->instance();
+
+    // X button sends null on a post that never had a photo
+    $instance->data['photo'] = null;
+
+    $reflection = new ReflectionMethod(EditBlogPost::class, 'saveAndPublish');
+    $reflection->setAccessible(true);
+    $reflection->invoke($instance);
+
+    $this->post->refresh();
+    // Should remain null (no corruption)
+    expect($this->post->photo)->toBeNull();
+});
+
 test('regression_268_uuid_nested_livewire_format', function () {
     $component = Livewire::test(EditBlogPost::class, ['record' => $this->post->id]);
     $instance = $component->instance();
