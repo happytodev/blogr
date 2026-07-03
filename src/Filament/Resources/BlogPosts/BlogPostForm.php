@@ -228,6 +228,10 @@ class BlogPostForm
                                                         ? $decoded[array_key_first($decoded)]
                                                         : null;
                                                 }
+                                                // FileUpload expects array format ['path.jpg'], not bare string
+                                                if (is_string($data[$tk]['photo'])) {
+                                                    $data[$tk]['photo'] = [$data[$tk]['photo']];
+                                                }
                                             }
                                             // Normalize other JSON-encoded strings back to arrays
                                             foreach ($translation as $field => $value) {

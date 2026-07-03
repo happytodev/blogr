@@ -67,7 +67,7 @@ trait AutoSave
     {
         try {
             $currentState = $this->data ?? [];
-            $currentHash = md5(serialize($currentState));
+            $currentHash = md5(serialize(static::sanitizeForSnapshot($currentState)));
             $hasChanges = $currentHash !== $this->savedSnapshot;
 
             if (! $hasChanges) {

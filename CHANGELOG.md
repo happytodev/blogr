@@ -4,6 +4,19 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.23.10](https://github.com/happytodev/blogr/compare/v1.23.9...v1.23.10) - 2026-07-03
+
+### 🐛 Fixed
+
+- **Blog posts**: photo upload now works on both Save Draft and Save & Publish (#268)
+  - AutoSave: sanitize TemporaryUploadedFile before serialize() to prevent crash
+  - `savePostDraft()`: persist uploaded files before storing draft
+  - `walkAndPersist()`: handle stdClass objects (Livewire serialization format)
+  - `normalizePhotoField`: pass through UUID-nested format for persistUploadedFiles
+  - `persistUploadedFiles()`: call early in save methods before model update
+  - `afterStateHydrated`: wrap photo strings in array (FileUpload expects array format)
+  - `mutateFormDataBeforeFill`: wrap photo strings in array for FileUpload
+
 ## [v1.23.9](https://github.com/happytodev/blogr/compare/v1.23.8...v1.23.9) - 2026-07-03
 
 ### 🐛 Fixed

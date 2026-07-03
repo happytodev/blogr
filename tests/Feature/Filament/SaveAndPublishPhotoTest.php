@@ -138,5 +138,7 @@ test('regression_267_photo_preserved_when_draft_missing_photo_key', function () 
         ->firstWhere('locale', 'en');
 
     expect($translationData)->not->toBeNull();
-    expect($translationData['photo'] ?? null)->toBe('blog-photos/model-photo.jpg');
+    // FileUpload expects array format ['path.jpg']
+    $photo = $translationData['photo'] ?? null;
+    expect($photo)->toBe(['blog-photos/model-photo.jpg']);
 });

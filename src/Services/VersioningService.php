@@ -34,7 +34,7 @@ class VersioningService
     {
         return BlogPostDraft::updateOrCreate(
             ['blog_post_id' => $post->id],
-            ['draft_data' => $formData],
+            ['draft_data' => static::persistUploadedFiles($formData, 'blog-photos')],
         );
     }
 
@@ -181,34 +181,33 @@ class VersioningService
 
     // ── File persistence ──
 
-    public static function persistUploadedFiles(array $data): array
+    public static function persistUploadedFiles(array $data, string $directory = 'cms-blocks/uploads'): array
     {
-        return static::walkAndPersist($data);
+        return static::walkAndPersist($data, $directory);
     }
 
-    protected static function walkAndPersist($value)
+    protected static function walkAndPersist($value, string $directory = 'cms-blocks/uploads')
     {
+        // Convert stdClass objects to arrays (Livewire serializes some data as objects)
+        if ($value instanceof \stdClass) {
+            $value = (array) $value;
+        }
+
         if ($value instanceof TemporaryUploadedFile) {
             try {
-                return $value->store('cms-blocks/uploads', ['disk' => 'public']);
+                return $value->store($directory, ['disk' => 'public']);
             } catch (\Throwable $e) {
                 return '';
             }
         }
 
         if (is_array($value)) {
-            // Check if this array represents a Livewire serialized TemporaryUploadedFile
-            // The Image field inside a Repeater stores files as:
-            //   ['uuid' => ['Livewire\Features\SupportFileUploads\TemporaryUploadedFile' => '/tmp/...']]
-            // After dehydrate, the format can be:
-            //   ['TemporaryUploadedFile' => '/tmp/...']
-            // or simply an array containing a value that looks like a temp file path
             $hasSerializedFile = false;
             foreach ($value as $k => $v) {
                 if (is_string($k) && str_contains($k, 'TemporaryUploadedFile') && is_string($v)) {
                     try {
                         $path = Storage::disk('public')
-                            ->putFile('cms-blocks/uploads', new File($v));
+                            ->putFile($directory, new File($v));
 
                         return $path;
                     } catch (\Throwable $e) {
@@ -220,7 +219,7 @@ class VersioningService
                         if (is_string($innerK) && str_contains($innerK, 'TemporaryUploadedFile') && is_string($innerV)) {
                             try {
                                 $path = Storage::disk('public')
-                                    ->putFile('cms-blocks/uploads', new File($innerV));
+                                    ->putFile($directory, new File($innerV));
 
                                 return $path;
                             } catch (\Throwable $e) {
@@ -233,7 +232,7 @@ class VersioningService
 
             $result = [];
             foreach ($value as $key => $item) {
-                $result[$key] = static::walkAndPersist($item);
+                $result[$key] = static::walkAndPersist($item, $directory);
             }
 
             return $result;

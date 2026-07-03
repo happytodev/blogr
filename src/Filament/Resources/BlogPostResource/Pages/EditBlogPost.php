@@ -20,6 +20,7 @@ use Happytodev\Blogr\Services\TranslationUsageService;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Traits\AutoSave;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class EditBlogPost extends EditRecord
 {
@@ -80,7 +81,18 @@ class EditBlogPost extends EditRecord
         if (isset($data['translations']) && is_array($data['translations'])) {
             foreach ($data['translations'] as $key => $translation) {
                 $data['translations'][$key] = static::normalizePhotoField($translation, 'photo');
+                // FileUpload expects array format ['path.jpg'], not a bare string
+                $photo = $data['translations'][$key]['photo'] ?? null;
+                if (is_string($photo)) {
+                    $data['translations'][$key]['photo'] = [$photo];
+                }
             }
+        }
+
+        // Same for main photo
+        $mainPhoto = $data['photo'] ?? null;
+        if (is_string($mainPhoto)) {
+            $data['photo'] = [$mainPhoto];
         }
 
         return $data;
@@ -129,6 +141,9 @@ class EditBlogPost extends EditRecord
 
         $data = $this->mutateFormDataBeforeSave($data);
 
+        // Persist uploaded files before saving to model and draft
+        $data = VersioningService::persistUploadedFiles($data, 'blog-photos');
+
         /** @var BlogPost $record */
         $record = $this->record;
         $record->update($data);
@@ -171,6 +186,24 @@ class EditBlogPost extends EditRecord
     protected function saveAndPublish(): void
     {
         $data = $this->data ?? [];
+
+        $data = $this->mutateFormDataBeforeSave($data);
+
+        // Persist uploaded files before saving to model and draft
+        $data = VersioningService::persistUploadedFiles($data, 'blog-photos');
+
+        $data['is_published'] = true;
+
+        /** @var BlogPost $record */
+        $record = $this->record;
+        $record->update($data);
+
+        app(VersioningService::class)->savePostDraft($this->record, $data);
+        app(VersioningService::class)->publishPostDraft($this->record, $data['translations'] ?? []);
+
+        $this->record->load('translations');
+        $this->refreshDraftState();
+        $this->fillForm();
 
         $data = $this->mutateFormDataBeforeSave($data);
         $data['is_published'] = true;
@@ -483,6 +516,16 @@ class EditBlogPost extends EditRecord
             }
         }
 
+        // TemporaryUploadedFile from a recent upload → store to final location
+        if ($value instanceof TemporaryUploadedFile) {
+            try {
+                $data[$field] = $value->store('blog-photos', ['disk' => 'public']);
+            } catch (\Throwable) {
+                unset($data[$field]);
+            }
+            return $data;
+        }
+
         // Empty array or null → remove so existing DB value is preserved
         if ((is_array($value) && empty($value)) || is_null($value)) {
             unset($data[$field]);
@@ -490,6 +533,12 @@ class EditBlogPost extends EditRecord
         // Array with one element → extract the string path
         elseif (is_array($value) && count($value) === 1 && is_string(reset($value))) {
             $data[$field] = reset($value);
+        }
+        // Livewire serialized TemporaryUploadedFile in a UUID-nested structure:
+        //   ["uuid-1234" => ["Livewire\Features\SupportFileUploads\TemporaryUploadedFile" => "/tmp/path"]]
+        // This happens when a file is uploaded inside a Repeater item.
+        // Just return the value unchanged — persistUploadedFiles() in savePostDraft() handles it.
+        elseif (is_array($value) && count($value) === 1) {
         }
         // Non-string value (TemporaryUploadedFile, unsaved FileUpload state, etc.)
         // → remove to preserve existing DB value

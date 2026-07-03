@@ -12,6 +12,7 @@ use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Traits\AutoSave;
 use Illuminate\Support\Facades\Log;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class CreateBlogPost extends CreateRecord
 {
@@ -77,6 +78,40 @@ class CreateBlogPost extends CreateRecord
             }
         }
         unset($data['series_position_custom']);
+
+        // Normalize photo fields
+        $data = $this->normalizePhotoForCreate($data, 'photo');
+        if (isset($data['translations']) && is_array($data['translations'])) {
+            foreach ($data['translations'] as $key => $translation) {
+                $data['translations'][$key] = $this->normalizePhotoForCreate($translation, 'photo');
+            }
+        }
+
+        return $data;
+    }
+
+    protected function normalizePhotoForCreate(array $data, string $field): array
+    {
+        if (! array_key_exists($field, $data)) {
+            return $data;
+        }
+
+        $value = $data[$field];
+
+        if ($value instanceof TemporaryUploadedFile) {
+            try {
+                $data[$field] = $value->store('blog-photos', ['disk' => 'public']);
+            } catch (\Throwable) {
+                unset($data[$field]);
+            }
+            return $data;
+        }
+
+        if (is_array($value) && empty($value)) {
+            unset($data[$field]);
+        } elseif (is_array($value) && count($value) === 1 && is_string($value[0])) {
+            $data[$field] = $value[0];
+        }
 
         return $data;
     }
