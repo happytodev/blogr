@@ -459,13 +459,18 @@ class EditBlogPost extends EditRecord
             }
         }
 
-        // Empty array → remove so existing DB value is preserved
-        if (is_array($value) && empty($value)) {
+        // Empty array or null → remove so existing DB value is preserved
+        if ((is_array($value) && empty($value)) || is_null($value)) {
             unset($data[$field]);
         }
         // Array with one element → extract the string path
         elseif (is_array($value) && count($value) === 1 && is_string(reset($value))) {
             $data[$field] = reset($value);
+        }
+        // Non-string value (TemporaryUploadedFile, unsaved FileUpload state, etc.)
+        // → remove to preserve existing DB value
+        elseif (! is_string($value)) {
+            unset($data[$field]);
         }
 
         return $data;

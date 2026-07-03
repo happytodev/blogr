@@ -4,6 +4,13 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.23.8](https://github.com/happytodev/blogr/compare/v1.23.7...v1.23.8) - 2026-07-03
+
+### 🐛 Fixed
+
+- **Blog posts**: non-string photo values (TemporaryUploadedFile, null, etc.) no longer overwrite existing photos on Save & Publish (#266)
+- **Blog posts**: `publishPostDraft` now skips non-string photo values to preserve existing DB data (#266)
+
 ## [v1.23.7](https://github.com/happytodev/blogr/compare/v1.23.6...v1.23.7) - 2026-07-03
 
 ### 🐛 Fixed

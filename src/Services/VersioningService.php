@@ -119,6 +119,10 @@ class VersioningService
                     if (is_array($versionData['photo'])) {
                         $versionData['photo'] = $versionData['photo'][0] ?? null;
                     }
+                    // Non-string photo (TemporaryUploadedFile, etc.) → remove to preserve existing value
+                    if (! is_string($versionData['photo'])) {
+                        unset($versionData['photo']);
+                    }
                 }
                 array_walk($versionData, function (&$value) {
                     if (is_array($value)) {
