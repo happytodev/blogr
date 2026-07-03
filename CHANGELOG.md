@@ -4,6 +4,12 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.23.9](https://github.com/happytodev/blogr/compare/v1.23.8...v1.23.9) - 2026-07-03
+
+### 🐛 Fixed
+
+- **Blog posts**: `mutateFormDataBeforeFill` now merges draft data with model data instead of replacing — preserves photo when draft has no photo key (#267)
+
 ## [v1.23.8](https://github.com/happytodev/blogr/compare/v1.23.7...v1.23.8) - 2026-07-03
 
 ### 🐛 Fixed

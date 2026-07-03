@@ -4,6 +4,7 @@ use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
+use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Tests\CmsTestCase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
@@ -105,4 +106,37 @@ test('regression_266_all_three_photos_preserved_after_save_and_publish', functio
 
     $frTranslation->refresh();
     expect($frTranslation->photo)->toBe('blog-photos/fr.jpg');
+});
+
+test('regression_267_photo_preserved_when_draft_missing_photo_key', function () {
+    // Post has a translation with a photo
+    $translation = $this->post->translations()->first();
+    $translation->update(['photo' => 'blog-photos/model-photo.jpg']);
+
+    // Save a draft that has translations data BUT without the photo key
+    // (simulates auto-save saving raw Livewire state that omits null fields)
+    app(VersioningService::class)->savePostDraft($this->post, [
+        'translations' => [
+            [
+                'locale' => 'en',
+                'title' => 'Edited title',
+                'slug' => 'edited-slug',
+                'content' => 'Edited content',
+                // NO photo key here!
+            ],
+        ],
+    ]);
+
+    // Load the edit page — the draft overrides model data
+    $component = Livewire::test(EditBlogPost::class, ['record' => $this->post->id]);
+    $component->assertStatus(200);
+
+    // The form should still show the model's photo because
+    // mutateFormDataBeforeFill should merge draft with model data
+    $instance = $component->instance();
+    $translationData = collect($instance->data['translations'] ?? [])
+        ->firstWhere('locale', 'en');
+
+    expect($translationData)->not->toBeNull();
+    expect($translationData['photo'] ?? null)->toBe('blog-photos/model-photo.jpg');
 });

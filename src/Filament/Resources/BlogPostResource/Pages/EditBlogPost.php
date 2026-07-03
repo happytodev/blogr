@@ -48,8 +48,32 @@ class EditBlogPost extends EditRecord
         $data = static::normalizePhotoField($data, 'photo');
 
         $draft = app(VersioningService::class)->getPostDraft($this->record);
-        if ($draft && isset($draft->draft_data['translations'])) {
-            $data['translations'] = $draft->draft_data['translations'];
+
+        // Merge draft translations into model translations, preserving model fields
+        // that are missing from the draft (e.g. photo when auto-save omitted it)
+        if ($draft && isset($draft->draft_data['translations']) && is_array($draft->draft_data['translations'])) {
+            $modelTranslations = $data['translations'] ?? [];
+            $draftTranslations = $draft->draft_data['translations'];
+
+            $merged = [];
+            // Index model translations by locale
+            foreach ($modelTranslations as $modelTrans) {
+                $locale = $modelTrans['locale'] ?? null;
+                if ($locale) {
+                    $merged[$locale] = $modelTrans;
+                }
+            }
+            // Overlay draft data onto model data
+            foreach ($draftTranslations as $draftTrans) {
+                $locale = $draftTrans['locale'] ?? null;
+                if ($locale) {
+                    $merged[$locale] = array_merge(
+                        $merged[$locale] ?? [],
+                        $draftTrans
+                    );
+                }
+            }
+            $data['translations'] = array_values($merged);
         }
 
         // Normalize translation photo fields too

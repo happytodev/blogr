@@ -187,9 +187,34 @@ class BlogPostForm
                                 if ($record instanceof BlogPost) {
                                     $draft = app(VersioningService::class)->getPostDraft($record);
                                     if ($draft && isset($draft->draft_data['translations'])) {
-                                        $data = $draft->draft_data['translations'];
+                                        $draftData = $draft->draft_data['translations'];
+                                        $modelTranslations = $record->translations()
+                                            ->get()
+                                            ->keyBy('locale')
+                                            ->toArray();
+
+                                        // Merge: start with model data, overlay draft fields
+                                        $merged = [];
+                                        foreach ($modelTranslations as $locale => $modelTrans) {
+                                            $merged[$locale] = $modelTrans;
+                                        }
+                                        foreach ($draftData as $draftTrans) {
+                                            $locale = $draftTrans['locale'] ?? null;
+                                            if ($locale) {
+                                                // Remove model-only keys that shouldn't be in the form
+                                                unset($draftTrans['blog_post_id'], $draftTrans['id'],
+                                                    $draftTrans['created_at'], $draftTrans['updated_at'],
+                                                    $draftTrans['reading_time']);
+                                                $merged[$locale] = array_merge(
+                                                    $merged[$locale] ?? [],
+                                                    $draftTrans
+                                                );
+                                            }
+                                        }
+
+                                        $data = array_values($merged);
+
                                         // Normalize per-translation photo fields
-                                        // (draft may contain PHP arrays instead of strings)
                                         foreach ($data as $tk => $translation) {
                                             if (isset($translation['photo'])) {
                                                 $photo = $translation['photo'];
