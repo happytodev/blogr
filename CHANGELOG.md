@@ -4,6 +4,12 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.23.6](https://github.com/happytodev/blogr/compare/v1.23.5...v1.23.6) - 2026-07-03
+
+### 🐛 Fixed
+
+- **Blog posts**: `normalizePhotoField` now uses `reset()` instead of `[0]` to safely extract first element from associative arrays (#265)
+
 ## [v1.23.5](https://github.com/happytodev/blogr/compare/v1.23.4...v1.23.5) - 2026-07-03
 
 ### 🐛 Fixed
