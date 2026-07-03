@@ -4,6 +4,13 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.23.4](https://github.com/happytodev/blogr/compare/v1.23.3...v1.23.4) - 2026-07-03
+
+### 🐛 Fixed
+
+- **Blog posts**: cover image no longer disappears after Save & Publish (#264)
+- **Blog posts**: TypeError on page reload after Save Draft fixed — FileUpload photo field properly handled (#264)
+
 ## [v1.23.3](https://github.com/happytodev/blogr/compare/v1.23.2...v1.23.3) - 2026-07-02
 
 ### 🐛 Fixed
