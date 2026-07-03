@@ -4,6 +4,12 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.23.5](https://github.com/happytodev/blogr/compare/v1.23.4...v1.23.5) - 2026-07-03
+
+### 🐛 Fixed
+
+- **Blog posts**: corrupted `photo` values (JSON-encoded arrays) no longer cause TypeError on edit page load (#265)
+
 ## [v1.23.4](https://github.com/happytodev/blogr/compare/v1.23.3...v1.23.4) - 2026-07-03
 
 ### 🐛 Fixed

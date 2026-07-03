@@ -44,9 +44,19 @@ class EditBlogPost extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
+        // Normalize corrupted photo fields (JSON-encoded arrays from previous bugs)
+        $data = static::normalizePhotoField($data, 'photo');
+
         $draft = app(VersioningService::class)->getPostDraft($this->record);
         if ($draft && isset($draft->draft_data['translations'])) {
             $data['translations'] = $draft->draft_data['translations'];
+        }
+
+        // Normalize translation photo fields too
+        if (isset($data['translations']) && is_array($data['translations'])) {
+            foreach ($data['translations'] as $key => $translation) {
+                $data['translations'][$key] = static::normalizePhotoField($translation, 'photo');
+            }
         }
 
         return $data;
@@ -440,6 +450,14 @@ class EditBlogPost extends EditRecord
         }
 
         $value = $data[$field];
+
+        // Decode JSON-encoded array strings from previous bugs (e.g. '[]', '["path.jpg"]')
+        if (is_string($value) && str_starts_with($value, '[') && str_ends_with($value, ']')) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                $value = $decoded;
+            }
+        }
 
         // Empty array → remove so existing DB value is preserved
         if (is_array($value) && empty($value)) {

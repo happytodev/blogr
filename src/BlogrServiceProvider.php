@@ -936,6 +936,7 @@ class BlogrServiceProvider extends PackageServiceProvider
             '2026_06_16_000001_create_blog_post_drafts_table',
             '2026_06_16_000002_create_blog_post_versions_table',
             '2026_06_17_000001_add_unpublish_at_to_blog_posts',
+            '2026_06_18_000001_clean_corrupted_photo_values',
         ];
 
         // Add CMS migrations if CMS is enabled
