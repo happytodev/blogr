@@ -42,7 +42,13 @@ class BlogrPlugin implements Plugin
             Plugins::class,
         ]);
 
-        $widgets = BlogrWidgets::enabled();
+        $widgets = array_values(array_intersect(
+            BlogrWidgets::enabled(),
+            array_filter(
+                BlogrWidgets::all(),
+                fn (string $class): bool => class_exists($class),
+            ),
+        ));
 
         if (config('blogr.cms.enabled', false)) {
             $widgets[] = CmsStatsOverview::class;
