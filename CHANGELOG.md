@@ -4,10 +4,11 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.23.11](https://github.com/happytodev/blogr/compare/v1.23.10...v1.23.11) - 2026-07-03
+
 ### 🐛 Fixed
 
-- **Blog posts**: photo changes are now detected and displayed in the version history (#269)
-- **Dashboard**: prevent crash when `dashboard_widgets` config references a removed widget class (`QuickVisitSite`) — non-existent classes are now silently filtered out (#271)
+- **Blog posts**: removed duplicate save code in `saveAndPublish()` that caused double model update
 
 ## [v1.23.10](https://github.com/happytodev/blogr/compare/v1.23.9...v1.23.10) - 2026-07-03
 
