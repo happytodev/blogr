@@ -104,6 +104,7 @@ class CreateBlogPost extends CreateRecord
             } catch (\Throwable) {
                 unset($data[$field]);
             }
+
             return $data;
         }
 

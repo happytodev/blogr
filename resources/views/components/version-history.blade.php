@@ -26,9 +26,10 @@
                                             'content' => 'Content', 'tldr' => 'TL;DR',
                                             'blocks' => 'Blocks',
                                             'seo_title' => 'SEO Title', 'seo_description' => 'SEO Desc',
-                                            'seo_keywords' => 'SEO Keywords',
-                                        ];
-                                    @endphp
+                                        'seo_keywords' => 'SEO Keywords',
+                                        'photo' => 'Cover Image',
+                                    ];
+                                @endphp
                                     <span class="text-xs px-1.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium">
                                         {{ $labels[$field] ?? $field }}
                                     </span>
@@ -64,6 +65,7 @@
                             'seo_title' => 'SEO Title',
                             'seo_description' => 'SEO Description',
                             'seo_keywords' => 'SEO Keywords',
+                        'photo' => 'Cover Image',
                         ];
                     @endphp
 
@@ -144,9 +146,10 @@
                                             'content' => 'Content', 'tldr' => 'TL;DR',
                                             'blocks' => 'Blocks',
                                             'seo_title' => 'SEO Title', 'seo_description' => 'SEO Desc',
-                                            'seo_keywords' => 'SEO Keywords',
-                                        ];
-                                    @endphp
+                                        'seo_keywords' => 'SEO Keywords',
+                                        'photo' => 'Cover Image',
+                                    ];
+                                @endphp
                                     <span class="text-xs px-1.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium">
                                         {{ $labels[$field] ?? $field }}
                                     </span>
@@ -188,6 +191,7 @@
                             'seo_title' => 'SEO Title',
                             'seo_description' => 'SEO Description',
                             'seo_keywords' => 'SEO Keywords',
+                        'photo' => 'Cover Image',
                         ];
                     @endphp
 
