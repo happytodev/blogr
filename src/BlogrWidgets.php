@@ -76,16 +76,19 @@ class BlogrWidgets
     }
 
     /**
-     * Get enabled widgets based on config
+     * Get enabled widgets based on config (raw, unfiltered)
      */
     public static function enabled(): array
     {
         $enabled = config('blogr.dashboard_widgets', []);
 
-        if (empty($enabled)) {
+        if (! is_array($enabled) || empty($enabled)) {
             return self::core();
         }
 
-        return array_intersect(self::all(), $enabled);
+        return array_values(array_filter(
+            $enabled,
+            fn ($class): bool => is_string($class),
+        ));
     }
 }

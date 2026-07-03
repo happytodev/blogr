@@ -145,12 +145,6 @@ parameters:
 			path: src/BlogrWidgets.php
 
 		-
-			message: '#^Parameter \#2 \.\.\.\$arrays of function array_intersect expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/BlogrWidgets.php
-
-		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$is_published\.$#'
 			identifier: property.notFound
 			count: 1
