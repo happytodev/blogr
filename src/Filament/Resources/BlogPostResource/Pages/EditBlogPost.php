@@ -523,6 +523,7 @@ class EditBlogPost extends EditRecord
             } catch (\Throwable) {
                 unset($data[$field]);
             }
+
             return $data;
         }
 
