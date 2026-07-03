@@ -464,8 +464,8 @@ class EditBlogPost extends EditRecord
             unset($data[$field]);
         }
         // Array with one element → extract the string path
-        elseif (is_array($value) && count($value) === 1 && is_string($value[0])) {
-            $data[$field] = $value[0];
+        elseif (is_array($value) && count($value) === 1 && is_string(reset($value))) {
+            $data[$field] = reset($value);
         }
 
         return $data;
