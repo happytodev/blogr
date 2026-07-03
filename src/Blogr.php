@@ -4,7 +4,7 @@ namespace Happytodev\Blogr;
 
 class Blogr
 {
-    const VERSION = '1.23.3';
+    const VERSION = '1.23.4';
 
     public static function getVersion(): string
     {
