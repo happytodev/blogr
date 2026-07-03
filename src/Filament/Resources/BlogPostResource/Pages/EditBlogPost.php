@@ -304,7 +304,7 @@ class EditBlogPost extends EditRecord
                 $draftEntry = null;
                 if ($draft && isset($draft->draft_data['translations'])) {
                     $draftTranslations = $draft->draft_data['translations'];
-                    $fieldKeys = ['title', 'slug', 'tldr', 'content', 'seo_title', 'seo_description', 'seo_keywords'];
+                    $fieldKeys = ['title', 'slug', 'tldr', 'content', 'seo_title', 'seo_description', 'seo_keywords', 'photo'];
                     $perLocaleFields = [];
                     $perLocalePrevious = [];
                     $allChanges = [];
@@ -361,11 +361,11 @@ class EditBlogPost extends EditRecord
                     foreach ($translationVersions->sortBy('version_number') as $v) {
                         $currentFields = $v->only([
                             'title', 'slug', 'tldr', 'content',
-                            'seo_title', 'seo_description', 'seo_keywords',
+                            'seo_title', 'seo_description', 'seo_keywords', 'photo',
                         ]);
                         $previousFields = $prevVersion ? $prevVersion->only([
                             'title', 'slug', 'tldr', 'content',
-                            'seo_title', 'seo_description', 'seo_keywords',
+                            'seo_title', 'seo_description', 'seo_keywords', 'photo',
                         ]) : [];
                         $changes = $prevVersion
                             ? array_keys(array_diff_assoc($currentFields, $previousFields))

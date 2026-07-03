@@ -323,3 +323,63 @@ it('does not create a version when publishing identical content', function () {
     $versions = CmsPageVersion::where('cms_page_translation_id', $translation->id)->get();
     expect($versions)->toHaveCount(1);
 });
+
+it('regression_269_history_shows_photo_changes', function () {
+    // Create two versions with different photos
+    BlogPostVersion::create([
+        'blog_post_translation_id' => $this->translation->id,
+        'version_number' => 1,
+        'title' => 'v1',
+        'photo' => 'blog-photos/old.jpg',
+    ]);
+    BlogPostVersion::create([
+        'blog_post_translation_id' => $this->translation->id,
+        'version_number' => 2,
+        'title' => 'v2',
+        'photo' => 'blog-photos/new.jpg',
+    ]);
+
+    // Render the version-history component directly with the same data
+    // structure that EditBlogPost's history action builds.
+    $versions = BlogPostVersion::where('blog_post_translation_id', $this->translation->id)
+        ->orderBy('version_number')
+        ->get();
+
+    $history = collect();
+    $prevVersion = null;
+    foreach ($versions as $v) {
+        $currentFields = $v->only([
+            'title', 'slug', 'tldr', 'content',
+            'seo_title', 'seo_description', 'seo_keywords', 'photo',
+        ]);
+        $previousFields = $prevVersion ? $prevVersion->only([
+            'title', 'slug', 'tldr', 'content',
+            'seo_title', 'seo_description', 'seo_keywords', 'photo',
+        ]) : [];
+        $changes = $prevVersion
+            ? array_keys(array_diff_assoc($currentFields, $previousFields))
+            : ['initial'];
+
+        $history->push([
+            'type' => 'version',
+            'title' => $v->title,
+            'version_number' => $v->version_number,
+            'version_id' => $v->id,
+            'translation_id' => $v->blog_post_translation_id,
+            'locale' => $this->translation->locale,
+            'created_at' => $v->created_at,
+            'fields' => $currentFields,
+            'previous_fields' => $prevVersion ? $previousFields : null,
+            'changes' => $changes,
+        ]);
+        $prevVersion = $v;
+    }
+
+    $html = view('blogr::components.version-history', [
+        'history' => $history,
+    ])->render();
+
+    expect($html)
+        ->toContain('blog-photos/old.jpg')
+        ->toContain('Cover Image');
+});
