@@ -1,6 +1,5 @@
 <?php
 
-use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\CreateBlogPost;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource\Pages\EditBlogPost;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
