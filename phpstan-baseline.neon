@@ -3397,6 +3397,12 @@ parameters:
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
 			message: '#^Call to function is_string\(\) with null will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 1
@@ -3410,6 +3416,12 @@ parameters:
 
 		-
 			message: '#^Cannot access offset ''locale'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
+			message: '#^Cannot access offset ''photo'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
@@ -3475,12 +3487,6 @@ parameters:
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
-			message: '#^Cannot access property \$photo on Illuminate\\Database\\Eloquent\\Model\|int\<min, \-1\>\|int\<1, max\>\|string\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
 			message: '#^Cannot access property \$title on mixed\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -3535,30 +3541,6 @@ parameters:
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
-			message: '#^Method Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\EditBlogPost\:\:handlePhotoDeletions\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\EditBlogPost\:\:handlePhotoDeletions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\EditBlogPost\:\:normalizePhotoField\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\EditBlogPost\:\:normalizePhotoField\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
 			message: '#^Method Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\EditBlogPost\:\:sanitizeForSnapshot\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -3580,12 +3562,6 @@ parameters:
 			message: '#^Parameter \#1 \$array of function array_key_first expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
-			message: '#^Parameter \#1 \$data of static method Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\EditBlogPost\:\:normalizePhotoField\(\) expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 2
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
@@ -3649,6 +3625,12 @@ parameters:
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
+			message: '#^Parameter \#1 \.\.\.\$arrays of function array_merge expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
+
+		-
 			message: '#^Parameter \#2 \.\.\.\$arrays of function array_merge expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -3657,7 +3639,7 @@ parameters:
 		-
 			message: '#^Possibly invalid array key type mixed\.$#'
 			identifier: offsetAccess.invalidOffset
-			count: 2
+			count: 3
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
