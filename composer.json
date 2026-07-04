@@ -28,6 +28,7 @@
         "filament/tables": "^4.8.5",
         "spatie/laravel-package-tools": "^1.15.0",
         "spatie/laravel-permission": "^6.0",
+        "spatie/shiki-php": "^2.4",
         "spatie/yaml-front-matter": "^2.1"
     },
     "require-dev": {

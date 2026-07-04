@@ -356,56 +356,82 @@
         color: var(--color-primary-hover-dark) !important;
     }
     
-    /* Prism.js Code Blocks Styling */
-    .prose pre[class*="language-"] {
-        @apply rounded-lg shadow-lg my-6;
+    /* Shiki Code Blocks Styling */
+    .prose .shiki {
+        position: relative;
+        padding-top: 2.5rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
     }
-    
-    .prose code[class*="language-"],
-    .prose pre[class*="language-"] {
-        @apply text-sm;
+
+    .prose .shiki code {
+        font-size: 0.875rem;
+        line-height: 1.625;
     }
-    
-    /* Copy button styling */
-    .prose div.code-toolbar > .toolbar {
-        @apply opacity-0 transition-opacity duration-200;
+
+    .prose .shiki[data-language]::before {
+        content: attr(data-language);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 0.25rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.025em;
+        text-transform: uppercase;
+        color: #6b7280;
+        background-color: rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 0.5rem 0.5rem 0 0;
+        pointer-events: none;
     }
-    
-    .prose div.code-toolbar:hover > .toolbar {
-        @apply opacity-100;
+
+    .dark .prose .shiki[data-language]::before {
+        color: #9ca3af;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-bottom-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Line numbers (only when data-line-numbers attribute is present) */
+    .shiki[data-line-numbers] code {
+        counter-reset: shiki-line;
+    }
+
+    .shiki[data-line-numbers] .line::before {
+        counter-increment: shiki-line;
+        content: counter(shiki-line);
+        display: inline-block;
+        width: 2rem;
+        margin-right: 1rem;
+        text-align: right;
+        color: #6b7280;
+        font-size: 0.75rem;
+        user-select: none;
+        opacity: 0.5;
+    }
+
+    .dark .shiki[data-line-numbers] .line::before {
+        color: #9ca3af;
+    }
+
+    /* Dark mode: use --shiki-dark CSS custom properties */
+    .dark .shiki {
+        background-color: var(--shiki-dark-bg) !important;
+    }
+
+    .dark .shiki code {
+        background-color: transparent !important;
+        color: var(--shiki-dark) !important;
+    }
+
+    .dark .shiki span {
+        color: var(--shiki-dark) !important;
     }
 </style>
-
-<!-- Prism.js Syntax Highlighting -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" class="prism-theme-light">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" class="prism-theme-dark">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script>
-    // Define aliases for languages not available as components (prevents 404 from autoloader)
-    Prism.languages.vue = Prism.languages.markup;
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
-
-<script>
-    // Pre-load common languages to avoid CDN 404s
-    Prism.plugins.autoloader.languages_path = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/';
-
-    // Add line numbers class to all pre elements
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('pre[class*="language-"]').forEach(function(pre) {
-            pre.classList.add('line-numbers');
-        });
-        
-        // Re-highlight after adding classes
-        Prism.highlightAll();
-    });
-</script>
 @endpush
 
 @section('content')

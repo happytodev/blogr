@@ -9,7 +9,7 @@ $containerClass = $maxWidth === 'full' ? 'max-w-full' : 'max-w-prose';
 <x-blogr::background-wrapper :data="$data" class="py-16 sm:py-20">
     <div class="{{ $containerClass }} mx-auto px-4 sm:px-6 lg:px-8">
         <div class="prose prose-lg dark:prose-invert prose-a:text-[var(--color-primary)] dark:prose-a:text-[var(--color-primary-dark)] max-w-none">
-            {!! \Illuminate\Support\Str::markdown($content) !!}
+            {!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($content) !!}
         </div>
     </div>
 </x-blogr::background-wrapper>

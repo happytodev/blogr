@@ -3,6 +3,7 @@
 namespace Happytodev\Blogr\Helpers;
 
 use Happytodev\Blogr\Extensions\VideoEmbedAdapter;
+use Happytodev\Blogr\Rendering\ShikiCodeBlockRenderer;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\Embed\EmbedExtension;
@@ -32,6 +33,15 @@ class MarkdownHelper
             $environment->addExtension(new CommonMarkCoreExtension);
             $environment->addExtension(new EmbedExtension);
             $environment->addExtension(new TableExtension);
+
+            $environment->addRenderer(
+                \League\CommonMark\Extension\CommonMark\Node\Block\FencedCode::class,
+                new ShikiCodeBlockRenderer,
+            );
+            $environment->addRenderer(
+                \League\CommonMark\Extension\CommonMark\Node\Block\IndentedCode::class,
+                new ShikiCodeBlockRenderer,
+            );
 
             static::$converter = new MarkdownConverter($environment);
         }

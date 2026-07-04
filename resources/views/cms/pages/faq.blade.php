@@ -33,7 +33,7 @@
     @if($content)
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="prose prose-lg dark:prose-invert max-w-none">
-                {!! \Illuminate\Support\Str::markdown($content) !!}
+                {!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($content) !!}
             </div>
         </div>
     @endif

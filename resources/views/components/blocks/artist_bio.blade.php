@@ -61,7 +61,7 @@ $imageStyleClasses = match ($imageStyle) {
             @endif
             <div class="w-full max-w-3xl text-center">
                 @if($title)<h2 class="text-3xl sm:text-4xl font-bold mb-4">{{ $title }}</h2>@endif
-                @if($bio)<div class="prose prose-lg dark:prose-invert max-w-none mb-6">{!! Str::markdown($bio) !!}</div>@endif
+                @if($bio)<div class="prose prose-lg dark:prose-invert max-w-none mb-6">{!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($bio) !!}</div>@endif
                 @if(count($socialLinks) > 0)
                     @php $linkMap = []; foreach ($socialLinks as $link) { if (!empty($link['platform']) && !empty($link['url'])) { $linkMap[$link['platform']] = $link['url']; } } @endphp
                     <x-blogr::social-links :links="$linkMap" size="w-6 h-6" />
@@ -77,7 +77,7 @@ $imageStyleClasses = match ($imageStyle) {
             @endif
             <div class="bio-text">
                 @if($title)<h2 class="text-3xl sm:text-4xl font-bold mb-4">{{ $title }}</h2>@endif
-                @if($bio)<div class="prose prose-lg dark:prose-invert max-w-none mb-6">{!! Str::markdown($bio) !!}</div>@endif
+                @if($bio)<div class="prose prose-lg dark:prose-invert max-w-none mb-6">{!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($bio) !!}</div>@endif
                 @if(count($socialLinks) > 0)
                     @php $linkMap = []; foreach ($socialLinks as $link) { if (!empty($link['platform']) && !empty($link['url'])) { $linkMap[$link['platform']] = $link['url']; } } @endphp
                     <x-blogr::social-links :links="$linkMap" size="w-6 h-6" />
