@@ -3,6 +3,7 @@
 namespace Happytodev\Blogr\Services;
 
 use Happytodev\Blogr\Contracts\BlogrExtension;
+use Happytodev\Blogr\Contracts\ExportableExtension;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -26,6 +27,15 @@ class ExtensionRegistry
     public function getAll(): array
     {
         return $this->extensions;
+    }
+
+    /** @return array<string, ExportableExtension> */
+    public function getExportableExtensions(): array
+    {
+        return array_filter(
+            $this->extensions,
+            fn (BlogrExtension $ext) => $ext instanceof ExportableExtension
+        );
     }
 
     public function get(string $id): ?BlogrExtension

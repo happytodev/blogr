@@ -70,6 +70,19 @@ class BlogrImportService
             $skipExisting = $options['skip_existing'] ?? false;
             $overwrite = $options['overwrite'] ?? false;
 
+            $importVersion = $data['version'] ?? 'unknown';
+            $importExportedAt = $data['exported_at'] ?? now()->toIso8601String();
+
+            // Apply only/skip filters
+            $importSections = ['users', 'categories', 'category_translations', 'tags', 'tag_translations', 'user_translations', 'cms_pages', 'cms_page_translations', 'series', 'series_translations', 'posts', 'post_translations', 'post_translation_categories', 'post_translation_tags', 'extension_states', 'extensions', 'media_files'];
+            if (isset($options['only'])) {
+                $allowed = array_flip($options['only']);
+                $data = array_intersect_key($data, $allowed);
+            }
+            if (isset($options['skip'])) {
+                $data = array_diff_key($data, array_flip($options['skip']));
+            }
+
             // If overwrite is enabled, delete all blog data (except users)
             if ($overwrite) {
                 Log::info('BlogrImportService: Overwrite mode enabled, deleting all blog data except users');
@@ -85,28 +98,52 @@ class BlogrImportService
 
             $results = [
                 'users' => isset($data['users']) ? $this->importUsers($data['users'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
-                'categories' => $this->importCategories($data['categories'], $skipExisting),
+                'categories' => isset($data['categories']) ? $this->importCategories($data['categories'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'category_translations' => isset($data['category_translations']) ? $this->importCategoryTranslations($data['category_translations'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
-                'tags' => $this->importTags($data['tags'], $skipExisting),
+                'tags' => isset($data['tags']) ? $this->importTags($data['tags'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'tag_translations' => isset($data['tag_translations']) ? $this->importTagTranslations($data['tag_translations'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'user_translations' => isset($data['user_translations']) ? $this->importUserTranslations($data['user_translations'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'cms_pages' => isset($data['cms_pages']) ? $this->importCmsPages($data['cms_pages'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'cms_page_translations' => isset($data['cms_page_translations']) ? $this->importCmsPageTranslations($data['cms_page_translations'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
-                'series' => $this->importSeries($data['series'], $skipExisting),
+                'series' => isset($data['series']) ? $this->importSeries($data['series'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'series_translations' => isset($data['series_translations']) ? $this->importSeriesTranslations($data['series_translations'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
-                'posts' => $this->importPosts($data['posts'], $skipExisting, $defaultAuthorId),
+                'posts' => isset($data['posts']) ? $this->importPosts($data['posts'], $skipExisting, $defaultAuthorId) : ['imported' => 0, 'skipped' => 0],
                 'post_translations' => isset($data['post_translations']) ? $this->importPostTranslations($data['post_translations'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'post_translation_categories' => isset($data['post_translation_categories']) ? $this->importPostTranslationCategories($data['post_translation_categories'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
                 'post_translation_tags' => isset($data['post_translation_tags']) ? $this->importPostTranslationTags($data['post_translation_tags'], $skipExisting) : ['imported' => 0, 'skipped' => 0],
             ];
+
+            // Restore extension states
+            $registry = app(ExtensionRegistry::class);
+            if (isset($data['extension_states'])) {
+                foreach ($data['extension_states'] as $extId => $state) {
+                    $registry->disable($extId);
+                }
+            }
+
+            // Import extension data
+            $extensionResults = [];
+            if (isset($data['extensions'])) {
+                foreach ($data['extensions'] as $extKey => $extData) {
+                    foreach ($registry->getExportableExtensions() as $ext) {
+                        if ($ext->getExportKey() === $extKey) {
+                            $extResult = $ext->importData($extData['data'] ?? [], $options);
+                            $extensionResults[$extKey] = $extResult;
+                        }
+                    }
+                }
+            }
+            if (! empty($extensionResults)) {
+                $results['extensions'] = $extensionResults;
+            }
 
             DB::commit();
 
             return [
                 'success' => true,
                 'results' => $results,
-                'version' => $data['version'],
-                'exported_at' => $data['exported_at'],
+                'version' => $importVersion,
+                'exported_at' => $importExportedAt,
             ];
 
         } catch (\Exception $e) {
