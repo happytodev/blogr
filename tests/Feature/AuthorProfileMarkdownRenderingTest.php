@@ -116,7 +116,7 @@ MD;
         ->and($html)->toContain('<ul>')
         ->and($html)->toContain('<li>Item 1</li>')
         ->and($html)->toContain('<a href="https://example.com">Link</a>')
-        ->and($html)->toContain('<code class="language-php">');
+        ->and($html)->toContain('class="shiki');
 });
 
 test('MarkdownHelper escapes potentially dangerous HTML', function () {
