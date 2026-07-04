@@ -303,6 +303,8 @@ class EditBlogPost extends EditRecord
                             $firstTitle = $transData['title'];
                         }
                         $draftFields = array_intersect_key($transData, array_flip($fieldKeys));
+                        // Normalize array values (e.g. photo from FilePond = ['path.jpg']) to strings
+                        $draftFields = array_map(fn ($v) => is_array($v) ? (reset($v) ?: '') : $v, $draftFields);
                         $perLocaleFields[$locale] = $draftFields;
 
                         $translation = $this->record->translations()
