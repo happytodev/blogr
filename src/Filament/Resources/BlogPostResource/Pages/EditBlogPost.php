@@ -20,7 +20,6 @@ use Happytodev\Blogr\Services\TranslationUsageService;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Traits\AutoSave;
 use Illuminate\Support\Str;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class EditBlogPost extends EditRecord
 {
@@ -45,9 +44,6 @@ class EditBlogPost extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // Normalize corrupted photo fields (JSON-encoded arrays from previous bugs)
-        $data = static::normalizePhotoField($data, 'photo');
-
         $draft = app(VersioningService::class)->getPostDraft($this->record);
 
         // Merge draft translations into model translations, preserving model fields
@@ -77,22 +73,14 @@ class EditBlogPost extends EditRecord
             $data['translations'] = array_values($merged);
         }
 
-        // Normalize translation photo fields too
+        // FileUpload inside a Repeater expects array format ['path.jpg']
         if (isset($data['translations']) && is_array($data['translations'])) {
             foreach ($data['translations'] as $key => $translation) {
-                $data['translations'][$key] = static::normalizePhotoField($translation, 'photo');
-                // FileUpload expects array format ['path.jpg'], not a bare string
-                $photo = $data['translations'][$key]['photo'] ?? null;
+                $photo = $translation['photo'] ?? null;
                 if (is_string($photo)) {
                     $data['translations'][$key]['photo'] = [$photo];
                 }
             }
-        }
-
-        // Same for main photo
-        $mainPhoto = $data['photo'] ?? null;
-        if (is_string($mainPhoto)) {
-            $data['photo'] = [$mainPhoto];
         }
 
         return $data;
@@ -139,8 +127,10 @@ class EditBlogPost extends EditRecord
     {
         $data = $this->data ?? [];
 
-        // Handle X button: [] + model has photo → user removed it
-        $data = $this->handlePhotoDeletions($data);
+        // FilePond sends [] when X is clicked → convert to null for DB
+        if (isset($data['photo']) && $data['photo'] === []) {
+            $data['photo'] = null;
+        }
 
         $data = $this->mutateFormDataBeforeSave($data);
 
@@ -190,8 +180,10 @@ class EditBlogPost extends EditRecord
     {
         $data = $this->data ?? [];
 
-        // Handle X button: [] + model has photo → user removed it
-        $data = $this->handlePhotoDeletions($data);
+        // FilePond sends [] when X is clicked → convert to null for DB
+        if (isset($data['photo']) && $data['photo'] === []) {
+            $data['photo'] = null;
+        }
 
         $data = $this->mutateFormDataBeforeSave($data);
 
@@ -496,81 +488,6 @@ class EditBlogPost extends EditRecord
             }
         }
         unset($data['series_position_custom']);
-
-        // Normalize photo fields — FileUpload may return an array
-        $data = static::normalizePhotoField($data, 'photo');
-
-        if (isset($data['translations']) && is_array($data['translations'])) {
-            foreach ($data['translations'] as $key => $translation) {
-                $data['translations'][$key] = static::normalizePhotoField($translation, 'photo');
-            }
-        }
-
-        return $data;
-    }
-
-    protected static function normalizePhotoField(array $data, string $field): array
-    {
-        if (! array_key_exists($field, $data)) {
-            return $data;
-        }
-
-        $value = $data[$field];
-
-        // Decode JSON-encoded array strings from previous bugs (e.g. '[]', '["path.jpg"]')
-        if (is_string($value) && str_starts_with($value, '[') && str_ends_with($value, ']')) {
-            $decoded = json_decode($value, true);
-            if (is_array($decoded)) {
-                $value = $decoded;
-            }
-        }
-
-        // TemporaryUploadedFile from a recent upload → store to final location
-        if ($value instanceof TemporaryUploadedFile) {
-            try {
-                $data[$field] = $value->store('blog-photos', ['disk' => 'public']);
-            } catch (\Throwable) {
-                unset($data[$field]);
-            }
-
-            return $data;
-        }
-
-        // Empty array → remove so existing DB value is preserved
-        if (is_array($value) && empty($value)) {
-            unset($data[$field]);
-        }
-        // Array with one element → extract the string path
-        elseif (is_array($value) && count($value) === 1 && is_string(reset($value))) {
-            $data[$field] = reset($value);
-        }
-        // Livewire serialized TemporaryUploadedFile in a UUID-nested structure:
-        //   ["uuid-1234" => ["Livewire\Features\SupportFileUploads\TemporaryUploadedFile" => "/tmp/path"]]
-        // This happens when a file is uploaded inside a Repeater item.
-        // Just return the value unchanged — persistUploadedFiles() in savePostDraft() handles it.
-        elseif (is_array($value) && count($value) === 1) {
-        }
-        // Non-string non-null value (TemporaryUploadedFile, unsaved FileUpload state, etc.)
-        // → remove to preserve existing DB value
-        // null means user clicked X → let pass through for deletion handling
-        elseif (! is_string($value) && $value !== null) {
-            unset($data[$field]);
-        }
-
-        return $data;
-    }
-
-    protected function handlePhotoDeletions(array $data): array
-    {
-        // FileUpload sends [] when user clicks X → delete if model has a photo
-        if (array_key_exists('photo', $data) && is_array($data['photo']) && empty($data['photo'])) {
-            if ($this->record && $this->record->photo !== null) {
-                $data['photo'] = null;
-            } else {
-                unset($data['photo']);
-            }
-        }
-        // Translation photos handled by publishPostDraft
 
         return $data;
     }
