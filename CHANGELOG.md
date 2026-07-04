@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.24.0](https://github.com/happytodev/blogr/compare/v1.23.17...v1.24.0) - 2026-07-04
+
 ### ✨ Added
 
 - **Import/Export**: extension registry exposes `getExportableExtensions()`, export includes `format_version`, `extension_states`, and `extensions` sections
@@ -14,6 +16,7 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Author page**: posts without translations no longer cause UrlGenerationException on author profile page (#279)
 - **Blog post queries**: fixed N+1 SQL queries in `getDefaultTranslation()` when translations are eager-loaded (#279)
+- **Markdown**: tables are now correctly rendered in blog posts and CMS pages (#278)
 
 ## [v1.23.17](https://github.com/happytodev/blogr/compare/v1.23.16...v1.23.17) - 2026-07-04
 
