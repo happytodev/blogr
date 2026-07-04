@@ -694,7 +694,7 @@ class BlogrSettings extends Page
         $this->heading_permalink_symbol = $config['heading_permalink']['symbol'] ?? '#';
         $this->heading_permalink_spacing = $config['heading_permalink']['spacing'] ?? 'after';
         $this->heading_permalink_visibility = $config['heading_permalink']['visibility'] ?? 'hover';
-        $this->shiki_line_numbers = $config['shiki']['line_numbers'] ?? true;
+        $this->shiki_line_numbers = (bool) config('blogr.shiki.line_numbers', true);
         $this->author_bio_enabled = $config['author_bio']['enabled'] ?? true;
         $this->author_bio_position = $config['author_bio']['position'] ?? 'bottom';
         $this->author_bio_compact = $config['author_bio']['compact'] ?? false;

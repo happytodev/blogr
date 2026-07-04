@@ -332,6 +332,9 @@
 </head>
 
 <body class="font-sans text-gray-900 dark:text-gray-100 transition-colors duration-200" style="font-family: '{{ $fontFamilyCss ?? 'Instrument Sans' }}', ui-sans-serif, system-ui, sans-serif !important;">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:bg-white focus:text-gray-900 focus:ring-2 focus:ring-primary-600 focus:rounded-lg focus:outline-none">
+        Skip to main content
+    </a>
     @stack('body-start')
 
     @if($preview ?? false)
@@ -351,7 +354,7 @@
         @endif
 
         <!-- Main Content -->
-        <main class="flex-grow">
+        <main id="main-content" class="flex-grow">
             @yield('content')
         </main>
 
