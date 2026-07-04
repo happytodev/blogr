@@ -144,7 +144,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                         <label for="{{ $uniqueId }}-name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            {{ __('Your Name') }} <span class="text-red-500">*</span>
+                            {{ __('Your Name') }} <span class="text-red-500">*</span><span class="sr-only"> (required)</span>
                         </label>
                         <input
                             id="{{ $uniqueId }}-name"
@@ -152,13 +152,14 @@
                             x-model="name"
                             autocomplete="name"
                             required
-                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                            aria-required="true"
+                            class="w-full px-4 py-3 rounded-xl border border-gray-400 dark:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                             placeholder="{{ __('John Doe') }}"
                         />
                     </div>
                     <div>
                         <label for="{{ $uniqueId }}-email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            {{ __('Your Email') }} <span class="text-red-500">*</span>
+                            {{ __('Your Email') }} <span class="text-red-500">*</span><span class="sr-only"> (required)</span>
                         </label>
                         <input
                             id="{{ $uniqueId }}-email"
@@ -166,7 +167,8 @@
                             x-model="email"
                             autocomplete="email"
                             required
-                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                            aria-required="true"
+                            class="w-full px-4 py-3 rounded-xl border border-gray-400 dark:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                             placeholder="{{ __('john@example.com') }}"
                         />
                     </div>
@@ -174,7 +176,7 @@
 
                 <div>
                     <label for="{{ $uniqueId }}-subject" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        {{ __('Subject') }} <span class="text-red-500">*</span>
+                        {{ __('Subject') }} <span class="text-red-500">*</span><span class="sr-only"> (required)</span>
                     </label>
                     <input
                         id="{{ $uniqueId }}-subject"
@@ -182,21 +184,23 @@
                         x-model="subject"
                         autocomplete="subject"
                         required
-                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                        aria-required="true"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-400 dark:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                         placeholder="{{ __('How can we help you?') }}"
                     />
                 </div>
 
                 <div>
                     <label for="{{ $uniqueId }}-message" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        {{ __('Message') }} <span class="text-red-500">*</span>
+                        {{ __('Message') }} <span class="text-red-500">*</span><span class="sr-only"> (required)</span>
                     </label>
                     <textarea
                         id="{{ $uniqueId }}-message"
                         x-model="message"
                         required
+                        aria-required="true"
                         rows="5"
-                        class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition resize-y"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-400 dark:border-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition resize-y"
                         placeholder="{{ __('Tell us about your project...') }}"
                     ></textarea>
                 </div>

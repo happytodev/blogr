@@ -79,7 +79,7 @@
                 <div class="flex flex-wrap justify-center gap-3 mb-8">
                     <button
                         @click="activeFilter = 'all'"
-                        class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-200"
+                        class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
                         :class="activeFilter === 'all' ? 'bg-[var(--color-primary)] text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
                     >
                         {{ __('All') }}
@@ -87,7 +87,7 @@
                     @foreach($categories as $category)
                     <button
                         @click="activeFilter = '{{ $category }}'"
-                        class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-200"
+                        class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
                         :class="activeFilter === '{{ $category }}' ? 'bg-[var(--color-primary)] text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
                     >
                         {{ $category }}
@@ -107,7 +107,8 @@
                                 @keydown.space.prevent="openLightbox({{ $idx }})"
                                 role="button"
                                 tabindex="0"
-                                class="snap-start flex-shrink-0 w-[70vw] sm:w-[50vw] lg:w-[40vw] xl:w-[30vw] relative overflow-hidden rounded-lg cursor-pointer group"
+                                aria-label="Open image {{ (int) $idx + 1 }}"
+                                class="snap-start flex-shrink-0 w-[70vw] sm:w-[50vw] lg:w-[40vw] xl:w-[30vw] relative overflow-hidden rounded-lg cursor-pointer group focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
@@ -139,7 +140,8 @@
                             @keydown.space.prevent="openLightbox({{ $idx }})"
                             role="button"
                             tabindex="0"
-                            class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group"
+                            aria-label="Open image {{ (int) $idx + 1 }}"
+                            class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
                         >
                             <img
                                 src="{{ Storage::url($image) }}"
@@ -166,7 +168,8 @@
                                 @keydown.space.prevent="openLightbox({{ $idx }})"
                                 role="button"
                                 tabindex="0"
-                                class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group"
+                                aria-label="Open image {{ (int) $idx + 1 }}"
+                                class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
@@ -197,7 +200,8 @@
                                 @keydown.space.prevent="openLightbox({{ $idx }})"
                                 role="button"
                                 tabindex="0"
-                                class="relative {{ $aspectClass }} overflow-hidden rounded-lg cursor-pointer group"
+                                aria-label="Open image {{ (int) $idx + 1 }}"
+                                class="relative {{ $aspectClass }} overflow-hidden rounded-lg cursor-pointer group focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
@@ -236,7 +240,8 @@
                                 @keydown.space.prevent="openLightbox({{ $idx }})"
                                 role="button"
                                 tabindex="0"
-                                class="relative {{ $spanClass }} overflow-hidden rounded-lg cursor-pointer group"
+                                aria-label="Open image {{ (int) $idx + 1 }}"
+                                class="relative {{ $spanClass }} overflow-hidden rounded-lg cursor-pointer group focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
                             >
                                 <img
                                     src="{{ Storage::url($image) }}"
@@ -268,7 +273,7 @@
                 >
                     <button
                         @click.stop="closeLightbox()"
-                        class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+                        class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus:outline-none"
                         aria-label="Close lightbox"
                     >
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,7 +283,7 @@
 
                     <button
                         @click.stop="prevImage()"
-                        class="absolute left-4 text-white hover:text-gray-300 transition-colors z-10"
+                        class="absolute left-4 text-white hover:text-gray-300 transition-colors z-10 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus:outline-none"
                         x-show="images.length > 1"
                         aria-label="Previous image"
                     >
@@ -297,7 +302,7 @@
 
                     <button
                         @click.stop="nextImage()"
-                        class="absolute right-4 text-white hover:text-gray-300 transition-colors z-10"
+                        class="absolute right-4 text-white hover:text-gray-300 transition-colors z-10 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus:outline-none"
                         x-show="images.length > 1"
                         aria-label="Next image"
                     >

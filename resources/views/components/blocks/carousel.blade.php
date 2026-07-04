@@ -165,7 +165,7 @@ $carouselId = 'carousel-' . md5(serialize($slides));
         @if($showArrows && count($slides) > 1)
         <button
             @click="prev()"
-            class="carousel-prev absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white hover:text-gray-300 transition-colors bg-black/20 hover:bg-black/40 rounded-full p-2"
+            class="carousel-prev absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white hover:text-gray-300 transition-colors bg-black/20 hover:bg-black/40 rounded-full p-2 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus:outline-none"
             aria-label="Previous slide"
         >
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,7 +174,7 @@ $carouselId = 'carousel-' . md5(serialize($slides));
         </button>
         <button
             @click="next()"
-            class="carousel-next absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white hover:text-gray-300 transition-colors bg-black/20 hover:bg-black/40 rounded-full p-2"
+            class="carousel-next absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white hover:text-gray-300 transition-colors bg-black/20 hover:bg-black/40 rounded-full p-2 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus:outline-none"
             aria-label="Next slide"
         >
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,7 +187,7 @@ $carouselId = 'carousel-' . md5(serialize($slides));
         <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-3">
             <button
                 @click="togglePause()"
-                class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 transition-colors flex items-center justify-center text-white"
+                class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 transition-colors flex items-center justify-center text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus:outline-none"
                 aria-label="Toggle autoplay"
                 x-show="slides.length > 1 && autoplaySpeed > 0"
             >
@@ -201,7 +201,7 @@ $carouselId = 'carousel-' . md5(serialize($slides));
             @foreach($slides as $index => $slide)
             <button
                 @click="goTo({{ $index }})"
-                class="w-3 h-3 rounded-full transition-all duration-300"
+                class="w-3 h-3 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus:outline-none"
                 :class="currentSlide === {{ $index }} ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'"
                     aria-label="Go to slide {{ (int) $index + 1 }}"
             ></button>
