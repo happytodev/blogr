@@ -4,6 +4,12 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.23.16](https://github.com/happytodev/blogr/compare/v1.23.15...v1.23.16) - 2026-07-04
+
+### ♻️ Changed
+
+- **Blog posts**: simplified photo handling — removed custom `normalizePhotoField()` and `handlePhotoDeletions()` methods, FilePond now manages uploads and deletions natively (#274)
+
 ## [v1.23.15](https://github.com/happytodev/blogr/compare/v1.23.14...v1.23.15) - 2026-07-04
 
 ### 🐛 Fixed
