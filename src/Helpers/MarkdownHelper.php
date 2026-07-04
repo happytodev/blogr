@@ -6,6 +6,7 @@ use Happytodev\Blogr\Extensions\VideoEmbedAdapter;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\Embed\EmbedExtension;
+use League\CommonMark\Extension\Table\TableExtension;
 use League\CommonMark\MarkdownConverter;
 
 class MarkdownHelper
@@ -30,6 +31,7 @@ class MarkdownHelper
 
             $environment->addExtension(new CommonMarkCoreExtension);
             $environment->addExtension(new EmbedExtension);
+            $environment->addExtension(new TableExtension);
 
             static::$converter = new MarkdownConverter($environment);
         }
