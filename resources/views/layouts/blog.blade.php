@@ -174,8 +174,8 @@
             /* Brand Colors — background, buttons, text, highlights */
             --color-bg: {{ config('blogr.ui.theme.bg_color', '#ffffff') }};
             --color-bg-dark: {{ config('blogr.ui.theme.bg_color_dark', '#111827') }};
-            --color-btn: {{ config('blogr.ui.theme.btn_color', '#c20be5') }};
-            --color-btn-dark: {{ config('blogr.ui.theme.btn_color_dark', '#e166fa') }};
+            --color-btn: {{ config('blogr.ui.theme.btn_color', '#9b0ab8') }};
+            --color-btn-dark: {{ config('blogr.ui.theme.btn_color_dark', '#d946ef') }};
             --color-text: {{ config('blogr.ui.theme.text_color', '#1f2937') }};
             --color-text-dark: {{ config('blogr.ui.theme.text_color_dark', '#f3f4f6') }};
             --color-highlight: {{ config('blogr.ui.theme.highlight_color', '#c20be5') }};

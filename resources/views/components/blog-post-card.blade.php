@@ -39,7 +39,7 @@
                 $categorySlug = $categoryTranslation ? $categoryTranslation->slug : $post->category->slug;
             @endphp
             <a href="{{ config('blogr.locales.enabled') ? route('blog.category', ['locale' => $currentLocale, 'categorySlug' => $categorySlug]) : route('blog.category', ['categorySlug' => $categorySlug]) }}"
-                class="inline-block bg-[var(--color-category-bg)] dark:bg-[var(--color-category-bg-dark)] backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-900 dark:text-white hover:opacity-90 transition-colors">
+                class="inline-block bg-[var(--color-category-bg)] dark:bg-[var(--color-category-bg-dark)] backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-900 dark:text-white hover:opacity-90 transition-colors focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none">
                 {{ $categoryName }}
             </a>
         </div>
@@ -111,7 +111,7 @@
                             $tagSlug = $tagTranslation ? $tagTranslation->slug : $tag->slug;
                         @endphp
                         <a href="{{ config('blogr.locales.enabled') ? route('blog.tag', ['locale' => $currentLocale, 'tagSlug' => $tagSlug]) : route('blog.tag', ['tagSlug' => $tagSlug]) }}"
-                            class="inline-block bg-[var(--color-tag-bg)] dark:bg-[var(--color-tag-bg-dark)] text-gray-900 dark:text-white text-xs px-2.5 py-1 rounded-full hover:opacity-90 transition-colors">
+                            class="inline-block bg-[var(--color-tag-bg)] dark:bg-[var(--color-tag-bg-dark)] text-gray-900 dark:text-white text-xs px-2.5 py-1 rounded-full hover:opacity-90 transition-colors focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none">
                             #{{ $tagName }}
                         </a>
                     @endforeach

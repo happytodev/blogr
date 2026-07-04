@@ -757,7 +757,7 @@ test('contact form blade view has proper dark mode label contrast', function () 
     expect($content)->toMatch('/dark:text-gray-300/');
     // Input fields still use dark:bg-gray-700
     expect($content)->toMatch('/dark:bg-gray-700/');
-    expect($content)->toMatch('/dark:border-gray-600/');
+    expect($content)->toMatch('/dark:border-gray-500/');
     // Form card background is now configurable (not hardcoded dark:bg-gray-800)
     expect($content)->toMatch('/form_background_color_dark/');
 });

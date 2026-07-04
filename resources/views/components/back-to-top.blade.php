@@ -12,7 +12,7 @@
 
 @if($enabled)
 <button id="blogr-back-to-top" aria-label="Back to top"
-    class="fixed z-50 bottom-6 right-6 p-3 shadow-lg transition-opacity duration-200 opacity-90 hover:opacity-100 {{ $roundedClass }}"
+    class="fixed z-50 bottom-6 right-6 p-3 shadow-lg transition-opacity duration-200 opacity-90 hover:opacity-100 {{ $roundedClass }} focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus:outline-none"
     style="{{ $bgStyle }} color: white;">
     <!-- simple chevron up icon -->
     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

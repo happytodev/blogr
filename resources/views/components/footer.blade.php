@@ -16,7 +16,7 @@
 
         <!-- Additional Links (optional) -->
         <div class="mt-4 text-center text-xs text-gray-500 dark:text-gray-500">
-            <span>Powered by <a href="https://github.com/happytodev/blogr" class="hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] transition-colors">Blogr</a></span>
+            <span>Powered by <a href="https://github.com/happytodev/blogr" class="hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] transition-colors focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none rounded">Blogr</a></span>
         </div>
     </div>
 </footer>

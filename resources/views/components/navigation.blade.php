@@ -188,13 +188,13 @@
                     @if($isMegaMenu)
                         <!-- Mega Menu Dropdown -->
                         <div class="relative" 
-                             x-data="{ open: false }"
-                             @mouseenter="open = true" 
-                             @mouseleave="open = false"
+                             x-data="{ open: false, closeTimeout: null }"
+                             @mouseenter="if (closeTimeout) clearTimeout(closeTimeout); open = true" 
+                             @mouseleave="closeTimeout = setTimeout(() => { open = false }, 300)"
                              @focusin="open = true"
                              @focusout="open = false"
                              @keydown.escape.prevent="open = false">
-                            <button class="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            <button class="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
                                     aria-haspopup="true"
                                     :aria-expanded="open">
                                 <span>{{ $label }}</span>
@@ -239,7 +239,7 @@
                         <!-- Regular Menu Item -->
                         <a href="{{ $url }}" 
                            target="{{ $target }}"
-                           class="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium transition-colors
+                           class="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none
                                   {{ $isActive 
                                       ? 'text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] bg-gray-100 dark:bg-gray-800' 
                                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)]' 
@@ -261,7 +261,9 @@
                 <!-- Mobile Menu Toggle Button -->
                 @if(!empty($menuItems))
                 <button @click="mobileMenuOpen = !mobileMenuOpen" 
-                        class="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
+                        :aria-expanded="mobileMenuOpen"
+                        class="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         <path x-show="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -274,7 +276,7 @@
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" @click.away="open = false" @keydown.escape.prevent="open = false"
                             :aria-expanded="open"
-                            class="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                            class="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
                         </svg>
@@ -323,6 +325,9 @@
                                 <span class="inline-flex items-center gap-2">
                                     <span>{{ localeFlag($locale) }}</span>
                                     <span class="uppercase font-semibold">{{ $locale }}</span>
+                                    @if($locale === $currentLocale)
+                                    <span class="sr-only">(current)</span>
+                                    @endif
                                 </span>
                             </a>
                             @endforeach
@@ -341,7 +346,7 @@
                 @endphp
                 <a href="{{ $feedUrl }}" target="_blank" rel="noopener noreferrer"
                    class="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
-                   title="RSS Feed">
+                   title="RSS Feed" aria-label="RSS Feed">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20C5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93v-2.83Z"/>
                     </svg>
@@ -355,7 +360,8 @@
                             :class="{ 'bg-white dark:bg-gray-700 shadow': theme === 'light' }"
                             :aria-pressed="theme === 'light'"
                             class="p-2 rounded-md transition-all duration-200"
-                            title="Light mode">
+                            title="Light mode"
+                            aria-label="Light mode">
                         <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
                         </svg>
@@ -364,7 +370,8 @@
                             :class="{ 'bg-white dark:bg-gray-700 shadow': theme === 'auto' }"
                             :aria-pressed="theme === 'auto'"
                             class="p-2 rounded-md transition-all duration-200"
-                            title="Auto mode">
+                            title="Auto mode"
+                            aria-label="Auto mode">
                         <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
                         </svg>
@@ -373,7 +380,8 @@
                             :class="{ 'bg-white dark:bg-gray-700 shadow': theme === 'dark' }"
                             :aria-pressed="theme === 'dark'"
                             class="p-2 rounded-md transition-all duration-200"
-                            title="Dark mode">
+                            title="Dark mode"
+                            aria-label="Dark mode">
                         <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                         </svg>
