@@ -51,6 +51,7 @@
                     name="email"
                     id="newsletter-email"
                     x-model="email"
+                    autocomplete="email"
                     placeholder="{{ $placeholder }}"
                     required
                     class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-600 focus:border-transparent"

@@ -150,6 +150,7 @@
                             id="{{ $uniqueId }}-name"
                             type="text"
                             x-model="name"
+                            autocomplete="name"
                             required
                             class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                             placeholder="{{ __('John Doe') }}"
@@ -163,6 +164,7 @@
                             id="{{ $uniqueId }}-email"
                             type="email"
                             x-model="email"
+                            autocomplete="email"
                             required
                             class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                             placeholder="{{ __('john@example.com') }}"
@@ -178,6 +180,7 @@
                         id="{{ $uniqueId }}-subject"
                         type="text"
                         x-model="subject"
+                        autocomplete="subject"
                         required
                         class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                         placeholder="{{ __('How can we help you?') }}"
