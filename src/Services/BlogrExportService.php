@@ -2,6 +2,7 @@
 
 namespace Happytodev\Blogr\Services;
 
+use Happytodev\Blogr\Contracts\ExportableExtension;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Models\BlogSeries;
@@ -20,11 +21,16 @@ use ZipArchive;
 
 class BlogrExportService
 {
+    const FORMAT_VERSION = 1;
+
     public function export(array $options = []): array
     {
+        $registry = app(ExtensionRegistry::class);
+
         $data = [
             'version' => config('blogr.version', 'unknown'),
             'exported_at' => now()->toIso8601String(),
+            'format_version' => self::FORMAT_VERSION,
             'posts' => BlogPost::all()->toArray(),
             'post_translations' => BlogPostTranslation::all()->toArray(),
             'series' => BlogSeries::all()->toArray(),
@@ -39,11 +45,46 @@ class BlogrExportService
             'users' => $this->exportUsers(),
             'cms_pages' => CmsPage::all()->toArray(),
             'cms_page_translations' => CmsPageTranslation::all()->toArray(),
+            'extension_states' => collect($registry->getDisabledIds())
+                ->mapWithKeys(fn (string $id) => [
+                    $id => ['disabled_at' => now()->toIso8601String()],
+                ])
+                ->toArray(),
+            'extensions' => collect($registry->getExportableExtensions())
+                ->mapWithKeys(fn (ExportableExtension $ext) => [
+                    $ext->getExportKey() => [
+                        'version' => '1.0.0',
+                        'data' => $ext->getExportData(),
+                        'media_files' => $ext->getExportMediaPaths(),
+                    ],
+                ])
+                ->toArray(),
         ];
 
         // Include media files if requested
         if (($options['include_media'] ?? true)) {
             $data['media_files'] = $this->collectMediaFiles($data);
+        }
+
+        // Collect extension media files
+        /** @var array<string, array{media_files: list<string>}> $extensionData */
+        $extensionData = $data['extensions'];
+        foreach ($extensionData as $extKey => $extData) {
+            foreach ($extData['media_files'] as $mediaPath) {
+                $data['media_files'][] = $mediaPath;
+            }
+        }
+        if (isset($data['media_files'])) {
+            $data['media_files'] = array_values(array_unique($data['media_files']));
+        }
+
+        // Apply only/skip filters
+        $alwaysIncluded = ['version', 'exported_at', 'format_version'];
+        if (isset($options['only'])) {
+            $data = array_intersect_key($data, array_flip(array_merge($alwaysIncluded, $options['only'])));
+        }
+        if (isset($options['skip'])) {
+            $data = array_diff_key($data, array_flip($options['skip']));
         }
 
         return $data;

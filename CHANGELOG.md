@@ -4,6 +4,12 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ Added
+
+- **Import/Export**: extension registry exposes `getExportableExtensions()`, export includes `format_version`, `extension_states`, and `extensions` sections
+- **Import/Export**: `--only` and `--skip` options for selective export and import
+- **Import/Export**: import restores extension disabled states and calls `importData()` on registered exportable extensions
+
 ### 🐛 Fixed
 
 - **Author page**: posts without translations no longer cause UrlGenerationException on author profile page (#279)
