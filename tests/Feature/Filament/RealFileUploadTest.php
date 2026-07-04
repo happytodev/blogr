@@ -53,6 +53,23 @@ test('regression_268_real_upload_flow', function () {
     expect($translation->photo)->toBe('blog-photos/translation-image.jpg');
 });
 
+test('regression_274_x_button_deletes_photo', function () {
+    $this->post->update(['photo' => 'blog-photos/existing-image.jpg']);
+
+    $component = Livewire::test(EditBlogPost::class, ['record' => $this->post->id]);
+    $instance = $component->instance();
+
+    // User clicks X → FileUpload sends empty array
+    $instance->data['photo'] = [];
+
+    $reflection = new ReflectionMethod(EditBlogPost::class, 'saveAndPublish');
+    $reflection->setAccessible(true);
+    $reflection->invoke($instance);
+
+    $this->post->refresh();
+    expect($this->post->photo)->toBeNull();
+});
+
 test('regression_268_uuid_nested_livewire_format', function () {
     $component = Livewire::test(EditBlogPost::class, ['record' => $this->post->id]);
     $instance = $component->instance();
