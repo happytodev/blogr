@@ -70,7 +70,7 @@
                     </svg>
                     {{ __('Loading...') }}
                 </span>
-                <span x-show="success">✓ {{ __('Subscribed!') }}</span>
+                <span x-show="success" role="status" class="inline-flex items-center">✓ {{ __('Subscribed!') }}</span>
             </button>
         </form>
 
