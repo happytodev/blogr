@@ -4,14 +4,29 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
-### Fixed
-- WCAG A accessibility: add skip-to-content link for keyboard users (#285)
-- WCAG A accessibility: add form label to newsletter email input (#285)
-- WCAG A accessibility: make gallery images keyboard-accessible with tabindex, role, and keydown handlers (#285)
-- WCAG A accessibility: make carousel keyboard-accessible with arrow keys and focus-based autoplay pause (#285)
+## [v1.26.0](https://github.com/happytodev/blogr/compare/v1.25.0...v1.26.0) - 2026-07-04
 
-### Added
-- WCAG 2.2 Level A badge and accessibility section in README (#285)
+### ✨ Features
+
+- **WCAG A**: skip-to-content link, newsletter form label, keyboard-accessible gallery, keyboard-accessible carousel with focus-based autoplay pause (#285)
+- **WCAG A**: descriptive `aria-label` on Read More links, `aria-pressed` on theme switcher, `autocomplete` on forms (#291, #295, #287)
+- **WCAG A**: full keyboard navigation + ARIA on mega menu, Escape key + focus on language switcher, null-safe route access (#294, #292)
+- **WCAG AA**: `role="status"` on dynamic form messages, Pause/Play button + `prefers-reduced-motion` on carousel (#290, #293)
+- **WCAG AA**: `scroll-margin-top` on main content, minimum 24×24px touch targets on social icons (#288, #289)
+- **WCAG AA**: color contrast validation in admin settings with warning notifications for failing pairs (#286)
+- **WCAG AA**: `aria-label` on all social icon links, `focus-visible` indicators on all interactive elements, `aria-required` on form fields, `sr-only` indicators for required fields and current locale, darker defaults for non-text contrast, 300ms close delay on mega menu (#299)
+
+### 🔧 Changed
+
+- **Color defaults**: `btn_color` changed from `#c20be5` to `#9b0ab8` for 4.5:1 contrast on white
+- **Input borders**: `border-gray-300` → `border-gray-400`, `dark:border-gray-600` → `dark:border-gray-500`
+
+### 📚 Documentation
+
+- `docs/WCAG.md` — full WCAG accessibility conformance documentation
+- WCAG 2.2 AA badge in README
+
+## [v1.25.0](https://github.com/happytodev/blogr/compare/v1.24.0...v1.25.0) - 2026-07-04
 
 ## [v1.25.0](https://github.com/happytodev/blogr/compare/v1.24.0...v1.25.0) - 2026-07-04
 
