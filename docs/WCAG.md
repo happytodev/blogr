@@ -6,8 +6,8 @@
 
 | Level | Status | Details |
 |-------|--------|---------|
-| A | ✅ Partial (5/10 criteria) | Critical barriers resolved |
-| AA | 🔄 In progress | 6 criteria remaining |
+| A | ✅ Complete | All Level A criteria satisfied |
+| AA | ✅ Partial (AA target reached, user-configurable colors may affect runtime contrast) | All implementable criteria addressed |
 | AAA | ❌ Not targeted | Not required by regulations |
 
 ## Implemented (Sprint 0 — completed)
@@ -19,42 +19,17 @@
 | 2.1.1 + 4.1.2 (A) | Keyboard-accessible gallery images (`tabindex`, `role`, keydown) | `gallery.blade.php` | #285 |
 | 2.1.1 + 2.2.2 (A) | Keyboard-navigable carousel with focus-based autoplay pause | `carousel.blade.php` | #285 |
 
-## In progress (Sprints 1–5)
+## Completed (all sprints)
 
-### Sprint 1 — Quick wins
-
-| # | WCAG SC | Description | Component |
-|---|---------|-------------|-----------|
-| 291 | 2.4.4 (A) | `aria-label` on "Read More" links | `blog-post-card.blade.php` |
-| 295 | 4.1.2 (A) | `aria-pressed` on theme switcher buttons | `navigation.blade.php` |
-| 287 | 1.3.5 (AA) | `autocomplete` attributes on forms | `contact_form.blade.php`, `newsletter.blade.php` |
-
-### Sprint 2 — Keyboard navigation (A)
-
-| # | WCAG SC | Description | Component |
-|---|---------|-------------|-----------|
-| 294 | 2.1.1 (A) | Escape key + focus management on language switcher | `language-switcher.blade.php` |
-| 292 | 2.1.1 (A) | Full keyboard support + ARIA on mega menu | `navigation.blade.php` |
-
-### Sprint 3 — Dynamic content (AA)
-
-| # | WCAG SC | Description | Component |
-|---|---------|-------------|-----------|
-| 290 | 4.1.3 (AA) | `role="status"` / `aria-live` on dynamic messages | `contact_form.blade.php`, `newsletter.blade.php`, code copy script |
-| 293 | 2.2.2 (A) | Pause/Play button + `prefers-reduced-motion` on carousel | `carousel.blade.php` |
-
-### Sprint 4 — Visual / design (AA)
-
-| # | WCAG SC | Description | Component |
-|---|---------|-------------|-----------|
-| 288 | 2.4.11 (AA) | `scroll-margin-top` to prevent sticky nav obscuring focus | `layouts/blog.blade.php` |
-| 289 | 2.5.8 (AA) | Touch targets ≥ 24×24px for icons and tags | `social-links.blade.php` |
-
-### Sprint 5 — Color system (AA)
-
-| # | WCAG SC | Description | Component |
-|---|---------|-------------|-----------|
-| 286 | 1.4.3 (AA) | Contrast ratio validation (4.5:1) for user-configurable colors | `ConfigHelper`, `BlogrSettings` |
+| Sprint | Issues | Criteria |
+|--------|--------|----------|
+| 0 — Critical A fixes | #285 | 2.4.1, 3.3.2, 2.1.1, 4.1.2 |
+| 1 — Quick wins | #291, #295, #287 | 2.4.4, 4.1.2, 1.3.5 |
+| 2 — Keyboard navigation | #294, #292 | 2.1.1 |
+| 3 — Dynamic content | #290, #293 | 4.1.3, 2.2.2 |
+| 4 — Visual / design | #288, #289 | 2.4.11, 2.5.8 |
+| 5 — Color system | #286 | 1.4.3 |
+| 6 — AA completion | #299 | 2.5.3, 1.4.1, 2.4.7, 1.4.11, 1.4.13 |
 
 ## Architecture notes
 
