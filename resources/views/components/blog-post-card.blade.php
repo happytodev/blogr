@@ -134,6 +134,7 @@
 
                 <!-- Read More Button -->
                 <a href="{{ config('blogr.locales.enabled') ? route('blog.show', ['locale' => $currentLocale, 'slug' => $postSlug]) : route('blog.show', ['slug' => $postSlug]) }}"
+                    aria-label="Read more about {{ $postTitle }}"
                     class="inline-flex items-center text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] font-semibold text-sm group/link ml-auto">
                     {{ __('blogr::blogr.ui.read_more') }}
                     <svg class="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform"

@@ -190,8 +190,13 @@
                         <div class="relative" 
                              x-data="{ open: false }"
                              @mouseenter="open = true" 
-                             @mouseleave="open = false">
-                            <button class="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                             @mouseleave="open = false"
+                             @focusin="open = true"
+                             @focusout="open = false"
+                             @keydown.escape.prevent="open = false">
+                            <button class="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                    aria-haspopup="true"
+                                    :aria-expanded="open">
                                 <span>{{ $label }}</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -267,7 +272,8 @@
                 <!-- Language Switcher -->
                 @if(config('blogr.ui.navigation.show_language_switcher', true) && config('blogr.locales.enabled', false) && count($availableLocales) > 1)
                 <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" @click.away="open = false" 
+                    <button @click="open = !open" @click.away="open = false" @keydown.escape.prevent="open = false"
+                            :aria-expanded="open"
                             class="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
@@ -293,8 +299,9 @@
                         <div class="py-1" role="menu">
                             @foreach($availableLocales as $locale)
                             @php
-                                $currentRouteName = request()->route()->getName();
-                                $currentParams = request()->route()->parameters();
+                                $currentRoute = request()->route();
+                                $currentRouteName = $currentRoute ? $currentRoute->getName() : 'blog.index';
+                                $currentParams = $currentRoute ? $currentRoute->parameters() : [];
                                 
                                 // For CMS pages, get the translated slug if it exists
                                 if ($currentRouteName === 'cms.page.show' && $cmsPageId) {
@@ -346,6 +353,7 @@
                 <div x-data="themeSwitch()" class="flex items-center space-x-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
                     <button @click="setTheme('light')" 
                             :class="{ 'bg-white dark:bg-gray-700 shadow': theme === 'light' }"
+                            :aria-pressed="theme === 'light'"
                             class="p-2 rounded-md transition-all duration-200"
                             title="Light mode">
                         <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
@@ -354,6 +362,7 @@
                     </button>
                     <button @click="setTheme('auto')" 
                             :class="{ 'bg-white dark:bg-gray-700 shadow': theme === 'auto' }"
+                            :aria-pressed="theme === 'auto'"
                             class="p-2 rounded-md transition-all duration-200"
                             title="Auto mode">
                         <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -362,6 +371,7 @@
                     </button>
                     <button @click="setTheme('dark')" 
                             :class="{ 'bg-white dark:bg-gray-700 shadow': theme === 'dark' }"
+                            :aria-pressed="theme === 'dark'"
                             class="p-2 rounded-md transition-all duration-200"
                             title="Dark mode">
                         <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
