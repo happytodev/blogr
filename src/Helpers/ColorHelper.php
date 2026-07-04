@@ -161,6 +161,73 @@ class ColorHelper
     }
 
     /**
+     * Parse hex color to RGB array
+     *
+     * @return array{int, int, int}
+     */
+    /**
+     * @return list<int>
+     */
+    public static function hexToRgbArray(string $hex): array
+    {
+        $hex = ltrim($hex, '#');
+
+        return array_map(fn (string $c): int => (int) hexdec($c), str_split($hex, 2));
+    }
+
+    /**
+     * Calculate WCAG relative luminance from a hex color
+     *
+     * Formula: https://www.w3.org/WAI/GL/wiki/Relative_luminance
+     */
+    public static function relativeLuminance(string $hex): float
+    {
+        [$r, $g, $b] = self::hexToRgbArray($hex);
+
+        $linearize = function (int $channel): float {
+            $srgb = $channel / 255;
+
+            return $srgb <= 0.04045
+                ? $srgb / 12.92
+                : (($srgb + 0.055) / 1.055) ** 2.4;
+        };
+
+        return 0.2126 * $linearize($r) + 0.7152 * $linearize($g) + 0.0722 * $linearize($b);
+    }
+
+    /**
+     * Calculate WCAG contrast ratio between two hex colors
+     *
+     * Ratio = (L1 + 0.05) / (L2 + 0.05) where L1 is lighter luminance
+     */
+    public static function contrastRatio(string $hex1, string $hex2): float
+    {
+        $l1 = self::relativeLuminance($hex1);
+        $l2 = self::relativeLuminance($hex2);
+
+        $lighter = max($l1, $l2);
+        $darker = min($l1, $l2);
+
+        return ($lighter + 0.05) / ($darker + 0.05);
+    }
+
+    /**
+     * Check if a foreground/background pair passes WCAG AA (4.5:1 for normal text)
+     */
+    public static function passesAA(string $foreground, string $background): bool
+    {
+        return self::contrastRatio($foreground, $background) >= 4.5;
+    }
+
+    /**
+     * Check if a foreground/background pair passes WCAG AA for large text (3:1)
+     */
+    public static function passesAALarge(string $foreground, string $background): bool
+    {
+        return self::contrastRatio($foreground, $background) >= 3.0;
+    }
+
+    /**
      * Convert RGB values to hex format
      *
      * @param  int  $r  Red value (0-255)

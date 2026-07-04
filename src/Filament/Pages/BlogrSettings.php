@@ -23,6 +23,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Utilities\Get;
 use Happytodev\Blogr\Blogr;
 use Happytodev\Blogr\BlogrWidgets;
+use Happytodev\Blogr\Helpers\ColorHelper;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\User;
@@ -3322,6 +3323,17 @@ class BlogrSettings extends Page
         $envPath = app()->environmentFilePath();
         $envWritable = $envPath && is_writable($envPath);
 
+        $contrastWarnings = $this->validateColorContrast();
+        if (! empty($contrastWarnings)) {
+            foreach ($contrastWarnings as $warning) {
+                Notification::make()
+                    ->title('⚠️ Contrast Warning')
+                    ->body($warning)
+                    ->warning()
+                    ->send();
+            }
+        }
+
         $body = __('blogr::blogr.settings.saved_successfully');
 
         if ($this->mail_provider === 'brevo' && ! $envWritable) {
@@ -3338,6 +3350,86 @@ class BlogrSettings extends Page
 
         // Re-hydrate form with fresh config values so UI reflects saved state immediately
         $this->mount();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function validateColorContrast(): array
+    {
+        $warnings = [];
+        $pairs = [
+            'Text on background' => [
+                'foreground' => $this->theme_text_color ?? '#1f2937',
+                'background' => $this->theme_bg_color ?? '#ffffff',
+                'ratio' => 4.5,
+            ],
+            'Button on background' => [
+                'foreground' => $this->theme_btn_color ?? '#c20be5',
+                'background' => $this->theme_bg_color ?? '#ffffff',
+                'ratio' => 3.0,
+            ],
+            'Text on background (dark)' => [
+                'foreground' => $this->theme_text_color_dark ?? '#f3f4f6',
+                'background' => $this->theme_bg_color_dark ?? '#111827',
+                'ratio' => 4.5,
+            ],
+            'Button on background (dark)' => [
+                'foreground' => $this->theme_btn_color_dark ?? '#e166fa',
+                'background' => $this->theme_bg_color_dark ?? '#111827',
+                'ratio' => 3.0,
+            ],
+        ];
+
+        if ($this->theme_header_text && $this->theme_header_bg) {
+            $pairs['Header text on header background'] = [
+                'foreground' => $this->theme_header_text,
+                'background' => $this->theme_header_bg,
+                'ratio' => 4.5,
+            ];
+        }
+
+        if ($this->theme_header_text_dark && $this->theme_header_bg_dark) {
+            $pairs['Header text on header background (dark)'] = [
+                'foreground' => $this->theme_header_text_dark,
+                'background' => $this->theme_header_bg_dark,
+                'ratio' => 4.5,
+            ];
+        }
+
+        if ($this->theme_footer_text && $this->theme_footer_bg) {
+            $pairs['Footer text on footer background'] = [
+                'foreground' => $this->theme_footer_text,
+                'background' => $this->theme_footer_bg,
+                'ratio' => 4.5,
+            ];
+        }
+
+        if ($this->theme_footer_text_dark && $this->theme_footer_bg_dark) {
+            $pairs['Footer text on footer background (dark)'] = [
+                'foreground' => $this->theme_footer_text_dark,
+                'background' => $this->theme_footer_bg_dark,
+                'ratio' => 4.5,
+            ];
+        }
+
+        foreach ($pairs as $label => $pair) {
+            $ratio = ColorHelper::contrastRatio($pair['foreground'], $pair['background']);
+            $needed = $pair['ratio'];
+
+            if ($ratio < $needed) {
+                $warnings[] = sprintf(
+                    '%s: contrast ratio %.1f:1 (minimum %.1f:1). %s on %s.',
+                    $label,
+                    $ratio,
+                    $needed,
+                    $pair['foreground'],
+                    $pair['background']
+                );
+            }
+        }
+
+        return $warnings;
     }
 
     private function updateConfigFile(array $data): void
