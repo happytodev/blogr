@@ -70,7 +70,8 @@ class BlogController
 
                 // Override post attributes with translation, with fallback to model accessors
                 $post->translated_title = $translation?->title ?? $post->title;
-                $post->translated_slug = $translation?->slug ?? $post->slug;
+                $post->translated_slug = $translation?->slug
+                    ?? $post->translations->first(fn ($t) => ! empty($t->slug))?->slug;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
 
                 // Set reading time from translation
@@ -463,7 +464,8 @@ class BlogController
                 }
 
                 // Always set translated properties with fallback to model accessors
-                $seriesPost->translated_slug = $seriesTranslation?->slug ?? $seriesPost->slug;
+                $seriesPost->translated_slug = $seriesTranslation?->slug
+                    ?? $seriesPost->translations->first(fn ($t) => ! empty($t->slug))?->slug;
                 $seriesPost->translated_title = $seriesTranslation?->title ?? $seriesPost->title;
             });
         }
@@ -778,7 +780,8 @@ class BlogController
                 }
 
                 // Set translated properties with fallback to model accessors
-                $post->translated_slug = $translation?->slug ?? $post->slug;
+                $post->translated_slug = $translation?->slug
+                    ?? $post->translations->first(fn ($t) => ! empty($t->slug))?->slug;
                 $post->translated_title = $translation?->title ?? $post->title;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
 

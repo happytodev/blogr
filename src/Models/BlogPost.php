@@ -320,7 +320,7 @@ class BlogPost extends Model
     {
         $locale = $this->default_locale ?? config('app.locale', 'en');
 
-        return $this->translate($locale) ?? $this->translations()->first();
+        return $this->translate($locale) ?? $this->translations->first();
     }
 
     /**

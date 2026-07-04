@@ -4821,7 +4821,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 3
 			path: src/Http/Controllers/AuthorController.php
 
 		-
@@ -4856,6 +4856,12 @@ parameters:
 
 		-
 			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: src/Http/Controllers/AuthorController.php
+
+		-
+			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
 			identifier: larastan.relationExistence
 			count: 1
 			path: src/Http/Controllers/AuthorController.php
@@ -4905,7 +4911,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
 			identifier: property.notFound
-			count: 4
+			count: 5
 			path: src/Http/Controllers/BlogController.php
 
 		-
@@ -5913,7 +5919,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 3
 			path: src/Models/BlogPost.php
 
 		-
