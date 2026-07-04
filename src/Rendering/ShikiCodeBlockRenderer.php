@@ -25,8 +25,10 @@ class ShikiCodeBlockRenderer implements NodeRendererInterface
         ?string $darkTheme = null,
         ?bool $showLineNumbers = null,
     ) {
-        $this->lightTheme = $lightTheme ?? (string) config('blogr.shiki.light_theme', 'github-light');
-        $this->darkTheme = $darkTheme ?? (string) config('blogr.shiki.dark_theme', 'github-dark');
+        $light = config('blogr.shiki.light_theme', 'github-light');
+        $this->lightTheme = $lightTheme ?? (is_string($light) ? $light : 'github-light');
+        $dark = config('blogr.shiki.dark_theme', 'github-dark');
+        $this->darkTheme = $darkTheme ?? (is_string($dark) ? $dark : 'github-dark');
         $this->showLineNumbers = $showLineNumbers ?? (bool) config('blogr.shiki.line_numbers', true);
     }
 
@@ -60,7 +62,6 @@ class ShikiCodeBlockRenderer implements NodeRendererInterface
             }
         }
 
-        /* @phpstan-ignore-next-line */
         return self::$nodeBinary = $finder->find('node', null, $candidates);
     }
 

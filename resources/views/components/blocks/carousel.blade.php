@@ -90,8 +90,13 @@ $carouselId = 'carousel-' . md5(serialize($slides));
         }"
         x-on:mouseenter="stopAutoplay()"
         x-on:mouseleave="startAutoplay()"
+        @focusin="stopAutoplay()"
+        @focusout="startAutoplay()"
+        @keydown.arrow-right.prevent="next()"
+        @keydown.arrow-left.prevent="prev()"
         id="{{ $carouselId }}"
         class="relative {{ $heightClass }} overflow-hidden"
+        tabindex="0"
     >
         @foreach($slides as $index => $slide)
         <div

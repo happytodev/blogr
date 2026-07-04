@@ -103,6 +103,10 @@
                             @php $idx = $loop->index; @endphp
                             <div
                                 @click="openLightbox({{ $idx }})"
+                                @keydown.enter="openLightbox({{ $idx }})"
+                                @keydown.space.prevent="openLightbox({{ $idx }})"
+                                role="button"
+                                tabindex="0"
                                 class="snap-start flex-shrink-0 w-[70vw] sm:w-[50vw] lg:w-[40vw] xl:w-[30vw] relative overflow-hidden rounded-lg cursor-pointer group"
                             >
                                 <img
@@ -131,6 +135,10 @@
                         <div
                             x-show="activeFilter === 'all' || activeFilter === '{{ $cat }}'"
                             @click="openLightbox({{ $idx }})"
+                            @keydown.enter="openLightbox({{ $idx }})"
+                            @keydown.space.prevent="openLightbox({{ $idx }})"
+                            role="button"
+                            tabindex="0"
                             class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group"
                         >
                             <img
@@ -154,6 +162,10 @@
                             @php $idx = $loop->index; @endphp
                             <div
                                 @click="openLightbox({{ $idx }})"
+                                @keydown.enter="openLightbox({{ $idx }})"
+                                @keydown.space.prevent="openLightbox({{ $idx }})"
+                                role="button"
+                                tabindex="0"
                                 class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group"
                             >
                                 <img
@@ -181,6 +193,10 @@
                             @endphp
                             <div
                                 @click="openLightbox({{ $idx }})"
+                                @keydown.enter="openLightbox({{ $idx }})"
+                                @keydown.space.prevent="openLightbox({{ $idx }})"
+                                role="button"
+                                tabindex="0"
                                 class="relative {{ $aspectClass }} overflow-hidden rounded-lg cursor-pointer group"
                             >
                                 <img
@@ -216,6 +232,10 @@
 
                             <div
                                 @click="openLightbox({{ $idx }})"
+                                @keydown.enter="openLightbox({{ $idx }})"
+                                @keydown.space.prevent="openLightbox({{ $idx }})"
+                                role="button"
+                                tabindex="0"
                                 class="relative {{ $spanClass }} overflow-hidden rounded-lg cursor-pointer group"
                             >
                                 <img

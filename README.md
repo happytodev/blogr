@@ -8,6 +8,7 @@
 [![Downloads](https://img.shields.io/packagist/dt/happytodev/blogr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr)
 [![GitHub Stars](https://img.shields.io/github/stars/happytodev/blogr?style=flat-square)](https://github.com/happytodev/blogr)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![WCAG 2.2 A](https://img.shields.io/badge/WCAG-2.2%20A%20(partial)-blue?style=flat-square)](https://www.w3.org/TR/WCAG22/)
 
 ![Blogr Banner](https://raw.githubusercontent.com/happytodev/blogr/main/.github/images/blogr.webp)
 
@@ -31,7 +32,8 @@ Blogr turns your Laravel application into a full-featured blogging platform. Bui
 - 🔌 **Extensible** — Plugin architecture via `BlogrExtension` for third-party packages.
 - 🔍 **SEO Ready** — Meta tags, Open Graph, Twitter Cards, JSON-LD, XML sitemaps, RSS feeds, hreflang.
 - 📊 **Dashboard Widgets** — 9 widgets including stats, charts, scheduled posts, SEO checklist, and more.
-- 🧪 **Battle Tested** — 1,266 automated tests covering every major feature.
+- 🧪 **Battle Tested** — 1,366+ automated tests covering every major feature.
+- ♿ **Accessible** — WCAG 2.2 Level A partial compliance: skip navigation, keyboard-operable galleries and carousels, form labels, and screen-reader-friendly ARIA attributes (Level AA in progress).
 
 ---
 

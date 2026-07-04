@@ -43,9 +43,13 @@
         >
             @csrf
             <div class="flex-1">
+                <label for="newsletter-email" class="sr-only">
+                    {{ __('Email address') }}
+                </label>
                 <input 
                     type="email" 
                     name="email"
+                    id="newsletter-email"
                     x-model="email"
                     placeholder="{{ $placeholder }}"
                     required
