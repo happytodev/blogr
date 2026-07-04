@@ -4,6 +4,10 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 🐛 Fixed
+
+- **Blog posts**: photo changes restored in version history after v1.23.16 refactoring (#269)
+
 ## [v1.23.16](https://github.com/happytodev/blogr/compare/v1.23.15...v1.23.16) - 2026-07-04
 
 ### ♻️ Changed
