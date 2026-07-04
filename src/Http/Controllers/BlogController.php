@@ -19,6 +19,7 @@ use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\Embed\EmbedExtension;
 use League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension;
+use League\CommonMark\Extension\Table\TableExtension;
 use League\CommonMark\Extension\TableOfContents\TableOfContentsExtension;
 use League\CommonMark\MarkdownConverter;
 
@@ -70,7 +71,8 @@ class BlogController
 
                 // Override post attributes with translation, with fallback to model accessors
                 $post->translated_title = $translation?->title ?? $post->title;
-                $post->translated_slug = $translation?->slug ?? $post->slug;
+                $post->translated_slug = $translation?->slug
+                    ?? $post->translations->first(fn ($t) => ! empty($t->slug))?->slug;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
 
                 // Set reading time from translation
@@ -278,6 +280,7 @@ class BlogController
         $environment->addExtension(new HeadingPermalinkExtension);
         $environment->addExtension(new TableOfContentsExtension);
         $environment->addExtension(new EmbedExtension);
+        $environment->addExtension(new TableExtension);
 
         $converter = new MarkdownConverter($environment);
 
@@ -463,7 +466,8 @@ class BlogController
                 }
 
                 // Always set translated properties with fallback to model accessors
-                $seriesPost->translated_slug = $seriesTranslation?->slug ?? $seriesPost->slug;
+                $seriesPost->translated_slug = $seriesTranslation?->slug
+                    ?? $seriesPost->translations->first(fn ($t) => ! empty($t->slug))?->slug;
                 $seriesPost->translated_title = $seriesTranslation?->title ?? $seriesPost->title;
             });
         }
@@ -778,7 +782,8 @@ class BlogController
                 }
 
                 // Set translated properties with fallback to model accessors
-                $post->translated_slug = $translation?->slug ?? $post->slug;
+                $post->translated_slug = $translation?->slug
+                    ?? $post->translations->first(fn ($t) => ! empty($t->slug))?->slug;
                 $post->translated_title = $translation?->title ?? $post->title;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
 
