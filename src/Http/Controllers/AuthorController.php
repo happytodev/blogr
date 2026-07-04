@@ -47,6 +47,7 @@ class AuthorController extends Controller
             'translations',
             'user',
         ])
+            ->whereHas('translations')
             ->where('user_id', $author->id)
             ->where('is_published', true)
             ->whereNotNull('published_at')
@@ -64,7 +65,8 @@ class AuthorController extends Controller
 
                 // Override post attributes with translation, with fallback to model accessors
                 $post->translated_title = $translation?->title ?? $post->title;
-                $post->translated_slug = $translation?->slug ?? $post->slug;
+                $post->translated_slug = $translation?->slug
+                    ?? $post->translations->first(fn ($t) => ! empty($t->slug))?->slug;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
 
                 // Set reading time from translation (use stored value, don't recalculate)

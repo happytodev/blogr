@@ -4,6 +4,11 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 🐛 Fixed
+
+- **Author page**: posts without translations no longer cause UrlGenerationException on author profile page (#279)
+- **Blog post queries**: fixed N+1 SQL queries in `getDefaultTranslation()` when translations are eager-loaded (#279)
+
 ## [v1.23.17](https://github.com/happytodev/blogr/compare/v1.23.16...v1.23.17) - 2026-07-04
 
 ### 🐛 Fixed

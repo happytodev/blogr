@@ -81,7 +81,7 @@
                     <article class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
                         {{-- Post Image --}}
                         <div class="relative h-56 bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden">
-                            <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug]) }}" class="block h-full">
+                            <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug ?? $post->slug]) }}" class="block h-full">
                                 @if($post->photo_url ?? false)
                                     <img src="{{ $post->photo_url }}" 
                                          alt="{{ $post->translated_title }}" 
@@ -121,7 +121,7 @@
                         <div class="p-6 flex-grow flex flex-col">
                             {{-- Title --}}
                             <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                                <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug]) }}"
+                                <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug ?? $post->slug]) }}"
                                    class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                                     {{ $post->translated_title }}
                                 </a>
@@ -169,7 +169,7 @@
                                     @endif
                                     
                                     {{-- Read More Link --}}
-                                    <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug]) }}" 
+                                    <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $post->translated_slug ?? $post->slug]) }}" 
                                        class="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-300 text-sm transition-colors">
                                         {{ __('Read more') }} →
                                     </a>
