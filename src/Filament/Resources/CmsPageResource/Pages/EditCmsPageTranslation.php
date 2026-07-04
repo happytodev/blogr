@@ -404,6 +404,8 @@ class EditCmsPageTranslation extends EditRecord
             $this->record->slug = Str::slug($provider->translate(
                 Str::headline($sourceTranslation->slug), $sourceLocale, $targetLocale
             ));
+
+            $this->record->slug = $this->ensureUniqueCmsSlug($this->record->slug, $targetLocale, $this->record->id);
             $this->record->blocks = $provider->translateBlocks(
                 $sourceTranslation->blocks ?? [], $sourceLocale, $targetLocale
             );
@@ -435,6 +437,21 @@ class EditCmsPageTranslation extends EditRecord
                 ->danger()
                 ->send();
         }
+    }
+
+    protected function ensureUniqueCmsSlug(string $slug, string $locale, ?int $excludeId = null): string
+    {
+        $candidate = $slug;
+        $counter = 1;
+
+        while (CmsPageTranslation::where('locale', $locale)->where('slug', $candidate)
+            ->when($excludeId, fn ($query) => $query->where('id', '!=', $excludeId))
+            ->exists()
+        ) {
+            $candidate = $slug.'-'.$counter++;
+        }
+
+        return $candidate;
     }
 
     protected function getFormActions(): array
