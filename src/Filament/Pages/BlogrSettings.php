@@ -372,6 +372,8 @@ class BlogrSettings extends Page
 
     public ?string $heading_permalink_visibility = null;
 
+    public ?bool $shiki_line_numbers = null;
+
     public ?bool $author_bio_enabled = null;
 
     public ?string $author_bio_position = null;
@@ -692,6 +694,7 @@ class BlogrSettings extends Page
         $this->heading_permalink_symbol = $config['heading_permalink']['symbol'] ?? '#';
         $this->heading_permalink_spacing = $config['heading_permalink']['spacing'] ?? 'after';
         $this->heading_permalink_visibility = $config['heading_permalink']['visibility'] ?? 'hover';
+        $this->shiki_line_numbers = $config['shiki']['line_numbers'] ?? true;
         $this->author_bio_enabled = $config['author_bio']['enabled'] ?? true;
         $this->author_bio_position = $config['author_bio']['position'] ?? 'bottom';
         $this->author_bio_compact = $config['author_bio']['compact'] ?? false;
@@ -1904,6 +1907,15 @@ class BlogrSettings extends Page
                                 ])
                                 ->columns(3),
 
+                            Section::make('Syntax Highlighting')
+                                ->description('Configure Shiki server-side syntax highlighting for code blocks')
+                                ->schema([
+                                    Toggle::make('shiki_line_numbers')
+                                        ->label('Show Line Numbers')
+                                        ->default(true)
+                                        ->helperText('Display line numbers on code blocks in blog posts, CMS pages, and documentation'),
+                                ]),
+
                             Section::make('Author Bio')
                                 ->description('Configure how author information is displayed on blog posts')
                                 ->schema([
@@ -3052,6 +3064,9 @@ class BlogrSettings extends Page
                 'symbol' => $this->heading_permalink_symbol,
                 'spacing' => $this->heading_permalink_spacing,
                 'visibility' => $this->heading_permalink_visibility,
+            ],
+            'shiki' => [
+                'line_numbers' => $this->shiki_line_numbers ?? true,
             ],
             'author_bio' => [
                 'enabled' => $this->author_bio_enabled,

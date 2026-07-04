@@ -4,6 +4,24 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ Added
+
+- **Syntax highlighting**: server-side code block highlighting via Shiki PHP on all frontend pages (blog, CMS, docs, author) (#283)
+- **Syntax highlighting**: language badge displayed on code blocks
+- **Syntax highlighting**: optional line numbers (toggle in Blogr Settings → Content)
+- **Syntax highlighting**: dual theme support (light/dark) with automatic dark mode switching
+- **Syntax highlighting**: copy-to-clipboard button on code blocks (appears on hover)
+
+### 🐛 Fixed
+
+- **Syntax highlighting**: code blocks now render with proper syntax colors instead of plain text (#283)
+- **Prism.js**: removed fragile CDN-based client-side highlighting in favor of server-side Shiki
+- **Markdown**: `Str::markdown()` calls in CMS FAQ, content blocks, and artist bio blocks replaced with `MarkdownHelper::toHtml()` for consistent Shiki rendering
+
+### 🔧 Changed
+
+- **Dependencies**: added `spatie/shiki-php ^2.4` (Composer) and `shiki ^4.0.2` (npm)
+
 ## [v1.24.0](https://github.com/happytodev/blogr/compare/v1.23.17...v1.24.0) - 2026-07-04
 
 ### ✨ Added

@@ -294,7 +294,30 @@
 
     @stack('head')
     @stack('styles')
-    
+
+    <style>
+        /* Shiki Syntax Highlighting */
+        .prose .shiki { position: relative; padding-top: 2.5rem; border-radius: 0.5rem; overflow-x: auto; margin-top: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); }
+        .prose .shiki code { font-size: 0.875rem; line-height: 1.625; }
+        .prose .shiki[data-language]::before { content: attr(data-language); position: absolute; top: 0; left: 0; right: 0; padding: 0.25rem 1rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.025em; text-transform: uppercase; color: #6b7280; background-color: rgba(0,0,0,0.05); border-bottom: 1px solid rgba(0,0,0,0.08); border-radius: 0.5rem 0.5rem 0 0; pointer-events: none; }
+        .dark .prose .shiki[data-language]::before { color: #9ca3af; background-color: rgba(255,255,255,0.05); border-bottom-color: rgba(255,255,255,0.08); }
+        .shiki[data-line-numbers] code { counter-reset: shiki-line; }
+        .shiki[data-line-numbers] .line::before { counter-increment: shiki-line; content: counter(shiki-line); display: inline-block; width: 2rem; margin-right: 1rem; text-align: right; color: #6b7280; font-size: 0.75rem; user-select: none; opacity: 0.5; }
+        .dark .shiki[data-line-numbers] .line::before { color: #9ca3af; }
+        .dark .shiki { background-color: var(--shiki-dark-bg) !important; }
+        .dark .shiki code { background-color: transparent !important; color: var(--shiki-dark) !important; }
+        .dark .shiki span { color: var(--shiki-dark) !important; }
+        .shiki-fallback { border-radius: 0.5rem; overflow-x: auto; margin-top: 1.5rem; margin-bottom: 1.5rem; background-color: #1f2937; color: #f3f4f6; padding: 1rem; font-size: 0.875rem; }
+        .shiki-fallback[data-language]::before { content: attr(data-language); position: absolute; top: 0; left: 0; right: 0; padding: 0.25rem 1rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #9ca3af; background-color: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem 0.5rem 0 0; pointer-events: none; }
+        .copy-button { position: absolute; top: 0.25rem; right: 0.5rem; z-index: 10; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 500; color: #6b7280; background: transparent; border: 1px solid transparent; border-radius: 0.25rem; cursor: pointer; opacity: 0; transition: opacity 0.2s, color 0.2s, background 0.2s, border-color 0.2s; }
+        .shiki:hover .copy-button, .shiki-fallback:hover .copy-button { opacity: 1; }
+        .copy-button:hover { color: #374151; background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); }
+        .dark .copy-button { color: #9ca3af; }
+        .dark .copy-button:hover { color: #d1d5db; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); }
+        .copy-button.copied { color: #059669 !important; border-color: #059669 !important; }
+        .dark .copy-button.copied { color: #34d399 !important; border-color: #34d399 !important; }
+    </style>
+
     <!-- Dark mode initialization script (runs before page render to prevent flash) -->
     <script>
         (function() {
@@ -341,7 +364,73 @@
     {{-- Back to top button (simple component) --}}
     <!-- DEBUG: BEFORE INCLUDE -->
     @include('blogr::components.back-to-top')
-    <!-- DEBUG: AFTER INCLUDE -->
+
+    <script>
+        (function() {
+            function addCopyButtons() {
+                document.querySelectorAll('.shiki, .shiki-fallback').forEach(function(pre) {
+                    if (pre.querySelector('.copy-button')) return;
+
+                    var btn = document.createElement('button');
+                    btn.className = 'copy-button';
+                    btn.type = 'button';
+                    btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy';
+                    pre.style.position = 'relative';
+                    pre.appendChild(btn);
+
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        var code = pre.querySelector('code');
+                        var text = code ? code.textContent : '';
+                        var cleaned = text.replace(/\n{3,}$/, '\n');
+
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(cleaned).then(function() {
+                                showCopied(btn);
+                            }, function() {
+                                fallbackCopy(cleaned, btn);
+                            });
+                        } else {
+                            fallbackCopy(cleaned, btn);
+                        }
+                    });
+                });
+            }
+
+            function fallbackCopy(text, btn) {
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try {
+                    document.execCommand('copy');
+                    showCopied(btn);
+                } catch (e) {
+                    btn.textContent = 'Failed';
+                }
+                document.body.removeChild(ta);
+            }
+
+            function showCopied(btn) {
+                btn.classList.add('copied');
+                var original = btn.innerHTML;
+                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Copied!';
+                setTimeout(function() {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = original;
+                }, 2000);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', addCopyButtons);
+            } else {
+                addCopyButtons();
+            }
+        })();
+    </script>
+
     @stack('scripts')
 </body>
 

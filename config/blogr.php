@@ -193,6 +193,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Shiki Syntax Highlighting
+    |--------------------------------------------------------------------------
+    |
+    | Configure server-side syntax highlighting for code blocks rendered by Shiki.
+    |
+    */
+    'shiki' => [
+        'line_numbers' => true, // Show line numbers on code blocks
+        'light_theme' => 'github-light', // Shiki theme name for light mode
+        'dark_theme' => 'github-dark',   // Shiki theme name for dark mode
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | SEO Configuration
     |--------------------------------------------------------------------------
     |
