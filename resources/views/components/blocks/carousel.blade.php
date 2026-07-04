@@ -52,6 +52,7 @@ $carouselId = 'carousel-' . md5(serialize($slides));
             ], $slides)) }},
             autoplaySpeed: {{ $autoplaySpeed }},
             autoplayInterval: null,
+            isPaused: false,
 
             init() {
                 if (this.slides.length > 1 && this.autoplaySpeed > 0) {
@@ -60,6 +61,7 @@ $carouselId = 'carousel-' . md5(serialize($slides));
             },
 
             startAutoplay() {
+                if (this.isPaused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
                 this.stopAutoplay();
                 this.autoplayInterval = setInterval(() => {
                     this.next();
@@ -70,6 +72,15 @@ $carouselId = 'carousel-' . md5(serialize($slides));
                 if (this.autoplayInterval) {
                     clearInterval(this.autoplayInterval);
                     this.autoplayInterval = null;
+                }
+            },
+
+            togglePause() {
+                this.isPaused = !this.isPaused;
+                if (this.isPaused) {
+                    this.stopAutoplay();
+                } else {
+                    this.startAutoplay();
                 }
             },
 
@@ -173,7 +184,20 @@ $carouselId = 'carousel-' . md5(serialize($slides));
         @endif
 
         @if($showDots && count($slides) > 1)
-        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex space-x-3">
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center space-x-3">
+            <button
+                @click="togglePause()"
+                class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 transition-colors flex items-center justify-center text-white"
+                aria-label="Toggle autoplay"
+                x-show="slides.length > 1 && autoplaySpeed > 0"
+            >
+                <svg x-show="!isPaused" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                </svg>
+                <svg x-show="isPaused" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+            </button>
             @foreach($slides as $index => $slide)
             <button
                 @click="goTo({{ $index }})"
