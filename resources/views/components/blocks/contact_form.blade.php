@@ -221,7 +221,7 @@
                 </div>
 
                 <template x-if="submitted">
-                    <div class="rounded-xl p-4 text-center" :class="success ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
+                    <div role="status" class="rounded-xl p-4 text-center" :class="success ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300'">
                         <p class="font-medium" x-text="statusMessage"></p>
                     </div>
                 </template>
