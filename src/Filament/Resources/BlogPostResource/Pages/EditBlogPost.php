@@ -436,6 +436,8 @@ class EditBlogPost extends EditRecord
                 ->where('locale', $targetLocale)
                 ->first();
 
+            $translated['slug'] = $this->ensureUniqueTranslationSlug($translated['slug'], $targetTranslation?->id);
+
             if ($targetTranslation) {
                 $targetTranslation->update($translated);
             } else {
@@ -463,6 +465,21 @@ class EditBlogPost extends EditRecord
                 ->danger()
                 ->send();
         }
+    }
+
+    protected function ensureUniqueTranslationSlug(string $slug, ?int $excludeId = null): string
+    {
+        $candidate = $slug;
+        $counter = 1;
+
+        while (BlogPostTranslation::where('slug', $candidate)
+            ->when($excludeId, fn ($query) => $query->where('id', '!=', $excludeId))
+            ->exists()
+        ) {
+            $candidate = $slug.'-'.$counter++;
+        }
+
+        return $candidate;
     }
 
     protected function mutateFormDataBeforeSave(array $data): array

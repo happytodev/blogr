@@ -4,6 +4,12 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 🐛 Fixed
+
+- **Blog posts**: AI translation now deduplicates slug when the generated slug already exists (suffix `-1`, `-2`, …) (#274)
+- **CMS pages**: AI translation now deduplicates slug when the generated slug already exists (suffix `-1`, `-2`, …) (#274)
+
+
 ## [v1.23.14](https://github.com/happytodev/blogr/compare/v1.23.12...v1.23.14) - 2026-07-03
 
 ### 🐛 Fixed
