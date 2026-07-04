@@ -4,6 +4,15 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- WCAG A accessibility: add skip-to-content link for keyboard users (#285)
+- WCAG A accessibility: add form label to newsletter email input (#285)
+- WCAG A accessibility: make gallery images keyboard-accessible with tabindex, role, and keydown handlers (#285)
+- WCAG A accessibility: make carousel keyboard-accessible with arrow keys and focus-based autoplay pause (#285)
+
+### Added
+- WCAG 2.2 Level A badge and accessibility section in README (#285)
+
 ## [v1.25.0](https://github.com/happytodev/blogr/compare/v1.24.0...v1.25.0) - 2026-07-04
 
 ### ✨ Features
