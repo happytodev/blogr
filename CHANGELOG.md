@@ -2,6 +2,13 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [v1.28.0](https://github.com/happytodev/blogr/compare/v1.27.0...v1.28.0) - 2026-07-05
+
+### ✨ Features
+
+- **shiki**: Add `blogr:install-shiki` artisan command to install the `shiki` npm package for syntax highlighting.
+- **settings**: Add Shiki installation status indicator in `BlogrSettings` → Syntax Highlighting section. Shows whether Shiki is installed, not installed, or if Node.js is missing.
+
 ## [Unreleased]
 
 ## [v1.27.0](https://github.com/happytodev/blogr/compare/v1.26.0...v1.27.0) - 2026-07-05

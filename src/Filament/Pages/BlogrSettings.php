@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Livewire\WithFileUploads;
+use Symfony\Component\Process\ExecutableFinder;
 
 class BlogrSettings extends Page
 {
@@ -1923,6 +1924,26 @@ class BlogrSettings extends Page
                                         ->label('Show Line Numbers')
                                         ->default(true)
                                         ->helperText('Display line numbers on code blocks in blog posts, CMS pages, and documentation'),
+
+                                    Placeholder::make('shiki_status')
+                                        ->label('Shiki Installation')
+                                        ->content(function () {
+                                            $shikiInstalled = is_dir(base_path('vendor/spatie/shiki-php/bin/node_modules/shiki'));
+                                            $nodeBin = (new ExecutableFinder)->find('node');
+
+                                            if (! $shikiInstalled && ! $nodeBin) {
+                                                return '<span class="text-danger-600 dark:text-danger-400">Node.js is not installed. Install Node.js first, then run <code>php artisan blogr:install-shiki</code>.</span>';
+                                            }
+
+                                            if ($shikiInstalled) {
+                                                return '<span class="text-success-600 dark:text-success-400">Shiki is installed and ready.</span>';
+                                            }
+
+                                            $url = url('/admin3333/blogr-settings?action=install-shiki');
+
+                                            return '<span class="text-warning-600 dark:text-warning-400">Shiki is not installed. Run <code>php artisan blogr:install-shiki</code> in your terminal.</span>';
+                                        })
+                                        ->html(),
                                 ]),
 
                             Section::make('Author Bio')
