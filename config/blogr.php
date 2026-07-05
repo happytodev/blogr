@@ -273,6 +273,9 @@ return [
             'show_theme_switcher' => true, // Show day/night/auto theme switcher
             'auto_add_blog' => false, // Auto-add "Blog" link to menu when CMS is homepage
         ],
+        'favicon' => [
+            'path' => null, // Path to uploaded favicon (null = fallback to default Blogr favicon)
+        ],
         'dates' => [
             'show_publication_date' => true, // Master toggle: Enable publication dates
             'show_publication_date_on_cards' => true, // Show dates on blog post cards (requires master enabled)

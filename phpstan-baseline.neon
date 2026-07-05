@@ -837,7 +837,7 @@ parameters:
 		-
 			message: '#^Call to an undefined method object\:\:getClientOriginalName\(\)\.$#'
 			identifier: method.notFound
-			count: 2
+			count: 3
 			path: src/Filament/Pages/BlogrSettings.php
 
 		-
@@ -1124,6 +1124,12 @@ parameters:
 
 		-
 			message: '#^Cannot access offset ''facebook_app_id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Cannot access offset ''favicon'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: src/Filament/Pages/BlogrSettings.php
@@ -1430,6 +1436,12 @@ parameters:
 
 		-
 			message: '#^Cannot access offset ''password'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Cannot access offset ''path'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: src/Filament/Pages/BlogrSettings.php
@@ -1833,7 +1845,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''ui'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 76
+			count: 77
 			path: src/Filament/Pages/BlogrSettings.php
 
 		-
@@ -2343,6 +2355,12 @@ parameters:
 		-
 			message: '#^Property Happytodev\\Blogr\\Filament\\Pages\\BlogrSettings\:\:\$enable_avatar_upload \(bool\|null\) does not accept mixed\.$#'
 			identifier: assign.propertyType
+			count: 1
+			path: src/Filament/Pages/BlogrSettings.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Pages\\BlogrSettings\:\:\$favicon type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
 			count: 1
 			path: src/Filament/Pages/BlogrSettings.php
 
@@ -3147,7 +3165,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
+			count: 2
 			path: src/Filament/Pages/BlogrSettings.php
 
 		-
