@@ -430,6 +430,9 @@ class BlogrSettings extends Page
 
     public ?array $navigation_menu_items = [];
 
+    // UI Settings - Favicon
+    public array $favicon = []; // FileUpload expects array
+
     // UI Settings - Dates
     public ?bool $dates_show_publication_date = null;
 
@@ -742,6 +745,11 @@ class BlogrSettings extends Page
         $this->navigation_show_theme_switcher = $config['ui']['navigation']['show_theme_switcher'] ?? true;
         $this->navigation_auto_add_blog = $config['ui']['navigation']['auto_add_blog'] ?? false;
         $this->navigation_menu_items = $config['ui']['navigation']['menu_items'] ?? [];
+
+        // Favicon
+        $this->favicon = isset($config['ui']['favicon']['path']) && $config['ui']['favicon']['path']
+            ? (is_array($config['ui']['favicon']['path']) ? $config['ui']['favicon']['path'] : [$config['ui']['favicon']['path']])
+            : [];
 
         $this->dates_show_publication_date = $config['ui']['dates']['show_publication_date'] ?? true;
         $this->dates_show_publication_date_on_cards = $config['ui']['dates']['show_publication_date_on_cards'] ?? true;
@@ -1972,6 +1980,26 @@ class BlogrSettings extends Page
                                         ->helperText('Use a compact inline version instead of the full bio box'),
                                 ])
                                 ->columns(3),
+
+                            Section::make('Favicon')
+                                ->description('Upload a favicon that appears in browser tabs and bookmarks')
+                                ->schema([
+                                    FileUpload::make('favicon')
+                                        ->label('Favicon Image')
+                                        ->image()
+                                        ->disk('public')
+                                        ->directory('blogr/favicon')
+                                        ->imageResizeMode('contain')
+                                        ->imageResizeTargetWidth('64')
+                                        ->imageResizeTargetHeight('64')
+                                        ->maxSize(1024)
+                                        ->acceptedFileTypes(['image/png', 'image/x-icon', 'image/vnd.microsoft.icon', 'image/svg+xml', 'image/webp'])
+                                        ->visibility('public')
+                                        ->storeFiles()
+                                        ->moveFiles()
+                                        ->helperText('Upload a favicon image (max 1MB, recommended 64×64px). Supports PNG, ICO, SVG, WebP.'),
+                                ])
+                                ->columns(2),
                         ]),
 
                     // ========================================
@@ -3001,6 +3029,27 @@ class BlogrSettings extends Page
             }
         }
 
+        // Handle favicon file upload
+        $faviconPath = null;
+        if (! empty($this->favicon)) {
+            $faviconFile = is_array($this->favicon) ? reset($this->favicon) : $this->favicon;
+
+            if ($faviconFile) {
+                if (is_object($faviconFile)) {
+                    if (method_exists($faviconFile, 'store')) {
+                        $faviconPath = $faviconFile->store('blogr/favicon', 'public');
+                    } elseif (method_exists($faviconFile, 'storeAs')) {
+                        $filename = $faviconFile->getClientOriginalName();
+                        $faviconPath = $faviconFile->storeAs('blogr/favicon', $filename, 'public');
+                    }
+                } elseif (is_string($faviconFile)) {
+                    if (! str_starts_with($faviconFile, 'livewire-file:')) {
+                        $faviconPath = $faviconFile;
+                    }
+                }
+            }
+        }
+
         // Read admin_path from form state first (most reliable in Livewire context)
         $adminPath = 'admin';
         try {
@@ -3115,6 +3164,9 @@ class BlogrSettings extends Page
                     'show_theme_switcher' => $this->navigation_show_theme_switcher,
                     'auto_add_blog' => $this->navigation_auto_add_blog ?? false,
                     'menu_items' => $this->cleanMenuItems($this->navigation_menu_items ?? []),
+                ],
+                'favicon' => [
+                    'path' => $faviconPath,
                 ],
                 'dates' => [
                     'show_publication_date' => $this->dates_show_publication_date,
@@ -3275,6 +3327,12 @@ class BlogrSettings extends Page
         \Log::info('BlogrSettings: Saving logo path to config', [
             'logoPath' => $logoPath,
             'navigation_logo_raw' => $this->navigation_logo,
+        ]);
+
+        // Log favicon path for debugging
+        \Log::info('BlogrSettings: Saving favicon path to config', [
+            'faviconPath' => $faviconPath,
+            'favicon_raw' => $this->favicon,
         ]);
 
         // Apply admin_path at runtime and persist to .env for reliability

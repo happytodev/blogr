@@ -4,6 +4,15 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ Features
+
+- **Favicon**: configurable favicon support — upload from admin settings, default Blogr SVG (green B in Black Ops One), also applied to the admin panel (#301)
+- **WCAG docs**: comprehensive rewrite explaining why, how, and impacts of WCAG 2.2 AA, with disclaimer (#301)
+
+### 🧪 Tests
+
+- `FaviconTest` — 4 TDD tests (default fallback, custom path, apple-touch-icon, WCAG bypass block preserved)
+
 ## [v1.26.0](https://github.com/happytodev/blogr/compare/v1.25.0...v1.26.0) - 2026-07-04
 
 ### ✨ Features

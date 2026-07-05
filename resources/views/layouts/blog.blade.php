@@ -62,7 +62,16 @@
     @endif
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    @php
+        $faviconPath = config('blogr.ui.favicon.path');
+        $defaultFavicon = asset('vendor/blogr/images/blogr-favicon.svg');
+    @endphp
+    @if($faviconPath)
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . $faviconPath) }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/' . $faviconPath) }}">
+    @else
+        <link rel="icon" type="image/svg+xml" href="{{ $defaultFavicon }}">
+    @endif
 
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

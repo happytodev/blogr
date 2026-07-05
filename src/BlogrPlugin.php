@@ -72,6 +72,16 @@ class BlogrPlugin implements Plugin
             'Settings',
         ]);
 
+        $panel->favicon(function (): string {
+            $faviconPath = config('blogr.ui.favicon.path');
+
+            if (is_string($faviconPath)) {
+                return asset('storage/'.$faviconPath);
+            }
+
+            return asset('vendor/blogr/images/blogr-favicon.svg');
+        });
+
         $panel->colors([
             'primary' => config('blogr.colors.primary', '#0ea5e9'),
         ]);
