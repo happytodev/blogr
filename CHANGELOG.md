@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.27.0](https://github.com/happytodev/blogr/compare/v1.26.0...v1.27.0) - 2026-07-05
+
 ### ✨ Features
 
 - **Favicon**: configurable favicon support — upload from admin settings, default Blogr SVG (green B in Black Ops One), also applied to the admin panel (#301)
