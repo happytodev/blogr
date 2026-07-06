@@ -22,7 +22,7 @@ enum CalloutType: string
     public static function tryFromStart(string $line): ?self
     {
         foreach (self::cases() as $type) {
-            if (preg_match('/^:::' . $type->value . '(?:\[(.+?)\])?\s*$/', $line, $matches)) {
+            if (preg_match('/^:::'.$type->value.'(?:\[(.+?)\])?\s*$/', $line, $matches)) {
                 return $type;
             }
         }
@@ -33,7 +33,7 @@ enum CalloutType: string
     public static function extractTitle(string $line): ?string
     {
         foreach (self::cases() as $type) {
-            if (preg_match('/^:::' . $type->value . '\[(.+?)\]\s*$/', $line, $matches)) {
+            if (preg_match('/^:::'.$type->value.'\[(.+?)\]\s*$/', $line, $matches)) {
                 return $matches[1];
             }
         }

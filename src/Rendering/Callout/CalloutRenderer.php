@@ -5,7 +5,6 @@ namespace Happytodev\Blogr\Rendering\Callout;
 use League\CommonMark\Node\Node;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
 use League\CommonMark\Renderer\NodeRendererInterface;
-use League\CommonMark\Util\HtmlElement;
 
 class CalloutRenderer implements NodeRendererInterface
 {
@@ -29,14 +28,14 @@ class CalloutRenderer implements NodeRendererInterface
 
         $titleHtml = '';
         if ($title) {
-            $titleHtml = '<p class="docs-callout__title">' . $icon . ' ' . htmlspecialchars($title) . '</p>';
+            $titleHtml = '<p class="docs-callout__title">'.$icon.' '.htmlspecialchars($title).'</p>';
         }
 
-        $classes = 'docs-callout docs-callout--' . $type->value;
+        $classes = 'docs-callout docs-callout--'.$type->value;
 
-        return '<aside class="' . $classes . '" aria-label="' . htmlspecialchars($title ?? $type->label()) . '">'
-            . $titleHtml
-            . '<div class="docs-callout__content">' . $innerHtml . '</div>'
-            . '</aside>';
+        return '<aside class="'.$classes.'" aria-label="'.htmlspecialchars($title ?? $type->label()).'">'
+            .$titleHtml
+            .'<div class="docs-callout__content">'.$innerHtml.'</div>'
+            .'</aside>';
     }
 }
