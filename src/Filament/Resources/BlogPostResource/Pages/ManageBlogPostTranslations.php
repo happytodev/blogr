@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Happytodev\Blogr\Filament\Components\CalloutMarkdownEditor;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
 use Happytodev\Blogr\Models\BlogPostTranslation;
 use Tables\Actions\CreateAction;
@@ -59,7 +60,7 @@ class ManageBlogPostTranslations extends ManageRelatedRecords
                     ->rows(3)
                     ->helperText('A brief summary of the post (optional)'),
 
-                Forms\Components\MarkdownEditor::make('content')
+                CalloutMarkdownEditor::make('content')
                     ->required()
                     ->columnSpanFull()
                     ->toolbarButtons([

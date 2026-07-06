@@ -37,7 +37,7 @@ test('bio field uses MarkdownEditor component instead of Textarea', function () 
     $filePath = __DIR__.'/../../src/Filament/Pages/Auth/EditProfile.php';
     $content = file_get_contents($filePath);
 
-    expect($content)->toContain('MarkdownEditor::make')
+    expect($content)->toContain('CalloutMarkdownEditor::make')
         ->and($content)->not->toContain('Textarea::make("bio.');
 });
 
@@ -46,8 +46,8 @@ test('bio field with multilingual support uses MarkdownEditor for each locale', 
     $filePath = __DIR__.'/../../src/Filament/Pages/Auth/EditProfile.php';
     $content = file_get_contents($filePath);
 
-    expect($content)->toContain('MarkdownEditor::make("bio.')
-        ->and($content)->toContain('use Filament\Forms\Components\MarkdownEditor;');
+    expect($content)->toContain('CalloutMarkdownEditor::make("bio.')
+        ->and($content)->toContain('use Happytodev\Blogr\Filament\Components\CalloutMarkdownEditor;');
 });
 
 test('profile edit page has wider max-width on large screens', function () {

@@ -336,8 +336,8 @@
         .dark .docs-callout--danger { background-color: rgba(239,68,68,0.1); }
         .docs-callout--caution { border-color: #f59e0b; background-color: #fffbeb; }
         .dark .docs-callout--caution { background-color: rgba(245,158,11,0.1); }
-        .docs-callout__title { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.5rem; }
-        .docs-callout__icon { flex-shrink: 0; }
+        .docs-callout__title { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; }
+        .docs-callout__icon { flex-shrink: 0; width: 32px; height: 32px; }
         .docs-callout--tip .docs-callout__title { color: #065f46; }
         .dark .docs-callout--tip .docs-callout__title { color: #6ee7b7; }
         .docs-callout--info .docs-callout__title { color: #1e40af; }
@@ -346,6 +346,8 @@
         .dark .docs-callout--danger .docs-callout__title { color: #fca5a5; }
         .docs-callout--caution .docs-callout__title { color: #92400e; }
         .dark .docs-callout--caution .docs-callout__title { color: #fcd34d; }
+        .docs-callout__title--icon-only { margin-bottom: 0; }
+        .docs-callout__content { font-size: 0.75rem; }
         .docs-callout__content > :first-child { margin-top: 0; }
         .docs-callout__content > :last-child { margin-bottom: 0; }
     </style>

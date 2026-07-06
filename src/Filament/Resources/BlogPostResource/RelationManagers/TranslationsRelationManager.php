@@ -13,6 +13,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Happytodev\Blogr\Filament\Components\CalloutMarkdownEditor;
 use Happytodev\Blogr\Services\LocaleService;
 use Illuminate\Database\Eloquent\Model;
 
@@ -76,7 +77,7 @@ class TranslationsRelationManager extends RelationManager
                 })
                 ->columnSpan(2),
 
-            Forms\Components\MarkdownEditor::make('content')
+            CalloutMarkdownEditor::make('content')
                 ->label('Content')
                 ->required()
                 ->toolbarButtons([

@@ -5,10 +5,10 @@ namespace Happytodev\Blogr\Filament\Pages\Auth;
 use App\Models\User;
 use Filament\Auth\Pages\EditProfile as BaseEditProfile;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
+use Happytodev\Blogr\Filament\Components\CalloutMarkdownEditor;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 
@@ -111,7 +111,7 @@ class EditProfile extends BaseEditProfile
         if ($localesEnabled && count($normalizedLocales) > 1) {
             // Multiple locales - create a markdown editor for each language
             foreach ($normalizedLocales as $locale => $label) {
-                $bioComponents[] = MarkdownEditor::make("bio.{$locale}")
+                $bioComponents[] = CalloutMarkdownEditor::make("bio.{$locale}")
                     ->label("Biography - {$label}")
                     ->maxLength(2000)
                     ->nullable()
@@ -130,7 +130,7 @@ class EditProfile extends BaseEditProfile
             }
         } else {
             // Single locale - just use 'en' as default
-            $bioComponents[] = MarkdownEditor::make('bio.en')
+            $bioComponents[] = CalloutMarkdownEditor::make('bio.en')
                 ->label('Biography')
                 ->maxLength(2000)
                 ->nullable()

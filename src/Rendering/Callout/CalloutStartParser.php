@@ -22,6 +22,6 @@ class CalloutStartParser implements BlockStartParserInterface
 
         $cursor->advanceToEnd();
 
-        return BlockStart::of(new CalloutParser(new CalloutBlock($type, $title)));
+        return BlockStart::of(new CalloutParser(new CalloutBlock($type, $title)))->at($cursor);
     }
 }
