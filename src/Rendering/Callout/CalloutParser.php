@@ -3,7 +3,6 @@
 namespace Happytodev\Blogr\Rendering\Callout;
 
 use League\CommonMark\Parser\Block\AbstractBlockContinueParser;
-use League\CommonMark\Parser\Block\BlockStart;
 use League\CommonMark\Parser\Cursor;
 use League\CommonMark\Parser\MarkdownParserStateInterface;
 
