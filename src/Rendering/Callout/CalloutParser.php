@@ -36,17 +36,12 @@ class CalloutParser extends AbstractBlockContinueParser
 
     public function tryContinue(Cursor $cursor, BlockContinueParserInterface $activeBlockParser): ?BlockContinue
     {
-        if ($this->ended) {
-            return BlockContinue::finished();
-        }
-
         $line = $cursor->getLine();
 
         if (trim($line) === ':::') {
-            $this->ended = true;
             $cursor->advanceToEnd();
 
-            return BlockContinue::at($cursor);
+            return BlockContinue::finished();
         }
 
         return BlockContinue::at($cursor);
