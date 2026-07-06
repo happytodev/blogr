@@ -9,7 +9,7 @@ class CalloutExtension implements ExtensionInterface
 {
     public function register(EnvironmentBuilderInterface $environment): void
     {
-        $environment->addBlockStartParser(CalloutParser::class, 200);
+        $environment->addBlockStartParser(new CalloutStartParser, 200);
         $environment->addRenderer(CalloutBlock::class, new CalloutRenderer);
     }
 }
