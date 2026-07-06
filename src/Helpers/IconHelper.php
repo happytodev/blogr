@@ -16,7 +16,7 @@ class IconHelper
         }
 
         return static::$outlineIcons = Cache::rememberForever('blogr-heroicon-outline-list', function () {
-            $svgDir = dirname(__DIR__, 2) . '/vendor/blade-ui-kit/blade-heroicons/resources/svg';
+            $svgDir = dirname(__DIR__, 2).'/vendor/blade-ui-kit/blade-heroicons/resources/svg';
 
             if (! is_dir($svgDir)) {
                 return [];
@@ -41,7 +41,7 @@ class IconHelper
 
     public static function getSvg(string $icon): ?string
     {
-        $path = dirname(__DIR__, 2) . "/vendor/blade-ui-kit/blade-heroicons/resources/svg/o-{$icon}.svg";
+        $path = dirname(__DIR__, 2)."/vendor/blade-ui-kit/blade-heroicons/resources/svg/o-{$icon}.svg";
 
         if (! file_exists($path)) {
             return null;

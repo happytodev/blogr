@@ -32,6 +32,7 @@ use Happytodev\Blogr\Filament\Widgets\BlogStatsOverview;
 use Happytodev\Blogr\Filament\Widgets\RecentBlogPosts;
 use Happytodev\Blogr\Filament\Widgets\ScheduledPosts;
 use Happytodev\Blogr\Helpers\ConfigHelper;
+use Happytodev\Blogr\Helpers\IconHelper;
 use Happytodev\Blogr\Http\Controllers\AuthorController;
 use Happytodev\Blogr\Http\Controllers\BlogController;
 use Happytodev\Blogr\Http\Controllers\CmsContactController;
@@ -262,10 +263,11 @@ class BlogrServiceProvider extends PackageServiceProvider
 
         // Route for serving icon SVGs in the IconPicker component
         $this->app['router']->get('/blogr/icon-svg/{icon}', function (string $icon) {
-            $svg = \Happytodev\Blogr\Helpers\IconHelper::getSvg($icon);
+            $svg = IconHelper::getSvg($icon);
             if (! $svg) {
                 abort(404);
             }
+
             return response($svg, 200, ['Content-Type' => 'image/svg+xml']);
         })->middleware('web');
 
