@@ -9,8 +9,6 @@ class IconPicker extends Field
 {
     protected string $view = 'blogr::components.icon-picker';
 
-    protected string $iconsPrefix = 'heroicon-o-';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -20,25 +18,26 @@ class IconPicker extends Field
         });
     }
 
-    public function getIcons(): array
+    public function getIconsWithSvg(): array
     {
-        return IconHelper::outlineIcons();
+        $icons = IconHelper::outlineIcons();
+        $result = [];
+
+        foreach ($icons as $name) {
+            $svg = IconHelper::getSvg($name);
+            if ($svg) {
+                $result[] = [
+                    'name' => $name,
+                    'svg' => $svg,
+                ];
+            }
+        }
+
+        return $result;
     }
 
     public function getIconSvg(string $icon): ?string
     {
         return IconHelper::getSvg($icon);
-    }
-
-    public function iconsPrefix(string $prefix): static
-    {
-        $this->iconsPrefix = $prefix;
-
-        return $this;
-    }
-
-    public function getIconsPrefix(): string
-    {
-        return $this->iconsPrefix;
     }
 }

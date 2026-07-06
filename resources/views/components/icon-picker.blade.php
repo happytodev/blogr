@@ -1,12 +1,7 @@
 @php
-    use Happytodev\Blogr\Helpers\IconHelper;
-    use function Filament\Support\generate_icon_html;
-
     $statePath = $getStatePath();
-    $icons = $getIcons();
+    $iconsData = $getIconsWithSvg();
     $selectedIcon = $getState();
-    $prefix = $getIconsPrefix();
-    $allIconsJson = json_encode(array_values($icons));
 @endphp
 
 <x-dynamic-component
@@ -17,7 +12,7 @@
         x-data="iconPicker({
             statePath: @js($statePath),
             selectedIcon: @js($selectedIcon),
-            allIcons: @js(array_values($icons)),
+            icons: @js($iconsData),
         })"
         class="space-y-3"
     >
@@ -48,15 +43,15 @@
             class="border border-gray-200 dark:border-gray-700 rounded-lg p-2 max-h-64 overflow-y-auto"
         >
             <div class="grid grid-cols-8 gap-1">
-                <template x-for="(name, key) in filteredIcons" :key="key">
+                <template x-for="(icon, key) in filteredIcons" :key="key">
                     <button
                         type="button"
-                        x-on:click="selectIcon(name)"
+                        x-on:click="selectIcon(icon.name)"
                         class="flex items-center justify-center w-10 h-10 rounded-lg border border-transparent hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all"
-                        :class="{ 'border-primary-500 bg-primary-50 dark:bg-primary-900/20': name === selectedIcon }"
-                        :title="name"
+                        :class="{ 'border-primary-500 bg-primary-50 dark:bg-primary-900/20': icon.name === selectedIcon }"
+                        :title="icon.name"
+                        x-html="icon.svg"
                     >
-                        <span x-text="name.substring(0, 2)" class="text-xs text-gray-400 dark:text-gray-500"></span>
                     </button>
                 </template>
             </div>
@@ -74,43 +69,30 @@
             Alpine.data('iconPicker', (config) => ({
                 statePath: config.statePath,
                 selectedIcon: config.selectedIcon || '',
-                allIcons: config.allIcons ?? [],
+                allIcons: config.icons ?? [],
                 search: '',
                 previewSvg: '',
 
                 init() {
-                    this.$watch('search', (value) => {
-                        // search is used in the template for filteredIcons
-                    });
-                    this.$watch('selectedIcon', (value) => {
-                        if (value) {
-                            fetch('/blogr/icon-svg/' + value)
-                                .then(r => r.text())
-                                .then(h => { this.previewSvg = h; })
-                                .catch(() => { this.previewSvg = ''; });
-                        } else {
-                            this.previewSvg = '';
-                        }
-                    });
-                    // initial preview
+                    // Restore preview from allIcons
                     if (this.selectedIcon) {
-                        fetch('/blogr/icon-svg/' + this.selectedIcon)
-                            .then(r => r.text())
-                            .then(h => { this.previewSvg = h; })
-                            .catch(() => {});
+                        const found = this.allIcons.find(i => i.name === this.selectedIcon);
+                        if (found) this.previewSvg = found.svg;
                     }
                 },
 
                 get filteredIcons() {
                     if (!this.search || this.search.length === 0) return [];
                     const lower = this.search.toLowerCase();
-                    return this.allIcons.filter(name => name.includes(lower)).slice(0, 80);
+                    return this.allIcons.filter(icon => icon.name.includes(lower)).slice(0, 80);
                 },
 
                 selectIcon(name) {
                     this.selectedIcon = name;
                     this.search = '';
-                    this.$wire.set(this.statePath, name);
+                    const found = this.allIcons.find(i => i.name === name);
+                    this.previewSvg = found ? found.svg : '';
+                    this.$wire.set(this.statePath, name, true);
                 },
             }));
         });
