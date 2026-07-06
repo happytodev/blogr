@@ -4,8 +4,9 @@ namespace Happytodev\Blogr\Rendering\Callout;
 
 use League\CommonMark\Node\Block\AbstractBlock;
 use League\CommonMark\Parser\Block\AbstractBlockContinueParser;
+use League\CommonMark\Parser\Block\BlockContinue;
+use League\CommonMark\Parser\Block\BlockContinueParserInterface;
 use League\CommonMark\Parser\Cursor;
-use League\CommonMark\Parser\MarkdownParserStateInterface;
 
 class CalloutParser extends AbstractBlockContinueParser
 {
@@ -33,21 +34,21 @@ class CalloutParser extends AbstractBlockContinueParser
         return true;
     }
 
-    public function tryContinue(Cursor $cursor, MarkdownParserStateInterface $parserState): ?int
+    public function tryContinue(Cursor $cursor, BlockContinueParserInterface $activeBlockParser): ?BlockContinue
     {
+        if ($this->ended) {
+            return BlockContinue::finished();
+        }
+
         $line = $cursor->getLine();
 
         if (trim($line) === ':::') {
             $this->ended = true;
             $cursor->advanceToEnd();
 
-            return AbstractBlockContinueParser::ABORT;
+            return BlockContinue::at($cursor);
         }
 
-        if ($cursor->isBlank()) {
-            return AbstractBlockContinueParser::CONTINUE;
-        }
-
-        return AbstractBlockContinueParser::CONTINUE;
+        return BlockContinue::at($cursor);
     }
 }
