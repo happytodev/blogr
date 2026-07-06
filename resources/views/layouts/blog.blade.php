@@ -325,6 +325,29 @@
         .dark .copy-button:hover { color: #d1d5db; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); }
         .copy-button.copied { color: #059669 !important; border-color: #059669 !important; }
         .dark .copy-button.copied { color: #34d399 !important; border-color: #34d399 !important; }
+
+        /* Callout / admonition blocks */
+        .docs-callout { border-radius: 0.5rem; padding: 1rem 1.25rem; margin: 1.5rem 0; border-left: 4px solid; }
+        .docs-callout--tip { border-color: #10b981; background-color: #ecfdf5; }
+        .dark .docs-callout--tip { background-color: rgba(16,185,129,0.1); }
+        .docs-callout--info { border-color: #3b82f6; background-color: #eff6ff; }
+        .dark .docs-callout--info { background-color: rgba(59,130,246,0.1); }
+        .docs-callout--danger { border-color: #ef4444; background-color: #fef2f2; }
+        .dark .docs-callout--danger { background-color: rgba(239,68,68,0.1); }
+        .docs-callout--caution { border-color: #f59e0b; background-color: #fffbeb; }
+        .dark .docs-callout--caution { background-color: rgba(245,158,11,0.1); }
+        .docs-callout__title { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.5rem; }
+        .docs-callout__icon { flex-shrink: 0; }
+        .docs-callout--tip .docs-callout__title { color: #065f46; }
+        .dark .docs-callout--tip .docs-callout__title { color: #6ee7b7; }
+        .docs-callout--info .docs-callout__title { color: #1e40af; }
+        .dark .docs-callout--info .docs-callout__title { color: #93c5fd; }
+        .docs-callout--danger .docs-callout__title { color: #991b1b; }
+        .dark .docs-callout--danger .docs-callout__title { color: #fca5a5; }
+        .docs-callout--caution .docs-callout__title { color: #92400e; }
+        .dark .docs-callout--caution .docs-callout__title { color: #fcd34d; }
+        .docs-callout__content > :first-child { margin-top: 0; }
+        .docs-callout__content > :last-child { margin-bottom: 0; }
     </style>
 
     <!-- Dark mode initialization script (runs before page render to prevent flash) -->

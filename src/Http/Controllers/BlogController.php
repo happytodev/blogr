@@ -12,6 +12,7 @@ use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\CategoryTranslation;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\TagTranslation;
+use Happytodev\Blogr\Rendering\Callout\CalloutExtension;
 use Happytodev\Blogr\Rendering\ShikiCodeBlockRenderer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
@@ -284,6 +285,10 @@ class BlogController
         $environment->addExtension(new TableOfContentsExtension);
         $environment->addExtension(new EmbedExtension);
         $environment->addExtension(new TableExtension);
+
+        if (class_exists(CalloutExtension::class)) {
+            $environment->addExtension(new CalloutExtension);
+        }
 
         $environment->addRenderer(FencedCode::class, new ShikiCodeBlockRenderer);
         $environment->addRenderer(IndentedCode::class, new ShikiCodeBlockRenderer);
