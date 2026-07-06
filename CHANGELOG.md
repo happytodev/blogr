@@ -11,8 +11,12 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.29.0](https://github.com/happytodev/blogr/compare/v1.28.0...v1.29.0) - 2026-07-07
+
 ### ✨ Features
 
+- **callouts**: Add `CalloutExtension` for `:::tip` / `:::info` / `:::danger` / `:::caution` admonition blocks in Markdown rendering (#305)
+- **callouts**: Add `IconHelper`, `IconPicker` component, and SVG icon route for heroicon selection (#304)
 - **callouts**: Icons now always render (with or without title) — better visual identification at a glance
 - **callouts**: Improved icon hierarchy — `caution` uses warning triangle, `danger` uses prohibitive x-circle
 - **callouts**: Icons upgraded to Heroicons v2 outline at 32px with `stroke-width="1.5"` for crisper details
@@ -20,10 +24,14 @@ All notable changes to `blogr` will be documented in this file.
 - **callouts**: CSS styling included in PDF exports — callouts render with colors and borders in generated PDFs
 - **editor**: New `CalloutMarkdownEditor` field extending `MarkdownEditor` — adds 4 dedicated toolbar buttons (Tip, Info, Caution, Danger) that insert callout templates at cursor position
 - **editor**: `CalloutMarkdownEditor` replaces `MarkdownEditor` in all blog post, docs, CMS, profile and author bio forms
+- **editor**: `IconPicker` form field with searchable grid, SVG preview, and live Alpine.js state binding
 
 ### 🐛 Fixed
 
+- **callouts**: Split `CalloutParser` into `CalloutStartParser` + `CalloutParser` following CommonMark 2.x patterns (correct `tryContinue()` signature returning `?BlockContinue`)
+- **callouts**: Proper `BlockContinue::finished()` on `:::` closing delimiter (prevents infinite loop)
 - **callouts**: `CalloutStartParser` now returns `->at($cursor)` — correct cursor advancement after parsing
+- **icon-picker**: Remove re-render flag from `$wire.set()` to prevent Alpine state reset on icon selection
 
 ### 🧪 Tests
 
