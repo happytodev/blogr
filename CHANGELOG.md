@@ -11,6 +11,26 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ Features
+
+- **callouts**: Icons now always render (with or without title) — better visual identification at a glance
+- **callouts**: Improved icon hierarchy — `caution` uses warning triangle, `danger` uses prohibitive x-circle
+- **callouts**: Icons upgraded to Heroicons v2 outline at 32px with `stroke-width="1.5"` for crisper details
+- **callouts**: Title font-size increased to 1.125rem, content font-size set to 0.75rem
+- **callouts**: CSS styling included in PDF exports — callouts render with colors and borders in generated PDFs
+- **editor**: New `CalloutMarkdownEditor` field extending `MarkdownEditor` — adds 4 dedicated toolbar buttons (Tip, Info, Caution, Danger) that insert callout templates at cursor position
+- **editor**: `CalloutMarkdownEditor` replaces `MarkdownEditor` in all blog post, docs, CMS, profile and author bio forms
+
+### 🐛 Fixed
+
+- **callouts**: `CalloutStartParser` now returns `->at($cursor)` — correct cursor advancement after parsing
+
+### 🧪 Tests
+
+- `CalloutMarkdownEditorTest` — class extension, view path, button structure and accessibility attributes
+- `AuthorBioFieldEnhancementsTest` — updated assertions for `CalloutMarkdownEditor`
+- `DocSettingsTest` — PDF template includes callout CSS styling
+
 ## [v1.27.0](https://github.com/happytodev/blogr/compare/v1.26.0...v1.27.0) - 2026-07-05
 
 ### ✨ Features
