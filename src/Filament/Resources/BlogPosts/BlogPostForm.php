@@ -7,7 +7,6 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -17,6 +16,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Happytodev\Blogr\Filament\Components\CalloutMarkdownEditor;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
@@ -95,7 +95,7 @@ class BlogPostForm
                                     ->helperText('Short summary of the article (max 500 characters)')
                                     ->columnSpanFull(),
 
-                                MarkdownEditor::make('content')
+                                CalloutMarkdownEditor::make('content')
                                     ->label('Content')
                                     ->required()
                                     ->toolbarButtons([

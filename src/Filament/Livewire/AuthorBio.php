@@ -3,11 +3,11 @@
 namespace Happytodev\Blogr\Filament\Livewire;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Schema;
+use Happytodev\Blogr\Filament\Components\CalloutMarkdownEditor;
 use Happytodev\Blogr\Services\LocaleService;
 use Happytodev\Blogr\Services\Translation\TranslationProviderFactory;
 use Happytodev\Blogr\Services\TranslationUsageService;
@@ -51,7 +51,7 @@ class AuthorBio extends MyProfileComponent
             $tabs[] = Tabs\Tab::make($locale)
                 ->label("{$flag} {$label}")
                 ->schema([
-                    MarkdownEditor::make("bio.{$locale}")
+                    CalloutMarkdownEditor::make("bio.{$locale}")
                         ->label(__('blogr::blogr.profile.bio_label', ['locale' => $label]))
                         ->maxLength(2000)
                         ->nullable()

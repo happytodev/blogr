@@ -8,7 +8,6 @@ use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -19,6 +18,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Happytodev\Blogr\Enums\CmsBlockType;
+use Happytodev\Blogr\Filament\Components\CalloutMarkdownEditor;
 use Happytodev\Blogr\Filament\Forms\LinkFieldsTrait;
 
 class CmsBlockBuilder
@@ -352,7 +352,7 @@ class CmsBlockBuilder
             ->schema(fn () => [
                 Section::make(__('Content'))
                     ->schema(fn () => [
-                        MarkdownEditor::make('content')
+                        CalloutMarkdownEditor::make('content')
                             ->label(__('Content'))
                             ->required()
                             ->toolbarButtons([
@@ -572,7 +572,7 @@ class CmsBlockBuilder
                                     ->maxLength(255)
                                     ->columnSpan(1),
 
-                                MarkdownEditor::make('bio')
+                                CalloutMarkdownEditor::make('bio')
                                     ->label(__('Bio'))
                                     ->toolbarButtons([
                                         'bold', 'italic', 'link', 'bulletList',
@@ -1556,7 +1556,7 @@ class CmsBlockBuilder
                             ->maxLength(255)
                             ->columnSpan(2),
 
-                        MarkdownEditor::make('bio')
+                        CalloutMarkdownEditor::make('bio')
                             ->label(__('Biography'))
                             ->toolbarButtons([
                                 'bold', 'italic', 'link', 'bulletList',
