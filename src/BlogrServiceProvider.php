@@ -260,6 +260,15 @@ class BlogrServiceProvider extends PackageServiceProvider
             $this->registerCmsRoutes();
         }
 
+        // Route for serving icon SVGs in the IconPicker component
+        $this->app['router']->get('/blogr/icon-svg/{icon}', function (string $icon) {
+            $svg = \Happytodev\Blogr\Helpers\IconHelper::getSvg($icon);
+            if (! $svg) {
+                abort(404);
+            }
+            return response($svg, 200, ['Content-Type' => 'image/svg+xml']);
+        })->middleware('web');
+
         // Share available locales with frontend views that don't already have
         // a controller-specific value (e.g. CmsPageController passes per-page locales).
         View::composer('blogr::*', function ($view) {
