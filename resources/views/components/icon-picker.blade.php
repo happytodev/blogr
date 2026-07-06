@@ -92,7 +92,7 @@
                     this.search = '';
                     const found = this.allIcons.find(i => i.name === name);
                     this.previewSvg = found ? found.svg : '';
-                    this.$wire.set(this.statePath, name, true);
+                    this.$wire.set(this.statePath, name);
                 },
             }));
         });
