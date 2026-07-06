@@ -2,6 +2,7 @@
 
 namespace Happytodev\Blogr\Rendering\Callout;
 
+use League\CommonMark\Node\Block\AbstractBlock;
 use League\CommonMark\Parser\Block\AbstractBlockContinueParser;
 use League\CommonMark\Parser\Cursor;
 use League\CommonMark\Parser\MarkdownParserStateInterface;
@@ -27,7 +28,7 @@ class CalloutParser extends AbstractBlockContinueParser
         return true;
     }
 
-    public function canContain(AbstractBlockContinueParser $childBlock): bool
+    public function canContain(AbstractBlock $childBlock): bool
     {
         return true;
     }
