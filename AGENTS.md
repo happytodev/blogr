@@ -9,6 +9,7 @@ issue before any code is written or proposed.** This ensures traceability.
 - User says "I need a feature" → create issue with `--label feature`
 - The issue is created via `gh issue create` immediately upon understanding
   the need
+- **All issues MUST be written in English** (title + body)
 - The issue number is referenced in all subsequent commits and PRs
 - The issue is closed when the work is merged into `main` — the PR description MUST include `Closes #<issue_number>` to auto-close on merge
 - Skipping this is a process error
