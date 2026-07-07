@@ -6,28 +6,33 @@ window.Alpine = Alpine;
 // Blogr Theme Switcher Component (required for light/dark/auto mode)
 Alpine.data('themeSwitch', () => ({
     theme: localStorage.getItem('theme') || 'auto',
-    
+    open: false,
+
     init() {
         this.applyTheme();
-        
-        // Watch for system preference changes when in auto mode
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
             if (this.theme === 'auto') {
                 this.applyTheme();
             }
         });
     },
-    
+
+    toggle() {
+        this.open = !this.open;
+    },
+
     setTheme(newTheme) {
         this.theme = newTheme;
+        this.open = false;
         localStorage.setItem('theme', newTheme);
         this.applyTheme();
     },
-    
+
     applyTheme() {
-        const isDark = this.theme === 'dark' || 
+        const isDark = this.theme === 'dark' ||
                       (this.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        
+
         if (isDark) {
             document.documentElement.classList.add('dark');
         } else {

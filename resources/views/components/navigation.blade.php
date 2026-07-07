@@ -355,37 +355,67 @@
 
                 <!-- Theme Switcher -->
                 @if(config('blogr.ui.navigation.show_theme_switcher', true))
-                <div x-data="themeSwitch()" class="flex items-center space-x-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-                    <button @click="setTheme('light')" 
-                            :class="{ 'bg-white dark:bg-gray-700 shadow': theme === 'light' }"
-                            :aria-pressed="theme === 'light'"
-                            class="p-2 rounded-md transition-all duration-200"
-                            title="Light mode"
-                            aria-label="Light mode">
-                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                <div x-data="themeSwitch()" class="relative">
+                    <button @click="toggle" @keydown.escape.prevent="open = false"
+                            :aria-expanded="open"
+                            :aria-label="theme === 'light' ? '{{ __('blogr::navigation.theme_light_label') }}' : (theme === 'auto' ? '{{ __('blogr::navigation.theme_auto_label') }}' : '{{ __('blogr::navigation.theme_dark_label') }}')"
+                            class="flex items-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus:outline-none"
+                            title="{{ __('blogr::navigation.theme_switch') }}">
+                        <svg x-show="theme === 'light'" class="w-5 h-5 text-yellow-500 shrink-0" fill="currentColor" viewBox="0 0 24 24" style="display: none;">
+                            <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM11 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0V4Zm0 15a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm8.07-12.07a1 1 0 0 1 0 1.414l-.707.707a1 1 0 1 1-1.414-1.414l.707-.707a1 1 0 0 1 1.414 0ZM6.343 16.95a1 1 0 0 1-1.414 0l-.707-.707a1 1 0 0 1 1.414-1.414l.707.707a1 1 0 0 1 0 1.414Zm11.314 0a1 1 0 0 1 0-1.414l.707-.707a1 1 0 1 1 1.414 1.414l-.707.707a1 1 0 0 1-1.414 0ZM4.05 7.05a1 1 0 0 1 0-1.414l.707-.707a1 1 0 1 1 1.414 1.414l-.707.707a1 1 0 0 1-1.414 0Z" />
+                        </svg>
+                        <svg x-show="theme === 'auto'" class="w-5 h-5 text-gray-600 dark:text-gray-400 shrink-0" fill="currentColor" viewBox="0 0 24 24" style="display: none;">
+                            <path d="M3.75 3A1.75 1.75 0 0 0 2 4.75v8.5c0 .966.784 1.75 1.75 1.75h5.5v2.25H7.5a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5h-1.75V15h5.5A1.75 1.75 0 0 0 22 13.25v-8.5A1.75 1.75 0 0 0 20.25 3H3.75ZM3.5 13.25V4.75A.25.25 0 0 1 3.75 4.5h16.5a.25.25 0 0 1 .25.25v8.5a.25.25 0 0 1-.25.25H3.75a.25.25 0 0 1-.25-.25Z" />
+                        </svg>
+                        <svg x-show="theme === 'dark'" class="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" fill="currentColor" viewBox="0 0 24 24" style="display: none;">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                        </svg>
+                        <svg class="w-4 h-4 ml-1 text-gray-400 dark:text-gray-500 transition-transform duration-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" :class="{ 'rotate-180': open }">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <button @click="setTheme('auto')" 
-                            :class="{ 'bg-white dark:bg-gray-700 shadow': theme === 'auto' }"
-                            :aria-pressed="theme === 'auto'"
-                            class="p-2 rounded-md transition-all duration-200"
-                            title="Auto mode"
-                            aria-label="Auto mode">
-                        <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
-                        </svg>
-                    </button>
-                    <button @click="setTheme('dark')" 
-                            :class="{ 'bg-white dark:bg-gray-700 shadow': theme === 'dark' }"
-                            :aria-pressed="theme === 'dark'"
-                            class="p-2 rounded-md transition-all duration-200"
-                            title="Dark mode"
-                            aria-label="Dark mode">
-                        <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                        </svg>
-                    </button>
+
+                    <div x-show="open" @click.away="open = false"
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="transform opacity-100 scale-100"
+                         x-transition:leave-end="transform opacity-0 scale-95"
+                         class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 py-1 z-50"
+                         role="menu"
+                         style="display: none;">
+                        <button @click="setTheme('light'); open = false"
+                                :aria-checked="theme === 'light'"
+                                role="menuitemradio"
+                                class="flex items-center w-full gap-3 px-4 py-2 text-sm transition-colors"
+                                :class="theme === 'light' ? 'bg-gray-100 dark:bg-gray-700 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'">
+                            <svg class="w-5 h-5 text-yellow-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM11 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0V4Zm0 15a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm8.07-12.07a1 1 0 0 1 0 1.414l-.707.707a1 1 0 1 1-1.414-1.414l.707-.707a1 1 0 0 1 1.414 0ZM6.343 16.95a1 1 0 0 1-1.414 0l-.707-.707a1 1 0 0 1 1.414-1.414l.707.707a1 1 0 0 1 0 1.414Zm11.314 0a1 1 0 0 1 0-1.414l.707-.707a1 1 0 1 1 1.414 1.414l-.707.707a1 1 0 0 1-1.414 0ZM4.05 7.05a1 1 0 0 1 0-1.414l.707-.707a1 1 0 1 1 1.414 1.414l-.707.707a1 1 0 0 1-1.414 0Z" />
+                            </svg>
+                            <span>{{ __('blogr::navigation.theme_light') }}</span>
+                        </button>
+                        <button @click="setTheme('auto'); open = false"
+                                :aria-checked="theme === 'auto'"
+                                role="menuitemradio"
+                                class="flex items-center w-full gap-3 px-4 py-2 text-sm transition-colors"
+                                :class="theme === 'auto' ? 'bg-gray-100 dark:bg-gray-700 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'">
+                            <svg class="w-5 h-5 text-gray-600 dark:text-gray-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M3.75 3A1.75 1.75 0 0 0 2 4.75v8.5c0 .966.784 1.75 1.75 1.75h5.5v2.25H7.5a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5h-1.75V15h5.5A1.75 1.75 0 0 0 22 13.25v-8.5A1.75 1.75 0 0 0 20.25 3H3.75ZM3.5 13.25V4.75A.25.25 0 0 1 3.75 4.5h16.5a.25.25 0 0 1 .25.25v8.5a.25.25 0 0 1-.25.25H3.75a.25.25 0 0 1-.25-.25Z" />
+                            </svg>
+                            <span>{{ __('blogr::navigation.theme_auto') }}</span>
+                        </button>
+                        <button @click="setTheme('dark'); open = false"
+                                :aria-checked="theme === 'dark'"
+                                role="menuitemradio"
+                                class="flex items-center w-full gap-3 px-4 py-2 text-sm transition-colors"
+                                :class="theme === 'dark' ? 'bg-gray-100 dark:bg-gray-700 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'">
+                            <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                            </svg>
+                            <span>{{ __('blogr::navigation.theme_dark') }}</span>
+                        </button>
+                    </div>
                 </div>
                 @endif
             </div>
@@ -475,10 +505,11 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('themeSwitch', () => ({
             theme: localStorage.getItem('theme') || '{{ config('blogr.ui.theme.default', 'light') }}',
-            
+            open: false,
+
             init() {
                 this.applyTheme();
-                
+
                 if (this.theme === 'auto') {
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
                         if (this.theme === 'auto') {
@@ -487,13 +518,18 @@
                     });
                 }
             },
-            
+
+            toggle() {
+                this.open = !this.open;
+            },
+
             setTheme(newTheme) {
                 this.theme = newTheme;
+                this.open = false;
                 localStorage.setItem('theme', newTheme);
                 this.applyTheme();
             },
-            
+
             applyTheme() {
                 if (this.theme === 'dark' || (this.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     document.documentElement.classList.add('dark');
