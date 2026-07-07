@@ -11,6 +11,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.30.0](https://github.com/happytodev/blogr/compare/v1.29.1...v1.30.0) - 2026-07-07
+
 ### ✨ Features
 
 - **nav**: Extend `LinkTypeRegistry` with context-aware resolvers and field factories — plugins can inject entity selector fields into the nav menu form and receive item data during URL resolution
