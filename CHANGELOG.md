@@ -2,20 +2,7 @@
 
 All notable changes to `blogr` will be documented in this file.
 
-## [v1.28.0](https://github.com/happytodev/blogr/compare/v1.27.0...v1.28.0) - 2026-07-05
-
-### ✨ Features
-
-- **shiki**: Add `blogr:install-shiki` artisan command to install the `shiki` npm package for syntax highlighting.
-- **settings**: Add Shiki installation status indicator in `BlogrSettings` → Syntax Highlighting section. Shows whether Shiki is installed, not installed, or if Node.js is missing.
-
-## [v1.32.0](https://github.com/happytodev/blogr/compare/v1.31.0...v1.32.0) - 2026-07-07
-
-### ✨ Features
-
-- **markdown**: Images in Markdown content are now wrapped in a lightbox trigger — clicking opens a full-screen Alpine.js overlay with caption support (#312)
-- **markdown**: New `ImageLightboxRenderer` CommonMark renderer for blog posts, CMS pages, content blocks, and author bios
-- **ui**: New `<x-blogr::image-lightbox />` Alpine.js component with close-on-escape, close-on-backdrop-click, and body scroll lock
+## [Unreleased]
 
 ## [v2.0.0](https://github.com/happytodev/blogr/compare/v1.32.0...v2.0.0) - 2026-07-07
 
@@ -35,6 +22,14 @@ All notable changes to `blogr` will be documented in this file.
 ### 🔄 Changed
 
 - **Livewire registration**: Replaced `Livewire\Mechanisms\ComponentRegistry::getName()` with `Str::kebab(class_basename())` — `ComponentRegistry` was removed in Livewire v4. Applied to blogr core and all plugin packages (blogr-comments, blogr-docs, blogr-gdpr, blogr-artist)
+
+## [v1.32.0](https://github.com/happytodev/blogr/compare/v1.31.0...v1.32.0) - 2026-07-07
+
+### ✨ Features
+
+- **markdown**: Images in Markdown content are now wrapped in a lightbox trigger — clicking opens a full-screen Alpine.js overlay with caption support (#312)
+- **markdown**: New `ImageLightboxRenderer` CommonMark renderer for blog posts, CMS pages, content blocks, and author bios
+- **ui**: New `<x-blogr::image-lightbox />` Alpine.js component with close-on-escape, close-on-backdrop-click, and body scroll lock
 
 ## [v1.31.0](https://github.com/happytodev/blogr/compare/v1.30.0...v1.31.0) - 2026-07-07
 
@@ -88,6 +83,13 @@ All notable changes to `blogr` will be documented in this file.
 - `AuthorBioFieldEnhancementsTest` — updated assertions for `CalloutMarkdownEditor`
 - `DocSettingsTest` — PDF template includes callout CSS styling
 
+## [v1.28.0](https://github.com/happytodev/blogr/compare/v1.27.0...v1.28.0) - 2026-07-05
+
+### ✨ Features
+
+- **shiki**: Add `blogr:install-shiki` artisan command to install the `shiki` npm package for syntax highlighting.
+- **settings**: Add Shiki installation status indicator in `BlogrSettings` → Syntax Highlighting section. Shows whether Shiki is installed, not installed, or if Node.js is missing.
+
 ## [v1.27.0](https://github.com/happytodev/blogr/compare/v1.26.0...v1.27.0) - 2026-07-05
 
 ### ✨ Features
@@ -120,8 +122,6 @@ All notable changes to `blogr` will be documented in this file.
 
 - `docs/WCAG.md` — full WCAG accessibility conformance documentation
 - WCAG 2.2 AA badge in README
-
-## [v1.25.0](https://github.com/happytodev/blogr/compare/v1.24.0...v1.25.0) - 2026-07-04
 
 ## [v1.25.0](https://github.com/happytodev/blogr/compare/v1.24.0...v1.25.0) - 2026-07-04
 
@@ -318,55 +318,6 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Contact form**: form card background and submit button colors are now configurable via the admin UI (Form Styling section) — leave empty for transparent/inherit
 - **Contact form**: Alpine.js component migrated from `Alpine.data()` registration to inline `x-data` — fixes console errors in Filament CMS preview
-
-## [Unreleased]
-
-### ✨ Added
-
-- **Dashboard**: 5 new widgets — category distribution doughnut, weekly activity bar chart, series overview, CMS overview, SEO checklist
-- **Dashboard**: widget picker in Settings → Dashboard to enable/disable widgets
-- **Dashboard**: edit action on recent posts table to open post editor
-- **Dashboard**: column toggling and filters (status, category, date range) on recent posts table
-- **Dashboard**: reading time column on recent posts table
-
-### 🎨 Changed
-
-- **Dashboard**: improve layout with variable column spans (BlogPostsChart 2/3, BlogReadingStats 1/3, ScheduledPosts 1/2)
-- **Dashboard**: BlogStatsOverview shows 8 stats (added series, CMS pages), cached 5 min, displayed 4 per row
-- **Dashboard**: BlogPostsChart shows both created and published series with separate colors
-- **Dashboard**: BlogReadingStats now cached 5 min, labels shortened
-- **Dashboard**: Scheduled Posts heading shows live count
-- **Dashboard**: compact stat cards with 4 columns per row
-
-### 🔥 Removed
-
-- **Dashboard**: remove QuickVisitSite widget (redundant with left nav "View Website" link)
-
-### 🐛 Fixed
-
-- **PHPStan**: raise analysis level from 5 to 9, regenerate baseline
-
-- **Tests**: feature tests for TagResource CRUD (create, read, update, delete)
-- **Tests**: feature test for auto-save indicator on blog post create/edit pages
-
-### 🔥 Removed
-
-- **Dashboard**: remove QuickVisitSite widget (redundant with left nav "View Website" link)
-- **Tests**: remove 2 obsolete browser test files (replaced by feature tests)
-- **Tests**: remove 3 tests that already exist in `tests/Localized/FrontendTranslationsTest`
-
-<<<<<<< HEAD
-## [Unreleased]
-=======
-### 🎨 Changed
-
-- **Dashboard**: improve layout with variable column spans (BlogPostsChart 2/3, BlogReadingStats 1/3, ScheduledPosts 1/2)
-- **Dashboard**: BlogStatsOverview shows 8 stats (added series, CMS pages), cached 5 min, displayed 4 per row
-- **Dashboard**: BlogPostsChart shows both created and published series with separate colors
-- **Dashboard**: BlogReadingStats now cached 5 min, labels shortened
-- **Dashboard**: Scheduled Posts heading shows live count
-- **Dashboard**: compact stat cards with 4 columns per row
->>>>>>> 06a5405 (feat(dashboard): add new widgets, improve layout, add edit/filters)
 
 ## [v1.21.0](https://github.com/happytodev/blogr/compare/v1.20.0...v1.21.0) - 2026-06-30
 
