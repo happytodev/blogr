@@ -199,11 +199,13 @@ This skill handles:
 
 ## Step 9 — Close the issue
 
-After the PR is merged, close the issue with a reference:
+The issue is auto-closed on merge via `Closes #<issue_number>` in the PR
+description (see git-changelog-workflow Step 5). No manual close is needed.
+
+If the PR was created without `Closes #<issue_number>`, close manually:
 
 ```bash
-gh issue comment $ISSUE_ID --body "Fixed in PR #$PR_NUMBER ($HASH)"
-gh issue close $ISSUE_ID
+gh issue close $ISSUE_ID --comment "Fixed in $HASH"
 ```
 
 ---
