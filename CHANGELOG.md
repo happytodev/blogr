@@ -19,6 +19,23 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ⬆️ Dependencies
+
+- **Laravel 13**: Migrated from Laravel 12 to Laravel 13 (via orchestra/testbench ^11.0)
+- **Filament v5**: Upgraded from Filament v4.8.5 to Filament v5 (filament/filament ^5.0, filament/schemas ^5.0, filament/support ^5.0)
+- **Livewire v4**: Upgraded from Livewire v3 to Livewire v4 (included with Filament v5)
+- **spatie/laravel-permission**: Upgraded from ^6.0 to ^8.0
+- **orchestra/testbench**: Upgraded from ^10.11 to ^11.0
+- **npm**: Updated tailwindcss 4.1.14→4.3.2, @tailwindcss/vite 4.1.14→4.3.2, vite 7.1.9→7.3.6, postcss 8.5.6→8.5.16, playwright 1.56.0→1.61.1, autoprefixer 10.4.21→10.5.2, @tailwindcss/typography 0.5.19→0.5.20
+
+### 🐛 Bug Fixes
+
+- **tests**: Fix JSON encoding failure in CodeBlockPreserverTest where a non-UTF8 byte caused `InvalidArgumentException` with Laravel 13's stricter `json_encode`
+
+### 🔄 Changed
+
+- **Livewire registration**: Replaced `Livewire\Mechanisms\ComponentRegistry::getName()` with `Str::kebab(class_basename())` — `ComponentRegistry` was removed in Livewire v4. Applied to blogr core and all plugin packages (blogr-comments, blogr-docs, blogr-gdpr, blogr-artist)
+
 ## [v1.31.0](https://github.com/happytodev/blogr/compare/v1.30.0...v1.31.0) - 2026-07-07
 
 ### ✨ Features

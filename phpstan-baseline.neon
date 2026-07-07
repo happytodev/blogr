@@ -7609,13 +7609,13 @@ parameters:
 			path: src/Services/CmsPageBackupService.php
 
 		-
-			message: '#^Parameter \#2 \$values of static method Illuminate\\Database\\Eloquent\\Builder\<Happytodev\\Blogr\\Models\\CmsPage\>\:\:updateOrCreate\(\) expects array\<string, mixed\>, mixed given\.$#'
+			message: '#^Parameter \#2 \$values of static method Illuminate\\Database\\Eloquent\\Builder\<Happytodev\\Blogr\\Models\\CmsPage\>\:\:updateOrCreate\(\) expects array\<string, mixed\>\|Closure, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Services/CmsPageBackupService.php
 
 		-
-			message: '#^Parameter \#2 \$values of static method Illuminate\\Database\\Eloquent\\Builder\<Happytodev\\Blogr\\Models\\CmsPageTranslation\>\:\:updateOrCreate\(\) expects array\<string, mixed\>, mixed given\.$#'
+			message: '#^Parameter \#2 \$values of static method Illuminate\\Database\\Eloquent\\Builder\<Happytodev\\Blogr\\Models\\CmsPageTranslation\>\:\:updateOrCreate\(\) expects array\<string, mixed\>\|Closure, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Services/CmsPageBackupService.php
@@ -8047,6 +8047,12 @@ parameters:
 			path: src/Services/TranslationUsageService.php
 
 		-
+			message: '#^Parameter \#1 \$value of static method Illuminate\\Database\\Connection\:\:raw\(\) expects float\|int\|literal\-string, non\-falsy\-string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Services/TranslationUsageService.php
+
+		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostDraft\:\:\$draft_data\.$#'
 			identifier: property.notFound
 			count: 1
@@ -8327,6 +8333,12 @@ parameters:
 			identifier: argument.type
 			count: 2
 			path: src/Services/WaveSeparatorService.php
+
+		-
+			message: '#^PHPDoc tag @mixin contains generic class Livewire\\Features\\SupportTesting\\Testable but does not specify its types\: TComponent$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Testing/TestsBlogr.php
 
 		-
 			message: '#^Trait Happytodev\\Blogr\\Traits\\HasTranslatedBio is used zero times and is not analysed\.$#'
