@@ -402,6 +402,9 @@
     <!-- DEBUG: BEFORE INCLUDE -->
     @include('blogr::components.back-to-top')
 
+    {{-- Image Lightbox --}}
+    <x-blogr::image-lightbox />
+
     <script>
         (function() {
             function addCopyButtons() {
