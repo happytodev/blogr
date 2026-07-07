@@ -3575,6 +3575,13 @@ class BlogrSettings extends Page
         // Write to file
         File::put($configPath, $content);
 
+        // Invalidate opcache so subsequent requests read the updated file
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate($configPath, true);
+        } elseif (function_exists('opcache_reset')) {
+            opcache_reset();
+        }
+
         // Also update in-memory config so current request sees the new values
         config()->set('blogr', $updatedConfig);
     }
