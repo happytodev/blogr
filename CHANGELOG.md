@@ -17,7 +17,7 @@ All notable changes to `blogr` will be documented in this file.
 - **markdown**: New `ImageLightboxRenderer` CommonMark renderer for blog posts, CMS pages, content blocks, and author bios
 - **ui**: New `<x-blogr::image-lightbox />` Alpine.js component with close-on-escape, close-on-backdrop-click, and body scroll lock
 
-## [Unreleased]
+## [v1.33.0](https://github.com/happytodev/blogr/compare/v1.32.0...v1.33.0) - 2026-07-07
 
 ### ⬆️ Dependencies
 
