@@ -9,13 +9,15 @@ All notable changes to `blogr` will be documented in this file.
 - **shiki**: Add `blogr:install-shiki` artisan command to install the `shiki` npm package for syntax highlighting.
 - **settings**: Add Shiki installation status indicator in `BlogrSettings` → Syntax Highlighting section. Shows whether Shiki is installed, not installed, or if Node.js is missing.
 
-## [Unreleased]
+## [v1.32.0](https://github.com/happytodev/blogr/compare/v1.31.0...v1.32.0) - 2026-07-07
 
 ### ✨ Features
 
 - **markdown**: Images in Markdown content are now wrapped in a lightbox trigger — clicking opens a full-screen Alpine.js overlay with caption support (#312)
 - **markdown**: New `ImageLightboxRenderer` CommonMark renderer for blog posts, CMS pages, content blocks, and author bios
 - **ui**: New `<x-blogr::image-lightbox />` Alpine.js component with close-on-escape, close-on-backdrop-click, and body scroll lock
+
+## [Unreleased]
 
 ## [v1.31.0](https://github.com/happytodev/blogr/compare/v1.30.0...v1.31.0) - 2026-07-07
 
