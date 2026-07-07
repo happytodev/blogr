@@ -13,6 +13,7 @@ use Happytodev\Blogr\Models\CategoryTranslation;
 use Happytodev\Blogr\Models\Tag;
 use Happytodev\Blogr\Models\TagTranslation;
 use Happytodev\Blogr\Rendering\Callout\CalloutExtension;
+use Happytodev\Blogr\Rendering\ImageLightboxRenderer;
 use Happytodev\Blogr\Rendering\ShikiCodeBlockRenderer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
@@ -21,6 +22,7 @@ use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
 use League\CommonMark\Extension\CommonMark\Node\Block\IndentedCode;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Image;
 use League\CommonMark\Extension\Embed\EmbedExtension;
 use League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension;
 use League\CommonMark\Extension\Table\TableExtension;
@@ -292,6 +294,7 @@ class BlogController
 
         $environment->addRenderer(FencedCode::class, new ShikiCodeBlockRenderer);
         $environment->addRenderer(IndentedCode::class, new ShikiCodeBlockRenderer);
+        $environment->addRenderer(Image::class, new ImageLightboxRenderer);
 
         $converter = new MarkdownConverter($environment);
 
