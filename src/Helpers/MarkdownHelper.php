@@ -3,11 +3,13 @@
 namespace Happytodev\Blogr\Helpers;
 
 use Happytodev\Blogr\Extensions\VideoEmbedAdapter;
+use Happytodev\Blogr\Rendering\ImageLightboxRenderer;
 use Happytodev\Blogr\Rendering\ShikiCodeBlockRenderer;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
 use League\CommonMark\Extension\CommonMark\Node\Block\IndentedCode;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Image;
 use League\CommonMark\Extension\Embed\EmbedExtension;
 use League\CommonMark\Extension\Table\TableExtension;
 use League\CommonMark\MarkdownConverter;
@@ -44,6 +46,8 @@ class MarkdownHelper
                 IndentedCode::class,
                 new ShikiCodeBlockRenderer,
             );
+
+            $environment->addRenderer(Image::class, new ImageLightboxRenderer);
 
             static::$converter = new MarkdownConverter($environment);
         }
