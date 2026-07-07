@@ -39,7 +39,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''router'' on Illuminate\\Contracts\\Foundation\\Application\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 53
+			count: 54
 			path: src/BlogrServiceProvider.php
 
 		-
@@ -61,7 +61,7 @@ parameters:
 			path: src/BlogrServiceProvider.php
 
 		-
-			message: '#^Method Happytodev\\Blogr\\Contracts\\BlogrExtension@anonymous/BlogrServiceProvider\.php\:404\:\:getDependencies\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method Happytodev\\Blogr\\Contracts\\BlogrExtension@anonymous/BlogrServiceProvider\.php\:417\:\:getDependencies\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/BlogrServiceProvider.php
@@ -659,6 +659,18 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: src/Events/UserDataExported.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Filament\\Components\\CalloutMarkdownEditor\:\:\$view \(view\-string\) does not accept default value of type string\.$#'
+			identifier: property.defaultValue
+			count: 1
+			path: src/Filament/Components/CalloutMarkdownEditor.php
+
+		-
+			message: '#^Method Happytodev\\Blogr\\Filament\\Components\\IconPicker\:\:getIconsWithSvg\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Filament/Components/IconPicker.php
 
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Filament\\Livewire\\AuthorBio\:\:\$form\.$#'
@@ -4591,6 +4603,24 @@ parameters:
 			path: src/Helpers/ConfigHelper.php
 
 		-
+			message: '#^Method Happytodev\\Blogr\\Helpers\\IconHelper\:\:getSvg\(\) should return string\|null but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Helpers/IconHelper.php
+
+		-
+			message: '#^Method Happytodev\\Blogr\\Helpers\\IconHelper\:\:outlineIcons\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Helpers/IconHelper.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Helpers\\IconHelper\:\:\$outlineIcons type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Helpers/IconHelper.php
+
+		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$locale\.$#'
 			identifier: property.notFound
 			count: 4
@@ -7061,6 +7091,12 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: src/Policies/UserPolicy.php
+
+		-
+			message: '#^Property Happytodev\\Blogr\\Rendering\\Callout\\CalloutParser\:\:\$ended is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Rendering/Callout/CalloutParser.php
 
 		-
 			message: '#^Cannot access offset ''name'' on mixed\.$#'

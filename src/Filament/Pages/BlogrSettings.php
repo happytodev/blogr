@@ -2193,6 +2193,12 @@ class BlogrSettings extends Page
                                                 ->required(fn (Get $get) => $get('type') === 'cms_page')
                                                 ->columnSpan(1),
 
+                                            // Plugin-registered link type fields
+                                            ...collect(app(LinkTypeRegistry::class)->getFieldFactories())
+                                                ->map(fn ($factory) => $factory())
+                                                ->values()
+                                                ->all(),
+
                                             Select::make('target')
                                                 ->label('Open in')
                                                 ->options([
@@ -2241,13 +2247,24 @@ class BlogrSettings extends Page
 
                                                     Select::make('type')
                                                         ->label('Link Type')
-                                                        ->options([
-                                                            'external' => 'External URL',
-                                                            'blog' => 'Blog Home',
-                                                            'category' => 'Category',
-                                                        ])
+                                                        ->options(function () {
+                                                            $options = [
+                                                                'external' => 'External URL',
+                                                                'blog' => 'Blog Home',
+                                                                'category' => 'Category',
+                                                                'cms_page' => 'CMS Page',
+                                                            ];
+
+                                                            $pluginOptions = app(LinkTypeRegistry::class)->getOptions();
+
+                                                            if (! empty($pluginOptions)) {
+                                                                $options['Plugins'] = $pluginOptions;
+                                                            }
+
+                                                            return $options;
+                                                        })
                                                         ->default('external')
-                                                        ->stateBindingModifiers(['defer'])
+                                                        ->live()
                                                         ->required()
                                                         ->columnSpan(1),
 
@@ -2274,6 +2291,28 @@ class BlogrSettings extends Page
                                                         ->visible(fn (Get $get) => $get('type') === 'category')
                                                         ->required(fn (Get $get) => $get('type') === 'category')
                                                         ->columnSpan(1),
+
+                                                    Select::make('cms_page_id')
+                                                        ->label('Select CMS Page')
+                                                        ->options(function () {
+                                                            return CmsPage::with('translations')
+                                                                ->get()
+                                                                ->mapWithKeys(function ($page) {
+                                                                    $translation = $page->translations->first();
+
+                                                                    return [$page->id => $translation->title ?? 'Page #'.$page->id];
+                                                                });
+                                                        })
+                                                        ->searchable()
+                                                        ->visible(fn (Get $get) => $get('type') === 'cms_page')
+                                                        ->required(fn (Get $get) => $get('type') === 'cms_page')
+                                                        ->columnSpan(1),
+
+                                                    // Plugin-registered link type fields for sub-menu items
+                                                    ...collect(app(LinkTypeRegistry::class)->getFieldFactories())
+                                                        ->map(fn ($factory) => $factory())
+                                                        ->values()
+                                                        ->all(),
 
                                                     Select::make('target')
                                                         ->label('Open in')
@@ -3535,6 +3574,13 @@ class BlogrSettings extends Page
 
         // Write to file
         File::put($configPath, $content);
+
+        // Invalidate opcache so subsequent requests read the updated file
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate($configPath, true);
+        } elseif (function_exists('opcache_reset')) {
+            opcache_reset();
+        }
 
         // Also update in-memory config so current request sees the new values
         config()->set('blogr', $updatedConfig);

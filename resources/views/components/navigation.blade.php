@@ -78,7 +78,7 @@
             }
             
             // Fallback to plugin-registered link types
-            if ($url === '#' && ($pluginUrl = app(\Happytodev\Blogr\Services\LinkTypeRegistry::class)->resolve($item['type'] ?? ''))) {
+            if ($url === '#' && ($pluginUrl = app(\Happytodev\Blogr\Services\LinkTypeRegistry::class)->resolve($item['type'] ?? '', $item))) {
                 $url = $pluginUrl;
             }
             

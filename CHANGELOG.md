@@ -11,6 +11,16 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ Features
+
+- **nav**: Extend `LinkTypeRegistry` with context-aware resolvers and field factories — plugins can inject entity selector fields into the nav menu form and receive item data during URL resolution
+- **nav**: Render plugin-registered link type fields in top-level and sub-menu item forms; add `cms_page` support for sub-menu items
+- **nav**: Pass menu item context to plugin link type resolvers
+
+### 🐛 Fixed
+
+- **settings**: Invalidate opcache after saving config file — updated navigation menu items are visible immediately without requiring a hard refresh
+
 ## [v1.29.1](https://github.com/happytodev/blogr/compare/v1.29.0...v1.29.1) - 2026-07-07
 
 ### 🐛 Fixed
