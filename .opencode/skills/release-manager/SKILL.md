@@ -123,18 +123,29 @@ accidental version bumps with unmerged work.
 
 ### 7. Update CHANGELOG.md (atomic commit)
 
-- Prepend a new entry at the top following the existing format:
+Insert the new entry in **correct semver descending order** (highest version first), NOT at the top of the file.
 
-  ```markdown
-  ## [v{version}](https://github.com/happytodev/blogr/compare/v{version}...v{previous}) - {date}
+Algorithm:
 
-  ### ✨ Features (or 🐛 Bug Fixes | ⬆️ Dependencies)
+1. Read `CHANGELOG.md` and find all `## [vX.Y.Z]` headers with their line numbers
+2. Parse each version into `(major, minor, patch)` tuples
+3. Compare the new version against existing versions:
+   - Walk through the file from top to bottom
+   - Find the **first existing version that is semantically LOWER** than the new one
+   - Insert the new entry **immediately before** that version's header
+   - If ALL existing versions are higher than the new one, append at the end of the version list (before `[Unreleased]` if present)
+4. Format the entry exactly as:
 
-  - **{title}**: {description}
-  ```
+   ```markdown
+   ## [v{version}](https://github.com/happytodev/blogr/compare/v{version}...v{previous}) - {date}
+
+   ### ✨ Features (or 🐛 Bug Fixes | ⬆️ Dependencies)
+
+   - **{title}**: {description}
+   ```
 
 - Use the user-approved release notes content from step 4
-- Keep existing entries intact
+- Keep all other existing entries intact, including the `[Unreleased]` section at the top
 - **Commit** only CHANGELOG.md:
   ```bash
   git add CHANGELOG.md
