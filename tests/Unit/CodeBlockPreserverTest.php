@@ -142,7 +142,7 @@ it('preserves code blocks in nested markdown', function () {
 
 it('preserves code block when provider translates its content', function () {
     Http::fake([
-        '*/translate' => Http::response(['translatedText' => "D\xe9but\n___BLOGR_CODE_".md5("```php\necho 1;\n```")."___\nFin"]),
+        '*/translate' => Http::response(['translatedText' => "D\u00e9but\n___BLOGR_CODE_".md5("```php\necho 1;\n```")."___\nFin"]),
     ]);
 
     $content = "Debut\n```php\necho 1;\n```\nFin";
