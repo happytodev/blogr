@@ -11,6 +11,12 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.29.1](https://github.com/happytodev/blogr/compare/v1.29.0...v1.29.1) - 2026-07-07
+
+### 🐛 Fixed
+
+- **callouts**: Remove default `<p>` margin-top on `.docs-callout__title` — fixes extra space between callout top border and title
+
 ## [v1.29.0](https://github.com/happytodev/blogr/compare/v1.28.0...v1.29.0) - 2026-07-07
 
 ### ✨ Features
