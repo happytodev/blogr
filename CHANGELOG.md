@@ -4,6 +4,8 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+## [v2.0.1](https://github.com/happytodev/blogr/compare/v2.0.0...v2.0.1) - 2026-07-07
+
 ### 🐛 Bug Fixes
 
 - **icons**: Fix icon picker search returning no results in production by resolving blade-heroicons SVGs via `base_path()` instead of the package-relative vendor path (#319)
