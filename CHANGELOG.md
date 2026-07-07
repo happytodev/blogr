@@ -11,6 +11,10 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ Features
+
+- **nav**: Replace three-button theme switcher pill with a dropdown — adds text labels, translated tooltips (FR/EN/ES/DE), monitor icon for system mode, and chevron affordance (#310)
+
 ## [v1.30.0](https://github.com/happytodev/blogr/compare/v1.29.1...v1.30.0) - 2026-07-07
 
 ### ✨ Features
