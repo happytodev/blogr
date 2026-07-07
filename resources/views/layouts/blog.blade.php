@@ -336,7 +336,7 @@
         .dark .docs-callout--danger { background-color: rgba(239,68,68,0.1); }
         .docs-callout--caution { border-color: #f59e0b; background-color: #fffbeb; }
         .dark .docs-callout--caution { background-color: rgba(245,158,11,0.1); }
-        .docs-callout__title { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.125rem; margin-bottom: 0.5rem; }
+        .docs-callout__title { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.125rem; margin: 0 0 0.5rem; }
         .docs-callout__icon { flex-shrink: 0; width: 32px; height: 32px; }
         .docs-callout--tip .docs-callout__title { color: #065f46; }
         .dark .docs-callout--tip .docs-callout__title { color: #6ee7b7; }
