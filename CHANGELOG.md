@@ -4,6 +4,14 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 🐛 Bug Fixes
+
+- **icons**: Fix icon picker search returning no results in production by resolving blade-heroicons SVGs via `base_path()` instead of the package-relative vendor path (#319)
+
+### 🔄 Changed
+
+- **docs**: Add requirement that all GitHub issues must be written in English (AGENTS.md)
+
 ## [v2.0.0](https://github.com/happytodev/blogr/compare/v1.32.0...v2.0.0) - 2026-07-07
 
 ### ⬆️ Dependencies
