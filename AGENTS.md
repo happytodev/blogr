@@ -10,7 +10,7 @@ issue before any code is written or proposed.** This ensures traceability.
 - The issue is created via `gh issue create` immediately upon understanding
   the need
 - The issue number is referenced in all subsequent commits and PRs
-- The issue is closed when the work is merged into `main`
+- The issue is closed when the work is merged into `main` — the PR description MUST include `Closes #<issue_number>` to auto-close on merge
 - Skipping this is a process error
 
 ## ⚠️ Commit policy — ZERO TOLERANCE
@@ -63,6 +63,7 @@ FilamentPHP v4 plugin package (`happytodev/blogr`) — a multilingual blog syste
 | File | Content |
 |------|---------|
 | [README.md](README.md) | Installation, prerequisites, basic commands |
+| [docs/RELEASE_NOTES.md](docs/RELEASE_NOTES.md) | Version compatibility, support policy, per-major feature documentation |
 | [docs/](docs/) | Feature documentation (CMS, gradients, translations, RGPD, etc.) |
 | [artist-portfolio-audit](.opencode/skills/artist-portfolio-audit/SKILL.md) | Variance analysis for the illustrator’s portfolio website |
 

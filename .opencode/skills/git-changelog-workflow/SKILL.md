@@ -249,6 +249,7 @@ gh pr create --title "type(scope): short title" --body "$(cat <<'EOF'
 - [ ] vendor/bin/pest --parallel
 - [ ] …
 
+Closes #<issue_number>
 EOF
 )" --base main
 ```
@@ -258,6 +259,8 @@ Otherwise, provide the compare URL:
 `https://github.com/happytodev/blogr/compare/main...BRANCH`
 
 ### Suggested PR body
+
+The PR body MUST include `Closes #<issue_number>` to auto-close the related issue on merge.
 
 ```markdown
 ## Summary
@@ -269,6 +272,8 @@ Otherwise, provide the compare URL:
 ## Test plan
 - [ ] `vendor/bin/pest --parallel`
 - [ ] …
+
+Closes #<issue_number>
 ```
 
 Return the URL of the created PR or the "New Pull Request" link.
