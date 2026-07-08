@@ -4,6 +4,14 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 🐛 Bug Fixes
+
+- **icons**: Fix icon picker preview not showing after save or when selecting a new icon by replacing `$wire.set()` with `$wire.$entangle()` two-way binding and adding `wire:ignore.self` to prevent Livewire morph interference (#321)
+
+### ✨ Features
+
+- **icons**: Add clear/remove icon button to the icon picker (#321)
+
 ## [v2.0.1](https://github.com/happytodev/blogr/compare/v2.0.0...v2.0.1) - 2026-07-07
 
 ### 🐛 Bug Fixes
