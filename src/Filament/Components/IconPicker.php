@@ -12,10 +12,6 @@ class IconPicker extends Field
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->afterStateHydrated(function (IconPicker $component, $state): void {
-            $component->state($state);
-        });
     }
 
     public function getIconsWithSvg(): array
