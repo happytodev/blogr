@@ -72,6 +72,10 @@ class BlogrPlugin implements Plugin
             'Settings',
         ]);
 
+        $panel->brandName('Blogr');
+        $panel->brandLogo(asset('vendor/blogr/images/blogr.webp'));
+        $panel->brandLogoHeight('3rem');
+
         $panel->favicon(function (): string {
             $faviconPath = config('blogr.ui.favicon.path');
 
