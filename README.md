@@ -48,6 +48,7 @@ Blogr turns your Laravel application into a full-featured blogging platform. Bui
 - Markdown content with Prism.js syntax highlighting
 - Video embeds (YouTube, Vimeo, Dailymotion)
 - Post scheduling (draft / scheduled / published)
+- Preview mode with signed URL (draft content visible before publishing)
 - Categories and tags with inline creation
 - Reading time calculation
 - Auto-generated table of contents

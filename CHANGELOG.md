@@ -4,6 +4,10 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ Features
+
+- **Blog posts**: preview mode with signed URL (30 min) to view a translation's rendered draft before publishing — works for unpublished and scheduled posts, via a Preview action in the edit form (#331)
+
 ## [v2.0.2](https://github.com/happytodev/blogr/compare/v2.0.1...v2.0.2) - 2026-07-08
 
 ### 🐛 Bug Fixes
