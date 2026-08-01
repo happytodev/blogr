@@ -39,7 +39,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''router'' on Illuminate\\Contracts\\Foundation\\Application\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 54
+			count: 55
 			path: src/BlogrServiceProvider.php
 
 		-
@@ -81,7 +81,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \.\.\.\$arrays of function array_merge expects array, mixed given\.$#'
 			identifier: argument.type
-			count: 20
+			count: 21
 			path: src/BlogrServiceProvider.php
 
 		-
@@ -4965,7 +4965,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$content\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 3
 			path: src/Http/Controllers/BlogController.php
 
 		-
@@ -4977,41 +4977,47 @@ parameters:
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$photo\.$#'
 			identifier: property.notFound
-			count: 1
+			count: 3
 			path: src/Http/Controllers/BlogController.php
 
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_description\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 3
 			path: src/Http/Controllers/BlogController.php
 
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_keywords\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 3
 			path: src/Http/Controllers/BlogController.php
 
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_title\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 3
 			path: src/Http/Controllers/BlogController.php
 
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$slug\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 5
 			path: src/Http/Controllers/BlogController.php
 
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$title\.$#'
 			identifier: property.notFound
-			count: 4
+			count: 6
 			path: src/Http/Controllers/BlogController.php
 
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$tldr\.$#'
+			identifier: property.notFound
+			count: 3
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$reading_time\.$#'
 			identifier: property.notFound
 			count: 1
 			path: src/Http/Controllers/BlogController.php
@@ -5356,18 +5362,6 @@ parameters:
 			message: '#^Parameter \#1 \$locale of method Happytodev\\Blogr\\Models\\BlogSeries\:\:translate\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Parameter \#1 \$locale of method Illuminate\\Foundation\\Application\:\:setLocale\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Parameter \#1 \$locale of static method Happytodev\\Blogr\\Helpers\\ConfigHelper\:\:getSeoSiteName\(\) expects string\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 3
 			path: src/Http/Controllers/BlogController.php
 
 		-

@@ -15,6 +15,7 @@ use Happytodev\Blogr\Models\TagTranslation;
 use Happytodev\Blogr\Rendering\Callout\CalloutExtension;
 use Happytodev\Blogr\Rendering\ImageLightboxRenderer;
 use Happytodev\Blogr\Rendering\ShikiCodeBlockRenderer;
+use Happytodev\Blogr\Services\VersioningService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
@@ -177,6 +178,7 @@ class BlogController
         }
 
         $locale = $locale ?? config('blogr.locales.default', 'en');
+        /** @var string $locale */
 
         // Set app locale for helpers to use
         app()->setLocale($locale);
@@ -225,6 +227,84 @@ class BlogController
         if ($post->unpublish_at && $post->unpublish_at->isPast()) {
             abort(404);
         }
+
+        return $this->renderPost($translation, (string) $locale);
+    }
+
+    /**
+     * Preview a blog post translation with draft data (signed URL required).
+     * Unlike show(), it renders unpublished and scheduled posts.
+     *
+     * @param  int  $translationId  The BlogPostTranslation ID
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function preview(int $translationId)
+    {
+        /** @var BlogPostTranslation $translation */
+        $translation = BlogPostTranslation::with([
+            'post.category.translations',
+            'post.tags.translations',
+            'post.translations',
+            'post.series.translations',
+            'post.series.posts.translations',
+        ])->findOrFail($translationId);
+
+        /** @var BlogPost $post */
+        $post = $translation->post;
+        $locale = $translation->getAttribute('locale');
+        /** @var string $locale */
+
+        // Overlay the last saved draft (per-locale translation data) on the translation
+        $draft = app(VersioningService::class)->getPostDraft($post);
+
+        $draftTranslation = null;
+        if ($draft && isset($draft->draft_data['translations']) && is_array($draft->draft_data['translations'])) {
+            foreach ($draft->draft_data['translations'] as $draftTrans) {
+                if (is_array($draftTrans) && ($draftTrans['locale'] ?? null) === $locale) {
+                    $draftTranslation = $draftTrans;
+                    break;
+                }
+            }
+        }
+
+        if (is_array($draftTranslation)) {
+            foreach (['title', 'slug', 'content', 'tldr', 'seo_title', 'seo_description', 'seo_keywords', 'reading_time'] as $field) {
+                if (array_key_exists($field, $draftTranslation)) {
+                    $translation->{$field} = $draftTranslation[$field];
+                }
+            }
+
+            if (array_key_exists('photo', $draftTranslation)) {
+                $photo = $draftTranslation['photo'];
+                $photoValue = is_array($photo) ? (reset($photo) ?: null) : $photo;
+                $translation->photo = is_string($photoValue) ? $photoValue : null;
+            }
+
+            // Reflect draft values on the post for view fallbacks (e.g. image alt)
+            $post->setAttribute('title', $translation->title);
+            $post->setAttribute('slug', $translation->slug);
+            $post->setAttribute('tldr', $translation->tldr);
+            if ($translation->photo) {
+                $post->setAttribute('photo', $translation->photo);
+            }
+        }
+
+        app()->setLocale($locale);
+
+        return $this->renderPost($translation, $locale, true);
+    }
+
+    /**
+     * Render the blog post show view (shared by show() and preview()).
+     *
+     * @param  bool  $preview  When true, marks the render as a draft preview.
+     * @return \Illuminate\Contracts\View\View
+     */
+    protected function renderPost(BlogPostTranslation $translation, string $locale, bool $preview = false)
+    {
+        $post = $translation->post;
+
+        $localesEnabled = config('blogr.locales.enabled', false);
 
         // Load permalink configuration
         $permalinkConfig = config('blogr.heading_permalink', [
@@ -496,6 +576,7 @@ class BlogController
             'tocPosition' => $tocPosition,
             'tocHtml' => $tocHtml,
             'tocCollapsible' => config('blogr.toc.collapsible', true),
+            'preview' => $preview,
         ]);
     }
 

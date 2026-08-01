@@ -6,6 +6,7 @@ All notable changes to `blogr` will be documented in this file.
 
 ### ✨ Features
 
+- **Blog posts**: preview mode with signed URL (30 min) to view a translation's rendered draft before publishing — works for unpublished and scheduled posts, via a Preview action in the edit form (#331)
 - **Admin**: add Blogr branding (name + logo) to the Filament panel
 
 ### 🛡️ Security
