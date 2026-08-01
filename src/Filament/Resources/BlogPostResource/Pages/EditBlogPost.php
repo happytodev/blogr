@@ -19,6 +19,7 @@ use Happytodev\Blogr\Services\Translation\TranslationProviderFactory;
 use Happytodev\Blogr\Services\TranslationUsageService;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Traits\AutoSave;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class EditBlogPost extends EditRecord
@@ -93,7 +94,24 @@ class EditBlogPost extends EditRecord
 
     protected function getFormActions(): array
     {
-        return [
+        $actions = [
+            Actions\Action::make('preview')
+                ->label('Preview')
+                ->icon('heroicon-o-eye')
+                ->color('info')
+                ->visible(fn () => $this->record instanceof BlogPost && $this->record->translations()->count() > 0)
+                ->url(function (array $data = []) {
+                    if (! $this->record instanceof BlogPost) {
+                        return '#';
+                    }
+
+                    $translationId = $data['translation_id'] ?? $this->record->translations()->value('id');
+
+                    return $translationId
+                        ? URL::signedRoute('blog.post.preview', ['translationId' => $translationId], now()->addMinutes(30))
+                        : '#';
+                })
+                ->openUrlInNewTab(),
             Actions\Action::make('saveAndPublish')
                 ->label('Save & Publish')
                 ->icon('heroicon-o-check-circle')
@@ -121,6 +139,23 @@ class EditBlogPost extends EditRecord
                 }),
             $this->getCancelFormAction(),
         ];
+
+        // For multi-locale posts, ask which language to preview
+        if ($this->record instanceof BlogPost && $this->record->translations()->count() > 1) {
+            $actions[0]->form([
+                Select::make('translation_id')
+                    ->label('Language')
+                    ->options(
+                        $this->record->translations()->pluck('locale', 'id')
+                            ->map(fn ($locale) => app(LocaleService::class)->localeLabel((string) $locale))
+                            ->toArray()
+                    )
+                    ->default($this->record->translations()->value('id'))
+                    ->required(),
+            ]);
+        }
+
+        return $actions;
     }
 
     protected function saveAsDraft(): void

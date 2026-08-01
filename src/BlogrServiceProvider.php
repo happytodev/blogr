@@ -462,6 +462,14 @@ class BlogrServiceProvider extends PackageServiceProvider
 
     protected function registerFrontendRoutes(): void
     {
+        $router = $this->app['router'];
+
+        // 0. POST PREVIEW ROUTE (signed URL, no locale needed)
+        // Must be registered before the catch-all {slug} route so it is not swallowed.
+        $router->get('_preview/post/{translationId}', [BlogController::class, 'preview'])
+            ->middleware(array_merge(config('blogr.route.middleware', ['web']), ['signed']))
+            ->name('blog.post.preview');
+
         $prefix = trim(config('blogr.route.prefix', 'blog'), '/');
         $isHomepage = config('blogr.route.homepage', false);
         $localesEnabled = config('blogr.locales.enabled', false);
