@@ -76,6 +76,11 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - Livewire registration updated for Livewire 4 across core and all plugin packages
 - Testbench upgraded to `^11.0`, Pest remains at `^4.0`
 
+### Notable v2.x features (by release)
+
+- **Blog Post Preview** (v2.1.0) — signed-URL preview (30 min) of a translation's rendered draft before publishing, including unpublished and scheduled posts, via a Preview action in the edit form
+- **Admin Branding** (v2.1.0) — Blogr brand name + logo in the Filament panel header
+
 > **Note**: This section is a living document. New features shipped in v2.x releases will be documented here as they land.
 
 ---

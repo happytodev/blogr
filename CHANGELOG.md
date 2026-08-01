@@ -13,6 +13,13 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Security audit**: add OWASP critical findings report (SECURITY-AUDIT.md)
 
+## [v2.1.0](https://github.com/happytodev/blogr/compare/v2.0.2...v2.1.0) - 2026-08-01
+
+### ✨ Features
+
+- **Blog posts**: preview mode with signed URL (30 min) to view a translation's rendered draft before publishing — works for unpublished and scheduled posts, via a Preview action in the edit form (#331)
+- **Admin**: add Blogr branding (name + logo) to the Filament panel
+
 ## [v2.0.2](https://github.com/happytodev/blogr/compare/v2.0.1...v2.0.2) - 2026-07-08
 
 ### 🐛 Bug Fixes
