@@ -111,6 +111,27 @@ accidental version bumps with unmerged work.
 - Zero tolerance: "skipped" and "passed" are OK; "failed" or "ERROR" means STOP.
 - Report the failure count to the user and tell them what tests failed.
 
+### 5bis. Update RELEASE_NOTES.md (major / minor bumps)
+
+Before version bumping, update `docs/RELEASE_NOTES.md` to reflect the new release:
+
+**For a major bump** (e.g. v2 → v3):
+- Create a new section `## Blogr v3 — Laravel 14 / Filament v6` (infer the Laravel/Filament versions from the new constraints in `composer.json` or ask the user)
+- Move the previous major's status to `🔴 EOL` / `✅ until <6 months from today>` in the Support Policy table
+- Add the new major to the Support Policy table as `🟢 Active`
+- Update the Compatibility Matrix tables (core, plugins, dependencies) to reflect the new major
+- In the new section, document the stack upgrade and any breaking features
+
+**For a minor bump** (e.g. v2.0 → v2.1):
+- Scan all `feat:` commits since the last release for user-facing features
+- Add entries under the current major's section in `docs/RELEASE_NOTES.md`
+- Format each entry as: `- **{Title}** (vX.Y.Z) — short description`
+
+**For a patch bump** (e.g. v2.0.1 → v2.0.2):
+- Skip — patch releases only contain bug fixes that don't warrant release note entries
+
+Do **not** commit the file yet — it will be committed together with CHANGELOG.md in step 7.
+
 ### 6. Update version files (atomic commit)
 
 - **`composer.json`**: Edit the `"version"` field
@@ -146,9 +167,9 @@ Algorithm:
 
 - Use the user-approved release notes content from step 4
 - Keep all other existing entries intact, including the `[Unreleased]` section at the top
-- **Commit** only CHANGELOG.md:
+- **Commit** both `CHANGELOG.md` and `docs/RELEASE_NOTES.md` (updated in step 5bis):
   ```bash
-  git add CHANGELOG.md
+  git add CHANGELOG.md docs/RELEASE_NOTES.md
   git commit -m "docs(changelog): v{version}"
   ```
 
