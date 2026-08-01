@@ -4,6 +4,14 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### ✨ Features
+
+- **Admin**: add Blogr branding (name + logo) to the Filament panel
+
+### 🛡️ Security
+
+- **Security audit**: add OWASP critical findings report (SECURITY-AUDIT.md)
+
 ## [v2.0.2](https://github.com/happytodev/blogr/compare/v2.0.1...v2.0.2) - 2026-07-08
 
 ### 🐛 Bug Fixes
