@@ -21,6 +21,14 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ $seoData['canonical'] ?? url()->current() }}">
 
+    <!-- Hreflang Alternates -->
+    @if (! empty($hreflangUrls) && count($hreflangUrls) > 1)
+        @foreach ($hreflangUrls as $hreflangLocale => $hreflangUrl)
+            <link rel="alternate" hreflang="{{ $hreflangLocale }}" href="{{ $hreflangUrl }}">
+        @endforeach
+        <link rel="alternate" hreflang="x-default" href="{{ $hreflangUrls[config('blogr.locales.default', 'en')] ?? reset($hreflangUrls) }}">
+    @endif
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="{{ $seoData['og_type'] ?? config('blogr.seo.og.type', 'website') }}">
     <meta property="og:url" content="{{ $seoData['canonical'] ?? url()->current() }}">
