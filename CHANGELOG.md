@@ -9,6 +9,7 @@ All notable changes to `blogr` will be documented in this file.
 - **Blog posts**: preview mode with signed URL (30 min) to view a translation's rendered draft before publishing — works for unpublished and scheduled posts, via a Preview action in the edit form (#331)
 - **Admin**: add Blogr branding (name + logo) to the Filament panel
 - **Admin**: add a reload (↻) suffix action on the slug field of all content type forms (blog posts, series, categories, tags, CMS pages) to regenerate the slug from the title/name (#334)
+- **SEO**: emit `<link rel="alternate" hreflang>` cross-language tags (with `x-default`) on localized blog pages — post, index, category, tag and series — using each locale's translated slug (#336)
 
 ### 🛡️ Security
 
