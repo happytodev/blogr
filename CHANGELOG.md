@@ -15,6 +15,13 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Security audit**: add OWASP critical findings report (SECURITY-AUDIT.md)
 
+## [v2.2.0](https://github.com/happytodev/blogr/compare/v2.1.0...v2.2.0) - 2026-08-05
+
+### ✨ Features
+
+- **SEO**: emit `<link rel="alternate" hreflang>` cross-language tags (with `x-default`) on localized blog pages — post, index, category, tag and series — using each locale's translated slug (#336)
+- **Admin**: add a reload (↻) suffix action on the slug field of all content type forms (blog posts, series, categories, tags, CMS pages) to regenerate the slug from the title/name (#334)
+
 ## [v2.1.0](https://github.com/happytodev/blogr/compare/v2.0.2...v2.1.0) - 2026-08-01
 
 ### ✨ Features

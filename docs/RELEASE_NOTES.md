@@ -80,6 +80,8 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 
 - **Blog Post Preview** (v2.1.0) — signed-URL preview (30 min) of a translation's rendered draft before publishing, including unpublished and scheduled posts, via a Preview action in the edit form
 - **Admin Branding** (v2.1.0) — Blogr brand name + logo in the Filament panel header
+- **Hreflang SEO** (v2.2.0) — `<link rel="alternate" hreflang>` cross-language tags (with `x-default`) on localized blog pages, using each locale's translated slug
+- **Slug Reload Action** (v2.2.0) — reload (↻) suffix action on the slug field of all content type forms to regenerate the slug from the title/name
 
 > **Note**: This section is a living document. New features shipped in v2.x releases will be documented here as they land.
 
