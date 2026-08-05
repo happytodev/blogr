@@ -24,9 +24,9 @@ class BlogrInstallShikiCommand extends Command
 
         $this->info('Node.js found at: '.$nodeBin);
 
-        $shikiDir = dirname(__DIR__, 2).'/vendor/spatie/shiki-php/bin';
+        $shikiDir = $this->resolveShikiBinDir();
 
-        if (! is_dir($shikiDir)) {
+        if (! $shikiDir) {
             $this->error('spatie/shiki-php is not installed. Run composer require spatie/shiki-php first.');
 
             return self::FAILURE;
@@ -56,5 +56,32 @@ class BlogrInstallShikiCommand extends Command
         $this->info('Shiki installed successfully.');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Resolve the spatie/shiki-php bin directory.
+     *
+     * When blogr is a composer dependency, the package lives in the consuming
+     * app's vendor directory. When blogr is the root package (development),
+     * it lives in the package-local vendor directory.
+     */
+    public function resolveShikiBinDir(?string $appBasePath = null): ?string
+    {
+        $appBasePath ??= base_path();
+
+        $candidates = [
+            $appBasePath.'/vendor/spatie/shiki-php/bin',
+            dirname(__DIR__, 2).'/vendor/spatie/shiki-php/bin',
+        ];
+
+        foreach ($candidates as $dir) {
+            if (is_dir($dir)) {
+                $resolved = realpath($dir);
+
+                return $resolved === false ? $dir : $resolved;
+            }
+        }
+
+        return null;
     }
 }

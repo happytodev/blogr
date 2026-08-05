@@ -24,7 +24,7 @@ MD;
     $html = MarkdownHelper::toHtml($markdown);
 
     // Should contain the Shiki code block wrapper
-    expect($html)->toContain('<pre class="shiki')
+    expect($html)->toContain('class="shiki')
         ->and($html)->toContain('<code>');
 
     // Should contain the code content

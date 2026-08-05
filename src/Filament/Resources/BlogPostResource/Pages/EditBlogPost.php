@@ -84,6 +84,14 @@ class EditBlogPost extends EditRecord
             }
         }
 
+        // Overlay the draft post-level cover (Post Metadata) so the field
+        // reflects the auto-saved draft instead of the stale DB value.
+        if ($draft && is_array($draft->draft_data) && array_key_exists('photo', $draft->draft_data)) {
+            $postPhoto = $draft->draft_data['photo'];
+            $postPhotoValue = is_array($postPhoto) ? (reset($postPhoto) ?: null) : $postPhoto;
+            $data['photo'] = is_string($postPhotoValue) ? $postPhotoValue : null;
+        }
+
         return $data;
     }
 

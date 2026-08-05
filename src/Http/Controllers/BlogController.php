@@ -298,6 +298,19 @@ class BlogController
             }
         }
 
+        // Overlay the draft post-level cover (Post Metadata) onto the post.
+        // It is used as a fallback by renderPost() when no translation photo is set.
+        $draftData = $draft && is_array($draft->draft_data) ? $draft->draft_data : [];
+        if (array_key_exists('photo', $draftData)) {
+            $postPhoto = $draftData['photo'];
+            $postPhotoValue = is_array($postPhoto) ? (reset($postPhoto) ?: null) : $postPhoto;
+
+            // Translation-specific photos keep priority (set above).
+            if (! $translation->photo) {
+                $post->setAttribute('photo', is_string($postPhotoValue) ? $postPhotoValue : null);
+            }
+        }
+
         app()->setLocale($locale);
 
         return $this->renderPost($translation, $locale, true);
