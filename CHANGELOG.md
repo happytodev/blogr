@@ -15,10 +15,12 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Security audit**: add OWASP critical findings report (SECURITY-AUDIT.md)
 
+## [v2.2.1](https://github.com/happytodev/blogr/compare/v2.2.0...v2.2.1) - 2026-08-05
+
 ### 🐛 Bug Fixes
 
-- **Shiki**: fix `blogr:install-shiki` failing in production by resolving the `spatie/shiki-php` bin from the consuming app's vendor path (#338)
-- **Blog posts**: keep the code-block header/copy bar from overlapping the highlighted text in the Shiki fallback layout (#339)
+- **Shiki**: fix `blogr:install-shiki` failing in production by resolving the `spatie/shiki-php` bin from the consuming app's vendor path instead of the package root (#338)
+- **Blog posts**: keep the code-block language/copy bar from overlapping the highlighted text in the Shiki fallback layout (#339)
 - **Blog posts**: restore the translation-level cover (Post Metadata) in preview mode and when reloading the edit form after auto-save (#340)
 
 ## [v2.2.0](https://github.com/happytodev/blogr/compare/v2.1.0...v2.2.0) - 2026-08-05
