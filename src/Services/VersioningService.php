@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\File;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\FileUploadConfiguration;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class VersioningService
@@ -252,7 +253,45 @@ class VersioningService
             return $result;
         }
 
+        if (is_string($value)) {
+            return static::persistLivewireTempPath($value, $directory);
+        }
+
         return $value;
+    }
+
+    /**
+     * Persist a plain Livewire temporary path (e.g. "livewire-tmp/<uuid>.jpg")
+     * to the final directory on the public disk. The FileUpload field state
+     * can carry such raw temp paths before Filament's native save pipeline
+     * runs; persisting them verbatim would leave broken references.
+     */
+    protected static function persistLivewireTempPath(string $value, string $directory): string
+    {
+        $tempDirectory = config('livewire.temporary_file_upload.directory');
+        $prefix = is_string($tempDirectory) && $tempDirectory !== '' ? $tempDirectory.'/' : 'livewire-tmp/';
+
+        if (! str_starts_with($value, $prefix)) {
+            return $value;
+        }
+
+        $filename = substr($value, strlen($prefix));
+
+        if ($filename === '' || str_contains($filename, '/') || str_contains($filename, '\\')) {
+            return $value;
+        }
+
+        try {
+            $tempFile = FileUploadConfiguration::storage()
+                ->path(FileUploadConfiguration::path($filename));
+
+            $storedPath = Storage::disk('public')
+                ->putFile($directory, new File($tempFile));
+
+            return is_string($storedPath) ? $storedPath : $value;
+        } catch (\Throwable $e) {
+            return $value;
+        }
     }
 
     // ── Internal ──
