@@ -4,6 +4,7 @@ namespace Happytodev\Blogr\Http\Controllers;
 
 use Happytodev\Blogr\Extensions\VideoEmbedAdapter;
 use Happytodev\Blogr\Helpers\ConfigHelper;
+use Happytodev\Blogr\Helpers\LocaleHelper;
 use Happytodev\Blogr\Helpers\SEOHelper;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
@@ -153,11 +154,19 @@ class BlogController
 
         $seoData = SEOHelper::forListingPage('index');
 
+        $hreflangUrls = [];
+        if (config('blogr.locales.enabled', false)) {
+            foreach (LocaleHelper::availableLocales() as $hreflangLocale) {
+                $hreflangUrls[$hreflangLocale] = route('blog.index', ['locale' => $hreflangLocale]);
+            }
+        }
+
         return View::make('blogr::blog.index', [
             'posts' => $posts,
             'featuredSeries' => $featuredSeries,
             'seoData' => $seoData,
             'currentLocale' => $locale,
+            'hreflangUrls' => $hreflangUrls,
         ]);
     }
 
@@ -571,6 +580,7 @@ class BlogController
             'displayData' => $displayData,
             'currentLocale' => $locale,
             'availableTranslations' => $availableTranslations,
+            'hreflangUrls' => $availableTranslations->pluck('url', 'locale')->all(),
             'seoData' => $seoData,
             'permalinkConfig' => $permalinkConfig,
             'tocPosition' => $tocPosition,
@@ -666,12 +676,26 @@ class BlogController
                 return $post;
             });
 
+        $hreflangUrls = [];
+        if ($localesEnabled) {
+            $slugsByLocale = CategoryTranslation::query()
+                ->where('category_id', $category->getKey())
+                ->pluck('slug', 'locale')
+                ->toArray();
+            $baseSlug = $category->getAttribute('slug');
+            foreach (LocaleHelper::availableLocales() as $hreflangLocale) {
+                $slug = $slugsByLocale[$hreflangLocale] ?? $baseSlug;
+                $hreflangUrls[$hreflangLocale] = route('blog.category', ['locale' => $hreflangLocale, 'categorySlug' => $slug]);
+            }
+        }
+
         return View::make('blogr::blog.category', [
             'category' => $category,
             'categoryTranslation' => $categoryTranslation,
             'displayName' => $displayName,
             'posts' => $posts,
             'currentLocale' => $currentLocale,
+            'hreflangUrls' => $hreflangUrls,
             'seoData' => SEOHelper::forListingPage('category', $displayName),
         ]);
     }
@@ -762,12 +786,26 @@ class BlogController
                 return $post;
             });
 
+        $hreflangUrls = [];
+        if ($localesEnabled) {
+            $slugsByLocale = TagTranslation::query()
+                ->where('tag_id', $tag->getKey())
+                ->pluck('slug', 'locale')
+                ->toArray();
+            $baseSlug = $tag->getAttribute('slug');
+            foreach (LocaleHelper::availableLocales() as $hreflangLocale) {
+                $slug = $slugsByLocale[$hreflangLocale] ?? $baseSlug;
+                $hreflangUrls[$hreflangLocale] = route('blog.tag', ['locale' => $hreflangLocale, 'tagSlug' => $slug]);
+            }
+        }
+
         return View::make('blogr::blog.tag', [
             'tag' => $tag,
             'tagTranslation' => $tagTranslation,
             'displayName' => $displayName,
             'posts' => $posts,
             'currentLocale' => $currentLocale,
+            'hreflangUrls' => $hreflangUrls,
             'seoData' => SEOHelper::forListingPage('tag', $displayName),
         ]);
     }
@@ -820,9 +858,17 @@ class BlogController
                 : route('blog.series.index'),
         ];
 
+        $hreflangUrls = [];
+        if (config('blogr.locales.enabled', false)) {
+            foreach (LocaleHelper::availableLocales() as $hreflangLocale) {
+                $hreflangUrls[$hreflangLocale] = route('blog.series.index', ['locale' => $hreflangLocale]);
+            }
+        }
+
         return View::make('blogr::blog.series-index', [
             'series' => $series,
             'currentLocale' => $locale,
+            'hreflangUrls' => $hreflangUrls,
             'seoData' => $seoData,
         ]);
     }
@@ -941,11 +987,20 @@ class BlogController
                 : route('blog.series', ['seriesSlug' => $translatedSlug]),
         ];
 
+        $hreflangUrls = [];
+        if ($localesEnabled) {
+            foreach (LocaleHelper::availableLocales() as $hreflangLocale) {
+                $slug = $series->getTranslatedSlug($hreflangLocale);
+                $hreflangUrls[$hreflangLocale] = route('blog.series', ['locale' => $hreflangLocale, 'seriesSlug' => $slug]);
+            }
+        }
+
         return View::make('blogr::blog.series', [
             'series' => $series,
             'seriesTranslation' => $seriesTranslation,
             'posts' => $posts,
             'currentLocale' => $locale,
+            'hreflangUrls' => $hreflangUrls,
             'seoData' => $seoData,
         ])->with('currentSeries', $series); // Share series for navigation component
     }
