@@ -6,12 +6,15 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Happytodev\Blogr\Filament\Forms\SlugFieldTrait;
 use Happytodev\Blogr\Models\Tag;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class TagForm
 {
+    use SlugFieldTrait;
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -29,7 +32,8 @@ class TagForm
                 TextInput::make('slug')
                     ->required()
                     ->unique(ignoreRecord: true)
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->suffixAction(self::syncSlugFromTitleAction('slug', 'name')),
 
                 Placeholder::make('rss_feed_url')
                     ->label('RSS Feed URL')

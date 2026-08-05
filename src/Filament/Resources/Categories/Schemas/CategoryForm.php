@@ -8,12 +8,15 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Happytodev\Blogr\Filament\Forms\SlugFieldTrait;
 use Happytodev\Blogr\Models\Category;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class CategoryForm
 {
+    use SlugFieldTrait;
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -32,7 +35,8 @@ class CategoryForm
                 TextInput::make('slug')
                     ->required()
                     ->unique('categories', 'slug', ignoreRecord: true)
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->suffixAction(self::syncSlugFromTitleAction('slug', 'name')),
                 Toggle::make('is_default')
                     ->label('Default category')
                     ->default(false),

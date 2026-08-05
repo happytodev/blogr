@@ -11,10 +11,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Happytodev\Blogr\Filament\Forms\SlugFieldTrait;
 use Illuminate\Support\HtmlString;
 
 class BlogSeriesForm
 {
+    use SlugFieldTrait;
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -100,6 +103,7 @@ class BlogSeriesForm
                                     ->maxLength(255)
                                     ->helperText('Optional: Localized URL slug for this language (e.g., "apprendre-laravel" for FR, "learn-laravel" for EN). Falls back to main slug if empty.')
                                     ->placeholder('translated-slug')
+                                    ->suffixAction(self::syncSlugFromTitleAction())
                                     ->columnSpan(2),
 
                                 Textarea::make('description')
