@@ -103,43 +103,52 @@ class VersioningService
                 continue;
             }
 
+            $versionData = array_intersect_key($localeData, array_flip([
+                'title', 'slug', 'content', 'tldr',
+                'seo_title', 'seo_description', 'seo_keywords', 'photo',
+            ]));
+
+            // Convert arrays to strings for storage
+            // photo is a single-file Upload — extract string path from arrays
+            if (isset($versionData['photo'])) {
+                if (is_array($versionData['photo'])) {
+                    $versionData['photo'] = $versionData['photo'][0] ?? null;
+                }
+                // Non-string photo (TemporaryUploadedFile, etc.) → remove to preserve existing value
+                if (! is_string($versionData['photo'])) {
+                    unset($versionData['photo']);
+                }
+            }
+            array_walk($versionData, function (&$value) {
+                if (is_array($value)) {
+                    $value = json_encode($value);
+                }
+            });
+
             $translation = BlogPostTranslation::where('blog_post_id', $post->id)
                 ->where('locale', $locale)
                 ->first();
 
-            if ($translation) {
-                $versionData = array_intersect_key($localeData, array_flip([
-                    'title', 'slug', 'content', 'tldr',
-                    'seo_title', 'seo_description', 'seo_keywords', 'photo',
-                ]));
-
-                // Convert arrays to strings for storage
-                // photo is a single-file Upload — extract string path from arrays
-                if (isset($versionData['photo'])) {
-                    if (is_array($versionData['photo'])) {
-                        $versionData['photo'] = $versionData['photo'][0] ?? null;
-                    }
-                    // Non-string photo (TemporaryUploadedFile, etc.) → remove to preserve existing value
-                    if (! is_string($versionData['photo'])) {
-                        unset($versionData['photo']);
-                    }
-                }
-                array_walk($versionData, function (&$value) {
-                    if (is_array($value)) {
-                        $value = json_encode($value);
-                    }
-                });
-
-                $translation->update($versionData);
-
-                BlogPostVersion::create([
-                    'blog_post_translation_id' => $translation->id,
-                    'version_number' => (BlogPostVersion::where('blog_post_translation_id', $translation->id)->max('version_number') ?? 0) + 1,
+            if (! $translation) {
+                // New locale added to the draft: create the translation so the
+                // newly added language is persisted and not silently dropped.
+                $translation = BlogPostTranslation::create([
+                    'blog_post_id' => $post->id,
+                    'locale' => $locale,
                     ...$versionData,
-                    'categories' => is_array($localeData['categories'] ?? null) ? json_encode($localeData['categories']) : ($localeData['categories'] ?? null),
-                    'tags' => is_array($localeData['tags'] ?? null) ? json_encode($localeData['tags']) : ($localeData['tags'] ?? null),
+                    'reading_time' => $this->calculateReadingTime($versionData['content'] ?? null),
                 ]);
+            } else {
+                $translation->update($versionData);
             }
+
+            BlogPostVersion::create([
+                'blog_post_translation_id' => $translation->id,
+                'version_number' => (BlogPostVersion::where('blog_post_translation_id', $translation->id)->max('version_number') ?? 0) + 1,
+                ...$versionData,
+                'categories' => is_array($localeData['categories'] ?? null) ? json_encode($localeData['categories']) : ($localeData['categories'] ?? null),
+                'tags' => is_array($localeData['tags'] ?? null) ? json_encode($localeData['tags']) : ($localeData['tags'] ?? null),
+            ]);
         }
 
         $draft->delete();
@@ -339,6 +348,18 @@ class VersioningService
         }
 
         return array_map([static::class, 'stripUuidKeys'], $data);
+    }
+
+    protected function calculateReadingTime(?string $content): int
+    {
+        if (empty($content)) {
+            return 0;
+        }
+
+        $wpm = config()->integer('blogr.reading_speed.words_per_minute', 200);
+        $wordCount = str_word_count(strip_tags($content));
+
+        return max(1, (int) ceil($wordCount / $wpm));
     }
 
     protected function isPublished(Model $translation): bool
