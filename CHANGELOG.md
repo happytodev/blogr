@@ -4,6 +4,11 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 🐛 Bug Fixes
+
+- **Blog posts**: tags selected on a published post are now saved when using Save Draft / Save & Publish — the tag pivot was previously dropped because the draft-flow save methods bypassed Filament's relationship sync (#344)
+- **Blog posts**: a cover image uploaded on a specific translation is now persisted to the real storage directory instead of a temporary `livewire-tmp` path that was lost after publishing (#345)
+
 ### ✨ Features
 
 - **Blog posts**: preview mode with signed URL (30 min) to view a translation's rendered draft before publishing — works for unpublished and scheduled posts, via a Preview action in the edit form (#331)

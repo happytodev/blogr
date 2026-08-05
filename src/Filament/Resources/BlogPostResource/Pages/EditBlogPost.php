@@ -184,6 +184,8 @@ class EditBlogPost extends EditRecord
         $record = $this->record;
         $record->update($data);
 
+        $record->tags()->sync($data['tags'] ?? []);
+
         app(VersioningService::class)->savePostDraft($this->record, $data);
 
         $this->lastAutoSaveAt = now()->toIso8601String();
@@ -238,6 +240,8 @@ class EditBlogPost extends EditRecord
         /** @var BlogPost $record */
         $record = $this->record;
         $record->update($data);
+
+        $record->tags()->sync($data['tags'] ?? []);
 
         app(VersioningService::class)->savePostDraft($this->record, $data);
         app(VersioningService::class)->publishPostDraft($this->record, $data['translations'] ?? []);
