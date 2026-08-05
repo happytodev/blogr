@@ -324,7 +324,8 @@
         .dark .shiki { background-color: var(--shiki-dark-bg) !important; }
         .dark .shiki code { background-color: transparent !important; color: var(--shiki-dark) !important; }
         .dark .shiki span { color: var(--shiki-dark) !important; }
-        .shiki-fallback { border-radius: 0.5rem; overflow-x: auto; margin-top: 1.5rem; margin-bottom: 1.5rem; background-color: #1f2937; color: #f3f4f6; padding: 1rem; font-size: 0.875rem; }
+        .shiki-fallback { position: relative; border-radius: 0.5rem; overflow-x: auto; margin-top: 1.5rem; margin-bottom: 1.5rem; background-color: #1f2937; color: #f3f4f6; padding: 1rem; font-size: 0.875rem; }
+        .shiki-fallback[data-language] { padding-top: 2.5rem; }
         .shiki-fallback[data-language]::before { content: attr(data-language); position: absolute; top: 0; left: 0; right: 0; padding: 0.25rem 1rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #9ca3af; background-color: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem 0.5rem 0 0; pointer-events: none; }
         .copy-button { position: absolute; top: 0.25rem; right: 0.5rem; z-index: 10; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 500; color: #6b7280; background: transparent; border: 1px solid transparent; border-radius: 0.25rem; cursor: pointer; opacity: 0; transition: opacity 0.2s, color 0.2s, background 0.2s, border-color 0.2s; }
         .shiki:hover .copy-button, .shiki-fallback:hover .copy-button { opacity: 1; }
