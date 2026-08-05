@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Happytodev\Blogr\Filament\Components\CalloutMarkdownEditor;
+use Happytodev\Blogr\Filament\Forms\SlugFieldTrait;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
@@ -27,6 +28,8 @@ use Illuminate\Support\Str;
 
 class BlogPostForm
 {
+    use SlugFieldTrait;
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -70,6 +73,7 @@ class BlogPostForm
                                     ->unique(ignoreRecord: true)
                                     ->maxLength(255)
                                     ->helperText('URL-friendly version of the title')
+                                    ->suffixAction(self::syncSlugFromTitleAction())
                                     ->columnSpan(2),
 
                                 FileUpload::make('photo')
@@ -301,7 +305,8 @@ class BlogPostForm
                                     ->required()
                                     ->unique('categories', 'slug')
                                     ->maxLength(255)
-                                    ->helperText('URL-friendly version of the name'),
+                                    ->helperText('URL-friendly version of the name')
+                                    ->suffixAction(self::syncSlugFromTitleAction('slug', 'name')),
 
                                 Toggle::make('is_default')
                                     ->label('Set as Default Category')
@@ -337,7 +342,8 @@ class BlogPostForm
                                 TextInput::make('slug')
                                     ->required()
                                     ->unique()
-                                    ->maxLength(255),
+                                    ->maxLength(255)
+                                    ->suffixAction(self::syncSlugFromTitleAction('slug', 'name')),
                             ]),
 
                         // Blog Series fields

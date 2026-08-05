@@ -9,6 +9,7 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
+use Happytodev\Blogr\Filament\Forms\SlugFieldTrait;
 use Happytodev\Blogr\Filament\Resources\CmsPageResource;
 use Happytodev\Blogr\Filament\Resources\CmsPages\CmsBlockBuilder;
 use Happytodev\Blogr\Models\CmsPage;
@@ -25,6 +26,7 @@ use Illuminate\Support\Str;
 class EditCmsPageTranslation extends EditRecord
 {
     use AutoSave;
+    use SlugFieldTrait;
 
     protected static string $resource = CmsPageResource::class;
 
@@ -66,6 +68,7 @@ class EditCmsPageTranslation extends EditRecord
                 ->required()
                 ->maxLength(255)
                 ->helperText(__('URL traduite de la page'))
+                ->suffixAction($this->syncSlugFromTitleAction())
                 ->columnSpan(2),
 
             Forms\Components\Textarea::make('excerpt')
