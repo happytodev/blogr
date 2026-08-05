@@ -95,6 +95,11 @@ class VersioningService
         }
 
         $data = $draft->draft_data;
+
+        if (isset($data['tags']) && is_array($data['tags'])) {
+            $post->tags()->sync($data['tags']);
+        }
+
         $translations = $data['translations'] ?? [];
 
         foreach ($translations as $localeData) {
