@@ -15,6 +15,8 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Security audit**: add OWASP critical findings report (SECURITY-AUDIT.md)
 
+## [v2.2.2](https://github.com/happytodev/blogr/compare/v2.2.1...v2.2.2) - 2026-08-05
+
 ### 🐛 Bug Fixes
 
 - **Blog posts**: persist a newly added translation (e.g. adding English to a French post) when saving or publishing — `publishPostDraft` now creates the translation row instead of silently dropping it, so the new language is no longer lost (#342)
