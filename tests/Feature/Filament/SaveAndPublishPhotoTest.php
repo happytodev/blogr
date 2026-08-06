@@ -6,12 +6,16 @@ use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Tests\CmsTestCase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
 uses(CmsTestCase::class);
 
 beforeEach(function () {
+    Storage::fake('public');
+
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
 
     $admin = User::factory()->create();
@@ -20,6 +24,12 @@ beforeEach(function () {
 
     $category = Category::factory()->create();
     $this->category = $category;
+
+    // The stored cover files must exist on the public disk so the FileUpload
+    // field can hydrate them (otherwise the field state is an empty array).
+    foreach (['general-image.jpg', 'translation-image.jpg', 'en.jpg', 'fr.jpg', 'general.jpg', 'newly-uploaded.jpg', 'old.jpg', 'new.jpg'] as $name) {
+        Storage::disk('public')->put('blog-photos/'.$name, UploadedFile::fake()->image($name, 1200, 630)->get());
+    }
 
     $this->post = BlogPost::factory()->create([
         'user_id' => $admin->id,

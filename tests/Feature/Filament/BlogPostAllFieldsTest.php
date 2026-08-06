@@ -6,6 +6,8 @@ use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\User;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Tests\CmsTestCase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ViewErrorBag;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
@@ -13,6 +15,8 @@ use Spatie\Permission\Models\Role;
 uses(CmsTestCase::class);
 
 beforeEach(function () {
+    Storage::fake('public');
+
     Role::create(['name' => 'admin', 'guard_name' => 'web']);
 
     $admin = User::factory()->create();
@@ -25,6 +29,9 @@ beforeEach(function () {
 });
 
 test('regression_264_photo_survives_save_and_publish', function () {
+    Storage::disk('public')->put('blog-photos/test-image.jpg', UploadedFile::fake()->image('test-image.jpg', 1200, 630)->get());
+    Storage::disk('public')->put('blog-photos/translation-image.jpg', UploadedFile::fake()->image('translation-image.jpg', 1200, 630)->get());
+
     $post = BlogPost::factory()->create([
         'user_id' => auth()->id(),
         'category_id' => $this->category->id,
@@ -106,6 +113,9 @@ test('regression_264_photo_survives_save_draft', function () {
 });
 
 test('regression_264_all_fields_survive_publish', function () {
+    Storage::disk('public')->put('blog-photos/main-image.jpg', UploadedFile::fake()->image('main-image.jpg', 1200, 630)->get());
+    Storage::disk('public')->put('blog-photos/translation-image.jpg', UploadedFile::fake()->image('translation-image.jpg', 1200, 630)->get());
+
     $post = BlogPost::factory()->create([
         'user_id' => auth()->id(),
         'category_id' => $this->category->id,
