@@ -4,6 +4,11 @@ All notable changes to `blogr` will be documented in this file.
 
 ## [Unreleased]
 
+### 🐛 Bug Fixes
+
+- **Blog posts**: clearing a translation cover image now persists — the deletion is stored instead of reappearing after saving (#347)
+- **Blog posts**: a cover image uploaded on a translation added after publication is now saved on publish; Filament v5's UUID-keyed file state is handled correctly (#348)
+
 ### ✨ Features
 
 - **Blog posts**: preview mode with signed URL (30 min) to view a translation's rendered draft before publishing — works for unpublished and scheduled posts, via a Preview action in the edit form (#331)
