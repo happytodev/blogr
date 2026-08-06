@@ -114,14 +114,23 @@ class VersioningService
                 'seo_title', 'seo_description', 'seo_keywords', 'photo',
             ]));
 
-            // Convert arrays to strings for storage
-            // photo is a single-file Upload — extract string path from arrays
-            if (isset($versionData['photo'])) {
+            // Convert arrays to strings for storage.
+            // photo is a single-file upload — its state can be a list
+            // (['path.jpg']) or a UUID-keyed map (['uuid' => 'path.jpg'])
+            // depending on Filament's FileUpload version. Resolve the first
+            // value regardless of the key format.
+            if (array_key_exists('photo', $versionData)) {
                 if (is_array($versionData['photo'])) {
-                    $versionData['photo'] = $versionData['photo'][0] ?? null;
+                    $versionData['photo'] = ! empty($versionData['photo']) && is_string($versionData['photo'][array_key_first($versionData['photo'])])
+                        ? $versionData['photo'][array_key_first($versionData['photo'])]
+                        : null;
                 }
-                // Non-string photo (TemporaryUploadedFile, etc.) → remove to preserve existing value
-                if (! is_string($versionData['photo'])) {
+
+                // Keep a non-empty string, or null when the cover was
+                // explicitly cleared so the deletion is persisted. Drop any
+                // other value (e.g. an unpersisted upload) to preserve the
+                // existing photo.
+                if (! is_string($versionData['photo']) && ! is_null($versionData['photo'])) {
                     unset($versionData['photo']);
                 }
             }
