@@ -33,6 +33,10 @@ enum CmsBlockType: string implements HasLabel
     case ARTIST_BIO = 'artist_bio';
     case MEDIA_TEXT = 'media_text';
 
+    case COMPARISON = 'comparison';
+
+    case INSTALL = 'install';
+
     public function getLabel(): string
     {
         return match ($this) {
@@ -62,6 +66,8 @@ enum CmsBlockType: string implements HasLabel
             self::PRICING_COMMISSIONS => __('Pricing Commissions'),
             self::ARTIST_BIO => __('Artist Bio'),
             self::MEDIA_TEXT => __('Media + Text'),
+            self::COMPARISON => __('Comparison Table'),
+            self::INSTALL => __('Installation Steps'),
         };
     }
 
@@ -94,6 +100,8 @@ enum CmsBlockType: string implements HasLabel
             self::PRICING_COMMISSIONS => __('Commission pricing showcase with images, prices and availability status'),
             self::ARTIST_BIO => __('Artist profile with avatar, biography and social links'),
             self::MEDIA_TEXT => __('An image beside rich text and an optional list, alternating sides'),
+            self::COMPARISON => __('Options compared side by side, one row per criterion'),
+            self::INSTALL => __('Numbered install steps, one command per platform, with a copy button'),
         };
     }
 
@@ -126,6 +134,8 @@ enum CmsBlockType: string implements HasLabel
             self::PRICING_COMMISSIONS => 'heroicon-o-shopping-bag',
             self::ARTIST_BIO => 'heroicon-o-user-circle',
             self::MEDIA_TEXT => 'heroicon-o-photo',
+            self::COMPARISON => 'heroicon-o-table-cells',
+            self::INSTALL => 'heroicon-o-command-line',
         };
     }
 }

@@ -48,6 +48,8 @@ class CmsBlockBuilder
             self::pricingCommissionsBlock(),
             self::artistBioBlock(),
             self::mediaTextBlock(),
+            self::comparisonBlock(),
+            self::installBlock(),
             self::transitionDiagonalBlock(),
             self::blogTitleBlock(),
         ];
@@ -1823,6 +1825,183 @@ class CmsBlockBuilder
                 self::getBackgroundFields(),
             ])
             ->columns(1);
+    }
+
+    protected static function comparisonBlock(): Block
+    {
+        return Block::make(CmsBlockType::COMPARISON->value)
+            ->label(CmsBlockType::COMPARISON->getLabel())
+            ->icon(CmsBlockType::COMPARISON->getIcon())
+            ->schema(fn () => [
+                Section::make(__('Comparison'))
+                    ->schema(fn () => [
+                        TextInput::make('eyebrow')
+                            ->label(__('Eyebrow'))
+                            ->maxLength(60)
+                            ->helperText(__('Small label above the heading. Optional.')),
+
+                        TextInput::make('heading')
+                            ->label(__('Heading'))
+                            ->maxLength(255),
+
+                        Textarea::make('intro')
+                            ->label(__('Intro'))
+                            ->rows(2)
+                            ->columnSpan(2),
+
+                        TextInput::make('verdict_label')
+                            ->label(__('Verdict label'))
+                            ->maxLength(60)
+                            ->helperText(__('Word shown in front of the summary line.')),
+
+                        Toggle::make('mobile_tabs')
+                            ->label(__('One column at a time on mobile'))
+                            ->default(false),
+
+                        Repeater::make('columns')
+                            ->label(__('Columns'))
+                            ->schema([
+                                TextInput::make('name')->label(__('Name'))->maxLength(60)->required(),
+                                TextInput::make('tagline')->label(__('Tagline'))->maxLength(120),
+                                TextInput::make('badge')->label(__('Badge'))->maxLength(40),
+                                Toggle::make('highlight')->label(__('Highlight this column')),
+                            ])
+                            ->addActionLabel(__('Add a column'))
+                            ->reorderable()
+                            ->columnSpan(2),
+
+                        Repeater::make('rows')
+                            ->label(__('Rows'))
+                            ->schema([
+                                TextInput::make('label')
+                                    ->label(__('Row label'))
+                                    ->maxLength(120)
+                                    ->required(),
+
+                                Repeater::make('cells')
+                                    ->label(__('Cells'))
+                                    ->simple(
+                                        TextInput::make('cell')->label(__('Cell')),
+                                    )
+                                    ->helperText(__('One cell per column, in the same order as the columns above.')),
+                            ])
+                            ->addActionLabel(__('Add a row'))
+                            ->columnSpan(2),
+
+                        TextInput::make('ahead.title')
+                            ->label(__('What the others do better — title'))
+                            ->maxLength(255)
+                            ->columnSpan(2),
+
+                        Repeater::make('ahead.items')
+                            ->label(__('What the others do better — items'))
+                            ->simple(
+                                TextInput::make('item')->label(__('Item')),
+                            )
+                            ->addActionLabel(__('Add an item'))
+                            ->columnSpan(2),
+
+                        Textarea::make('closing')
+                            ->label(__('Closing line'))
+                            ->rows(2)
+                            ->columnSpan(2),
+
+                        TextInput::make('footnote')
+                            ->label(__('Footnote'))
+                            ->maxLength(255)
+                            ->columnSpan(2),
+
+                        Repeater::make('ctas')
+                            ->label(__('Call-to-action buttons'))
+                            ->schema([
+                                TextInput::make('text')->label(__('Label'))->maxLength(60),
+                                TextInput::make('url')->label(__('URL'))->maxLength(255),
+                                Select::make('style')
+                                    ->label(__('Style'))
+                                    ->options([
+                                        'primary' => __('Primary'),
+                                        'secondary' => __('Secondary'),
+                                        'ghost' => __('Ghost'),
+                                    ])
+                                    ->default('primary'),
+                            ])
+                            ->addActionLabel(__('Add a button'))
+                            ->columnSpan(2),
+                    ]),
+            ]);
+    }
+
+    protected static function installBlock(): Block
+    {
+        return Block::make(CmsBlockType::INSTALL->value)
+            ->label(CmsBlockType::INSTALL->getLabel())
+            ->icon(CmsBlockType::INSTALL->getIcon())
+            ->schema(fn () => [
+                Section::make(__('Installation'))
+                    ->schema(fn () => [
+                        TextInput::make('eyebrow')
+                            ->label(__('Eyebrow'))
+                            ->maxLength(60)
+                            ->helperText(__('Small label above the heading. Optional.')),
+
+                        TextInput::make('heading')
+                            ->label(__('Heading'))
+                            ->maxLength(255),
+
+                        Repeater::make('steps')
+                            ->label(__('Steps'))
+                            ->schema([
+                                TextInput::make('cmd')
+                                    ->label(__('Command'))
+                                    ->maxLength(255)
+                                    ->required(),
+
+                                TextInput::make('note')
+                                    ->label(__('Note'))
+                                    ->maxLength(255),
+                            ])
+                            ->addActionLabel(__('Add a step'))
+                            ->columnSpan(2),
+
+                        Repeater::make('rows')
+                            ->label(__('Other platforms'))
+                            ->schema([
+                                TextInput::make('os')->label(__('Platform'))->maxLength(60),
+                                TextInput::make('cmd')->label(__('Command'))->maxLength(255),
+                                TextInput::make('hint')->label(__('Hint'))->maxLength(120),
+                            ])
+                            ->addActionLabel(__('Add a platform'))
+                            ->columnSpan(2),
+
+                        TextInput::make('copy')
+                            ->label(__('Copy button label'))
+                            ->maxLength(40)
+                            ->default(__('Copy')),
+
+                        TextInput::make('copied')
+                            ->label(__('Confirmation label'))
+                            ->maxLength(40)
+                            ->default(__('Copied')),
+
+                        TextInput::make('download_label')
+                            ->label(__('Download button label'))
+                            ->maxLength(60),
+
+                        TextInput::make('download_text')
+                            ->label(__('Download note'))
+                            ->maxLength(255),
+
+                        TextInput::make('download_url')
+                            ->label(__('Download URL'))
+                            ->maxLength(255)
+                            ->helperText(__('Leave empty to hide the download button.')),
+
+                        Textarea::make('after')
+                            ->label(__('Line after the commands'))
+                            ->rows(2)
+                            ->columnSpan(2),
+                    ]),
+            ]);
     }
 
     protected static function transitionDiagonalBlock(): Block
