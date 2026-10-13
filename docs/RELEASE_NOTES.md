@@ -73,7 +73,7 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 ### v2.4.0 — 2026-10-13
 
 - **Comparison table** (v2.4.0) — options side by side, one row per criterion: columns with an optional badge and tagline, rows of cells whose length follows the number of columns, a "what the others do better" list, call-to-action buttons, a closing line and a footnote.
-- **Installation steps** (v2.4.0) — numbered steps, one command per platform, a copy button that confirms itself with its own label, and an optional download link. Every label comes from the block, so a page can be written in any language.
+- **Installation steps** (v2.4.0) — numbered steps, one command per platform, a copy button that confirms itself with its own label, and an optional download link. Every label comes from the block, so a page can be written in any language. Each platform also carries its own terminal chrome.
 
 ### v2.3.0 — 2026-10-13
 

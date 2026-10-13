@@ -20,7 +20,7 @@ All notable changes to `blogr` will be documented in this file.
 ### ✨ Features
 
 - **Comparison table**: options side by side, one row per criterion. Columns carry an optional badge and tagline; each row carries a label and one cell per column, aligned by position. Plus a "what the others do better" list, call-to-action buttons, a closing line and a footnote.
-- **Installation steps**: numbered steps, one command per platform, a copy button that confirms itself with its own label, and an optional download link. The button labels and the link all come from the block, so a page can be written in any language, and leaving the link empty hides the button.
+- **Installation steps**: numbered steps, one command per platform, a copy button that confirms itself with its own label, and an optional download link. The button labels and the link all come from the block, so a page can be written in any language, and leaving the link empty hides the button. Each platform also carries its own terminal chrome: macOS traffic lights on the left, Linux window buttons on the right in a title bar, Windows caption buttons flush to the right with a PowerShell prompt.
 
 ## [v2.3.0](https://github.com/happytodev/blogr/compare/v2.2.4...v2.3.0) - 2026-10-13
 
