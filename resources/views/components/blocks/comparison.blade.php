@@ -1,12 +1,18 @@
 {{--
     Bloc `comparison` — un tableau d'options côte à côte, une ligne par critère.
 
-    Deux familles de données à ne pas confondre :
-    - les listes (columns, rows, cells, ctas, ahead.items) peuvent revenir de
-      l'éditeur de contenu avec des clés UUID une fois le bloc retouché dans
-      l'admin. On ne lit donc jamais une clé comme une position : array_values().
-    - rows[i].cells[j] se lit en regard de columns[j]. C'est un tableau au sens
-      strict : la vue aligne les cellules sur les en-têtes dans l'ordre donné.
+    Formes réelles des données, relevées sur une page en production :
+    - rows[i].cells[j] = { text: '…', sub?: '…' } — un OBJET par cellule, pas une
+      chaîne. `sub` est une ligne plus petite, optionnelle.
+    - ahead.items[i]   = { name: '…', text: '…' }
+    - mobile_tabs      = une liste de libellés d'onglets ("Phage vs Herd"), et non
+      un booléen.
+    On tolère malgré tout une chaîne nue là où un objet est attendu : elle
+    s'affiche telle quelle au lieu de casser la page.
+
+    Et comme partout ailleurs, array_values() : l'éditeur de contenu réécrit les
+    listes avec des clés UUID dès que le bloc est retouché dans l'admin, donc on
+    ne lit jamais une clé comme une position.
 --}}
 @php
     $eyebrow = $data['eyebrow'] ?? null;
@@ -20,9 +26,18 @@
     $aheadItems = is_array($ahead) ? array_values($ahead['items'] ?? []) : [];
     $closing = $data['closing'] ?? null;
     $footnote = $data['footnote'] ?? null;
-    $stacked = (bool) ($data['mobile_tabs'] ?? false);
+    $tabLabels = array_values(array_filter((array) ($data['mobile_tabs'] ?? []), 'is_scalar'));
     $ctas = array_values($data['ctas'] ?? []);
-    $stackedClasses = $stacked ? 'block md:table' : 'table';
+
+    // Objet (la forme réelle) ou chaîne (formes plus anciennes) : on ramène tout
+    // à deux chaînes, pour que la vue ne dépende pas de la forme reçue.
+    $renderCell = function ($cell): array {
+        if (is_array($cell)) {
+            return ['text' => $cell['text'] ?? '', 'sub' => $cell['sub'] ?? ''];
+        }
+
+        return ['text' => is_scalar($cell) ? (string) $cell : '', 'sub' => ''];
+    };
 @endphp
 
 <section class="mx-auto max-w-7xl px-5 py-16 sm:py-24 lg:px-8">
@@ -42,7 +57,7 @@
 
     @if(count($columns))
         <div class="mt-12 overflow-x-auto">
-            <table class="{{ $stackedClasses }} w-full border-collapse text-left">
+            <table class="w-full border-collapse text-left">
                 <thead>
                     <tr class="border-b border-gray-200 dark:border-gray-700">
                         <th scope="col" class="px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -70,13 +85,25 @@
                                 {{ $row['label'] ?? '' }}
                             </th>
                             @foreach(array_values($row['cells'] ?? []) as $cell)
-                                <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{{ $cell }}</td>
+                                @php($c = $renderCell($cell))
+                                <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                                    {{ $c['text'] }}
+                                    @if($c['sub'])
+                                        <span class="mt-1 block text-xs text-gray-500 dark:text-gray-400">{{ $c['sub'] }}</span>
+                                    @endif
+                                </td>
                             @endforeach
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
+    @endif
+
+    @if(count($tabLabels))
+        <p class="mt-6 text-center font-mono text-[11.5px] text-gray-500 dark:text-gray-400">
+            {{ implode(' · ', $tabLabels) }}
+        </p>
     @endif
 
     @if($aheadTitle || count($aheadItems))
@@ -86,11 +113,17 @@
             @endif
 
             @if(count($aheadItems))
-                <ul class="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                <ul class="mt-3 space-y-3 text-sm text-gray-600 dark:text-gray-300">
                     @foreach($aheadItems as $item)
-                        <li class="flex gap-2">
-                            <span aria-hidden="true">—</span>
-                            <span>{{ $item }}</span>
+                        <li>
+                            @if(is_array($item))
+                                @if(!empty($item['name']))
+                                    <span class="font-medium text-gray-900 dark:text-white">{{ $item['name'] }}</span>
+                                @endif
+                                <span class="block">{{ $item['text'] ?? '' }}</span>
+                            @else
+                                {{ $item }}
+                            @endif
                         </li>
                     @endforeach
                 </ul>

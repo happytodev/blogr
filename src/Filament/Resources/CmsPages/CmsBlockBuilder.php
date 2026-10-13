@@ -1854,9 +1854,14 @@ class CmsBlockBuilder
                             ->maxLength(60)
                             ->helperText(__('Word shown in front of the summary line.')),
 
-                        Toggle::make('mobile_tabs')
-                            ->label(__('One column at a time on mobile'))
-                            ->default(false),
+                        Repeater::make('mobile_tabs')
+                            ->label(__('Mobile tab labels'))
+                            ->simple(
+                                TextInput::make('label')->label(__('Tab')),
+                            )
+                            ->helperText(__('One label per pair compared on mobile (for example "Phage vs Herd"). Leave empty to show the table as is.'))
+                            ->addActionLabel(__('Add a tab'))
+                            ->columnSpan(2),
 
                         Repeater::make('columns')
                             ->label(__('Columns'))
@@ -1880,10 +1885,19 @@ class CmsBlockBuilder
 
                                 Repeater::make('cells')
                                     ->label(__('Cells'))
-                                    ->simple(
-                                        TextInput::make('cell')->label(__('Cell')),
-                                    )
-                                    ->helperText(__('One cell per column, in the same order as the columns above.')),
+                                    ->schema([
+                                        TextInput::make('text')
+                                            ->label(__('Text'))
+                                            ->maxLength(255)
+                                            ->helperText(__('A word wrapped in *asterisks* is emphasised.')),
+
+                                        TextInput::make('sub')
+                                            ->label(__('Sub note'))
+                                            ->maxLength(255)
+                                            ->helperText(__('Smaller line under the cell. Optional.')),
+                                    ])
+                                    ->helperText(__('One cell per column, in the same order as the columns above.'))
+                                    ->addActionLabel(__('Add a cell')),
                             ])
                             ->addActionLabel(__('Add a row'))
                             ->columnSpan(2),
@@ -1895,9 +1909,17 @@ class CmsBlockBuilder
 
                         Repeater::make('ahead.items')
                             ->label(__('What the others do better — items'))
-                            ->simple(
-                                TextInput::make('item')->label(__('Item')),
-                            )
+                            ->schema([
+                                TextInput::make('name')
+                                    ->label(__('Tool'))
+                                    ->maxLength(60)
+                                    ->required(),
+
+                                Textarea::make('text')
+                                    ->label(__('What it does better'))
+                                    ->rows(2)
+                                    ->required(),
+                            ])
                             ->addActionLabel(__('Add an item'))
                             ->columnSpan(2),
 
