@@ -6,13 +6,66 @@ use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
+// ─── ISOLATION ──────────────────────────────────────────────
+//
+// Les tests de ce fichier appellent BlogrSettings::save(), qui écrit dans le
+// vrai .env de l'application de test ET pousse BLOGR_ADMIN_PATH dans
+// l'environnement du processus. config/blogr.php se contentant d'un
+// env('BLOGR_ADMIN_PATH', 'admin'), le test « default value » lisait ensuite la
+// valeur laissée par celui qui venait de tourner — 'admin2026' un jour,
+// 'from-property' le lendemain, selon l'ordre.
+//
+// On remet donc les deux en état après chaque test : le fichier et la variable.
+
+beforeEach(function () {
+    $this->envPath = base_path('.env');
+    $this->envExisted = File::exists($this->envPath);
+    $this->envOriginal = $this->envExisted ? File::get($this->envPath) : null;
+    $this->adminPathOriginal = getenv('BLOGR_ADMIN_PATH');
+});
+
+afterEach(function () {
+    if ($this->envExisted) {
+        File::put($this->envPath, $this->envOriginal);
+    } elseif (File::exists($this->envPath)) {
+        File::delete($this->envPath);
+    }
+
+    if ($this->adminPathOriginal === false) {
+        putenv('BLOGR_ADMIN_PATH');
+        unset($_ENV['BLOGR_ADMIN_PATH'], $_SERVER['BLOGR_ADMIN_PATH']);
+    } else {
+        putenv('BLOGR_ADMIN_PATH='.$this->adminPathOriginal);
+        $_ENV['BLOGR_ADMIN_PATH'] = $this->adminPathOriginal;
+        $_SERVER['BLOGR_ADMIN_PATH'] = $this->adminPathOriginal;
+    }
+});
+
 // ─── CONFIG ─────────────────────────────────────────────
 
 test('admin_path key exists in blogr config with default value', function () {
-    $config = require __DIR__.'/../../config/blogr.php';
+    // Ce test parle du DÉFAUT du fichier de config : il doit donc se placer dans
+    // les conditions du défaut. config/blogr.php ne fait qu'un
+    // env('BLOGR_ADMIN_PATH', 'admin'), donc il répond au sujet de l'environnement
+    // — or les tests de ce fichier ont de bonnes raisons d'écrire cette variable.
+    // Sans la neutraliser, on ne lit pas le défaut mais ce que le test précédent
+    // a laissé, et le résultat dépend de l'ordre d'exécution.
+    $original = getenv('BLOGR_ADMIN_PATH');
+    putenv('BLOGR_ADMIN_PATH');
+    unset($_ENV['BLOGR_ADMIN_PATH'], $_SERVER['BLOGR_ADMIN_PATH']);
 
-    expect($config)->toHaveKey('admin_path');
-    expect($config['admin_path'])->toBe('admin');
+    try {
+        $config = require __DIR__.'/../../config/blogr.php';
+
+        expect($config)->toHaveKey('admin_path');
+        expect($config['admin_path'])->toBe('admin');
+    } finally {
+        if ($original !== false) {
+            putenv('BLOGR_ADMIN_PATH='.$original);
+            $_ENV['BLOGR_ADMIN_PATH'] = $original;
+            $_SERVER['BLOGR_ADMIN_PATH'] = $original;
+        }
+    }
 });
 
 test('admin_path can be overridden by config', function () {

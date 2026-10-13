@@ -262,6 +262,14 @@ it('export includes translation photos in media files', function () {
 });
 
 it('export includes users with their roles', function () {
+    // Le test lit le fichier le plus récent du dossier d'export. Sans le vider,
+    // il peut lire l'export d'un test passé avant lui, pris à un moment où ces
+    // utilisateurs n'existaient pas encore.
+    $exportDir = storage_path('app/blogr-exports');
+    if (File::exists($exportDir)) {
+        File::cleanDirectory($exportDir);
+    }
+
     // Setup roles
     Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
     Role::firstOrCreate(['name' => 'writer', 'guard_name' => 'web']);
