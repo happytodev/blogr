@@ -602,12 +602,122 @@ class EditCmsPageTranslation extends EditRecord
             ->send();
     }
 
+    /**
+     * Le formulaire ne connait qu'une partie des cles d'un bloc : celles qu'il expose.
+     * Ecrire le brouillon avec les seules donnees du formulaire supprimerait tout le reste
+     * — le terminal du hero, les colonnes et les cellules de la comparaison, les pieds de
+     * table, les libelles d'onglets. C'est ce qui cassait les pages apres un enregistrement.
+     *
+     * On fusionne donc : les valeurs du formulaire gagnent, les cles qu'il ne touche pas sont
+     * conservees telles quelles.
+     */
+    protected function keepUntouchedKeys(array $data): array
+    {
+        $published = $this->record?->blocks;
+
+        if (! is_array($published) || $published === [] || ! isset($data['blocks']) || ! is_array($data['blocks'])) {
+            return $data;
+        }
+
+        $data['blocks'] = $this->mergeBlocksWithPublished($published, $data['blocks']);
+
+        return $data;
+    }
+
+    protected function mergeBlocksWithPublished(array $published, array $incoming): array
+    {
+        $publishedByPosition = array_values($published);
+        $positions = array_keys($incoming);
+
+        foreach ($incoming as $key => $block) {
+            $position = array_search($key, $positions, true);
+            $previous = $publishedByPosition[$position] ?? null;
+
+            if (! is_array($block) || ! is_array($previous)) {
+                continue;
+            }
+
+            if (($previous['type'] ?? null) !== ($block['type'] ?? null)) {
+                continue;
+            }
+
+            $incoming[$key]['data'] = $this->mergeKeepingUntouched(
+                $previous['data'] ?? [],
+                is_array($block['data'] ?? null) ? $block['data'] : []
+            );
+        }
+
+        return $incoming;
+    }
+
+    /**
+     * @param  array<mixed>  $previous  donnees publiees
+     * @param  array<mixed>  $incoming  donnees du formulaire
+     * @return array<mixed>
+     */
+    protected function mergeKeepingUntouched(array $previous, array $incoming): array
+    {
+        if ($previous === []) {
+            return $incoming;
+        }
+
+        if ($this->isSequence($previous) && $this->isSequence($incoming)) {
+            // Les cles du formulaire (UUID) sont conservees ; l'appariement se fait au rang.
+            $previousValues = array_values($previous);
+            $incomingKeys = array_keys($incoming);
+            $merged = [];
+
+            foreach (array_values($incoming) as $position => $value) {
+                $before = $previousValues[$position] ?? null;
+
+                $merged[$incomingKeys[$position]] = is_array($before) && is_array($value)
+                    ? $this->mergeKeepingUntouched($before, $value)
+                    : $value;
+            }
+
+            return $merged;
+        }
+
+        $merged = $incoming;
+
+        foreach ($previous as $key => $value) {
+            if (! array_key_exists($key, $merged)) {
+                $merged[$key] = $value;
+
+                continue;
+            }
+
+            if (is_array($value) && is_array($merged[$key])) {
+                $merged[$key] = $this->mergeKeepingUntouched($value, $merged[$key]);
+            }
+        }
+
+        return $merged;
+    }
+
+    protected function isSequence(mixed $value): bool
+    {
+        if (! is_array($value) || $value === []) {
+            return false;
+        }
+
+        if (array_is_list($value)) {
+            return true;
+        }
+
+        // Une suite est un tableau dont aucune cle n'est un nom de champ : les cles generees
+        // par le formulaire (UUID et autres identifiants) ne ressemblent pas a du snake_case.
+        return ! collect(array_keys($value))->every(
+            fn ($key) => is_string($key) && preg_match('/^[a-z][a-z0-9_]*$/', $key) === 1
+        );
+    }
+
     public function save(?bool $shouldRedirect = null, bool $shouldSendNotification = true): void
     {
         $data = $this->data ?? [];
 
         if ($this->record && $this->record->page?->is_published) {
-            app(VersioningService::class)->saveDraft($this->record, $data);
+            app(VersioningService::class)->saveDraft($this->record, $this->keepUntouchedKeys($data));
 
             $this->lastAutoSaveAt = now()->toIso8601String();
             $this->hasUnsavedChanges = false;

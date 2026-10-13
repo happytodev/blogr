@@ -2,6 +2,18 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.5.0] - 2026-10-13
+
+### 🐛 Bug Fixes
+
+- Saving a published page from the admin no longer deletes the block data the form does not
+  expose. The draft is now **merged with the published blocks** instead of replacing them.
+  Until now, saving a page silently emptied every key its block form did not declare — the
+  hero's terminal lines, the comparison's columns and cells, table footnotes, and so on — and
+  the rendered page broke until the data was restored by hand.
+- The `pricing` block's `features` field now stores `feature` objects, matching the shape the
+  block's own views and the seeded data already used, instead of a bare list of strings.
+
 ## [Unreleased]
 
 ### ✨ Features

@@ -700,11 +700,11 @@ class CmsBlockBuilder
 
                                 Repeater::make('features')
                                     ->label(__('Features'))
-                                    ->simple(
-                                        TextInput::make('feature')
-                                            ->required()
-                                            ->placeholder(__('Feature description'))
-                                    )
+                                    ->schema([
+                                          TextInput::make('feature')
+                                              ->required()
+                                              ->placeholder(__('Feature description')),
+                                      ])
                                     ->defaultItems(3)
                                     ->columnSpan(2),
 

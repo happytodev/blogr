@@ -70,6 +70,17 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.5.0 — 2026-10-13
+
+**Saving a page no longer eats its content.** Editing a CMS page in the admin used to write a
+draft built only from the fields the block form declares. Everything else — terminal lines,
+comparison columns and cells, footnotes, table captions — was dropped, and the page rendered
+broken until the data was restored by hand. The draft is now merged with the published blocks,
+so whatever the form does not touch is kept as it was.
+
+**The `pricing` block stores its features properly.** Its `features` field wrote a bare list of
+strings where the views and the seeded data expected `feature` objects. It now matches.
+
 ### v2.4.0 — 2026-10-13
 
 - **Comparison table** (v2.4.0) — options side by side, one row per criterion: columns with an optional badge and tagline, rows of cells whose length follows the number of columns, a "what the others do better" list, call-to-action buttons, a closing line and a footnote.
