@@ -70,6 +70,11 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.4.0 — 2026-10-13
+
+- **Comparison table** (v2.4.0) — options side by side, one row per criterion: columns with an optional badge and tagline, rows of cells whose length follows the number of columns, a "what the others do better" list, call-to-action buttons, a closing line and a footnote.
+- **Installation steps** (v2.4.0) — numbered steps, one command per platform, a copy button that confirms itself with its own label, and an optional download link. Every label comes from the block, so a page can be written in any language.
+
 ### v2.3.0 — 2026-10-13
 
 - **Image + rich text split block** (v2.3.0) — an image beside rich text, alternating sides down a page, with an optional list of items and a `side` field choosing which column holds the image.
