@@ -20,7 +20,10 @@ class TagFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->word();
+        // unique() : fake()->word() peut répéter le même mot, et un test qui
+        // demande plusieurs tags d'un coup se heurtait alors à la contrainte
+        // d'unicité sur tags.slug (observé : 'Sed' / 'sed' inséré deux fois).
+        $name = fake()->unique()->word();
 
         return [
             'name' => ucfirst($name),
