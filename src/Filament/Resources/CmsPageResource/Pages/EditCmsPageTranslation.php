@@ -20,6 +20,7 @@ use Happytodev\Blogr\Services\Translation\TranslationProviderFactory;
 use Happytodev\Blogr\Services\TranslationUsageService;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Traits\AutoSave;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
@@ -48,6 +49,29 @@ class EditCmsPageTranslation extends EditRecord
 
         $this->fillForm();
         $this->initializeAutoSave();
+    }
+
+    /**
+     * Filament re-resolves the `record` property between two Livewire requests by
+     * taking its route key and resolving it through the RESOURCE's model — here a
+     * CmsPage. But this page edits a CmsPageTranslation.
+     *
+     * When the translation and its page happen to share an id, the parent's guard
+     * (`$record->getKey() === $model->getKey()`) passes and the translation is
+     * silently replaced by the page. The form then writes into the page and the
+     * translation never changes: no error, no update, in both this page's tests.
+     * With different ids the same code aborts with a 404 instead.
+     *
+     * mount() already resolved the right record; keep it, provided it still belongs
+     * to the page it was opened for.
+     */
+    protected function resolveRecordFromLivewire(Model $model): Model
+    {
+        if ($model instanceof CmsPageTranslation && $this->cmsPage?->id === $model->cms_page_id) {
+            return $model;
+        }
+
+        return parent::resolveRecordFromLivewire($model);
     }
 
     public function form(Schema $schema): Schema

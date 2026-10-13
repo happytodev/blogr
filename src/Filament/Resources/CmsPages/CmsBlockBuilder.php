@@ -47,6 +47,7 @@ class CmsBlockBuilder
             self::carouselBlock(),
             self::pricingCommissionsBlock(),
             self::artistBioBlock(),
+            self::mediaTextBlock(),
             self::transitionDiagonalBlock(),
             self::blogTitleBlock(),
         ];
@@ -890,6 +891,81 @@ class CmsBlockBuilder
                             ])
                             ->default('16/9')
                             ->columnSpan(1),
+                    ])
+                    ->columns(2),
+
+                self::getBackgroundFields(),
+            ])
+            ->columns(1);
+    }
+
+    /**
+     * An image beside rich text, alternating sides down a page.
+     *
+     * Issue #353. The image column keeps the source's aspect ratio; on mobile the
+     * columns stack, image first.
+     */
+    protected static function mediaTextBlock(): Block
+    {
+        return Block::make(CmsBlockType::MEDIA_TEXT->value)
+            ->label(CmsBlockType::MEDIA_TEXT->getLabel())
+            ->icon(CmsBlockType::MEDIA_TEXT->getIcon())
+            ->schema(fn () => [
+                Section::make(__('Content'))
+                    ->schema(fn () => [
+                        TextInput::make('eyebrow')
+                            ->label(__('Eyebrow'))
+                            ->maxLength(60)
+                            ->helperText(__('Small label above the title. Optional.')),
+
+                        TextInput::make('title')
+                            ->label(__('Title'))
+                            ->maxLength(255)
+                            ->helperText(__('Wrap a word in *asterisks* to emphasise it.')),
+
+                        Textarea::make('subtitle')
+                            ->label(__('Subtitle'))
+                            ->rows(2)
+                            ->maxLength(255)
+                            ->columnSpan(2),
+
+                        CalloutMarkdownEditor::make('content')
+                            ->label(__('Content'))
+                            ->columnSpan(2),
+
+                        Repeater::make('items')
+                            ->label(__('List'))
+                            ->schema([
+                                TextInput::make('title')->label(__('Title'))->maxLength(120),
+                                Textarea::make('text')->label(__('Text'))->rows(2),
+                            ])
+                            ->columns(2)
+                            ->defaultItems(0)
+                            ->columnSpan(2),
+
+                        FileUpload::make('image')
+                            ->label(__('Image'))
+                            ->image()
+                            ->disk('public')
+                            ->directory('cms-blocks/media-text'),
+
+                        Select::make('side')
+                            ->label(__('Image side'))
+                            ->options([
+                                'left' => __('Left'),
+                                'right' => __('Right'),
+                            ])
+                            ->default('right')
+                            ->helperText(__('Which column holds the image. Alternate it between blocks.')),
+
+                        TextInput::make('image_alt')
+                            ->label(__('Image alt text'))
+                            ->columnSpan(2),
+
+                        TextInput::make('image_caption')
+                            ->label(__('Image caption'))
+                            ->maxLength(120)
+                            ->columnSpan(2),
                     ])
                     ->columns(2),
 

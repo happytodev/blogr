@@ -31,6 +31,7 @@ enum CmsBlockType: string implements HasLabel
     case CAROUSEL = 'carousel';
     case PRICING_COMMISSIONS = 'pricing_commissions';
     case ARTIST_BIO = 'artist_bio';
+    case MEDIA_TEXT = 'media_text';
 
     public function getLabel(): string
     {
@@ -60,6 +61,7 @@ enum CmsBlockType: string implements HasLabel
             self::CAROUSEL => __('Hero Carousel'),
             self::PRICING_COMMISSIONS => __('Pricing Commissions'),
             self::ARTIST_BIO => __('Artist Bio'),
+            self::MEDIA_TEXT => __('Media + Text'),
         };
     }
 
@@ -91,6 +93,7 @@ enum CmsBlockType: string implements HasLabel
             self::CAROUSEL => __('Image carousel/slider with optional title, subtitle and call-to-action per slide'),
             self::PRICING_COMMISSIONS => __('Commission pricing showcase with images, prices and availability status'),
             self::ARTIST_BIO => __('Artist profile with avatar, biography and social links'),
+            self::MEDIA_TEXT => __('An image beside rich text and an optional list, alternating sides'),
         };
     }
 
@@ -122,6 +125,7 @@ enum CmsBlockType: string implements HasLabel
             self::CAROUSEL => 'heroicon-o-view-columns',
             self::PRICING_COMMISSIONS => 'heroicon-o-shopping-bag',
             self::ARTIST_BIO => 'heroicon-o-user-circle',
+            self::MEDIA_TEXT => 'heroicon-o-photo',
         };
     }
 }

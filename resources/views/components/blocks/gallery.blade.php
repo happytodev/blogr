@@ -47,9 +47,16 @@
                     lightboxOpen: false,
                     currentIndex: 0,
                     activeFilter: 'all',
-                    images: {{ json_encode(array_map(fn($img) => Storage::url($img), $images)) }},
+                    {{-- @js() rather than json_encode(): the JSON quotes would become
+                         HTML entities (&quot;) inside the x-data attribute, and browsers
+                         do not all decode those the same way. --}}
+                    {{-- array_values(): the content editor stores lists keyed by UUID once
+                         a block is edited. A JavaScript object has no .length and
+                         images[0] is undefined — the lightbox opened on an empty overlay
+                         with a "2 /" counter and no total. Always send a list. --}}
+                    images: @js(array_values(array_map(fn($img) => Storage::url($img), $images))),
                     @if($displayMode === 'filtered')
-                    imageCategories: {{ json_encode($imageCategories) }},
+                    imageCategories: @js($imageCategories),
                     get filteredImages() {
                         if (this.activeFilter === 'all') return this.images;
                         return this.images.filter((_, i) => this.imageCategories[String(i)] === this.activeFilter);
@@ -267,7 +274,9 @@
                     x-transition:leave="transition ease-in duration-200"
                     x-transition:leave-start="opacity-100"
                     x-transition:leave-end="opacity-0"
-                    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90"
+                    {{-- z-[60]: the template's back-to-top button is z-50 and declared
+                         later in the document, so it used to sit on top of this overlay. --}}
+                    class="fixed inset-0 z-[60] flex items-center justify-center bg-black"
                     style="display: none;"
                     @click="closeLightbox()"
                 >
@@ -296,7 +305,12 @@
                         <img
                             :src="images[currentIndex]"
                             :alt="'{{ $heading ?? 'Gallery image' }} ' + (currentIndex + 1)"
-                            class="max-w-full max-h-full object-contain"
+                            {{-- Sized against the WINDOW, never as a percentage of this
+                                 parent: the parent takes its width from its content and the
+                                 image from its parent, so neither resolved and the image
+                                 painted at 0 × 0 — an open lightbox, a loaded image, and a
+                                 black screen. --}}
+                            class="w-auto h-auto max-w-[90vw] max-h-[85vh] object-contain rounded-lg"
                         >
                     </div>
 

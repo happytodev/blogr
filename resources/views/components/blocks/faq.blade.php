@@ -14,21 +14,24 @@ $items = $data['items'] ?? [];
         @endif
         
         <div class="space-y-4" x-data="{ activeItem: null }">
-            @foreach($items as $index => $item)
+            {{-- $loop->index, never $index: the key comes from the editor and is a UUID
+                 on an edited page, which turns `activeItem === b840a197-…` into invalid
+                 JavaScript — the accordion stops responding and the console fills up. --}}
+            @foreach($items as $item)
                 <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                    <button @click="activeItem = activeItem === {{ $index }} ? null : {{ $index }}"
+                    <button @click="activeItem = activeItem === {{ $loop->index }} ? null : {{ $loop->index }}"
                             class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                         <span class="font-semibold">
                             {{ $item['question'] }}
                         </span>
-                        <svg x-show="activeItem !== {{ $index }}" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg x-show="activeItem !== {{ $loop->index }}" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
-                        <svg x-show="activeItem === {{ $index }}" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg x-show="activeItem === {{ $loop->index }}" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
                         </svg>
                     </button>
-                    <div x-show="activeItem === {{ $index }}" 
+                    <div x-show="activeItem === {{ $loop->index }}" 
                          x-transition:enter="transition ease-out duration-200"
                          x-transition:enter-start="opacity-0 transform scale-95"
                          x-transition:enter-end="opacity-100 transform scale-100"
