@@ -67,7 +67,10 @@ class EditCmsPageTranslation extends EditRecord
      */
     protected function resolveRecordFromLivewire(Model $model): Model
     {
-        if ($model instanceof CmsPageTranslation && $this->cmsPage?->id === $model->cms_page_id) {
+        // Compared through the relation: the model documents none of its columns, so
+        // larastan cannot read `cms_page_id` on it, and the relation answers the same
+        // question — does this translation still belong to the page it was opened for?
+        if ($model instanceof CmsPageTranslation && $model->page?->is($this->cmsPage)) {
             return $model;
         }
 
