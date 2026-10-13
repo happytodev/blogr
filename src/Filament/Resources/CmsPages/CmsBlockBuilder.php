@@ -11,6 +11,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
@@ -948,6 +949,15 @@ class CmsBlockBuilder
                         FileUpload::make('image')
                             ->label(__('Image'))
                             ->image()
+                            // Les données portent une CHAÎNE (le chemin), alors que
+                            // FileUpload restitue une carte {uuid: chemin}. Sans cette
+                            // normalisation, un enregistrement dans l'admin transforme
+                            // « cms-blocks/x.png » en tableau, et la vue du site tombe
+                            // sur str_starts_with() au rechargement. Même famille de
+                            // défaut que les libellés d'onglets.
+                            ->dehydrateStateUsing(fn ($state) => is_array($state)
+                                ? (string) (array_values($state)[0] ?? '')
+                                : $state)
                             ->disk('public')
                             ->directory('cms-blocks/media-text'),
 
@@ -1854,74 +1864,36 @@ class CmsBlockBuilder
                             ->maxLength(60)
                             ->helperText(__('Word shown in front of the summary line.')),
 
-                        Repeater::make('mobile_tabs')
+                        // TagsInput, et non un Repeater : les données portent une LISTE
+                        // DE CHAÎNES. Un Repeater manipule des objets et emballe chaque
+                        // valeur ({label: …}) ; quand le champ porte le même nom que la
+                        // valeur, l'emballage et le déballage ne sont plus symétriques et
+                        // CHAQUE aller-retour dans l'admin ajoute un niveau
+                        // ({label: {label: 'Phage vs Herd'}}), jusqu'à ce que la page tombe
+                        // sur htmlspecialchars() d'un tableau. TagsInput a exactement le
+                        // contrat qu'il faut : une liste de chaînes, rien d'autre.
+                        TagsInput::make('mobile_tabs')
                             ->label(__('Mobile tab labels'))
-                            ->simple(
-                                TextInput::make('label')->label(__('Tab')),
-                            )
+                            // Dépliage à l'hydratation : une donnée abîmée par l'ancien
+                            // formulaire ({label: {label: '…'}}) redevient une chaîne, et
+                            // l'enregistrement suivant la remet d'aplomb.
+                            ->formatStateUsing(function ($state): array {
+                                $flat = function ($value) use (&$flat): string {
+                                    if (is_array($value)) {
+                                        return $flat($value['label'] ?? '');
+                                    }
+
+                                    return is_scalar($value) ? trim((string) $value) : '';
+                                };
+
+                                return array_values(array_filter(array_map(
+                                    fn ($item) => $flat($item),
+                                    (array) ($state ?? []),
+                                ), fn ($label) => $label !== ''));
+                            })
                             ->helperText(__('One label per pair compared on mobile (for example "Phage vs Herd"). Leave empty to show the table as is.'))
-                            ->addActionLabel(__('Add a tab'))
-                            ->columnSpan(2),
-
-                        Repeater::make('columns')
-                            ->label(__('Columns'))
-                            ->schema([
-                                TextInput::make('name')->label(__('Name'))->maxLength(60)->required(),
-                                TextInput::make('tagline')->label(__('Tagline'))->maxLength(120),
-                                TextInput::make('badge')->label(__('Badge'))->maxLength(40),
-                                Toggle::make('highlight')->label(__('Highlight this column')),
-                            ])
-                            ->addActionLabel(__('Add a column'))
-                            ->reorderable()
-                            ->columnSpan(2),
-
-                        Repeater::make('rows')
-                            ->label(__('Rows'))
-                            ->schema([
-                                TextInput::make('label')
-                                    ->label(__('Row label'))
-                                    ->maxLength(120)
-                                    ->required(),
-
-                                Repeater::make('cells')
-                                    ->label(__('Cells'))
-                                    ->schema([
-                                        TextInput::make('text')
-                                            ->label(__('Text'))
-                                            ->maxLength(255)
-                                            ->helperText(__('A word wrapped in *asterisks* is emphasised.')),
-
-                                        TextInput::make('sub')
-                                            ->label(__('Sub note'))
-                                            ->maxLength(255)
-                                            ->helperText(__('Smaller line under the cell. Optional.')),
-                                    ])
-                                    ->helperText(__('One cell per column, in the same order as the columns above.'))
-                                    ->addActionLabel(__('Add a cell')),
-                            ])
-                            ->addActionLabel(__('Add a row'))
-                            ->columnSpan(2),
-
-                        TextInput::make('ahead.title')
-                            ->label(__('What the others do better — title'))
-                            ->maxLength(255)
-                            ->columnSpan(2),
-
-                        Repeater::make('ahead.items')
-                            ->label(__('What the others do better — items'))
-                            ->schema([
-                                TextInput::make('name')
-                                    ->label(__('Tool'))
-                                    ->maxLength(60)
-                                    ->required(),
-
-                                Textarea::make('text')
-                                    ->label(__('What it does better'))
-                                    ->rows(2)
-                                    ->required(),
-                            ])
-                            ->addActionLabel(__('Add an item'))
-                            ->columnSpan(2),
+                            ->columnSpan(2)
+                            ->nestedRecursiveRules([]),
 
                         Textarea::make('closing')
                             ->label(__('Closing line'))

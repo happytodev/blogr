@@ -157,7 +157,59 @@ class EditCmsPageTranslation extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        return VersioningService::persistUploadedFiles($data);
+        return self::normaliseUploadFields(VersioningService::persistUploadedFiles($data));
+    }
+
+    /**
+     * Ramène les champs d'image à une chaîne.
+     *
+     * Un FileUpload filaire restitue une carte {uuid: chemin} là où les vues
+     * attendent le chemin seul. Normaliser au niveau du champ ne tient pas : le
+     * composant réécrit sa propre valeur après les callbacks. C'est donc ici, au
+     * dernier moment avant l'écriture, que la conversion est fiable — et elle
+     * couvre tous les blocs d'un seul coup, hero compris.
+     *
+     * Une carte à clé unique, dont la clé est un UUID et la valeur un chemin, est
+     * un envoi de fichier ; on la réduit à ce chemin. Toute autre structure est
+     * laissée intacte.
+     */
+    protected static function normaliseUploadFields(array $data): array
+    {
+        $isUploadMap = function ($value): bool {
+            if (! is_array($value) || count($value) !== 1) {
+                return false;
+            }
+
+            $key = (string) array_key_first($value);
+            $inner = array_values($value)[0];
+
+            return is_string($inner)
+                && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $key) === 1;
+        };
+
+        $walk = function ($value) use (&$walk, $isUploadMap) {
+            if (! is_array($value)) {
+                return $value;
+            }
+
+            if ($isUploadMap($value)) {
+                return (string) array_values($value)[0];
+            }
+
+            $out = [];
+            foreach ($value as $key => $item) {
+                $out[$key] = $walk($item);
+            }
+
+            return $out;
+        };
+
+        if (isset($data['blocks'])) {
+            $blocks = is_string($data['blocks']) ? json_decode($data['blocks'], true) : $data['blocks'];
+            $data['blocks'] = $walk($blocks);
+        }
+
+        return $data;
     }
 
     protected function authorizeAccess(): void
