@@ -13,7 +13,6 @@ uses()->group('cms', 'blocks');
  *
  * Issue: #353
  */
-
 beforeEach(function () {
     $this->page = CmsPage::factory()->homepage()->create(['template' => 'landing']);
 });
