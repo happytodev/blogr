@@ -1872,6 +1872,85 @@ class CmsBlockBuilder
                         // ({label: {label: 'Phage vs Herd'}}), jusqu'à ce que la page tombe
                         // sur htmlspecialchars() d'un tableau. TagsInput a exactement le
                         // contrat qu'il faut : une liste de chaînes, rien d'autre.
+                        Repeater::make('columns')
+                            ->label(__('Columns'))
+                            ->schema([
+                                TextInput::make('name')->label(__('Name'))->maxLength(60)->required(),
+                                TextInput::make('tagline')->label(__('Tagline'))->maxLength(120),
+                                TextInput::make('badge')->label(__('Badge'))->maxLength(40),
+                                Toggle::make('highlight')->label(__('Highlight this column')),
+                            ])
+                            ->addActionLabel(__('Add a column'))
+                            ->reorderable()
+                            ->columnSpan(2),
+
+                        Repeater::make('rows')
+                            ->label(__('Rows'))
+                            ->schema([
+                                TextInput::make('label')
+                                    ->label(__('Row label'))
+                                    ->maxLength(120)
+                                    ->required(),
+
+                                Repeater::make('cells')
+                                    ->label(__('Cells'))
+                                    ->schema([
+                                        TextInput::make('text')
+                                            ->label(__('Text'))
+                                            ->maxLength(255)
+                                            ->helperText(__('A word wrapped in *asterisks* is emphasised.')),
+
+                                        TextInput::make('sub')
+                                            ->label(__('Sub note'))
+                                            ->maxLength(255)
+                                            ->helperText(__('Smaller line under the cell. Optional.')),
+
+                                        Select::make('tone')
+                                            ->label(__('Text colour'))
+                                            ->options([
+                                                '' => __('Default'),
+                                                'green' => __('Green'),
+                                                'amber' => __('Amber'),
+                                                'accent' => __('Accent'),
+                                            ])
+                                            ->helperText(__('Colours the text itself.')),
+
+                                        Select::make('chip')
+                                            ->label(__('Chip'))
+                                            ->options([
+                                                '' => __('None'),
+                                                'green' => __('Green chip'),
+                                                'neutral' => __('Neutral chip'),
+                                            ])
+                                            ->helperText(__('Draws the text inside a pill. Leave empty for plain text.')),
+                                    ])
+                                    ->helperText(__('One cell per column, in the same order as the columns above.'))
+                                    ->addActionLabel(__('Add a cell')),
+                            ])
+                            ->addActionLabel(__('Add a row'))
+                            ->columnSpan(2),
+
+                        TextInput::make('ahead.title')
+                            ->label(__('What the others do better - title'))
+                            ->maxLength(255)
+                            ->columnSpan(2),
+
+                        Repeater::make('ahead.items')
+                            ->label(__('What the others do better - items'))
+                            ->schema([
+                                TextInput::make('name')
+                                    ->label(__('Tool'))
+                                    ->maxLength(60)
+                                    ->required(),
+
+                                Textarea::make('text')
+                                    ->label(__('What it does better'))
+                                    ->rows(2)
+                                    ->required(),
+                            ])
+                            ->addActionLabel(__('Add an item'))
+                            ->columnSpan(2),
+
                         TagsInput::make('mobile_tabs')
                             ->label(__('Mobile tab labels'))
                             // Dépliage à l'hydratation : une donnée abîmée par l'ancien
