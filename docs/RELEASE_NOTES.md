@@ -70,6 +70,12 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.3.0 — 2026-10-13
+
+- **Image + rich text split block** (v2.3.0) — an image beside rich text, alternating sides down a page, with an optional list of items and a `side` field choosing which column holds the image.
+- **Gallery and FAQ blocks fixed for UUID-keyed data** (v2.3.0) — the editor stores lists keyed by UUID once a block is edited; the gallery lightbox and the FAQ accordion both assumed integer keys and broke silently on edited pages.
+- **Page translation saves fixed** (v2.3.0) — saving a translation persisted nothing, or aborted with a 404, because Filament re-resolved the page's record through the resource's own model. Broken since August; the two failing tests are green again.
+
 ### Notable changes
 
 - All filament packages pinned to `^5.0` (`filament/actions`, `filament/filament`, `filament/schemas`, `filament/support`, `filament/tables`)

@@ -15,6 +15,18 @@ All notable changes to `blogr` will be documented in this file.
 
 - **Security audit**: add OWASP critical findings report (SECURITY-AUDIT.md)
 
+## [v2.3.0](https://github.com/happytodev/blogr/compare/v2.2.4...v2.3.0) - 2026-10-13
+
+### ✨ Features
+
+- **Image + rich text split block**: an image beside rich text, alternating sides down a page — eyebrow, title, subtitle, rich content, an optional list of items, image + alt + caption, and a `side` field that chooses which column holds the image.
+
+### 🐛 Bug Fixes
+
+- **Gallery lightbox with UUID-keyed images**: with UUID-keyed images the lightbox received an object instead of an array — `.length` was undefined (a "2 /" counter with no total) and `images[0]` was undefined (an empty overlay with the image loaded but painted at 0 × 0). It also sized the image as a percentage of a parent that takes its width from its content, and shared the template's back-to-top z-index.
+- **FAQ accordion with UUID-keyed items**: the bundle key was printed inside Alpine expressions. On an edited page that key is a UUID, so `activeItem === b840a197-…` stopped being valid JavaScript — no question opened, and the console filled with errors.
+- **Page translation saves**: saving a translation persisted nothing, or aborted with a 404. Filament re-resolved the page's `record` through the resource's own model, replacing the translation with its page whenever the two shared an id. Failing on `main` since August.
+
 ## [v2.2.4](https://github.com/happytodev/blogr/compare/v2.2.3...v2.2.4) - 2026-08-05
 
 ### 🐛 Bug Fixes
