@@ -8,8 +8,6 @@ use Illuminate\Support\ViewErrorBag;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 
-use function Pest\Laravel\get;
-
 uses(CmsTestCase::class);
 
 /**
@@ -99,7 +97,6 @@ test('saving the page from the admin does not nest the mobile tabs any deeper', 
     // DÉJÀ emboîtée n'est pas son rôle : c'est celui de la commande de réparation.
     $this->markTestSkipped('Réparation des valeurs déjà emboîtées : hors périmètre du champ.');
 
-    
     // Le cas observé en production : une donnée déjà emboîtée par un aller-retour
     // précédent. Un formulaire dont l'emballage et le déballage ne sont pas
     // symétriques ajoute un niveau à chaque passage — {label: {label: …}}.
@@ -167,7 +164,6 @@ test('an upload field comes back as a path, not as a map', function () {
     // lacune de test, pas du code. À reprendre.
     $this->markTestSkipped('Le remplissage du constructeur de blocs en test Livewire reste à traiter.');
 
-    
     // FileUpload filaire une carte {uuid: chemin} là où les vues attendent le
     // chemin seul. C'est ce qui faisait tomber la page au rechargement, et un
     // correctif posé sur le champ lui-même ne tient pas : le composant réécrit
