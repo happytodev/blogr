@@ -1,8 +1,9 @@
 <?php
 
+use Happytodev\Blogr\Tests\CmsTestCase;
 use Illuminate\Support\Facades\View;
 
-uses(Happytodev\Blogr\Tests\CmsTestCase::class);
+uses(CmsTestCase::class);
 uses()->group('cms', 'blocks');
 
 /**
