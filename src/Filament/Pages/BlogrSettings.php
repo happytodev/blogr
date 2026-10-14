@@ -3531,6 +3531,13 @@ class BlogrSettings extends Page
     {
         $removed = app(SettingsRepository::class)->forgetAll();
 
+        // A compiled configuration built before the reset may still carry the
+        // overrides (in 2.6.0): rebuild it so the file's values are served again
+        // immediately, and not only from the next deployment on.
+        if (! app()->environment('testing')) {
+            Artisan::call('config:clear');
+        }
+
         Notification::make()
             ->title(__('blogr::blogr.settings.reset_done', ['count' => $removed]))
             ->success()

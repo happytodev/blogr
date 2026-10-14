@@ -2,6 +2,21 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.6.1] - 2026-10-14
+
+### 🐛 Bug Fixes
+
+- **The stored settings are no longer baked into the compiled configuration.** `php artisan
+  config:cache` boots the application before dumping the configuration, so applying the overrides
+  there froze them into `bootstrap/cache/config.php`: the compiled file then outranked the table and
+  deleting a setting — or the *reset to the file values* button — had no effect until the next cache
+  rebuild. The overrides are now applied for real requests only.
+- The list is read once per request instead of being cached: a cache entry could be repopulated with
+  the values read just before a save, which would have kept a deleted setting alive. Nothing survives
+  a write now but the database itself.
+- *Reset to the file values* clears the compiled configuration too, so the file's values are served
+  again immediately.
+
 ## [2.6.0] - 2026-10-14
 
 ### ✨ Features

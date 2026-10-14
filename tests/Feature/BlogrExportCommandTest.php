@@ -361,6 +361,14 @@ it('export includes cms pages with their translations and blocks', function () {
         'content' => 'Contenu de la page',
     ]);
 
+    // The export directory is shared by every test of the process and the check
+    // below reads the most recently modified file: two exports written in the
+    // same second are indistinguishable by mtime, which made this test depend on
+    // the order the suite ran in. Start from an empty directory.
+    if (File::isDirectory(storage_path('app/blogr-exports'))) {
+        File::cleanDirectory(storage_path('app/blogr-exports'));
+    }
+
     // Export
     $this->artisan('blogr:export')->assertExitCode(0);
 

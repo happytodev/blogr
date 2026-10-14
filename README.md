@@ -210,6 +210,11 @@ This matters because of how a value written to the file behaves on a server that
 directories: the file ships with each release, so a change saved only there is replaced by the next
 deployment. A stored setting survives deployments, rollbacks and `config:clear`.
 
+- The overrides are applied when the application boots and are **never baked into the compiled
+  configuration** (`php artisan config:cache` boots the app before dumping it, so applying them there
+  would freeze them into `bootstrap/cache/config.php` and a reset would have no effect until the next
+  deploy). The list is read once per request, uncached: a stale entry would keep a deleted setting
+  alive, which is the failure this feature exists to prevent.
 - Values that are `null` are **not** stored: a field left empty falls back to the file, and a
   partially filled form can never blank the site.
 - The settings page shows how many values are stored and offers a one-click **reset to the file

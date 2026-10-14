@@ -19,11 +19,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // A cache may still hold the "no table yet" answer read before this
-        // migration ran; drop it so the first request after migrating reads
-        // the (still empty) table instead of a stale empty list.
+        // 2.6.0 cached the overrides under this key; the list is read directly
+        // now, so drop anything left behind.
         try {
-            Cache::forget(SettingsRepository::CACHE_KEY);
+            Cache::forget(SettingsRepository::LEGACY_CACHE_KEY);
         } catch (Throwable) {
             // No usable cache store: nothing was cached either.
         }
@@ -34,7 +33,7 @@ return new class extends Migration
         Schema::dropIfExists(SettingsRepository::TABLE);
 
         try {
-            Cache::forget(SettingsRepository::CACHE_KEY);
+            Cache::forget(SettingsRepository::LEGACY_CACHE_KEY);
         } catch (Throwable) {
         }
     }

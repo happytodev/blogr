@@ -101,6 +101,45 @@ it('resets every override, so the file values apply again', function () {
         ->and(app(SettingsRepository::class)->all())->toBe([]);
 });
 
+it('does not bake the overrides into the compiled configuration', function () {
+    DB::table(SettingsRepository::TABLE)->insert([
+        'key' => 'auto_save_interval',
+        'value' => '45',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    config(['blogr.auto_save_interval' => 30]);
+
+    // `php artisan config:cache` boots the application before dumping the
+    // configuration: applying the overrides there would freeze them into
+    // bootstrap/cache/config.php, and a reset would then have no effect.
+    $_SERVER['argv'] = ['artisan', 'config:cache'];
+
+    try {
+        app(SettingsRepository::class)->applyToConfig();
+    } finally {
+        unset($_SERVER['argv']);
+    }
+
+    expect(config('blogr.auto_save_interval'))->toBe(30);
+});
+
+it('applies the overrides when a real request boots the application', function () {
+    DB::table(SettingsRepository::TABLE)->insert([
+        'key' => 'auto_save_interval',
+        'value' => '45',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    config(['blogr.auto_save_interval' => 30]);
+
+    app(SettingsRepository::class)->applyToConfig();
+
+    expect(config('blogr.auto_save_interval'))->toBe(45);
+});
+
 it('falls back to writing the config file while the table is not migrated', function () {
     // The table is absent: the page must keep working the way it did before.
     app()->instance(SettingsRepository::class, new class extends SettingsRepository

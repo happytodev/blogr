@@ -10,29 +10,37 @@ use Throwable;
 /**
  * Stores the settings an admin saves from the Settings page.
  *
- * Why a table instead of the config file: each deployment builds a fresh
- * release directory from the repository, so a value written to
- * `config/blogr.php` on the server is replaced by the next deploy — and
- * `config:clear` on its own is not the problem, the deploy is. Values kept
- * here are applied on top of the file at boot, which makes them durable while
- * the committed file keeps playing the role of the defaults.
+ * Why a table instead of the config file: each deployment builds a fresh release
+ * directory from the repository, so a value written to `config/blogr.php` on the
+ * server is replaced by the next deploy — `config:clear` on its own is not the
+ * problem, the deploy is. Values kept here are applied on top of the file when
+ * the application boots, which makes a save durable while the committed file
+ * keeps playing the role of the defaults.
  *
  * An empty table means "no override": the config file wins, exactly as before,
  * so an existing site keeps behaving identically until something is saved.
+ *
+ * The list is read once per request and never cached: it changes only when an
+ * admin saves, and a stale entry would keep a deleted setting alive — the very
+ * failure this feature exists to prevent.
  */
 class SettingsRepository
 {
     public const TABLE = 'blogr_settings';
 
-    public const CACHE_KEY = 'blogr:settings-overrides';
+    /** Only used to clean up after 2.6.0, which cached the list. */
+    public const LEGACY_CACHE_KEY = 'blogr:settings-overrides';
 
     /**
      * Memoised on the instance, not statically: the repository is a singleton for
      * one request, and a static would leak the overrides of one test into the next
      * one in the same process.
+     *
+     * @var array<string, mixed>|null
      */
-    /** @var array<string, mixed>|null */
     protected ?array $memo = null;
+
+    protected bool $readFailed = false;
 
     /**
      * Every override, as a flat list of dotted config keys (e.g.
@@ -46,13 +54,7 @@ class SettingsRepository
             return $this->memo;
         }
 
-        try {
-            return $this->memo = Cache::rememberForever(self::CACHE_KEY, fn () => $this->readFromDatabase());
-        } catch (Throwable) {
-            // An unusable cache store must never take the site down: read the
-            // table directly rather than fail.
-            return $this->memo = $this->readFromDatabase();
-        }
+        return $this->memo = $this->readFromDatabase();
     }
 
     public function count(): int
@@ -71,14 +73,13 @@ class SettingsRepository
 
     /**
      * Apply every override on top of the configuration loaded from the file.
-     *
-     * `all()` is memoised and cached, so a request that has nothing to override
-     * costs one cache read and no schema lookup — the migration clears that
-     * cache, which is what makes the first request after migrating read the
-     * (still empty) table instead of a stale "no table" answer.
      */
     public function applyToConfig(): void
     {
+        if ($this->isBuildingCompiledConfig()) {
+            return;
+        }
+
         foreach ($this->all() as $key => $value) {
             config()->set("blogr.{$key}", $value);
         }
@@ -137,29 +138,58 @@ class SettingsRepository
         return $deleted;
     }
 
-    /** Forget the memoised list and the cache entry after a write. */
+    /** Forget the memoised list after a write, and any entry left by 2.6.0. */
     public function flush(): void
     {
         $this->memo = null;
+        $this->readFailed = false;
 
         try {
-            Cache::forget(self::CACHE_KEY);
+            Cache::forget(self::LEGACY_CACHE_KEY);
         } catch (Throwable) {
+            // No usable cache store: nothing to clean up either.
         }
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @return array<string, mixed>
+     */
     protected function readFromDatabase(): array
     {
-        if (! $this->hasTable()) {
+        if ($this->readFailed) {
             return [];
         }
 
-        return DB::table(self::TABLE)
-            ->pluck('value', 'key')
-            ->map(function ($value): mixed {
-                return is_string($value) ? json_decode($value, true) : null;
-            })
-            ->all();
+        try {
+            return DB::table(self::TABLE)
+                ->pluck('value', 'key')
+                ->map(function ($value): mixed {
+                    return is_string($value) ? json_decode($value, true) : null;
+                })
+                ->all();
+        } catch (Throwable) {
+            // The table has not been migrated yet (or the connection is down):
+            // the site must keep serving the values from the config file.
+            $this->readFailed = true;
+
+            return [];
+        }
+    }
+
+    /**
+     * `php artisan config:cache` boots the application before dumping the
+     * configuration, so applying the overrides there would bake them into
+     * `bootstrap/cache/config.php` — the compiled file would then outrank the
+     * table, and deleting a setting (or resetting them all) would have no effect
+     * until the next cache rebuild. Overrides belong to the runtime, never to the
+     * build.
+     */
+    protected function isBuildingCompiledConfig(): bool
+    {
+        if (! app()->runningInConsole()) {
+            return false;
+        }
+
+        return in_array($_SERVER['argv'][1] ?? null, ['config:cache', 'optimize'], true);
     }
 }
