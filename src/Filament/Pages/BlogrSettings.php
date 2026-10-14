@@ -31,6 +31,7 @@ use Happytodev\Blogr\Services\BlogrExportService;
 use Happytodev\Blogr\Services\BlogrImportService;
 use Happytodev\Blogr\Services\LinkTypeRegistry;
 use Happytodev\Blogr\Services\LocaleService;
+use Happytodev\Blogr\Services\SettingsRepository;
 use Happytodev\Blogr\Services\TranslationUsageService;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
@@ -515,6 +516,9 @@ class BlogrSettings extends Page
     // Anonymize IP
     public ?bool $analytics_anonymize_ip = null;
 
+    // Settings that live in the database (overrides applied on top of config/blogr.php)
+    public ?int $stored_settings_count = null;
+
     // Sitemap Settings
     public ?bool $sitemap_enabled = null;
 
@@ -565,6 +569,9 @@ class BlogrSettings extends Page
 
     public function mount(): void
     {
+        // How many settings are stored in the database (they win over the file)
+        $this->stored_settings_count = app(SettingsRepository::class)->count();
+
         // Load current config values
         $config = config('blogr', []);
 
@@ -3399,11 +3406,14 @@ class BlogrSettings extends Page
         config()->set('blogr.admin_path', $adminPath);
         $envWritten = $this->updateEnvFile(['BLOGR_ADMIN_PATH' => $adminPath]);
 
-        // Update the config file
-        $this->updateConfigFile($data);
+        // Persist what the form holds: overrides in the database when the table
+        // exists (they survive deployments and config:clear), the config file
+        // otherwise.
+        $this->stored_settings_count = $this->persistSettings($data);
 
-        // Clear config cache so subsequent requests use the updated files
-        // In testing, updateConfigFile() already set in-memory values, so skip
+        // Clear the config cache so subsequent requests read the updated
+        // configuration. Stored overrides are applied at boot and do not depend
+        // on this cache; the file fallback does.
         if (! app()->environment('testing')) {
             Artisan::call('config:clear');
         }
@@ -3454,6 +3464,10 @@ class BlogrSettings extends Page
 
         $body = __('blogr::blogr.settings.saved_successfully');
 
+        if ($this->stored_settings_count !== null) {
+            $body .= "\n".__('blogr::blogr.settings.stored_in_database', ['count' => $this->stored_settings_count]);
+        }
+
         if ($this->mail_provider === 'brevo' && ! $envWritable) {
             $body .= "\n".__('blogr::blogr.settings.env_not_writable');
         }
@@ -3468,6 +3482,62 @@ class BlogrSettings extends Page
 
         // Re-hydrate form with fresh config values so UI reflects saved state immediately
         $this->mount();
+    }
+
+    /**
+     * Persist what the form holds.
+     *
+     * Preferred path: one row per setting in `blogr_settings`, applied on top of
+     * the configuration file at boot. An admin save is then durable — the file
+     * ships with every release, so a value written only there is replaced by the
+     * next deployment — and the committed file keeps its comments.
+     *
+     * Fallback, while the table has not been migrated: the historical behaviour,
+     * rewriting config/blogr.php.
+     *
+     * @param  array<string, mixed>  $data
+     * @return int|null the number of stored overrides, null when the file was used
+     */
+    protected function persistSettings(array $data): ?int
+    {
+        $settings = app(SettingsRepository::class);
+
+        if (! $settings->hasTable()) {
+            $this->updateConfigFile($data);
+
+            return null;
+        }
+
+        // A null means "not set": storing it would make the override outrank a
+        // real value from the file, and a partially filled form (or a page saved
+        // without being mounted) would blank the site out. Empty strings and
+        // `false` are kept — those are deliberate.
+        $values = array_filter(Arr::dot($data), fn ($value) => $value !== null);
+        $settings->put($values);
+
+        // The page renders from the live configuration, so apply the values right
+        // away: the form, the previews and the notification show what was saved.
+        foreach ($values as $key => $value) {
+            config()->set("blogr.{$key}", $value);
+        }
+
+        return $settings->count();
+    }
+
+    /**
+     * Drop every stored override, so the values from config/blogr.php apply again.
+     */
+    public function resetStoredSettings(): void
+    {
+        $removed = app(SettingsRepository::class)->forgetAll();
+
+        Notification::make()
+            ->title(__('blogr::blogr.settings.reset_done', ['count' => $removed]))
+            ->success()
+            ->send();
+
+        // Reload the page: this request still holds the overrides we just deleted.
+        $this->redirect(static::getUrl());
     }
 
     /**

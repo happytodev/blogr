@@ -49,6 +49,7 @@ use Happytodev\Blogr\Policies\UserPolicy;
 use Happytodev\Blogr\Services\ExtensionRegistry;
 use Happytodev\Blogr\Services\LinkTypeRegistry;
 use Happytodev\Blogr\Services\LocaleService;
+use Happytodev\Blogr\Services\SettingsRepository;
 use Happytodev\Blogr\Testing\TestsBlogr;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
@@ -123,10 +124,18 @@ class BlogrServiceProvider extends PackageServiceProvider
 
         // Register link type registry
         $this->app->singleton(LinkTypeRegistry::class);
+
+        // Register the settings repository (admin-saved overrides, applied at boot)
+        $this->app->singleton(SettingsRepository::class);
     }
 
     public function packageBooted(): void
     {
+        // Apply the settings an admin saved from the Settings page, before
+        // anything reads the configuration (mail setup runs further down and
+        // reads values that can be overridden here).
+        $this->app->make(SettingsRepository::class)->applyToConfig();
+
         // FIX: Manually load and inject blogr translations
         // The issue: Spatie's loadTranslationsFrom() registers hints, but Laravel's loader
         // may cache them. We directly load and inject all translations into the translator.
@@ -958,6 +967,7 @@ class BlogrServiceProvider extends PackageServiceProvider
             '2026_06_16_000002_create_blog_post_versions_table',
             '2026_06_17_000001_add_unpublish_at_to_blog_posts',
             '2026_06_18_000001_clean_corrupted_photo_values',
+            '2026_10_14_000001_create_blogr_settings_table',
         ];
 
         // Add CMS migrations if CMS is enabled

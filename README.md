@@ -199,6 +199,25 @@ Blogr ships with several Artisan commands:
 
 All settings are manageable from the **Blogr Settings** page in the admin panel, or directly in `config/blogr.php`.
 
+### Where the settings are stored
+
+Saving the **Blogr Settings** page stores one row per setting in the `blogr_settings` table, and those
+values are applied **on top of** `config/blogr.php` when the application boots. The file therefore
+keeps playing the role of the defaults, and stays the place to version your theme, your copy and your
+provider keys in Git.
+
+This matters because of how a value written to the file behaves on a server that deploys by release
+directories: the file ships with each release, so a change saved only there is replaced by the next
+deployment. A stored setting survives deployments, rollbacks and `config:clear`.
+
+- Values that are `null` are **not** stored: a field left empty falls back to the file, and a
+  partially filled form can never blank the site.
+- The settings page shows how many values are stored and offers a one-click **reset to the file
+  values** — the honest counterpart of an override: a file edit that a stored value hides must be
+  visible, not silent.
+- While the `blogr_settings` table has not been migrated, saving keeps the previous behaviour and
+  rewrites `config/blogr.php`, so an upgrade never breaks a site mid-flight.
+
 ### Routes and homepage
 
 ```php

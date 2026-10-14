@@ -69,6 +69,12 @@ return [
         'env_not_writable' => 'Warnung: Die .env-Datei ist nicht beschreibbar. E-Mail-Anmeldedaten wurden nicht gespeichert.',
         'search_placeholder' => 'Einstellungen durchsuchen...',
         'no_search_results' => 'Keine Einstellungen gefunden für ',
+        'stored_banner_title' => ':count Einstellungen sind in der Datenbank gespeichert',
+        'stored_banner_text' => 'Sie haben Vorrang vor config/blogr.php und überstehen Deployments und config:clear.',
+        'reset_action' => 'Auf die Dateiwerte zurücksetzen (:count)',
+        'reset_confirm' => 'Diese Überschreibungen löschen? Die Werte aus config/blogr.php gelten dann wieder.',
+        'reset_done' => ':count Überschreibungen gelöscht — die Werte aus config/blogr.php gelten wieder.',
+        'stored_in_database' => ':count Einstellungen in der Datenbank gespeichert (sie überstehen Deployments).',
     ],
 
     // Notifications

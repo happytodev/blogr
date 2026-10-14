@@ -84,6 +84,12 @@ return [
         'env_not_writable' => 'Warning: the .env file is not writable. Mail credentials were not saved.',
         'search_placeholder' => 'Search settings...',
         'no_search_results' => 'No settings match your search for ',
+        'stored_banner_title' => ':count settings stored in the database',
+        'stored_banner_text' => 'They take precedence over config/blogr.php and survive deployments and config:clear.',
+        'reset_action' => 'Reset to the file values (:count)',
+        'reset_confirm' => 'Delete the stored overrides? The values from config/blogr.php will apply again.',
+        'reset_done' => ':count stored settings deleted — the values from config/blogr.php apply again.',
+        'stored_in_database' => ':count settings stored in the database (they survive deployments).',
     ],
 
     // Feeds

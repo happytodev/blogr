@@ -1,4 +1,21 @@
 <x-filament-panels::page>
+    @if(($stored_settings_count ?? 0) > 0)
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; border-radius: 8px; border: 1px solid #d1d5db; background: #f8fafc; padding: 12px 16px; font-size: 13px; line-height: 20px; color: #111827;">
+            <span>
+                <strong>{{ trans_choice('blogr::blogr.settings.stored_banner_title', $stored_settings_count, ['count' => $stored_settings_count]) }}</strong>
+                {{ __('blogr::blogr.settings.stored_banner_text') }}
+            </span>
+            <button
+                type="button"
+                wire:click="resetStoredSettings"
+                wire:confirm="{{ __('blogr::blogr.settings.reset_confirm') }}"
+                style="margin-left: auto; border: 1px solid #d1d5db; background: #fff; border-radius: 6px; padding: 6px 12px; font-size: 13px; color: #111827; cursor: pointer;"
+            >
+                {{ __('blogr::blogr.settings.reset_action', ['count' => $stored_settings_count]) }}
+            </button>
+        </div>
+    @endif
+
     <div style="margin-bottom: 16px;">
         <div style="position: relative;">
             <svg style="pointer-events: none; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: #9ca3af;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

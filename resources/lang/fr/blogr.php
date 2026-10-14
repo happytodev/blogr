@@ -84,6 +84,12 @@ return [
         'env_not_writable' => 'Attention : le fichier .env n\'est pas accessible en écriture. Les identifiants mail n\'ont pas été sauvegardés.',
         'search_placeholder' => 'Rechercher dans les paramètres...',
         'no_search_results' => 'Aucun paramètre ne correspond à votre recherche pour ',
+        'stored_banner_title' => ':count réglages sont enregistrés en base',
+        'stored_banner_text' => 'Ils prennent le pas sur config/blogr.php et survivent aux déploiements comme à un config:clear.',
+        'reset_action' => 'Revenir aux valeurs du fichier (:count)',
+        'reset_confirm' => 'Supprimer ces surcharges ? Les valeurs de config/blogr.php s\'appliqueront de nouveau.',
+        'reset_done' => ':count surcharge(s) supprimée(s) — les valeurs de config/blogr.php s\'appliquent de nouveau.',
+        'stored_in_database' => ':count réglages enregistrés en base (ils survivent aux déploiements).',
     ],
 
     // Feeds

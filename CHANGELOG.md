@@ -2,6 +2,21 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.6.0] - 2026-10-14
+
+### ✨ Features
+
+- **Settings are stored in the database instead of the config file.** Saving the Settings page no
+  longer rewrites `config/blogr.php`: every value goes into the new `blogr_settings` table and is
+  applied on top of the file at boot. On a release-based deployment the file ships with each deploy,
+  so a value saved only there was silently replaced by the next one — an admin save is now durable,
+  and the committed file keeps its comments and its role of defaults. The page reports how many
+  values are stored and resets them to the file values in one click; `null` values are never stored,
+  and the previous behaviour is kept while the table is not migrated.
+
+Run `php artisan migrate` after updating: the new `blogr_settings` table is created, and an
+existing site keeps its exact behaviour until a setting is saved from the admin.
+
 ## [2.5.0] - 2026-10-13
 
 ### 🐛 Bug Fixes

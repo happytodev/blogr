@@ -69,6 +69,12 @@ return [
         'env_not_writable' => 'Advertencia: el archivo .env no se puede escribir. Las credenciales de correo no se guardaron.',
         'search_placeholder' => 'Buscar en configuración...',
         'no_search_results' => 'No hay configuraciones que coincidan con su búsqueda de ',
+        'stored_banner_title' => ':count ajustes guardados en la base de datos',
+        'stored_banner_text' => 'Tienen prioridad sobre config/blogr.php y sobreviven a los despliegues y a config:clear.',
+        'reset_action' => 'Volver a los valores del archivo (:count)',
+        'reset_confirm' => '¿Eliminar estas sobrescrituras? Los valores de config/blogr.php volverán a aplicarse.',
+        'reset_done' => ':count sobrescrituras eliminadas — los valores de config/blogr.php vuelven a aplicarse.',
+        'stored_in_database' => ':count ajustes guardados en la base de datos (sobreviven a los despliegues).',
     ],
 
     // Notifications
