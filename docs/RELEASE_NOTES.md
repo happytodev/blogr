@@ -70,6 +70,28 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.6.1 — 2026-10-14
+
+**Stored settings are no longer frozen into the compiled configuration.** `php artisan config:cache`
+boots the application before dumping the configuration, so the overrides stored in the database were
+baked into `bootstrap/cache/config.php` — the compiled file then outranked the table, and deleting a
+setting (or using *reset to the file values*) had no effect until the next cache rebuild. They are now
+applied for real requests only, read once per request without a cache entry, and the reset clears the
+compiled configuration too.
+
+### v2.6.0 — 2026-10-14
+
+**Settings are stored in the database instead of the config file.** Saving the Settings page rewrote
+`config/blogr.php` — and regenerated it from an array, dropping every comment in it. On a host that
+deploys by release directories, that file is replaced by the next deployment, so an admin save held
+only until the following release and then vanished. Every value now goes into a `blogr_settings` table
+and is applied on top of the installed config, which makes a save durable across deployments,
+rollbacks and `config:clear`, while the committed file keeps its role of defaults. The settings page
+reports how many values are stored and resets them to the file values in one click; `null` values are
+never stored, and the previous behaviour is kept while the table is not migrated.
+
+Run `php artisan migrate` after updating.
+
 ### v2.5.0 — 2026-10-13
 
 **Saving a page no longer eats its content.** Editing a CMS page in the admin used to write a
