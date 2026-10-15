@@ -262,9 +262,9 @@ it('export includes translation photos in media files', function () {
 });
 
 it('export includes users with their roles', function () {
-    // Le test lit le fichier le plus récent du dossier d'export. Sans le vider,
-    // il peut lire l'export d'un test passé avant lui, pris à un moment où ces
-    // utilisateurs n'existaient pas encore.
+// The test reads the most recent file of the export folder. Without clearing it, it
+// could read the export of a previous test, taken at a time when those users did
+// not exist yet.
     $exportDir = storage_path('app/blogr-exports');
     if (File::exists($exportDir)) {
         File::cleanDirectory($exportDir);
