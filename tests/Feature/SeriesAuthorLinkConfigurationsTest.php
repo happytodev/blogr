@@ -57,7 +57,7 @@ beforeEach(function () {
 });
 
 it('generates correct author links without locales and without homepage', function () {
-    // Configuration: pas de locales, avec préfixe "blog"
+    // Configuration: no locales, with the "blog" prefix
     config(['blogr.locales.enabled' => false]);
     config(['blogr.route.prefix' => 'blog']);
     config(['blogr.route.as_homepage' => false]);
@@ -67,7 +67,7 @@ it('generates correct author links without locales and without homepage', functi
 
     $response->assertStatus(200);
 
-    // Le lien devrait être /blog/author/johndoe
+    // The link should be /blog/author/johndoe
     $content = $response->getContent();
     preg_match_all('/href="([^"]*author[^"]*)"/i', $content, $matches);
 
@@ -83,15 +83,15 @@ it('generates correct author links without locales and without homepage', functi
 });
 
 it('generates correct author links without locales and with homepage', function () {
-    // Configuration: pas de locales, blog en homepage
-    // Note: Ce test ne peut pas vraiment tester car les routes sont déjà enregistrées
-    // On teste juste que la génération d'URL ne plante pas
+    // Configuration: no locales, blog as homepage
+    // Note: This test cannot really test because the routes are already registered
+    // We just check that URL generation does not crash
     config(['blogr.locales.enabled' => false]);
     config(['blogr.route.prefix' => '']);
     config(['blogr.route.as_homepage' => true]);
     config(['blogr.author_profile.enabled' => true]);
 
-    // Tester que route() génère bien un URL
+    // Test that route() does generate a URL
     $authorUrl = route('blog.author', ['userSlug' => 'johndoe']);
 
     // Le lien devrait contenir /author/johndoe
@@ -99,7 +99,7 @@ it('generates correct author links without locales and with homepage', function 
 });
 
 it('generates correct author links with locales and homepage', function () {
-    // Configuration: locales activées, blog en homepage
+    // Configuration: locales enabled, blog as homepage
     config(['blogr.locales.enabled' => true]);
     config(['blogr.locales.available' => ['en', 'fr']]);
     config(['blogr.locales.default' => 'en']);
@@ -107,15 +107,15 @@ it('generates correct author links with locales and homepage', function () {
     config(['blogr.route.as_homepage' => true]);
     config(['blogr.author_profile.enabled' => true]);
 
-    // Note: Les routes ne seront pas enregistrées avec locale car elles sont déjà bootées
-    // Ce test vérifie seulement que le helper route() ne plante pas
+    // Note: The routes will not be registered with locale because they are already booted
+    // This test only checks that the route() helper does not crash
     $authorUrl = route('blog.author', ['userSlug' => 'johndoe']);
 
     expect($authorUrl)->toContain('/author/johndoe');
 });
 
 it('generates correct author links with locales and without homepage', function () {
-    // Configuration: locales activées, avec préfixe "blog"
+    // Configuration: locales enabled, with the "blog" prefix
     config(['blogr.locales.enabled' => true]);
     config(['blogr.locales.available' => ['en', 'fr']]);
     config(['blogr.locales.default' => 'en']);
@@ -123,8 +123,8 @@ it('generates correct author links with locales and without homepage', function 
     config(['blogr.route.as_homepage' => false]);
     config(['blogr.author_profile.enabled' => true]);
 
-    // Note: Les routes ne seront pas enregistrées avec locale car elles sont déjà bootées
-    // Ce test vérifie seulement que le helper route() ne plante pas
+    // Note: The routes will not be registered with locale because they are already booted
+    // This test only checks that the route() helper does not crash
     $authorUrl = route('blog.author', ['userSlug' => 'johndoe']);
 
     // Le lien devrait contenir /author/johndoe

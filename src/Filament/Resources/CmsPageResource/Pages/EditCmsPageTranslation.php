@@ -161,17 +161,17 @@ class EditCmsPageTranslation extends EditRecord
     }
 
     /**
-     * Ramène les champs d'image à une chaîne.
+     * Brings image fields back to a string.
      *
-     * Un FileUpload filaire restitue une carte {uuid: chemin} là où les vues
-     * attendent le chemin seul. Normaliser au niveau du champ ne tient pas : le
-     * composant réécrit sa propre valeur après les callbacks. C'est donc ici, au
-     * dernier moment avant l'écriture, que la conversion est fiable — et elle
-     * couvre tous les blocs d'un seul coup, hero compris.
+     * A wired FileUpload returns a {uuid: path} map where the views
+     * expect the path alone. Normalizing at the field level does not hold: the
+     * component rewrites its own value after the callbacks. It is therefore here, at the
+     * last moment before writing, that the conversion is reliable — and it
+     * covers all blocks at once, hero included.
      *
-     * Une carte à clé unique, dont la clé est un UUID et la valeur un chemin, est
-     * un envoi de fichier ; on la réduit à ce chemin. Toute autre structure est
-     * laissée intacte.
+     * A single-key map, whose key is a UUID and whose value is a path, is
+     * a file upload; we reduce it to that path. Any other structure is
+     * left intact.
      */
     protected static function normaliseUploadFields(array $data): array
     {

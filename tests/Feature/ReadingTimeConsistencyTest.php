@@ -111,7 +111,7 @@ it('calculates reading time from translation content not main post content', fun
     $response = $this->get(route('blog.index', ['locale' => 'fr']));
     $response->assertStatus(200);
 
-    // Should show "inférieur à une minute" or "< 1 min"
+    // Should show "less than a minute" or "< 1 min"
     // Since we have only 6 words, it should be < 1 minute
     expect($shortTranslation->reading_time)->toBe(1);
 });

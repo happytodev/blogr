@@ -949,12 +949,12 @@ class CmsBlockBuilder
                         FileUpload::make('image')
                             ->label(__('Image'))
                             ->image()
-                            // Les données portent une CHAÎNE (le chemin), alors que
-                            // FileUpload restitue une carte {uuid: chemin}. Sans cette
-                            // normalisation, un enregistrement dans l'admin transforme
-                            // « cms-blocks/x.png » en tableau, et la vue du site tombe
-                            // sur str_starts_with() au rechargement. Même famille de
-                            // défaut que les libellés d'onglets.
+                            // The data carries a STRING (the path), whereas
+                            // FileUpload returns a {uuid: path} map. Without this
+                            // normalization, a save in the admin turns
+                            // "cms-blocks/x.png" into an array, and the site view crashes
+                            // on str_starts_with() on reload. Same family of
+                            // defect as the tab labels.
                             ->dehydrateStateUsing(fn ($state) => is_array($state)
                                 ? (string) (array_values($state)[0] ?? '')
                                 : $state)
@@ -1864,14 +1864,14 @@ class CmsBlockBuilder
                             ->maxLength(60)
                             ->helperText(__('Word shown in front of the summary line.')),
 
-                        // TagsInput, et non un Repeater : les données portent une LISTE
-                        // DE CHAÎNES. Un Repeater manipule des objets et emballe chaque
-                        // valeur ({label: …}) ; quand le champ porte le même nom que la
-                        // valeur, l'emballage et le déballage ne sont plus symétriques et
-                        // CHAQUE aller-retour dans l'admin ajoute un niveau
-                        // ({label: {label: 'Phage vs Herd'}}), jusqu'à ce que la page tombe
-                        // sur htmlspecialchars() d'un tableau. TagsInput a exactement le
-                        // contrat qu'il faut : une liste de chaînes, rien d'autre.
+                        // TagsInput, not a Repeater: the data carries a LIST
+                        // OF STRINGS. A Repeater deals with objects and wraps each
+                        // value ({label: …}); when the field has the same name as the
+                        // value, wrapping and unwrapping are no longer symmetric and
+                        // EACH round-trip in the admin adds a level
+                        // ({label: {label: 'Phage vs Herd'}}), until the page crashes
+                        // on htmlspecialchars() of an array. TagsInput has exactly the
+                        // contract needed: a list of strings, nothing else.
                         Repeater::make('columns')
                             ->label(__('Columns'))
                             ->schema([
@@ -1953,9 +1953,9 @@ class CmsBlockBuilder
 
                         TagsInput::make('mobile_tabs')
                             ->label(__('Mobile tab labels'))
-                            // Dépliage à l'hydratation : une donnée abîmée par l'ancien
-                            // formulaire ({label: {label: '…'}}) redevient une chaîne, et
-                            // l'enregistrement suivant la remet d'aplomb.
+                            // Unfolding at hydration: data damaged by the old
+                            // form ({label: {label: '…'}}) becomes a string again, and
+                            // the next save straightens it out.
                             ->formatStateUsing(function ($state): array {
                                 $flat = function ($value) use (&$flat): string {
                                     if (is_array($value)) {

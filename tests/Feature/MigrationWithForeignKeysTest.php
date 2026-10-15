@@ -8,7 +8,7 @@ use Happytodev\Blogr\Models\BlogPost;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-// Test 1: Vérifier que toutes les migrations s'exécutent sans erreur
+// Test 1: Check that all migrations run without error
 it('can run all migrations including the fixed delete() migration', function () {
     // Execute all migrations - this will test the fixed migration
     $this->artisan('migrate')->assertSuccessful();
@@ -44,7 +44,7 @@ it('can run all migrations including the fixed delete() migration', function () 
         ->toContain('updated_at');
 });
 
-// Test 2: Vérifier que delete() fonctionne même sur une table vide (installation fraîche)
+// Test 2: Check that delete() works even on an empty table (fresh install)
 it('delete() works on empty tables during fresh installation', function () {
     // This simulates the scenario of a fresh installation
 
@@ -62,7 +62,7 @@ it('delete() works on empty tables during fresh installation', function () {
     expect(BlogPost::count())->toBe(0);
 });
 
-// Test 3: Vérifier que le rollback fonctionne
+// Test 3: Check that the rollback works
 it('rollback of migration works correctly', function () {
     // Run migrations
     $this->artisan('migrate')->assertSuccessful();
@@ -85,7 +85,7 @@ it('rollback of migration works correctly', function () {
     expect(Schema::hasTable('blog_posts'))->toBeTrue();
 });
 
-// Test 4: Documentation du moteur de base de données utilisé
+// Test 4: Documentation of the database engine used
 it('confirms SQLite is used in tests and delete() is compatible', function () {
     $this->artisan('migrate')->assertSuccessful();
 

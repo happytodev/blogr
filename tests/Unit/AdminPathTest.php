@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\File;
 
 // ─── ISOLATION ──────────────────────────────────────────────
 //
-// Les tests de ce fichier appellent BlogrSettings::save(), qui écrit dans le
-// vrai .env de l'application de test ET pousse BLOGR_ADMIN_PATH dans
-// l'environnement du processus. config/blogr.php se contentant d'un
-// env('BLOGR_ADMIN_PATH', 'admin'), le test « default value » lisait ensuite la
-// valeur laissée par celui qui venait de tourner — 'admin2026' un jour,
-// 'from-property' le lendemain, selon l'ordre.
+// The tests in this file call BlogrSettings::save(), which writes to the
+// real .env of the test application AND pushes BLOGR_ADMIN_PATH into
+// the process environment. Since config/blogr.php settles for an
+// env('BLOGR_ADMIN_PATH', 'admin'), the "default value" test then read the
+// value left by whichever had just run — 'admin2026' one day,
+// 'from-property' the next, depending on the order.
 //
-// On remet donc les deux en état après chaque test : le fichier et la variable.
+// So we reset both after each test: the file and the variable.
 
 beforeEach(function () {
     $this->envPath = base_path('.env');
@@ -44,12 +44,12 @@ afterEach(function () {
 // ─── CONFIG ─────────────────────────────────────────────
 
 test('admin_path key exists in blogr config with default value', function () {
-    // Ce test parle du DÉFAUT du fichier de config : il doit donc se placer dans
-    // les conditions du défaut. config/blogr.php ne fait qu'un
-    // env('BLOGR_ADMIN_PATH', 'admin'), donc il répond au sujet de l'environnement
-    // — or les tests de ce fichier ont de bonnes raisons d'écrire cette variable.
-    // Sans la neutraliser, on ne lit pas le défaut mais ce que le test précédent
-    // a laissé, et le résultat dépend de l'ordre d'exécution.
+    // This test is about the DEFAULT of the config file: it must therefore be placed in
+    // the conditions of the default. config/blogr.php only does an
+    // env('BLOGR_ADMIN_PATH', 'admin'), so it responds to the environment variable
+    // — yet the tests in this file have good reasons to write that variable.
+    // Without neutralizing it, one reads not the default but what the previous test
+    // left behind, and the result depends on execution order.
     $original = getenv('BLOGR_ADMIN_PATH');
     putenv('BLOGR_ADMIN_PATH');
     unset($_ENV['BLOGR_ADMIN_PATH'], $_SERVER['BLOGR_ADMIN_PATH']);

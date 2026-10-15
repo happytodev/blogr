@@ -1,18 +1,18 @@
 {{--
-    Bloc `comparison` — un tableau d'options côte à côte, une ligne par critère.
+    `comparison` block — a side-by-side table of options, one row per criterion.
 
-    Formes réelles des données, relevées sur une page en production :
-    - rows[i].cells[j] = { text: '…', sub?: '…' } — un OBJET par cellule, pas une
-      chaîne. `sub` est une ligne plus petite, optionnelle.
+    Real data shapes, observed on a production page:
+    - rows[i].cells[j] = { text: '…', sub?: '…' } — an OBJECT per cell, not a
+      string. `sub` is a smaller, optional line.
     - ahead.items[i]   = { name: '…', text: '…' }
-    - mobile_tabs      = une liste de libellés d'onglets ("Phage vs Herd"), et non
-      un booléen.
-    On tolère malgré tout une chaîne nue là où un objet est attendu : elle
-    s'affiche telle quelle au lieu de casser la page.
+    - mobile_tabs      = a list of tab labels ("Phage vs Herd"), and not
+      a boolean.
+    A bare string is still tolerated where an object is expected: it
+    displays as-is instead of breaking the page.
 
-    Et comme partout ailleurs, array_values() : l'éditeur de contenu réécrit les
-    listes avec des clés UUID dès que le bloc est retouché dans l'admin, donc on
-    ne lit jamais une clé comme une position.
+    And as everywhere else, array_values(): the content editor rewrites
+    lists with UUID keys as soon as the block is edited in the admin, so we
+    never read a key as a position.
 --}}
 @php
     $eyebrow = $data['eyebrow'] ?? null;
@@ -29,8 +29,8 @@
     $tabLabels = array_values(array_filter((array) ($data['mobile_tabs'] ?? []), 'is_scalar'));
     $ctas = array_values($data['ctas'] ?? []);
 
-    // Objet (la forme réelle) ou chaîne (formes plus anciennes) : on ramène tout
-    // à deux chaînes, pour que la vue ne dépende pas de la forme reçue.
+    // Object (the real shape) or string (older shapes): we bring everything
+    // back to two strings, so the view does not depend on the received shape.
     $renderCell = function ($cell): array {
         if (is_array($cell)) {
             return ['text' => $cell['text'] ?? '', 'sub' => $cell['sub'] ?? ''];

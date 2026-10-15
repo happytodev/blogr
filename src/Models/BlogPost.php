@@ -324,16 +324,16 @@ class BlogPost extends Model
     }
 
     /**
-     * Accesseur pour obtenir le titre depuis la traduction par défaut
+     * Accessor to get the title from the default translation
      */
     public function getTitleAttribute($value): ?string
     {
-        // Si on a déjà la valeur en DB (ancien système), la retourner
+        // If we already have the value in the DB (legacy system), return it
         if ($value) {
             return $value;
         }
 
-        // Sinon, récupérer depuis la traduction
+        // Otherwise, fetch it from the translation
         $translation = $this->getDefaultTranslation();
 
         return $translation?->title;

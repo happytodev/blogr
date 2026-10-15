@@ -30,7 +30,7 @@ class BlogrPlugin implements Plugin
             TagResource::class,
         ];
 
-        // Ajouter la ressource CMS si activée
+        // Add the CMS resource if enabled
         if (config('blogr.cms.enabled', false)) {
             $resources[] = CmsPageResource::class;
         }

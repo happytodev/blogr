@@ -1,11 +1,11 @@
 {{--
-    Bloc `install` — des étapes numérotées, une commande par plateforme, et un
-    appel au téléchargement.
+    `install` block — numbered steps, one command per platform, and a
+    download call.
 
-    Les étapes et les plateformes sont des listes : l'éditeur de contenu les
-    réécrit avec des clés UUID une fois le bloc retouché dans l'admin, donc on
-    ne lit jamais la clé comme une position (array_values), et on transmet la
-    commande à Alpine avec @js() plutôt que json_encode().
+    Steps and platforms are lists: the content editor
+    rewrites them with UUID keys once the block is edited in the admin, so we
+    never read the key as a position (array_values), and we pass the
+    command to Alpine with @js() rather than json_encode().
 --}}
 @php
     $eyebrow = $data['eyebrow'] ?? null;

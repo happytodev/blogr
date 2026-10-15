@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Vérifier si la table users existe avant d'ajouter les colonnes
+        // Check whether the users table exists before adding the columns
         if (! Schema::hasTable('users')) {
             return;
         }
@@ -34,7 +34,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Vérifier si la table users existe avant de tenter de supprimer les colonnes
+        // Check whether the users table exists before attempting to drop the columns
         if (! Schema::hasTable('users')) {
             return;
         }

@@ -9,8 +9,8 @@ use function Pest\Laravel\get;
 uses(CmsTestCase::class)->group('cms');
 
 beforeEach(function () {
-    // Configuration déjà faite dans CmsTestCase
-    // Run CMS migrations si besoin (normalement déjà fait)
+    // Configuration already done in CmsTestCase
+    // Run CMS migrations if needed (normally already done)
     $this->artisan('migrate', ['--database' => 'testing']);
 });
 

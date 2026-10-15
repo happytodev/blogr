@@ -9,8 +9,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 it('Display "No posts yet" if there are no posts', function () {
-    // la base est rafraîchie par RefreshDatabase, donc pas de posts par défaut
-    // Remplace route('blog.index') par '/blog' ou le nom de route correct si nécessaire
+    // The database is refreshed by RefreshDatabase, so there are no posts by default
+    // Replace route('blog.index') with '/blog' or the correct route name if necessary
     $this->get(route('blog.index'))
         ->assertOk()
         ->assertSeeText('No posts yet');

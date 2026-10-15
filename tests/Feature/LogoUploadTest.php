@@ -69,11 +69,11 @@ it('navigation displays uploaded logo correctly', function () {
         'blogr.ui.navigation.logo_display' => 'image',
     ]);
 
-    // Vérifier que la config est bien chargée
+    // Check that the config is properly loaded
     expect(config('blogr.ui.navigation.logo'))->toBe($path);
     expect(config('blogr.ui.navigation.logo_display'))->toBe('image');
 
-    // Vérifier que le fichier existe
+    // Check that the file exists
     expect(Storage::disk('public')->exists($path))->toBeTrue();
 });
 

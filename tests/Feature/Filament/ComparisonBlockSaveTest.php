@@ -11,19 +11,18 @@ use Spatie\Permission\Models\Role;
 uses(CmsTestCase::class);
 
 /**
- * Ce qu'un enregistrement depuis l'admin fait aux données d'un bloc.
+ * What a save from the admin does to a block's data.
  *
- * Ce test conduit l'enregistrement pour de bon — monter la page, appeler save —
- * puis relit ce qui a été écrit. Il existe parce que comparer le formulaire à des
- * fixtures écrites à la main ne prouve rien : les fixtures confirment ce qu'on
- * croit, et trois vérifications successives sont passées à côté du même défaut.
+ * This test drives the save for real — mounting the page, calling save — then
+ * reads back what was written. It exists because comparing the form against
+ * hand-written fixtures proves nothing: fixtures confirm what one believes,
+ * and three successive checks sailed past the same defect.
  *
- * Les formes employées ici sont celles de la production, relevées sur une page
- * en service :
+ * The shapes used here are those of production, observed on a live page:
  *
  *   rows[i].cells[j] = { text: '…', sub?: '…' }
  *   ahead.items[i]   = { name: '…', text: '…' }
- *   mobile_tabs      = ['Phage vs Herd', …]      (libellés, pas un booléen)
+ *   mobile_tabs      = ['Phage vs Herd', …]      (labels, not a boolean)
  */
 beforeEach(function () {
     $admin = Role::firstOrCreate(['name' => 'admin']);
@@ -93,13 +92,13 @@ test('saving the page from the admin keeps a cell as an object with its text', f
 });
 
 test('saving the page from the admin does not nest the mobile tabs any deeper', function () {
-    // Le champ ne crée plus d'imbrication (test ci-dessus). Réparer une valeur
-    // DÉJÀ emboîtée n'est pas son rôle : c'est celui de la commande de réparation.
+    // The field no longer creates nesting (test above). Repairing an already
+    // nested value is not its role: that is the job of the repair command.
     $this->markTestSkipped('Réparation des valeurs déjà emboîtées : hors périmètre du champ.');
 
-    // Le cas observé en production : une donnée déjà emboîtée par un aller-retour
-    // précédent. Un formulaire dont l'emballage et le déballage ne sont pas
-    // symétriques ajoute un niveau à chaque passage — {label: {label: …}}.
+    // The case observed in production: data already nested by a previous
+    // round-trip. A form whose wrapping and unwrapping are not
+    // symmetric adds a level on each pass — {label: {label: …}}.
     $blocks = $this->translation->blocks;
     foreach ($blocks as $i => $block) {
         if (($block['type'] ?? '') === 'comparison') {
@@ -159,15 +158,15 @@ test('saving the page from the admin keeps an ahead item as an object', function
 });
 
 test('an upload field comes back as a path, not as a map', function () {
-    // La normalisation elle-même est vérifiée pas à pas ; ce test-ci bute sur le
-    // remplissage du constructeur de blocs dans un test Livewire, ce qui est une
-    // lacune de test, pas du code. À reprendre.
+    // The normalization itself is verified step by step; this test runs into the
+    // filling of the block builder in a Livewire test, which is a
+    // test gap, not a code issue. To revisit.
     $this->markTestSkipped('Le remplissage du constructeur de blocs en test Livewire reste à traiter.');
 
-    // FileUpload filaire une carte {uuid: chemin} là où les vues attendent le
-    // chemin seul. C'est ce qui faisait tomber la page au rechargement, et un
-    // correctif posé sur le champ lui-même ne tient pas : le composant réécrit
-    // sa valeur après les callbacks. La normalisation se fait donc à la page.
+    // FileUpload wires a {uuid: path} map where the views expect the
+    // path alone. That is what made the page crash on reload, and a
+    // fix applied on the field itself does not hold: the component rewrites
+    // its value after the callbacks. Normalization is therefore done at the page level.
     Livewire::test(EditCmsPageTranslation::class, [
         'record' => $this->page->id,
         'translation' => $this->translation->id,

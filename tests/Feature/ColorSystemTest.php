@@ -6,7 +6,7 @@ use Happytodev\Blogr\Tests\TestCase;
 uses(TestCase::class);
 
 // ============================================
-// PHASE RED: Tests pour le nouveau système de couleurs
+// PHASE RED: Tests for the new color system
 // ============================================
 
 describe('Card Border Color Removal', function () {
