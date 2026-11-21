@@ -79,6 +79,13 @@ class CreateBlogPost extends CreateRecord
         }
         unset($data['series_position_custom']);
 
+        // The series select keeps its default ('auto-bottom') even when it is
+        // hidden, and the column is an integer: without a series, nothing may
+        // reach the database but a number or nothing.
+        if (isset($data['series_position']) && ! is_numeric($data['series_position'])) {
+            $data['series_position'] = null;
+        }
+
         // Normalize photo fields
         $data = $this->normalizePhotoForCreate($data, 'photo');
         if (isset($data['translations']) && is_array($data['translations'])) {
