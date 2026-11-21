@@ -2,6 +2,15 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.7.2] - 2026-11-21
+
+### 🐛 Bug Fixes
+
+- **The sitemap no longer answers 500 as soon as a CMS page exists.** `/{locale}/blog/sitemap.xml`
+  fell back on `CmsPage::getDefaultTranslation()` — a method `BlogPost` has and `CmsPage` never did —
+  so the route crashed on any page that has no translation in the requested locale. `CmsPage` now
+  exposes it: the page's `default_locale` first, then the first translation available.
+
 ## [2.7.1] - 2026-11-21
 
 ### 🐛 Bug Fixes
