@@ -71,6 +71,13 @@ class PostUrlHelper
             return null;
         }
 
+        // A nested URL only exists for a locale the post is translated in: the
+        // route resolves a translation for that locale, so reusing another
+        // locale's slug would answer 404 (issue #363).
+        if (! self::hasTranslation($post, $locale)) {
+            return null;
+        }
+
         $postSlug = self::postSlug($post, $locale);
         $seriesSlug = self::stringOrNull($series->getTranslatedSlug($locale));
 
@@ -130,7 +137,31 @@ class PostUrlHelper
             }
         }
 
-        return self::stringOrNull($post->slug);
+        // The eager-loaded collection can be filtered on another locale (a
+        // listing that only loads the current one, for instance): ask the
+        // database before giving up, otherwise the caller builds a route with
+        // no slug and the page answers 500 (issue #362).
+        $slug = $post->translations()->where('locale', $locale)->whereNotNull('slug')->value('slug')
+            ?? $post->translations()->where('locale', $post->getAttribute('default_locale'))->whereNotNull('slug')->value('slug')
+            ?? $post->translations()->whereNotNull('slug')->value('slug');
+
+        return self::stringOrNull($slug);
+    }
+
+    /**
+     * Does the post have a usable translation (a slug) for that locale?
+     */
+    protected static function hasTranslation(BlogPost $post, string $locale): bool
+    {
+        $isUsable = fn ($translation) => $translation->locale === $locale
+            && is_string($translation->slug)
+            && $translation->slug !== '';
+
+        if ($post->relationLoaded('translations')) {
+            return $post->translations->contains($isUsable);
+        }
+
+        return $post->translations()->where('locale', $locale)->whereNotNull('slug')->exists();
     }
 
     protected static function localesEnabled(): bool

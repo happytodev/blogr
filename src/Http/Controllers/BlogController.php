@@ -746,9 +746,10 @@ class BlogController
             'category.translations',
             'tags.translations',
             'series.translations', // Needed to resolve the post URL (nested in its series)
-            'translations' => function ($query) use ($currentLocale) {
-                $query->where('locale', $currentLocale);
-            },
+            // Every translation, not only the current locale: the card falls
+            // back on another one for a post that is not translated here, and
+            // a filtered relation made that fallback return null (issue #362).
+            'translations',
         ])
             ->where('category_id', $category->id)
             ->published()
@@ -857,9 +858,10 @@ class BlogController
                 'category.translations',
                 'tags.translations',
                 'series.translations', // Needed to resolve the post URL (nested in its series)
-                'translations' => function ($query) use ($currentLocale) {
-                    $query->where('locale', $currentLocale);
-                },
+                // Every translation, not only the current locale: the card falls
+                // back on another one for a post that is not translated here
+                // (issue #362).
+                'translations',
             ])
             ->published()
             ->visibleOnIndex()

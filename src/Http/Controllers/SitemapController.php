@@ -34,17 +34,20 @@ class SitemapController
 
         foreach ($posts as $post) {
             $translation = $post->translations->firstWhere('locale', $locale);
-            if (! $translation) {
-                $translation = $post->getDefaultTranslation();
+
+            // A post is listed only where it is translated: falling back on its
+            // default translation used to list a French slug under /en/, and the
+            // nested route answered 404 (issue #363).
+            if (! $translation || ! $translation->slug) {
+                continue;
             }
-            if ($translation && $translation->slug) {
-                $urls[] = [
-                    'loc' => PostUrlHelper::forPost($post, $locale),
-                    'lastmod' => $post->updated_at->toW3cString(),
-                    'changefreq' => 'weekly',
-                    'priority' => '0.8',
-                ];
-            }
+
+            $urls[] = [
+                'loc' => PostUrlHelper::forPost($post, $locale),
+                'lastmod' => $post->updated_at->toW3cString(),
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ];
         }
 
         // Categories
