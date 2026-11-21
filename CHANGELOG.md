@@ -2,6 +2,21 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.7.3] - 2026-11-21
+
+### 🐛 Bug Fixes
+
+- **A category or tag page no longer answers 500 when it lists a post that has no translation in the
+  current locale.** The listings eager-loaded the translations filtered on the current locale, the card
+  fell back on `getDefaultTranslation()` — which reads that same filtered relation — found nothing, and
+  built a route without a slug (`Missing required parameter … [Route: blog.show]`). They now load every
+  translation, and `PostUrlHelper::postSlug()` falls back on the database when the loaded collection has
+  no usable slug.
+- **The sitemap lists a post only in the locales it is translated in.** It fell back on the default
+  translation to decide whether to list a post, then built the URL for its own locale, so a French-only
+  series post appeared under `/en/` and answered 404. `PostUrlHelper::nestedForPost()` now returns null
+  when the post is not translated in the requested locale.
+
 ## [2.7.2] - 2026-11-21
 
 ### 🐛 Bug Fixes
