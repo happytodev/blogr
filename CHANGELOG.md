@@ -2,6 +2,16 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.7.1] - 2026-11-21
+
+### 🐛 Bug Fixes
+
+- **The language switcher keeps each locale's own slug.** The switcher built the other locale's URL
+  from the current route parameters and only translated the slug for CMS pages: on a series, category
+  or tag page, the link to the other locale pointed at a slug that does not exist there and answered
+  404 — only the visible switcher was wrong, the `hreflang` alternates in `<head>` were already
+  correct. A series post now translates both its series slug and its own.
+
 ## [2.7.0] - 2026-11-21
 
 ### ✨ Features
