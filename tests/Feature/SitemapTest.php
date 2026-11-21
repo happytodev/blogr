@@ -178,3 +178,25 @@ it('escapes XML special characters in URLs', function () {
 
     expect($content)->toContain('c++');
 });
+
+it('lists a CMS page that has no translation in the requested locale', function () {
+    // The page exists in English only: reading another locale must fall back on
+    // its default translation instead of calling a method the model never had.
+    $page = CmsPage::create([
+        'slug' => 'a-propos',
+        'is_published' => true,
+        'is_homepage' => false,
+        'default_locale' => 'en',
+    ]);
+    $page->translations()->create([
+        'locale' => 'en',
+        'title' => 'About Us',
+        'slug' => 'a-propos',
+        'content' => 'About content',
+    ]);
+
+    $response = $this->controller->index('fr');
+
+    expect($response->getStatusCode())->toBe(200);
+    expect($response->getContent())->toContain('a-propos');
+});

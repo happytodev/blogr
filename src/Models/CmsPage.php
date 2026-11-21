@@ -74,6 +74,20 @@ class CmsPage extends Model
     }
 
     /**
+     * Get the default translation: the page's default_locale, with a fallback
+     * on the first translation available.
+     *
+     * BlogPost has had this method from the start; the sitemap relied on it for
+     * CMS pages too, but CmsPage never implemented it — reading a locale the
+     * page is not translated in answered 500 (issue #361).
+     */
+    public function getDefaultTranslation(): ?CmsPageTranslation
+    {
+        return $this->translation($this->default_locale ?? config('app.locale', 'en'))
+            ?? $this->translations()->first();
+    }
+
+    /**
      * Get translation for current locale or fallback to default
      */
     public function currentTranslation(?string $locale = null): ?CmsPageTranslation
