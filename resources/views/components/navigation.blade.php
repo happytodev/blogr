@@ -316,7 +316,58 @@
                                         $currentParams['slug'] = $cmsTranslation->slug;
                                     }
                                 }
-                                
+
+                                // Series, categories and tags carry a slug per translation, and a
+                                // series post carries two of them. Reusing the current locale's slug
+                                // sent readers to a 404 on the other locale (issue #360).
+                                if (in_array($currentRouteName, ['blog.series', 'blog.series.post'], true) && isset($currentParams['seriesSlug'])) {
+                                    $series = \Happytodev\Blogr\Models\BlogSeries::query()
+                                        ->whereHas('translations', fn ($query) => $query->where('locale', $currentLocale)->where('slug', $currentParams['seriesSlug']))
+                                        ->first()
+                                        ?? \Happytodev\Blogr\Models\BlogSeries::where('slug', $currentParams['seriesSlug'])->first();
+
+                                    if ($series) {
+                                        $currentParams['seriesSlug'] = $series->getTranslatedSlug($locale);
+                                    }
+                                }
+
+                                if (in_array($currentRouteName, ['blog.series.post', 'blog.show'], true) && isset($currentParams['slug'])) {
+                                    // Post slugs are unique across locales, so the current one is
+                                    // enough to find the post and read its slug in the target locale.
+                                    $postTranslation = \Happytodev\Blogr\Models\BlogPostTranslation::where('slug', $currentParams['slug'])->first();
+                                    $translatedSlug = $postTranslation?->post?->translate($locale)?->slug;
+
+                                    if ($translatedSlug) {
+                                        $currentParams['slug'] = $translatedSlug;
+                                    }
+                                }
+
+                                if ($currentRouteName === 'blog.category' && isset($currentParams['categorySlug'])) {
+                                    $category = \Happytodev\Blogr\Models\Category::query()
+                                        ->whereHas('translations', fn ($query) => $query->where('locale', $currentLocale)->where('slug', $currentParams['categorySlug']))
+                                        ->first()
+                                        ?? \Happytodev\Blogr\Models\Category::where('slug', $currentParams['categorySlug'])->first();
+
+                                    $translatedSlug = $category?->translations()->where('locale', $locale)->first()?->slug;
+
+                                    if ($translatedSlug) {
+                                        $currentParams['categorySlug'] = $translatedSlug;
+                                    }
+                                }
+
+                                if ($currentRouteName === 'blog.tag' && isset($currentParams['tagSlug'])) {
+                                    $tag = \Happytodev\Blogr\Models\Tag::query()
+                                        ->whereHas('translations', fn ($query) => $query->where('locale', $currentLocale)->where('slug', $currentParams['tagSlug']))
+                                        ->first()
+                                        ?? \Happytodev\Blogr\Models\Tag::where('slug', $currentParams['tagSlug'])->first();
+
+                                    $translatedSlug = $tag?->translations()->where('locale', $locale)->first()?->slug;
+
+                                    if ($translatedSlug) {
+                                        $currentParams['tagSlug'] = $translatedSlug;
+                                    }
+                                }
+
                                 $currentParams['locale'] = $locale;
                             @endphp
                             <a href="{{ route($currentRouteName, $currentParams) }}" 
