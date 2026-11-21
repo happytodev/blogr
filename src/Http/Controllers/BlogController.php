@@ -5,6 +5,7 @@ namespace Happytodev\Blogr\Http\Controllers;
 use Happytodev\Blogr\Extensions\VideoEmbedAdapter;
 use Happytodev\Blogr\Helpers\ConfigHelper;
 use Happytodev\Blogr\Helpers\LocaleHelper;
+use Happytodev\Blogr\Helpers\PostUrlHelper;
 use Happytodev\Blogr\Helpers\SEOHelper;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogPostTranslation;
@@ -63,6 +64,7 @@ class BlogController
                 'category.translations',
                 'tags.translations',
                 'translations', // Load all translations for photo fallback
+                'series.translations', // Needed to resolve the post URL (nested in its series)
             ])
             ->orderBy('published_at', 'desc')
             ->published()
@@ -224,8 +226,103 @@ class BlogController
 
         $post = $translation->post;
 
+        if (! $post instanceof BlogPost) {
+            abort(404);
+        }
+
         // Check if post is published
         if (! $post->is_published) {
+            abort(404);
+        }
+
+        if ($post->published_at && $post->published_at->isFuture()) {
+            abort(404);
+        }
+
+        if ($post->unpublish_at && $post->unpublish_at->isPast()) {
+            abort(404);
+        }
+
+        // A post that belongs to a published series is served under that series:
+        // the flat URL is only an alias and answers with a permanent redirect.
+        // Only redirect when the requested slug really is the one of the
+        // requested locale, so a translation fallback keeps working as before.
+        if ($post->translate((string) $locale)?->is($translation)) {
+            $nestedUrl = PostUrlHelper::nestedForPost($post, (string) $locale);
+
+            if ($nestedUrl !== null && $nestedUrl !== url()->current()) {
+                return redirect($nestedUrl, 301);
+            }
+        }
+
+        return $this->renderPost($translation, (string) $locale);
+    }
+
+    /**
+     * Display a post through its series URL: /{locale}/{prefix}/series/{seriesSlug}/{postSlug}
+     *
+     * @param  string  $localeOrSeriesSlug  The locale (localized routes) or the series slug
+     * @param  string|null  $seriesSlug  The series slug (localized routes) or the post slug
+     * @param  string|null  $slug  The post slug (localized routes)
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function seriesPost($localeOrSeriesSlug, $seriesSlug = null, $slug = null)
+    {
+        $localesEnabled = config('blogr.locales.enabled', false);
+
+        if ($localesEnabled && $slug !== null) {
+            // Format: /{locale}/blog/series/{seriesSlug}/{slug}
+            $locale = $localeOrSeriesSlug;
+            $actualSeriesSlug = $seriesSlug;
+            $actualSlug = $slug;
+        } else {
+            // Format: /blog/series/{seriesSlug}/{slug} (no locales)
+            $locale = config('blogr.locales.default', 'en');
+            $actualSeriesSlug = $localeOrSeriesSlug;
+            $actualSlug = $seriesSlug;
+        }
+
+        $locale = $locale ?? config('blogr.locales.default', 'en');
+        /** @var string $locale */
+        app()->setLocale($locale);
+
+        $series = BlogSeries::whereHas('translations', function ($query) use ($actualSeriesSlug, $locale) {
+            $query->where('locale', $locale)->where('slug', $actualSeriesSlug);
+        })
+            ->with('translations')
+            ->published()
+            ->first();
+
+        if (! $series) {
+            $series = BlogSeries::where('slug', $actualSeriesSlug)
+                ->with('translations')
+                ->published()
+                ->first();
+        }
+
+        if (! $series) {
+            abort(404);
+        }
+
+        $translation = BlogPostTranslation::where('slug', $actualSlug)
+            ->where('locale', $locale)
+            ->whereHas('post', fn ($query) => $query->where('blog_series_id', $series->getKey()))
+            ->with([
+                'post.category.translations',
+                'post.tags.translations',
+                'post.translations',
+                'post.series.translations',
+                'post.series.posts.translations',
+            ])
+            ->first();
+
+        if (! $translation) {
+            abort(404);
+        }
+
+        $post = $translation->post;
+
+        if (! $post instanceof BlogPost || ! $post->is_published) {
             abort(404);
         }
 
@@ -325,6 +422,10 @@ class BlogController
     protected function renderPost(BlogPostTranslation $translation, string $locale, bool $preview = false)
     {
         $post = $translation->post;
+
+        if (! $post instanceof BlogPost) {
+            abort(404);
+        }
 
         $localesEnabled = config('blogr.locales.enabled', false);
 
@@ -503,13 +604,11 @@ class BlogController
         }
 
         // Get available translations for language switcher
-        $availableTranslations = $post->translations->map(function ($trans) use ($localesEnabled) {
+        $availableTranslations = $post->translations->map(function ($trans) use ($post) {
             return [
                 'locale' => $trans->locale,
                 'title' => $trans->title,
-                'url' => $localesEnabled
-                    ? route('blog.show', ['locale' => $trans->locale, 'slug' => $trans->slug])
-                    : route('blog.show', ['slug' => $trans->slug]),
+                'url' => PostUrlHelper::forPost($post, $trans->locale),
             ];
         });
 
@@ -520,9 +619,7 @@ class BlogController
             'title' => $translation->seo_title ?: $translation->title,
             'description' => $translation->seo_description ?: Str::limit(strip_tags($contentWithoutFrontmatter), 160),
             'keywords' => $translation->seo_keywords ?: $translation->title,
-            'canonical' => $localesEnabled
-                ? route('blog.show', ['locale' => $locale, 'slug' => $translation->slug])
-                : route('blog.show', ['slug' => $translation->slug]),
+            'canonical' => PostUrlHelper::forPost($post, (string) $locale),
             'og_type' => 'article',
             'schema_type' => 'BlogPosting',
             'site_name' => ConfigHelper::getSeoSiteName($locale),
@@ -648,6 +745,7 @@ class BlogController
         $posts = BlogPost::with([
             'category.translations',
             'tags.translations',
+            'series.translations', // Needed to resolve the post URL (nested in its series)
             'translations' => function ($query) use ($currentLocale) {
                 $query->where('locale', $currentLocale);
             },
@@ -758,6 +856,7 @@ class BlogController
             ->with([
                 'category.translations',
                 'tags.translations',
+                'series.translations', // Needed to resolve the post URL (nested in its series)
                 'translations' => function ($query) use ($currentLocale) {
                     $query->where('locale', $currentLocale);
                 },
@@ -922,7 +1021,7 @@ class BlogController
         }
 
         $posts = $series->posts()
-            ->with(['translations'])
+            ->with(['translations', 'series.translations'])
             ->published()
             ->orderBy('series_position')
             ->get()

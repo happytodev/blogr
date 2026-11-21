@@ -8,9 +8,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
+use Happytodev\Blogr\Helpers\PostUrlHelper;
 use Happytodev\Blogr\Models\BlogPost;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Route;
 
 class RecentBlogPosts extends BaseWidget
 {
@@ -21,7 +21,7 @@ class RecentBlogPosts extends BaseWidget
         return $table
             ->query(
                 BlogPost::query()
-                    ->with(['category', 'user', 'translations'])
+                    ->with(['category', 'user', 'translations', 'series.translations'])
                     ->latest()
                     ->limit(10)
             )
@@ -40,19 +40,8 @@ class RecentBlogPosts extends BaseWidget
 
                         $locale = app()->getLocale();
                         $defaultLocale = config('blogr.locales.default', 'en');
-                        $localesEnabled = config('blogr.locales.enabled', false);
 
-                        $translation = $record->translations->first();
-                        $slug = $translation ? $translation->slug : $record->id;
-
-                        if ($localesEnabled && Route::has('blog.show')) {
-                            $route = Route::getRoutes()->getByName('blog.show');
-                            if ($route && str_contains($route->uri(), '{locale}')) {
-                                return route('blog.show', ['locale' => $locale ?: $defaultLocale, 'slug' => $slug]);
-                            }
-                        }
-
-                        return route('blog.show', ['slug' => $slug]);
+                        return PostUrlHelper::forPost($record, $locale ?: $defaultLocale);
                     })
                     ->openUrlInNewTab()
                     ->tooltip(function (Tables\Columns\TextColumn $column): ?string {

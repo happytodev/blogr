@@ -40,7 +40,7 @@
                         @endphp
                         <article class="group">
                             @if($imageUrl)
-                                <a href="{{ route('blog.show', ['locale' => app()->getLocale(), 'slug' => $translation->slug]) }}" class="block mb-4 overflow-hidden rounded-lg">
+                                <a href="{{ \Happytodev\Blogr\Helpers\PostUrlHelper::forPost($post, app()->getLocale()) }}" class="block mb-4 overflow-hidden rounded-lg">
                                     <img 
                                         src="{{ $imageUrl }}" 
                                         alt="{{ $translation->title }}"
@@ -54,7 +54,7 @@
                             </div>
                             
                             <h3 class="text-xl font-bold mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                                <a href="{{ route('blog.show', ['locale' => app()->getLocale(), 'slug' => $translation->slug]) }}">
+                                <a href="{{ \Happytodev\Blogr\Helpers\PostUrlHelper::forPost($post, app()->getLocale()) }}">
                                     {{ $translation->title }}
                                 </a>
                             </h3>
@@ -65,7 +65,7 @@
                                 </p>
                             @endif
                             
-                            <a href="{{ route('blog.show', ['locale' => app()->getLocale(), 'slug' => $translation->slug]) }}" class="text-primary-600 dark:text-primary-400 font-semibold hover:underline">
+                            <a href="{{ \Happytodev\Blogr\Helpers\PostUrlHelper::forPost($post, app()->getLocale()) }}" class="text-primary-600 dark:text-primary-400 font-semibold hover:underline">
                                 {{ __('Read more') }} →
                             </a>
                         </article>

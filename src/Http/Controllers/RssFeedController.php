@@ -2,6 +2,7 @@
 
 namespace Happytodev\Blogr\Http\Controllers;
 
+use Happytodev\Blogr\Helpers\PostUrlHelper;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
@@ -87,7 +88,7 @@ class RssFeedController
     {
         $limit = config('blogr.rss.items_limit', 20);
 
-        $query = BlogPost::with(['user', 'category', 'tags', 'translations'])
+        $query = BlogPost::with(['user', 'category', 'tags', 'translations', 'series.translations'])
             ->where('is_published', true)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
@@ -148,7 +149,7 @@ class RssFeedController
                 continue;
             }
 
-            $postUrl = route('blog.show', ['locale' => $locale, 'slug' => $translation->slug]);
+            $postUrl = PostUrlHelper::forPost($post, $locale);
 
             $xml .= '    <item>'."\n";
             $xml .= '      <title>'.$this->escapeXml($translation->title).'</title>'."\n";

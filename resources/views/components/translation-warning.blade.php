@@ -1,4 +1,4 @@
-@props(['currentLocale', 'translationLocale', 'availableLocales' => []])<div {{ $attributes }}>
+@props(['currentLocale', 'translationLocale', 'availableLocales' => [], 'post' => null])<div {{ $attributes }}>
 
     {{ $slot}}
 
@@ -29,7 +29,7 @@
                 </p>
                 <div class="flex flex-wrap gap-2">
                     @foreach($availableLocales as $locale)
-                        <a href="{{ route('blog.show', ['locale' => $locale, 'slug' => request()->route('slug')]) }}" 
+                        <a href="{{ $post ? \Happytodev\Blogr\Helpers\PostUrlHelper::forPost($post, $locale) : route('blog.show', ['locale' => $locale, 'slug' => request()->route('slug')]) }}" 
                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 hover:bg-yellow-300 dark:hover:bg-yellow-700 transition-colors">
                             {{ strtoupper($locale) }}
                         </a>

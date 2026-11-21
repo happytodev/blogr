@@ -2,6 +2,7 @@
 
 namespace Happytodev\Blogr\Http\Controllers;
 
+use Happytodev\Blogr\Helpers\PostUrlHelper;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
@@ -26,7 +27,7 @@ class SitemapController
         $urls = [];
 
         // Blog posts
-        $posts = BlogPost::with('translations')
+        $posts = BlogPost::with(['translations', 'series.translations'])
             ->published()
             ->orderBy('updated_at', 'desc')
             ->get();
@@ -38,7 +39,7 @@ class SitemapController
             }
             if ($translation && $translation->slug) {
                 $urls[] = [
-                    'loc' => route('blog.show', ['locale' => $locale, 'slug' => $translation->slug]),
+                    'loc' => PostUrlHelper::forPost($post, $locale),
                     'lastmod' => $post->updated_at->toW3cString(),
                     'changefreq' => 'weekly',
                     'priority' => '0.8',

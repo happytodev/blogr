@@ -3,15 +3,15 @@
 @php
     $currentLocale = $currentLocale ?? app()->getLocale();
     $postTranslation = $post->translate($currentLocale);
-    $postSlug = $postTranslation ? $postTranslation->slug : $post->slug;
     $postTitle = $postTranslation ? $postTranslation->title : $post->title;
     $postTldr = $postTranslation ? $postTranslation->tldr : $post->tldr;
+    $postUrl = \Happytodev\Blogr\Helpers\PostUrlHelper::forPost($post, $currentLocale);
 @endphp
 
 <article class="group bg-[var(--color-blog-card-bg)] dark:bg-[var(--color-blog-card-bg-dark)] rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
     <!-- Post Image -->
     <div class="relative h-56 bg-gradient-to-br from-[var(--color-primary)] to-purple-600 overflow-hidden">
-        <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $postSlug]) }}"
+        <a href="{{ $postUrl }}"
             class="block h-full">
             @if ($post->photo)
                 <img src="{{ $post->photo_url }}" alt="{{ $postTitle }}"
@@ -57,7 +57,7 @@
     <div class="p-6 flex-grow flex flex-col relative z-10">
         <!-- Title -->
         <h2 class="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-[var(--color-primary-hover)] dark:group-hover:text-[var(--color-primary-hover-dark)] transition-colors line-clamp-2">
-            <a href="{{ config('blogr.locales.enabled') ? route('blog.show', ['locale' => $currentLocale, 'slug' => $postSlug]) : route('blog.show', ['slug' => $postSlug]) }}">
+            <a href="{{ $postUrl }}">
                 {{ $postTitle }}
             </a>
         </h2>
@@ -78,7 +78,7 @@
                     {{ $carbonDate->isoFormat('LL') }}
                 </time>
                 @if (isset($post->comment_count) && $post->comment_count > 0)
-                    <a href="{{ config('blogr.locales.enabled') ? route('blog.show', ['locale' => $currentLocale, 'slug' => $postSlug]) : route('blog.show', ['slug' => $postSlug]) }}#comments" class="inline-flex items-center gap-1 hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary-dark)] transition-colors">
+                    <a href="{{ $postUrl }}#comments" class="inline-flex items-center gap-1 hover:text-[var(--color-primary)] dark:hover:text-[var(--color-primary-dark)] transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
@@ -133,7 +133,7 @@
                 @endif
 
                 <!-- Read More Button -->
-                <a href="{{ config('blogr.locales.enabled') ? route('blog.show', ['locale' => $currentLocale, 'slug' => $postSlug]) : route('blog.show', ['slug' => $postSlug]) }}"
+                <a href="{{ $postUrl }}"
                     aria-label="Read more about {{ $postTitle }}"
                     class="inline-flex items-center text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] font-semibold text-sm group/link ml-auto">
                     {{ __('blogr::blogr.ui.read_more') }}

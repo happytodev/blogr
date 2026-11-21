@@ -45,6 +45,7 @@ class AuthorController extends Controller
             'category.translations',
             'tags.translations',
             'translations',
+            'series.translations', // Needed to resolve the post URL (nested in its series)
             'user',
         ])
             ->whereHas('translations')

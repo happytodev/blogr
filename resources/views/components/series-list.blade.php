@@ -68,7 +68,7 @@
                         <span class="font-semibold text-gray-900 dark:text-gray-100">{{ $postTranslation?->title ?? __('blogr::blogr.ui.untitled') }}</span>
                         <span class="ml-2 text-xs text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]">({{ __('blogr::blogr.series.current') }})</span>
                     @else
-                        <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $postTranslation?->slug ?? $post->slug]) }}" 
+                        <a href="{{ \Happytodev\Blogr\Helpers\PostUrlHelper::forPost($post, $currentLocale) }}" 
                            class="relative z-10 text-gray-700 dark:text-gray-300 hover:text-[var(--color-primary-hover)] dark:hover:text-[var(--color-primary-hover-dark)] hover:underline">
                             {{ $postTranslation?->title ?? __('blogr::blogr.ui.untitled') }}
                         </a>

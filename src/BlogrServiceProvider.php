@@ -535,6 +535,16 @@ class BlogrServiceProvider extends PackageServiceProvider
                     ))
                     ->name('blog.series.index');
 
+                // Nested series post route MUST be registered before the
+                // series/{seriesSlug} catch-all, which would swallow it.
+                $this->app['router']->get('{locale}/series/{seriesSlug}/{slug}', [BlogController::class, 'seriesPost'])
+                    ->where(['locale' => $localePattern, 'seriesSlug' => '[^/]+', 'slug' => '[^/]+'])
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [SetLocale::class]
+                    ))
+                    ->name('blog.series.post');
+
                 $this->app['router']->get('{locale}/series/{seriesSlug}', [BlogController::class, 'series'])
                     ->where(['locale' => $localePattern, 'seriesSlug' => '.*'])
                     ->middleware(array_merge(
@@ -628,6 +638,16 @@ class BlogrServiceProvider extends PackageServiceProvider
                     ))
                     ->name('blog.series.index');
 
+                // Nested series post route MUST be registered before the
+                // series/{seriesSlug} catch-all, which would swallow it.
+                $this->app['router']->get($fullPrefix.'/series/{seriesSlug}/{slug}', [BlogController::class, 'seriesPost'])
+                    ->where(['locale' => $localePattern, 'seriesSlug' => '[^/]+', 'slug' => '[^/]+'])
+                    ->middleware(array_merge(
+                        config('blogr.route.middleware', ['web']),
+                        [SetLocale::class]
+                    ))
+                    ->name('blog.series.post');
+
                 $this->app['router']->get($fullPrefix.'/series/{seriesSlug}', [BlogController::class, 'series'])
                     ->where(['locale' => $localePattern, 'seriesSlug' => '.*'])
                     ->middleware(array_merge(
@@ -711,6 +731,11 @@ class BlogrServiceProvider extends PackageServiceProvider
                     ->group(function () {
                         $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
                         $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
+                        // Nested series post route MUST be registered before the
+                        // series/{seriesSlug} catch-all, which would swallow it.
+                        $this->app['router']->get('/series/{seriesSlug}/{slug}', [BlogController::class, 'seriesPost'])
+                            ->where(['seriesSlug' => '[^/]+', 'slug' => '[^/]+'])
+                            ->name('blog.series.post');
                         $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
                         $this->app['router']->get('/author/{userSlug}', [AuthorController::class, 'show'])->name('blog.author');
                         $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');
@@ -740,6 +765,11 @@ class BlogrServiceProvider extends PackageServiceProvider
                     ->group(function () {
                         $this->app['router']->get('/', [BlogController::class, 'index'])->name('blog.index');
                         $this->app['router']->get('/series', [BlogController::class, 'seriesIndex'])->name('blog.series.index');
+                        // Nested series post route MUST be registered before the
+                        // series/{seriesSlug} catch-all, which would swallow it.
+                        $this->app['router']->get('/series/{seriesSlug}/{slug}', [BlogController::class, 'seriesPost'])
+                            ->where(['seriesSlug' => '[^/]+', 'slug' => '[^/]+'])
+                            ->name('blog.series.post');
                         $this->app['router']->get('/series/{seriesSlug}', [BlogController::class, 'series'])->name('blog.series');
                         $this->app['router']->get('/author/{userSlug}', [AuthorController::class, 'show'])->name('blog.author');
                         $this->app['router']->get('/category/{categorySlug}', [BlogController::class, 'category'])->name('blog.category');

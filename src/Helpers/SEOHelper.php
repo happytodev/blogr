@@ -77,7 +77,7 @@ class SEOHelper
             'title' => $title,
             'description' => Str::limit($description, 160),
             'keywords' => $keywords,
-            'canonical' => route('blog.show', $post->slug),
+            'canonical' => PostUrlHelper::forPost($post),
             'og_type' => 'article',
             'schema_type' => 'BlogPosting',
             'robots' => 'index, follow',

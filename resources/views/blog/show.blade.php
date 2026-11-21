@@ -501,6 +501,7 @@
                 :currentLocale="$currentLocale ?? app()->getLocale()"
                 :translationLocale="$displayData['currentTranslationLocale']"
                 :availableLocales="$post->translations->pluck('locale')->toArray()"
+                :post="$post"
             />
         @endif
         
@@ -648,7 +649,7 @@
                                     <span
                                         class="ml-2 text-xs text-purple-600 dark:text-purple-400">({{ __('blogr::blogr.series.current') }})</span>
                                 @else
-                                    <a href="{{ route('blog.show', ['locale' => $currentLocale, 'slug' => $seriesPost->translated_slug ?? $seriesPost->slug]) }}"
+                                    <a href="{{ \Happytodev\Blogr\Helpers\PostUrlHelper::forPost($seriesPost, $currentLocale) }}"
                                         class="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:underline">
                                         {{ $seriesPost->translated_title ?? $seriesPost->title }}
                                     </a>

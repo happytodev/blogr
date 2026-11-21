@@ -38,7 +38,7 @@
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         @if($previous)
-        <a href="{{ route('blog.show', ['slug' => $previousTranslation?->slug ?? $previous->slug]) }}" 
+        <a href="{{ \Happytodev\Blogr\Helpers\PostUrlHelper::forPost($previous, $currentLocale) }}" 
            class="flex items-center p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-[var(--color-primary)] dark:hover:border-[var(--color-primary-dark)] hover:shadow-md transition-all group">
             <div class="flex-shrink-0 mr-3">
                 <svg class="w-6 h-6 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] group-hover:text-[var(--color-primary-hover)] dark:group-hover:text-[var(--color-primary-hover-dark)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +60,7 @@
         @endif
         
         @if($next)
-        <a href="{{ route('blog.show', ['slug' => $nextTranslation?->slug ?? $next->slug]) }}" 
+        <a href="{{ \Happytodev\Blogr\Helpers\PostUrlHelper::forPost($next, $currentLocale) }}" 
            class="flex items-center p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-[var(--color-primary)] dark:hover:border-[var(--color-primary-dark)] hover:shadow-md transition-all group">
             <div class="flex-grow text-right">
                 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Next</div>
