@@ -2,6 +2,39 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.7.0] - 2026-11-21
+
+### ✨ Features
+
+- **A series post is served under its series.** `/{locale}/{prefix}/series/{seriesSlug}/{postSlug}`
+  is now the canonical address of a post that belongs to a published series, starting with the
+  `canonical` tag and the `hreflang` alternates. The nested URL is what the language switcher, the
+  sitemap, the RSS feed, the blog cards, the series page and its navigation, the author page and the
+  admin "view" link generate; `PostUrlHelper::forPost()` is the single way to build a post URL. The
+  former flat URL (`/{locale}/{prefix}/{postSlug}`) answers with a **301** to the nested one, and a
+  post that is not part of a published series keeps its flat URL unchanged.
+- Series navigation no longer drops the locale from its links, and the translation warning links to
+  the other locale's own slug instead of reusing the current one.
+
+### 🐛 Bug Fixes
+
+- **Saving a post without a series no longer breaks the admin.** The series position select kept its
+  `auto-bottom` default even when the series field was hidden, and `series_position` is an integer
+  column: MySQL rejected the word (error 1366) behind a generic "Error while loading page". The
+  create and edit hooks now store nothing but a number or nothing.
+- `Blogr::VERSION` reports the released version again.
+
+### 📚 Docs & chores
+
+- Every code comment is written in English.
+- The 2.6.0 and 2.6.1 release notes are recorded in `docs/RELEASE_NOTES.md`.
+
+### ⚠️ Upgrade note
+
+Sites that publish their own views (`resources/views/vendor/blogr/…`) keep generating flat post
+URLs until those overrides are updated: the links still work, but through a 301. Update the
+overrides to call `PostUrlHelper::forPost()`, or run `vendor:publish --tag=blogr-views --force`.
+
 ## [2.6.1] - 2026-10-14
 
 ### 🐛 Bug Fixes

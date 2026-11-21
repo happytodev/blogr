@@ -70,6 +70,25 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.7.0 — 2026-11-21
+
+**A post that belongs to a series is served under that series.**
+`/{locale}/{prefix}/series/{seriesSlug}/{postSlug}` is the canonical address of a series post:
+the `canonical` tag, the `hreflang` alternates, the language switcher, the sitemap, the RSS feed,
+the blog cards, the series page, the previous/next navigation, the author page and the admin
+"view" link all use it. The former flat URL (`/{locale}/{prefix}/{postSlug}`) answers with a
+**301** to the nested one, and a post that is not part of a published series keeps its flat URL
+unchanged. `PostUrlHelper::forPost()` is the single way to build a post URL.
+
+Sites that publish their own views (`resources/views/vendor/blogr/…`) keep generating flat post
+URLs until those overrides are updated: the links still work, but go through a redirect. Update
+the overrides or run `vendor:publish --tag=blogr-views --force`.
+
+**Saving a post without a series no longer breaks the admin.** The series position select kept its
+`auto-bottom` default even when the series field was hidden, and `series_position` is an integer
+column: MySQL rejected the word (error 1366) behind a generic "Error while loading page". Both
+create and edit hooks now store nothing but a number or nothing.
+
 ### v2.6.1 — 2026-10-14
 
 **Stored settings are no longer frozen into the compiled configuration.** `php artisan config:cache`
