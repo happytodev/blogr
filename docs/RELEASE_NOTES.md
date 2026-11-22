@@ -70,6 +70,24 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.7.6 — 2026-11-22
+
+A post slug is now unique **per locale**, which is what the route always implied.
+
+- The table declared `unique('slug')` on `blog_post_translations`, so the English and the French version
+  of one article could not share a slug: the second one was refused by the admin with "already taken",
+  and the only way out was to invent different slugs for two URLs that were already distinct.
+  Categories, tags and CMS pages were already unique per locale. A migration replaces the index with
+  `unique(['locale', 'slug'])`.
+- The admin slug rule is scoped to the item's locale: the same slug in another locale is accepted, a
+  duplicate inside the same locale is still refused.
+- `BlogController::show()` fell back on "find by slug alone" when the requested locale had no match. With
+  two locales able to own the same slug that fallback would answer with another language's article under
+  this locale; it now only applies when the post has no translation in the requested locale, and not at
+  all when locales are out of the URL (nothing then claims a language).
+
+Upgrading runs one migration: `php artisan migrate`.
+
 ### v2.7.5 — 2026-11-22
 
 A type-safety pass over the package; what it turned up is fixed here.

@@ -2,6 +2,25 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.7.6] - 2026-11-22
+
+### 🐛 Bug Fixes
+
+- **A post slug is unique per locale, not across all locales.** The route carries the locale
+  (`/{locale}/blog/series/{seriesSlug}/{postSlug}`), but the table declared `unique('slug')` on
+  `blog_post_translations`: the English and the French version of one article could not share a slug,
+  and the second one was refused by the admin with "already taken". Categories, tags and CMS pages were
+  already unique per locale. A migration replaces the index with `unique(['locale', 'slug'])`, and the
+  admin slug rule is scoped to the item's locale — a duplicate inside the same locale is still refused.
+- **The slug fallback no longer serves another language's article.** `BlogController::show()` fell back
+  on "find by slug alone" whenever the requested locale had no match; with two locales able to own the
+  same slug, that would answer with the wrong language under this locale. It now applies only when the
+  post itself has no translation in the requested locale, and not at all when locales are out of the URL.
+
+### Upgrade
+
+`php artisan migrate` — the new index replaces the global one on `blog_post_translations`.
+
 ## [2.7.5] - 2026-11-22
 
 ### 🐛 Bug Fixes
