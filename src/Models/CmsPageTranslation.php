@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
  * @property string $slug
  * @property string $title
  * @property string|null $content
+ * @property array<int, mixed>|null $blocks
  * @property string|null $excerpt
  * @property string|null $meta_title
  * @property string|null $meta_description

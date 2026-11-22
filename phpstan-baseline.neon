@@ -4009,6 +4009,12 @@ parameters:
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
+			message: '#^Parameter \#1 \$blocks of method Happytodev\\Blogr\\Services\\Translation\\TranslationProvider\:\:translateBlocks\(\) expects array\<int, array\>, array\<int, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
 			message: '#^Parameter \#1 \$provider of method Happytodev\\Blogr\\Services\\TranslationUsageService\:\:trackUsage\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -4105,6 +4111,12 @@ parameters:
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
 			message: '#^Return type of call to function collect contains unresolvable type\.$#'
 			identifier: function.unresolvableReturnType
 			count: 1
@@ -4113,13 +4125,13 @@ parameters:
 		-
 			message: '#^Unable to resolve the template type TKey in call to function collect$#'
 			identifier: argument.templateType
-			count: 2
+			count: 1
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
 			message: '#^Unable to resolve the template type TValue in call to function collect$#'
 			identifier: argument.templateType
-			count: 2
+			count: 1
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-

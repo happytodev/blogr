@@ -393,7 +393,7 @@ class EditCmsPageTranslation extends EditRecord
             return;
         }
 
-        $sourceBlocks = $sourceTranslation->blocks ?? [];
+        $sourceBlocks = is_array($sourceTranslation->blocks) ? $sourceTranslation->blocks : [];
         $currentBlocks = $this->record->blocks ?? [];
 
         // Build map of existing block types: ['hero' => true, 'features' => true, ...]
@@ -411,6 +411,10 @@ class EditCmsPageTranslation extends EditRecord
         // First pass: keep target's existing blocks in order, check for gaps
         $usedPositions = [];
         foreach ($sourceBlocks as $i => $sourceBlock) {
+            if (! is_array($sourceBlock)) {
+                continue;
+            }
+
             $type = $sourceBlock['type'] ?? '';
 
             if ($type && isset($existingTypes[$type])) {
@@ -495,7 +499,7 @@ class EditCmsPageTranslation extends EditRecord
 
             $this->record->slug = $this->ensureUniqueCmsSlug($this->record->slug, $targetLocale, $this->record->id);
             $this->record->blocks = $provider->translateBlocks(
-                $sourceTranslation->blocks ?? [], $sourceLocale, $targetLocale
+                is_array($sourceTranslation->blocks) ? $sourceTranslation->blocks : [], $sourceLocale, $targetLocale
             );
 
             $this->record->save();
@@ -624,7 +628,7 @@ class EditCmsPageTranslation extends EditRecord
     protected function keepUntouchedKeys(array $data): array
     {
         $record = $this->record;
-        $published = $record instanceof CmsPageTranslation ? $record->page?->blocks : null;
+        $published = $record instanceof CmsPageTranslation ? $record->blocks : null;
 
         if (! is_array($published) || $published === [] || ! isset($data['blocks']) || ! is_array($data['blocks'])) {
             return $data;

@@ -14,7 +14,6 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $slug
  * @property CmsPageTemplate $template
- * @property array<int, mixed>|null $blocks
  * @property bool|null $is_published
  * @property bool|null $is_homepage
  * @property string|null $default_locale
