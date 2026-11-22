@@ -70,6 +70,25 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.7.4 — 2026-11-22
+
+Saving a new post right after the auto-save fired no longer fails.
+
+The auto-save wrote a placeholder post *and* a partial translation — locale, title, slug — for the
+first item of the translations repeater. The repeater had been mounted when no record existed, so it
+held every item as new and knew nothing about that row: on save it inserted the same locale again.
+The `(blog_post_id, locale)` unique index refused it, and the slug rule refused a slug the post
+already carried, so the user faced a 500 on a post that had in fact been created, published and left
+without what they had typed.
+
+- The auto-save no longer writes a translation: the form owns them and writes them once. A draft now
+  shows as "Untitled" in the admin list until it is saved.
+- Drafts started before this version are repaired on save: the rows the repeater does not hold are
+  dropped before it inserts.
+
+No migration, no configuration change. `composer require happytodev/blogr:^2.7.4`, then
+`php artisan view:clear && php artisan optimize:clear`.
+
 ### v2.7.0 — 2026-11-21
 
 **A post that belongs to a series is served under that series.**

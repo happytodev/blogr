@@ -9,7 +9,6 @@ use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Services\VersioningService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 trait AutoSave
@@ -102,20 +101,12 @@ trait AutoSave
                     'category_id' => $currentState['category_id'] ?? Category::first()?->id ?? 1,
                 ]);
                 if ($placeholder->exists) {
-                    // Create a translation from the first translation data so the post
-                    // appears with a title in the blog list, not as "Untitled"
-                    $translations = $currentState['translations'] ?? [];
-                    $firstKey = array_key_first($translations);
-                    if ($firstKey !== null && isset($translations[$firstKey]['title'])) {
-                        $title = $translations[$firstKey]['title'];
-                        $slug = $translations[$firstKey]['slug'] ?? Str::slug($title);
-                        $locale = $translations[$firstKey]['locale'] ?? $currentState['default_locale'] ?? app()->getLocale();
-                        $placeholder->translations()->create([
-                            'locale' => $locale,
-                            'title' => $title,
-                            'slug' => $slug,
-                        ]);
-                    }
+                    // No translation is written here on purpose (#364): a row the
+                    // repeater has never seen makes the create page collide with
+                    // itself on save — the (post, locale) unique index refuses the
+                    // insert, and the slug rule refuses the same slug a second
+                    // time. The form owns the translations; until it is saved the
+                    // post simply shows as "Untitled" in the admin list.
                     $this->record = $placeholder;
                     app(VersioningService::class)->savePostDraft($placeholder, $currentState);
                 }

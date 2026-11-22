@@ -2,6 +2,18 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.7.4] - 2026-11-22
+
+### 🐛 Bug Fixes
+
+- **Saving a new post no longer fails once the auto-save has run.** The auto-save wrote a placeholder
+  post *and* a partial translation (locale, title, slug). The translations repeater had been mounted
+  when no record existed, so it knew nothing about that row: on save it inserted the same locale again,
+  the `(blog_post_id, locale)` unique index refused it, and the slug rule refused a slug the post
+  already carried. The user got a 500 on a post that had in fact been created, published, and left
+  without what they had typed. The placeholder no longer writes a translation — the form owns them —
+  and drafts started before this version are repaired on save.
+
 ## [2.7.3] - 2026-11-21
 
 ### 🐛 Bug Fixes

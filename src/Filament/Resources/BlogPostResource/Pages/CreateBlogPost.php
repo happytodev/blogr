@@ -9,6 +9,7 @@ use Happytodev\Blogr\Filament\Resources\BlogPostResource;
 use Happytodev\Blogr\Filament\Resources\BlogPosts\BlogPostForm;
 use Happytodev\Blogr\Jobs\SendPostNotificationJob;
 use Happytodev\Blogr\Models\BlogPost;
+use Happytodev\Blogr\Models\BlogPostTranslation;
 use Happytodev\Blogr\Services\VersioningService;
 use Happytodev\Blogr\Traits\AutoSave;
 use Illuminate\Support\Facades\Log;
@@ -47,6 +48,28 @@ class CreateBlogPost extends CreateRecord
             if ($draft) {
                 $draft->delete();
             }
+
+            // The auto-save writes a placeholder and a partial translation
+            // (locale, title, slug) while the form still believes no record
+            // exists. The repeater only recognises the rows it holds under a
+            // "record-{id}" state key, so that row is invisible to it and gets
+            // inserted again — which the (post, locale) unique index refuses.
+            // The form is the source of truth: drop what the repeater does not
+            // own and let it write the translations it carries.
+            $state = $this->data['translations'] ?? [];
+
+            $keptIds = is_array($state)
+                ? collect(array_keys($state))
+                    ->filter(fn ($key): bool => str_starts_with((string) $key, 'record-'))
+                    ->map(fn ($key): int => (int) substr((string) $key, strlen('record-')))
+                    ->all()
+                : [];
+
+            BlogPostTranslation::query()
+                ->where('blog_post_id', $this->record->getKey())
+                ->whereNotIn('id', $keptIds)
+                ->delete();
+
             $this->record->update($data);
 
             return $this->record;
