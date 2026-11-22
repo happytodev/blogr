@@ -955,9 +955,15 @@ class CmsBlockBuilder
                             // "cms-blocks/x.png" into an array, and the site view crashes
                             // on str_starts_with() on reload. Same family of
                             // defect as the tab labels.
-                            ->dehydrateStateUsing(fn ($state) => is_array($state)
-                                ? (string) (array_values($state)[0] ?? '')
-                                : $state)
+                            ->dehydrateStateUsing(function ($state) {
+                                if (! is_array($state)) {
+                                    return $state;
+                                }
+
+                                $first = array_values($state)[0] ?? '';
+
+                                return is_string($first) ? $first : '';
+                            })
                             ->disk('public')
                             ->directory('cms-blocks/media-text'),
 

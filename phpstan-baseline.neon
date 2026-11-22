@@ -39,7 +39,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''router'' on Illuminate\\Contracts\\Foundation\\Application\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 55
+			count: 59
 			path: src/BlogrServiceProvider.php
 
 		-
@@ -61,7 +61,7 @@ parameters:
 			path: src/BlogrServiceProvider.php
 
 		-
-			message: '#^Method Happytodev\\Blogr\\Contracts\\BlogrExtension@anonymous/BlogrServiceProvider\.php\:417\:\:getDependencies\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method Happytodev\\Blogr\\Contracts\\BlogrExtension@anonymous/BlogrServiceProvider\.php\:426\:\:getDependencies\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/BlogrServiceProvider.php
@@ -81,7 +81,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \.\.\.\$arrays of function array_merge expects array, mixed given\.$#'
 			identifier: argument.type
-			count: 21
+			count: 23
 			path: src/BlogrServiceProvider.php
 
 		-
@@ -145,12 +145,6 @@ parameters:
 			path: src/BlogrWidgets.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$is_published\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Commands/BlogrCommand.php
-
-		-
 			message: '#^Method Happytodev\\Blogr\\Commands\\BlogrCommand\:\:getTutorialPosts\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -169,26 +163,14 @@ parameters:
 			path: src/Commands/BlogrExportCommand.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Commands/BlogrImportCommand.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$template\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Commands/BlogrImportCommand.php
-
-		-
-			message: '#^Call to an undefined method BackedEnum\:\:label\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Commands/BlogrImportCommand.php
-
-		-
 			message: '#^Cannot access offset ''type'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Commands/BlogrImportCommand.php
+
+		-
+			message: '#^Instanceof between Happytodev\\Blogr\\Enums\\CmsPageTemplate and BackedEnum will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Commands/BlogrImportCommand.php
 
@@ -415,18 +397,6 @@ parameters:
 			path: src/Commands/BlogrInstallCommand.php
 
 		-
-			message: '#^Right side of \|\| is always false\.$#'
-			identifier: booleanOr.rightAlwaysFalse
-			count: 1
-			path: src/Commands/BlogrInstallCommand.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$is_published\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Commands/BlogrListTutorialsCommand.php
-
-		-
 			message: '#^Method Happytodev\\Blogr\\Commands\\BlogrPublishDemoPagesCommand\:\:handle\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -549,12 +519,6 @@ parameters:
 		-
 			message: '#^Method Happytodev\\Blogr\\Commands\\MigratePostsToTranslations\:\:handle\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: src/Commands/MigratePostsToTranslations.php
-
-		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
 			count: 1
 			path: src/Commands/MigratePostsToTranslations.php
 
@@ -809,12 +773,6 @@ parameters:
 			identifier: offsetAccess.invalidOffset
 			count: 2
 			path: src/Filament/Pages/Auth/EditProfile.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$translations\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Filament/Pages/BlogrSettings.php
 
 		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
@@ -3157,12 +3115,6 @@ parameters:
 			path: src/Filament/Pages/BlogrSettings.php
 
 		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\Category model\.$#'
-			identifier: larastan.relationExistence
-			count: 2
-			path: src/Filament/Pages/BlogrSettings.php
-
-		-
 			message: '#^Result of \|\| is always false\.$#'
 			identifier: booleanOr.alwaysFalse
 			count: 1
@@ -3235,27 +3187,9 @@ parameters:
 			path: src/Filament/Resources/BlogPostResource.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$user_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
-
-		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostDraft\:\:\$updated_at\.$#'
 			identifier: property.notFound
 			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_published\.$#'
-			identifier: property.notFound
-			count: 2
 			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
 
 		-
@@ -3267,30 +3201,6 @@ parameters:
 		-
 			message: '#^Call to function property_exists\(\) with \$this\(Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\CreateBlogPost\) and ''record'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
-
-		-
-			message: '#^Cannot access offset ''locale'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
-
-		-
-			message: '#^Cannot access offset ''slug'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
-
-		-
-			message: '#^Cannot access offset ''title'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
-
-		-
-			message: '#^Cannot access offset mixed on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
 
@@ -3337,12 +3247,6 @@ parameters:
 			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
 
 		-
-			message: '#^Parameter \#1 \$array of function array_key_first expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
-
-		-
 			message: '#^Parameter \#1 \$data of method Happytodev\\Blogr\\Filament\\Resources\\BlogPostResource\\Pages\\CreateBlogPost\:\:normalizePhotoForCreate\(\) expects array, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -3355,28 +3259,10 @@ parameters:
 			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
 
 		-
-			message: '#^Parameter \#1 \$title of static method Illuminate\\Support\\Str\:\:slug\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
-
-		-
 			message: '#^Parameter \#1 \$view of static method Filament\\Schemas\\Components\\View\:\:make\(\) expects view\-string, string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/CreateBlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$is_published\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostDraft\:\:\$created_at\.$#'
@@ -3400,12 +3286,6 @@ parameters:
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostVersion\:\:\$version_number\.$#'
 			identifier: property.notFound
 			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_published\.$#'
-			identifier: property.notFound
-			count: 2
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
@@ -3447,31 +3327,13 @@ parameters:
 		-
 			message: '#^Cannot access offset ''locale'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
+			count: 2
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
 			message: '#^Cannot access offset ''photo'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
-			message: '#^Cannot access offset ''slug'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
-			message: '#^Cannot access offset ''title'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
-			message: '#^Cannot access offset mixed on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
@@ -3589,15 +3451,9 @@ parameters:
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
-			message: '#^Parameter \#1 \$array of function array_key_first expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
 			message: '#^Parameter \#1 \$options of method Filament\\Forms\\Components\\Select\:\:options\(\) expects array\<array\<string\>\|string\>\|Closure\|Illuminate\\Contracts\\Support\\Arrayable\|string\|null, array\<mixed\> given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 3
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
@@ -3626,12 +3482,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$shouldRedirect of method Filament\\Resources\\Pages\\EditRecord\<Illuminate\\Database\\Eloquent\\Model\>\:\:save\(\) expects bool, bool\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
-			message: '#^Parameter \#1 \$title of static method Illuminate\\Support\\Str\:\:slug\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
@@ -3675,18 +3525,12 @@ parameters:
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 2
+			count: 1
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
 		-
 			message: '#^Return type of call to function collect contains unresolvable type\.$#'
 			identifier: function.unresolvableReturnType
-			count: 1
-			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
 			count: 1
 			path: src/Filament/Resources/BlogPostResource/Pages/EditBlogPost.php
 
@@ -3775,18 +3619,6 @@ parameters:
 			path: src/Filament/Resources/BlogPostResource/RelationManagers/TranslationsRelationManager.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Filament/Resources/BlogPosts/BlogPostForm.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Filament/Resources/BlogPosts/BlogPostForm.php
-
-		-
 			message: '#^Binary operation "\+" between mixed and 1 results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -3796,6 +3628,18 @@ parameters:
 			message: '#^Call to function method_exists\(\) with Workbench\\App\\Models\\User and ''hasRole'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 5
+			path: src/Filament/Resources/BlogPosts/BlogPostForm.php
+
+		-
+			message: '#^Cannot access offset ''photo'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: src/Filament/Resources/BlogPosts/BlogPostForm.php
+
+		-
+			message: '#^Cannot access offset string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
 			path: src/Filament/Resources/BlogPosts/BlogPostForm.php
 
 		-
@@ -3823,8 +3667,8 @@ parameters:
 			path: src/Filament/Resources/BlogPosts/BlogPostForm.php
 
 		-
-			message: '#^Unable to resolve the template type TMapWithKeysValue in call to method Illuminate\\Database\\Eloquent\\Collection\<int,Happytodev\\Blogr\\Models\\BlogSeries\>\:\:mapWithKeys\(\)$#'
-			identifier: argument.templateType
+			message: '#^Parameter \#1 \.\.\.\$arrays of function array_merge expects array, mixed given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Filament/Resources/BlogPosts/BlogPostForm.php
 
@@ -3889,22 +3733,10 @@ parameters:
 			path: src/Filament/Resources/Categories/RelationManagers/TranslationsRelationManager.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Filament/Resources/Categories/Schemas/CategoryForm.php
-
-		-
 			message: '#^Parameter \#1 \$title of static method Illuminate\\Support\\Str\:\:slug\(\) expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 2
 			path: src/Filament/Resources/Categories/Schemas/CategoryForm.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Filament/Resources/CmsPageResource.php
 
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
@@ -4027,24 +3859,6 @@ parameters:
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_published\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$updated_at\.$#'
 			identifier: property.notFound
 			count: 1
@@ -4057,25 +3871,7 @@ parameters:
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
-			message: '#^Cannot access offset ''locale'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
-
-		-
-			message: '#^Cannot access offset ''slug'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
-
-		-
-			message: '#^Cannot access offset ''title'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
-
-		-
-			message: '#^Cannot access offset mixed on mixed\.$#'
+			message: '#^Cannot access offset ''data'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
@@ -4213,13 +4009,19 @@ parameters:
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
-			message: '#^Parameter \#1 \$array of function array_key_first expects array, mixed given\.$#'
+			message: '#^Parameter \#1 \$provider of method Happytodev\\Blogr\\Services\\TranslationUsageService\:\:trackUsage\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
-			message: '#^Parameter \#1 \$provider of method Happytodev\\Blogr\\Services\\TranslationUsageService\:\:trackUsage\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$published of method Happytodev\\Blogr\\Filament\\Resources\\CmsPageResource\\Pages\\EditCmsPageTranslation\:\:mergeBlocksWithPublished\(\) expects array\<string, mixed\>, array\<int, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Parameter \#1 \$sourceLocale of method Happytodev\\Blogr\\Filament\\Resources\\CmsPageResource\\Pages\\EditCmsPageTranslation\:\:syncMissingBlocks\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
@@ -4231,7 +4033,7 @@ parameters:
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
-			message: '#^Parameter \#1 \$title of static method Illuminate\\Support\\Str\:\:slug\(\) expects string, mixed given\.$#'
+			message: '#^Parameter \#1 \$string of function strtoupper expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
@@ -4291,6 +4093,18 @@ parameters:
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
+			message: '#^Parameter \#2 \$incoming of method Happytodev\\Blogr\\Filament\\Resources\\CmsPageResource\\Pages\\EditCmsPageTranslation\:\:mergeBlocksWithPublished\(\) expects array\<string, mixed\>, array\<mixed, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
+			message: '#^Parameter \#2 \$sourceLocale of method Happytodev\\Blogr\\Filament\\Resources\\CmsPageResource\\Pages\\EditCmsPageTranslation\:\:translateWithAI\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
+
+		-
 			message: '#^Return type of call to function collect contains unresolvable type\.$#'
 			identifier: function.unresolvableReturnType
 			count: 1
@@ -4309,12 +4123,6 @@ parameters:
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>locale" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 3
@@ -4327,28 +4135,10 @@ parameters:
 			path: src/Filament/Resources/CmsPageResource/Pages/EditCmsPageTranslation.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>title" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: src/Filament/Resources/CmsPageResource/Pages/ListCmsPages.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$translations\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Filament/Resources/CmsPages/CmsBlockBuilder.php
 
 		-
 			message: '#^Cannot access offset ''data'' on mixed\.$#'
@@ -4405,12 +4195,6 @@ parameters:
 			path: src/Filament/Resources/CmsPages/CmsBlockBuilder.php
 
 		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\Category model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Filament/Resources/CmsPages/CmsBlockBuilder.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$locale\.$#'
 			identifier: property.notFound
 			count: 1
@@ -4429,28 +4213,10 @@ parameters:
 			path: src/Filament/Resources/Tags/RelationManagers/TranslationsRelationManager.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Filament/Resources/Tags/Schemas/TagForm.php
-
-		-
 			message: '#^Method Happytodev\\Blogr\\Filament\\Widgets\\CmsStatsOverview\:\:canView\(\) should return bool but returns mixed\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Filament/Widgets/CmsStatsOverview.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$photo\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Filament/Widgets/MissingSeoAlert.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Filament/Widgets/MissingSeoAlert.php
 
 		-
 			message: '#^Anonymous function should return string\|null but returns mixed\.$#'
@@ -4463,24 +4229,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Filament/Widgets/MissingSeoAlert.php
-
-		-
-			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Filament/Widgets/MissingSeoAlert.php
-
-		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 2
-			path: src/Filament/Widgets/MissingSeoAlert.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Filament/Widgets/RecentBlogPosts.php
 
 		-
 			message: '#^Anonymous function should return string\|null but returns mixed\.$#'
@@ -4501,24 +4249,6 @@ parameters:
 			path: src/Filament/Widgets/RecentBlogPosts.php
 
 		-
-			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Filament/Widgets/RecentBlogPosts.php
-
-		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Filament/Widgets/RecentBlogPosts.php
-
-		-
-			message: '#^Relation ''user'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Filament/Widgets/RecentBlogPosts.php
-
-		-
 			message: '#^Anonymous function should return string\|null but returns mixed\.$#'
 			identifier: return.type
 			count: 1
@@ -4527,18 +4257,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$string of function strlen expects string, mixed given\.$#'
 			identifier: argument.type
-			count: 1
-			path: src/Filament/Widgets/ScheduledPosts.php
-
-		-
-			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Filament/Widgets/ScheduledPosts.php
-
-		-
-			message: '#^Relation ''user'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
 			count: 1
 			path: src/Filament/Widgets/ScheduledPosts.php
 
@@ -4621,18 +4339,6 @@ parameters:
 			path: src/Helpers/IconHelper.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$locale\.$#'
-			identifier: property.notFound
-			count: 4
-			path: src/Helpers/LinkResolver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 6
-			path: src/Helpers/LinkResolver.php
-
-		-
 			message: '#^Method Happytodev\\Blogr\\Helpers\\LinkResolver\:\:resolve\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -4697,30 +4403,6 @@ parameters:
 			identifier: offsetAccess.invalidOffset
 			count: 1
 			path: src/Helpers/LocaleHelper.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$photo\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Helpers/SEOHelper.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$published_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Helpers/SEOHelper.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$tags\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Helpers/SEOHelper.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$updated_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Helpers/SEOHelper.php
 
 		-
 			message: '#^Cannot access offset ''default_description'' on mixed\.$#'
@@ -4843,33 +4525,9 @@ parameters:
 			path: src/Helpers/SEOHelper.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$photo\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/AuthorController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/AuthorController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/AuthorController.php
-
-		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_tldr\.$#'
 			identifier: property.notFound
 			count: 1
-			path: src/Http/Controllers/AuthorController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
-			identifier: property.notFound
-			count: 3
 			path: src/Http/Controllers/AuthorController.php
 
 		-
@@ -4903,14 +4561,8 @@ parameters:
 			path: src/Http/Controllers/AuthorController.php
 
 		-
-			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Http/Controllers/AuthorController.php
-
-		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
+			message: '#^Strict comparison using \=\=\= between int and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: src/Http/Controllers/AuthorController.php
 
@@ -4933,177 +4585,15 @@ parameters:
 			path: src/Http/Controllers/AuthorController.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$photo\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_tldr\.$#'
 			identifier: property.notFound
 			count: 1
 			path: src/Http/Controllers/BlogController.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
-			identifier: property.notFound
-			count: 5
-			path: src/Http/Controllers/BlogController.php
-
-		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostDraft\:\:\$draft_data\.$#'
 			identifier: property.notFound
 			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$content\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$locale\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$photo\.$#'
-			identifier: property.notFound
-			count: 4
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$reading_time\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_description\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_keywords\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_title\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 5
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 6
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$tldr\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$photo\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$translated_description\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$translated_slug\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$translated_title\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$description\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$photo\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$seo_description\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$seo_title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$photo\.$#'
-			identifier: property.notFound
-			count: 3
 			path: src/Http/Controllers/BlogController.php
 
 		-
@@ -5125,18 +4615,6 @@ parameters:
 			path: src/Http/Controllers/BlogController.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:posts\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:translate\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: src/Http/Controllers/BlogController.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:published\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -5151,90 +4629,6 @@ parameters:
 		-
 			message: '#^Cannot access offset ''symbol'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot access property \$is_published on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot access property \$photo on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 3
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot access property \$photo_url on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot access property \$published_at on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 4
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot access property \$reading_time on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot access property \$series on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 10
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot access property \$tags on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot access property \$translations on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 3
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot access property \$unpublish_at on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot access property \$updated_at on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: property.nonObject
-			count: 2
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot call method getDefaultTranslation\(\) on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot call method getEstimatedReadingTime\(\) on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot call method setAttribute\(\) on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Cannot call method shouldDisplayToc\(\) on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: method.nonObject
 			count: 1
 			path: src/Http/Controllers/BlogController.php
 
@@ -5259,12 +4653,6 @@ parameters:
 		-
 			message: '#^Method Happytodev\\Blogr\\Http\\Controllers\\BlogController\:\:category\(\) has parameter \$localeOrCategorySlug with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: src/Http/Controllers/BlogController.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Http\\Controllers\\BlogController\:\:getContentWithoutFrontmatter\(\) should return string but returns string\|null\.$#'
-			identifier: return.type
 			count: 1
 			path: src/Http/Controllers/BlogController.php
 
@@ -5383,20 +4771,38 @@ parameters:
 			path: src/Http/Controllers/BlogController.php
 
 		-
+			message: '#^Parameter \#1 \$value of method Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<Happytodev\\Blogr\\Models\\BlogPost,Happytodev\\Blogr\\Models\\Tag,Illuminate\\Database\\Eloquent\\Relations\\Pivot,string\>\:\:take\(\) expects int, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Parameter \#1 \$view of static method Illuminate\\View\\Factory\:\:make\(\) expects view\-string, string given\.$#'
+			identifier: argument.type
+			count: 6
+			path: src/Http/Controllers/BlogController.php
+
+		-
 			message: '#^Parameter \#3 \$subject of function preg_replace expects array\<float\|int\|string\>\|string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Http/Controllers/BlogController.php
 
 		-
-			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 2
+			message: '#^Strict comparison using \=\=\= between int and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 3
 			path: src/Http/Controllers/BlogController.php
 
 		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
+			message: '#^Strict comparison using \=\=\= between int\<1, max\> and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between mixed and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: src/Http/Controllers/BlogController.php
 
@@ -5443,42 +4849,6 @@ parameters:
 			path: src/Http/Controllers/CmsContactController.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$template\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/CmsPageController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$content\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/CmsPageController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$excerpt\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/CmsPageController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$page\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/CmsPageController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$seo_keywords\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/CmsPageController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 4
-			path: src/Http/Controllers/CmsPageController.php
-
-		-
 			message: '#^Cannot access property \$content on Happytodev\\Blogr\\Models\\CmsPageTranslation\|null\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -5486,6 +4856,12 @@ parameters:
 
 		-
 			message: '#^Cannot access property \$excerpt on Happytodev\\Blogr\\Models\\CmsPageTranslation\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
+			message: '#^Cannot access property \$is_published on Happytodev\\Blogr\\Models\\CmsPage\|null\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: src/Http/Controllers/CmsPageController.php
@@ -5503,15 +4879,21 @@ parameters:
 			path: src/Http/Controllers/CmsPageController.php
 
 		-
+			message: '#^Cannot access property \$published_at on Happytodev\\Blogr\\Models\\CmsPage\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Http/Controllers/CmsPageController.php
+
+		-
 			message: '#^Cannot access property \$seo_keywords on Happytodev\\Blogr\\Models\\CmsPageTranslation\|null\.$#'
 			identifier: property.nonObject
 			count: 1
 			path: src/Http/Controllers/CmsPageController.php
 
 		-
-			message: '#^Cannot access property \$template on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			message: '#^Cannot access property \$template on Happytodev\\Blogr\\Models\\CmsPage\|null\.$#'
 			identifier: property.nonObject
-			count: 2
+			count: 4
 			path: src/Http/Controllers/CmsPageController.php
 
 		-
@@ -5521,9 +4903,9 @@ parameters:
 			path: src/Http/Controllers/CmsPageController.php
 
 		-
-			message: '#^Cannot call method availableLocales\(\) on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			message: '#^Cannot call method availableLocales\(\) on Happytodev\\Blogr\\Models\\CmsPage\|null\.$#'
 			identifier: method.nonObject
-			count: 1
+			count: 2
 			path: src/Http/Controllers/CmsPageController.php
 
 		-
@@ -5557,42 +4939,6 @@ parameters:
 			path: src/Http/Controllers/CmsPageController.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CategoryTranslation\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\TagTranslation\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
 			message: '#^Binary operation "\.\=" between mixed and non\-falsy\-string results in an error\.$#'
 			identifier: assignOp.invalid
 			count: 2
@@ -5607,18 +4953,6 @@ parameters:
 		-
 			message: '#^Method Happytodev\\Blogr\\Http\\Controllers\\RssFeedController\:\:getPosts\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Happytodev\\Blogr\\Models\\Category\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Happytodev\\Blogr\\Models\\Tag\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
 			count: 1
 			path: src/Http/Controllers/RssFeedController.php
 
@@ -5677,126 +5011,6 @@ parameters:
 			path: src/Http/Controllers/RssFeedController.php
 
 		-
-			message: '#^Relation ''category'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Relation ''tags'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 2
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\Category model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\Tag model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Relation ''user'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Happytodev\\Blogr\\Models\\Category\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: method.unresolvableReturnType
-			count: 1
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Happytodev\\Blogr\\Models\\Tag\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: method.unresolvableReturnType
-			count: 1
-			path: src/Http/Controllers/RssFeedController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$updated_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$updated_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$updated_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$is_homepage\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$updated_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$updated_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Call to an undefined method Happytodev\\Blogr\\Models\\CmsPage\:\:getDefaultTranslation\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
 			message: '#^Parameter \#1 \$locale of method Happytodev\\Blogr\\Http\\Controllers\\SitemapController\:\:generateSitemap\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -5805,12 +5019,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$string of function trim expects string, mixed given\.$#'
 			identifier: argument.type
-			count: 1
-			path: src/Http/Controllers/SitemapController.php
-
-		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
 			count: 1
 			path: src/Http/Controllers/SitemapController.php
 
@@ -5911,120 +5119,6 @@ parameters:
 			path: src/Jobs/SendPostNotificationJob.php
 
 		-
-			message: '#^Relation ''translations'' is not found in Happytodev\\Blogr\\Models\\BlogPost model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: src/Jobs/SendPostNotificationJob.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$blog_series_id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$category\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$display_toc\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$is_published\.$#'
-			identifier: property.notFound
-			count: 4
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$photo\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$published_at\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$series_position\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$tags\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translations\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$unpublish_at\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$content\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$reading_time\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_description\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_keywords\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$seo_title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$tldr\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
 			message: '#^Access to an undefined property object\:\:\$pendingTranslationData\.$#'
 			identifier: property.notFound
 			count: 1
@@ -6092,12 +5186,6 @@ parameters:
 
 		-
 			message: '#^Method Happytodev\\Blogr\\Models\\BlogPost\:\:author\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Models\\BlogPost\:\:category\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: src/Models/BlogPost.php
@@ -6223,21 +5311,9 @@ parameters:
 			path: src/Models/BlogPost.php
 
 		-
-			message: '#^Method Happytodev\\Blogr\\Models\\BlogPost\:\:series\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
 			message: '#^Method Happytodev\\Blogr\\Models\\BlogPost\:\:shouldDisplayToc\(\) should return bool but returns mixed\.$#'
 			identifier: return.type
 			count: 2
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Models\\BlogPost\:\:tags\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
 			path: src/Models/BlogPost.php
 
 		-
@@ -6247,20 +5323,8 @@ parameters:
 			path: src/Models/BlogPost.php
 
 		-
-			message: '#^Method Happytodev\\Blogr\\Models\\BlogPost\:\:translations\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
 			message: '#^Method Happytodev\\Blogr\\Models\\BlogPost\:\:updateContentWithFrontmatter\(\) has parameter \$frontmatter with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Models/BlogPost.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Models\\BlogPost\:\:user\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: src/Models/BlogPost.php
 
@@ -6295,24 +5359,6 @@ parameters:
 			path: src/Models/BlogPostDraft.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$content\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPostTranslation.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$reading_time\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPostTranslation.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogPostTranslation.php
-
-		-
 			message: '#^Binary operation "/" between int and mixed results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -6320,12 +5366,6 @@ parameters:
 
 		-
 			message: '#^Class Happytodev\\Blogr\\Models\\BlogPostTranslation uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Models/BlogPostTranslation.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:categories\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
 			identifier: missingType.generics
 			count: 1
 			path: src/Models/BlogPostTranslation.php
@@ -6343,52 +5383,10 @@ parameters:
 			path: src/Models/BlogPostTranslation.php
 
 		-
-			message: '#^Method Happytodev\\Blogr\\Models\\BlogPostTranslation\:\:tags\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Models/BlogPostTranslation.php
-
-		-
 			message: '#^Method Happytodev\\Blogr\\Models\\BlogPostVersion\:\:translation\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: src/Models/BlogPostVersion.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$is_featured\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogSeries.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$photo\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogSeries.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$published_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogSeries.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeries\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogSeries.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$description\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogSeries.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogSeriesTranslation\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/BlogSeries.php
 
 		-
 			message: '#^Cannot access property \$user on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
@@ -6411,7 +5409,7 @@ parameters:
 		-
 			message: '#^Method Happytodev\\Blogr\\Models\\BlogSeries\:\:getDefaultTranslation\(\) should return Happytodev\\Blogr\\Models\\BlogSeriesTranslation\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: return.type
-			count: 2
+			count: 1
 			path: src/Models/BlogSeries.php
 
 		-
@@ -6459,7 +5457,7 @@ parameters:
 		-
 			message: '#^Method Happytodev\\Blogr\\Models\\BlogSeries\:\:translate\(\) should return Happytodev\\Blogr\\Models\\BlogSeriesTranslation\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: return.type
-			count: 2
+			count: 1
 			path: src/Models/BlogSeries.php
 
 		-
@@ -6499,12 +5497,6 @@ parameters:
 			path: src/Models/BlogSeriesTranslation.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Category\:\:\$translations\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/Category.php
-
-		-
 			message: '#^Binary operation "\." between mixed and ''categories'' results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -6523,18 +5515,6 @@ parameters:
 			path: src/Models/Category.php
 
 		-
-			message: '#^Method Happytodev\\Blogr\\Models\\Category\:\:posts\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Models/Category.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Models\\Category\:\:translations\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Models/Category.php
-
-		-
 			message: '#^Class Happytodev\\Blogr\\Models\\CategoryTranslation uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -6547,24 +5527,6 @@ parameters:
 			path: src/Models/CategoryTranslation.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$default_locale\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/CmsPage.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$is_published\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/CmsPage.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$published_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/CmsPage.php
-
-		-
 			message: '#^Class Happytodev\\Blogr\\Models\\CmsPage uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -6573,12 +5535,6 @@ parameters:
 		-
 			message: '#^Method Happytodev\\Blogr\\Models\\CmsPage\:\:availableLocales\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Models/CmsPage.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Models\\CmsPage\:\:currentTranslation\(\) should return Happytodev\\Blogr\\Models\\CmsPageTranslation\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: return.type
 			count: 1
 			path: src/Models/CmsPage.php
 
@@ -6625,19 +5581,19 @@ parameters:
 			path: src/Models/CmsPage.php
 
 		-
-			message: '#^Method Happytodev\\Blogr\\Models\\CmsPage\:\:translation\(\) should return Happytodev\\Blogr\\Models\\CmsPageTranslation\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Models/CmsPage.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Models\\CmsPage\:\:translations\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Models/CmsPage.php
-
-		-
 			message: '#^Parameter \#1 \$array of function array_diff expects an array of values castable to string, array\<mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Models/CmsPage.php
+
+		-
+			message: '#^Parameter \#1 \$locale of method Happytodev\\Blogr\\Models\\CmsPage\:\:translation\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Models/CmsPage.php
+
+		-
+			message: '#^Parameter \#1 \$locale of method Happytodev\\Blogr\\Models\\CmsPage\:\:translation\(\) expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Models/CmsPage.php
@@ -6667,42 +5623,6 @@ parameters:
 			path: src/Models/CmsPageDraft.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$locale\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Models/CmsPageTranslation.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$meta_description\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/CmsPageTranslation.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$meta_keywords\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/CmsPageTranslation.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$meta_title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/CmsPageTranslation.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/CmsPageTranslation.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/CmsPageTranslation.php
-
-		-
 			message: '#^Method Happytodev\\Blogr\\Models\\CmsPageTranslation\:\:page\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
@@ -6715,22 +5635,10 @@ parameters:
 			path: src/Models/CmsPageTranslation.php
 
 		-
-			message: '#^Parameter \#1 \$string of function rtrim expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Models/CmsPageTranslation.php
-
-		-
 			message: '#^Method Happytodev\\Blogr\\Models\\CmsPageVersion\:\:translation\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
 			path: src/Models/CmsPageVersion.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\Tag\:\:\$translations\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/Tag.php
 
 		-
 			message: '#^Binary operation "\." between mixed and ''blog_post_tag'' results in an error\.$#'
@@ -6775,18 +5683,6 @@ parameters:
 			path: src/Models/Tag.php
 
 		-
-			message: '#^Method Happytodev\\Blogr\\Models\\Tag\:\:posts\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Models/Tag.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Models\\Tag\:\:translations\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Models/Tag.php
-
-		-
 			message: '#^Class Happytodev\\Blogr\\Models\\TagTranslation uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1
@@ -6811,20 +5707,8 @@ parameters:
 			path: src/Models/User.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\User\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Models/User.php
-
-		-
 			message: '#^Class Happytodev\\Blogr\\Models\\User uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
-			count: 1
-			path: src/Models/User.php
-
-		-
-			message: '#^Method Happytodev\\Blogr\\Models\\User\:\:blogPosts\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: src/Models/User.php
 
@@ -6949,28 +5833,10 @@ parameters:
 			path: src/Notifications/PostSavedByWriter.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
+			message: '#^Instanceof between Happytodev\\Blogr\\Models\\BlogSeries and Happytodev\\Blogr\\Models\\BlogSeries will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Observers/BlogSeriesTranslationObserver.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Observers/BlogSeriesTranslationObserver.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:translations\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Observers/BlogSeriesTranslationObserver.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$user_id\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Policies/BlogPostPolicy.php
 
 		-
 			message: '#^Method Happytodev\\Blogr\\Policies\\BlogPostPolicy\:\:create\(\) has parameter \$user with no type specified\.$#'
@@ -7621,24 +6487,6 @@ parameters:
 			path: src/Services/CmsPageBackupService.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$published_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Services/CmsPageImportExportService.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$slug\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Services/CmsPageImportExportService.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\CmsPage\:\:\$template\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Services/CmsPageImportExportService.php
-
-		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1
@@ -7671,6 +6519,12 @@ parameters:
 		-
 			message: '#^Cannot access offset ''title'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Services/CmsPageImportExportService.php
+
+		-
+			message: '#^Instanceof between Happytodev\\Blogr\\Enums\\CmsPageTemplate and BackedEnum will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Services/CmsPageImportExportService.php
 
@@ -7767,12 +6621,6 @@ parameters:
 		-
 			message: '#^Method Happytodev\\Blogr\\Services\\CmsPageImportExportService\:\:replaceUrlsInData\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Services/CmsPageImportExportService.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\<mixed\>, Closure\(Happytodev\\Blogr\\Models\\CmsPageTranslation\)\: array\<mixed\> given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Services/CmsPageImportExportService.php
 
@@ -8071,12 +6919,6 @@ parameters:
 			path: src/Services/VersioningService.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_published\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Services/VersioningService.php
-
-		-
 			message: '#^Anonymous function should return non\-empty\-string but returns non\-empty\-string\|false\.$#'
 			identifier: return.type
 			count: 3
@@ -8339,6 +7181,12 @@ parameters:
 			identifier: missingType.generics
 			count: 1
 			path: src/Testing/TestsBlogr.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Traits/AutoSave.php
 
 		-
 			message: '#^Trait Happytodev\\Blogr\\Traits\\HasTranslatedBio is used zero times and is not analysed\.$#'

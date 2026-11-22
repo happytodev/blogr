@@ -7,10 +7,18 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Happytodev\Blogr\Tests\Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property-read Collection<int, BlogPost> $blogPosts
+ */
 class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerifyEmail
 {
     use HasFactory, HasRoles;
@@ -40,7 +48,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         return UserFactory::new();
     }
 
-    public function blogPosts()
+    /**
+     * @return HasMany<BlogPost, $this>
+     */
+    public function blogPosts(): HasMany
     {
         return $this->hasMany(BlogPost::class);
     }

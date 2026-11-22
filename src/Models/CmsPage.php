@@ -4,10 +4,25 @@ namespace Happytodev\Blogr\Models;
 
 use Happytodev\Blogr\Database\Factories\CmsPageFactory;
 use Happytodev\Blogr\Enums\CmsPageTemplate;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property string $slug
+ * @property CmsPageTemplate $template
+ * @property array<int, mixed>|null $blocks
+ * @property bool|null $is_published
+ * @property bool|null $is_homepage
+ * @property string|null $default_locale
+ * @property Carbon|null $published_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection<int, CmsPageTranslation> $translations
+ */
 class CmsPage extends Model
 {
     use HasFactory;
@@ -60,6 +75,9 @@ class CmsPage extends Model
     /**
      * Get all translations for this page
      */
+    /**
+     * @return HasMany<CmsPageTranslation, $this>
+     */
     public function translations(): HasMany
     {
         return $this->hasMany(CmsPageTranslation::class);
@@ -83,8 +101,15 @@ class CmsPage extends Model
      */
     public function getDefaultTranslation(): ?CmsPageTranslation
     {
-        return $this->translation($this->default_locale ?? config('app.locale', 'en'))
-            ?? $this->translations()->first();
+        $translation = $this->translation($this->default_locale ?? config('app.locale', 'en'));
+
+        if ($translation instanceof CmsPageTranslation) {
+            return $translation;
+        }
+
+        $fallback = $this->translations()->first();
+
+        return $fallback instanceof CmsPageTranslation ? $fallback : null;
     }
 
     /**

@@ -39,9 +39,10 @@ class RecentBlogPosts extends BaseWidget
                         }
 
                         $locale = app()->getLocale();
-                        $defaultLocale = config('blogr.locales.default', 'en');
+                        $configured = config('blogr.locales.default');
+                        $defaultLocale = is_string($configured) ? $configured : 'en';
 
-                        return PostUrlHelper::forPost($record, $locale ?: $defaultLocale);
+                        return PostUrlHelper::forPost($record, $locale !== '' ? $locale : $defaultLocale);
                     })
                     ->openUrlInNewTab()
                     ->tooltip(function (Tables\Columns\TextColumn $column): ?string {

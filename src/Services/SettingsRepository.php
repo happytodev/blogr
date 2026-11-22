@@ -190,6 +190,9 @@ class SettingsRepository
             return false;
         }
 
-        return in_array($_SERVER['argv'][1] ?? null, ['config:cache', 'optimize'], true);
+        $argv = $_SERVER['argv'] ?? null;
+        $command = is_array($argv) ? ($argv[1] ?? null) : null;
+
+        return in_array($command, ['config:cache', 'optimize'], true);
     }
 }

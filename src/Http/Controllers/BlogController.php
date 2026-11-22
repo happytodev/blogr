@@ -87,7 +87,7 @@ class BlogController
 
                 // Set reading time from translation
                 if ($translation && isset($translation->reading_time)) {
-                    $post->reading_time = $translation->reading_time;
+                    $post->reading_time = $translation->reading_time === null ? null : (string) $translation->reading_time;
                 }
 
                 // Photo fallback logic: translation photo > post photo > any other translation photo
@@ -374,10 +374,14 @@ class BlogController
         }
 
         if (is_array($draftTranslation)) {
-            foreach (['title', 'slug', 'content', 'tldr', 'seo_title', 'seo_description', 'seo_keywords', 'reading_time'] as $field) {
-                if (array_key_exists($field, $draftTranslation)) {
-                    $translation->{$field} = $draftTranslation[$field];
+            foreach (['title', 'slug', 'content', 'tldr', 'seo_title', 'seo_description', 'seo_keywords'] as $field) {
+                if (array_key_exists($field, $draftTranslation) && is_scalar($draftTranslation[$field])) {
+                    $translation->{$field} = (string) $draftTranslation[$field];
                 }
+            }
+
+            if (isset($draftTranslation['reading_time']) && is_numeric($draftTranslation['reading_time'])) {
+                $translation->reading_time = (int) $draftTranslation['reading_time'];
             }
 
             if (array_key_exists('photo', $draftTranslation)) {
@@ -553,7 +557,7 @@ class BlogController
         if ($translation) {
             if (isset($translation->reading_time) && $translation->reading_time > 0) {
                 // Use stored value if available
-                $post->reading_time = $translation->reading_time;
+                $post->reading_time = $translation->reading_time === null ? null : (string) $translation->reading_time;
             } else {
                 // Calculate from translation content if not stored
                 $readingSpeed = config('blogr.reading_speed.words_per_minute', 200);
@@ -561,7 +565,7 @@ class BlogController
                 $plainText = strip_tags($text);
                 $wordCount = str_word_count($plainText);
                 $minutes = floor($wordCount / $readingSpeed);
-                $post->reading_time = $wordCount > 0 ? max(1, (int) $minutes) : 0;
+                $post->reading_time = (string) ($wordCount > 0 ? max(1, (int) $minutes) : 0);
             }
         }
 
@@ -626,7 +630,7 @@ class BlogController
             'robots' => 'index, follow',
             'author' => $post->user->name ?? ConfigHelper::getSeoSiteName($locale),
             'published_time' => $post->published_at?->toISOString(),
-            'modified_time' => $post->updated_at->toISOString(),
+            'modified_time' => $post->updated_at?->toISOString(),
             'tags' => $post->tags->pluck('name')->toArray(),
         ];
 
@@ -649,7 +653,7 @@ class BlogController
                 'name' => $post->user->name ?? ConfigHelper::getSeoSiteName($locale),
             ],
             'datePublished' => $post->published_at?->toISOString(),
-            'dateModified' => $post->updated_at->toISOString(),
+            'dateModified' => $post->updated_at?->toISOString(),
         ]);
 
         // Prepare translated slugs for series posts if post is part of a series
@@ -667,7 +671,10 @@ class BlogController
             $post->series->translated_description = $seriesTranslation?->description ?? $post->series->description;
 
             // Filter to only published posts in the series
-            $post->series->posts = $post->series->posts->filter->isCurrentlyPublished()->values();
+            $post->series->setRelation(
+                'posts',
+                $post->series->posts->filter->isCurrentlyPublished()->values()
+            );
 
             // Translate each post in the series
             $post->series->posts->each(function ($seriesPost) use ($locale) {
@@ -717,7 +724,9 @@ class BlogController
         }
 
         // Validate and resolve locale
-        $currentLocale = $locale ?? config('blogr.locales.default', 'en');
+        $configuredLocale = config('blogr.locales.default');
+        $fallbackLocale = is_string($configuredLocale) ? $configuredLocale : 'en';
+        $currentLocale = is_string($locale) && $locale !== '' ? $locale : $fallbackLocale;
 
         // Try to find category by main slug first
         $category = Category::where('slug', $actualCategorySlug)->first();
@@ -765,7 +774,7 @@ class BlogController
 
                 // Set reading time from translation
                 if ($translation && isset($translation->reading_time)) {
-                    $post->reading_time = $translation->reading_time;
+                    $post->reading_time = $translation->reading_time === null ? null : (string) $translation->reading_time;
                 }
 
                 // Photo fallback logic: translation photo > post photo > any other translation photo
@@ -828,7 +837,9 @@ class BlogController
             $actualTagSlug = $localeOrTagSlug;
         }
 
-        $currentLocale = $locale ?? config('blogr.locales.default', 'en');
+        $configuredLocale = config('blogr.locales.default');
+        $fallbackLocale = is_string($configuredLocale) ? $configuredLocale : 'en';
+        $currentLocale = is_string($locale) && $locale !== '' ? $locale : $fallbackLocale;
 
         // Try to find tag by main slug first
         $tag = Tag::where('slug', $actualTagSlug)->first();
@@ -877,7 +888,7 @@ class BlogController
 
                 // Set reading time from translation
                 if ($translation && isset($translation->reading_time)) {
-                    $post->reading_time = $translation->reading_time;
+                    $post->reading_time = $translation->reading_time === null ? null : (string) $translation->reading_time;
                 }
 
                 // Photo fallback logic: translation photo > post photo > any other translation photo
@@ -1044,7 +1055,7 @@ class BlogController
 
                 // Set reading time from translation
                 if ($translation && isset($translation->reading_time)) {
-                    $post->reading_time = $translation->reading_time;
+                    $post->reading_time = $translation->reading_time === null ? null : (string) $translation->reading_time;
                 }
 
                 // Photo fallback logic: translation photo > post photo > any other translation photo
@@ -1119,10 +1130,10 @@ class BlogController
         ])->with('currentSeries', $series); // Share series for navigation component
     }
 
-    protected function getContentWithoutFrontmatter(string $content): string
+    protected function getContentWithoutFrontmatter(?string $content): string
     {
         $pattern = '/^---\s*\n.*?\n---\s*\n/s';
 
-        return preg_replace($pattern, '', $content);
+        return (string) preg_replace($pattern, '', $content ?? '');
     }
 }

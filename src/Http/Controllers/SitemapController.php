@@ -44,7 +44,7 @@ class SitemapController
 
             $urls[] = [
                 'loc' => PostUrlHelper::forPost($post, $locale),
-                'lastmod' => $post->updated_at->toW3cString(),
+                'lastmod' => $post->updated_at?->toW3cString() ?? now()->toW3cString(),
                 'changefreq' => 'weekly',
                 'priority' => '0.8',
             ];
@@ -56,7 +56,7 @@ class SitemapController
             $slug = $category->slug;
             $urls[] = [
                 'loc' => route('blog.category', ['locale' => $locale, 'categorySlug' => $slug]),
-                'lastmod' => $category->updated_at->toW3cString(),
+                'lastmod' => $category->updated_at?->toW3cString() ?? now()->toW3cString(),
                 'changefreq' => 'weekly',
                 'priority' => '0.6',
             ];
@@ -68,7 +68,7 @@ class SitemapController
             $slug = $tag->slug;
             $urls[] = [
                 'loc' => route('blog.tag', ['locale' => $locale, 'tagSlug' => $slug]),
-                'lastmod' => $tag->updated_at->toW3cString(),
+                'lastmod' => $tag->updated_at?->toW3cString() ?? now()->toW3cString(),
                 'changefreq' => 'weekly',
                 'priority' => '0.5',
             ];
@@ -82,7 +82,7 @@ class SitemapController
                 $slug = $translation?->slug ?? $s->slug;
                 $urls[] = [
                     'loc' => route('blog.series', ['locale' => $locale, 'seriesSlug' => $slug]),
-                    'lastmod' => $s->updated_at->toW3cString(),
+                    'lastmod' => $s->updated_at?->toW3cString() ?? now()->toW3cString(),
                     'changefreq' => 'weekly',
                     'priority' => '0.6',
                 ];
@@ -109,7 +109,7 @@ class SitemapController
                     }
                     $urls[] = [
                         'loc' => $url,
-                        'lastmod' => $page->updated_at->toW3cString(),
+                        'lastmod' => $page->updated_at?->toW3cString() ?? now()->toW3cString(),
                         'changefreq' => $page->is_homepage ? 'daily' : 'monthly',
                         'priority' => $page->is_homepage ? '1.0' : '0.7',
                     ];
