@@ -202,9 +202,13 @@ class BlogPostForm
                                         foreach ($modelTranslations as $locale => $modelTrans) {
                                             $merged[$locale] = $modelTrans;
                                         }
-                                        foreach ($draftData as $draftTrans) {
+                                        foreach (is_array($draftData) ? $draftData : [] as $draftTrans) {
+                                            if (! is_array($draftTrans)) {
+                                                continue;
+                                            }
+
                                             $locale = $draftTrans['locale'] ?? null;
-                                            if ($locale) {
+                                            if (is_string($locale) && $locale !== '') {
                                                 // Remove model-only keys that shouldn't be in the form
                                                 unset($draftTrans['blog_post_id'], $draftTrans['id'],
                                                     $draftTrans['created_at'], $draftTrans['updated_at'],
@@ -220,6 +224,10 @@ class BlogPostForm
 
                                         // Normalize per-translation photo fields
                                         foreach ($data as $tk => $translation) {
+                                            if (! is_array($translation)) {
+                                                continue;
+                                            }
+
                                             if (isset($translation['photo'])) {
                                                 $photo = $translation['photo'];
                                                 if (is_array($photo)) {
@@ -239,7 +247,7 @@ class BlogPostForm
                                             }
                                             // Normalize other JSON-encoded strings back to arrays
                                             foreach ($translation as $field => $value) {
-                                                if ($field === 'photo') {
+                                                if (! is_string($field) || $field === 'photo') {
                                                     continue;
                                                 }
                                                 if (is_string($value) && str_starts_with($value, '[') && str_ends_with($value, ']')) {

@@ -5,7 +5,26 @@ namespace Happytodev\Blogr\Models;
 use Happytodev\Blogr\Traits\ClearsLocaleCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property int $cms_page_id
+ * @property string $locale
+ * @property string $slug
+ * @property string $title
+ * @property string|null $content
+ * @property string|null $excerpt
+ * @property string|null $meta_title
+ * @property string|null $meta_description
+ * @property string|null $meta_keywords
+ * @property string|null $seo_title
+ * @property string|null $seo_description
+ * @property string|null $seo_keywords
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read CmsPage|null $page
+ */
 class CmsPageTranslation extends Model
 {
     use ClearsLocaleCache;
@@ -41,16 +60,21 @@ class CmsPageTranslation extends Model
      */
     public function url(): string
     {
-        $cmsPrefix = config('blogr.cms.prefix', '');
-        $baseUrl = rtrim(config('app.url'), '/');
+        $configuredPrefix = config('blogr.cms.prefix');
+        $cmsPrefix = is_string($configuredPrefix) ? trim($configuredPrefix, '/') : '';
+
+        $configuredUrl = config('app.url');
+        $baseUrl = is_string($configuredUrl) ? rtrim($configuredUrl, '/') : '';
+
+        $defaultLocale = config('blogr.locales.default');
 
         // Build URL parts
         $parts = array_filter([
             $baseUrl,
             $cmsPrefix,
-            $this->locale !== config('blogr.locales.default') ? $this->locale : null,
+            $this->locale !== $defaultLocale ? $this->locale : null,
             $this->slug,
-        ]);
+        ], fn ($part) => is_string($part) && $part !== '');
 
         return implode('/', $parts);
     }

@@ -352,7 +352,7 @@ class BlogrInstallCommand extends Command
         $appJsContent = File::get($appJsPath);
 
         // Check if Alpine is already configured
-        if (str_contains($appJsContent, 'import Alpine from') || str_contains($appJsContent, 'import Alpine from')) {
+        if (str_contains($appJsContent, 'import Alpine from')) {
             $this->info('✅ Alpine.js is already configured in app.js.');
 
             return;

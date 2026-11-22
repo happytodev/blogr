@@ -72,7 +72,7 @@ class AuthorController extends Controller
 
                 // Set reading time from translation (use stored value, don't recalculate)
                 if ($translation && isset($translation->reading_time)) {
-                    $post->reading_time = $translation->reading_time;
+                    $post->reading_time = $translation->reading_time === null ? null : (string) $translation->reading_time;
                 }
 
                 // Photo fallback logic: translation photo > post photo > any other translation photo

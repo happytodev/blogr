@@ -16,9 +16,9 @@ class BlogSeriesTranslationObserver
     {
         $series = $translation->series;
 
-        if ($series) {
+        if ($series instanceof BlogSeries) {
             // Check if slug looks auto-generated (starts with 'series-' and has timestamp)
-            if (Str::startsWith($series->slug, 'series-') && Str::contains($series->slug, '-')) {
+            if (Str::startsWith($series->slug, 'series-')) {
                 // Check if this is the first translation
                 $translationCount = $series->translations()->count();
 

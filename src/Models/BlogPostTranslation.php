@@ -4,11 +4,33 @@ namespace Happytodev\Blogr\Models;
 
 use Happytodev\Blogr\Tests\Database\Factories\BlogPostTranslationFactory;
 use Happytodev\Blogr\Traits\ClearsLocaleCache;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property int $blog_post_id
+ * @property string $locale
+ * @property string $title
+ * @property string $slug
+ * @property string|null $excerpt
+ * @property string|null $content
+ * @property string|null $tldr
+ * @property string|null $photo
+ * @property string|null $seo_title
+ * @property string|null $seo_description
+ * @property string|null $seo_keywords
+ * @property int|null $reading_time
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read BlogPost|null $post
+ * @property-read Collection<int, Category> $categories
+ * @property-read Collection<int, Tag> $tags
+ */
 class BlogPostTranslation extends Model
 {
     use HasFactory;
@@ -50,6 +72,9 @@ class BlogPostTranslation extends Model
     /**
      * Get the categories associated with this translation.
      */
+    /**
+     * @return BelongsToMany<Category, $this>
+     */
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -62,6 +87,9 @@ class BlogPostTranslation extends Model
 
     /**
      * Get the tags associated with this translation.
+     */
+    /**
+     * @return BelongsToMany<Tag, $this>
      */
     public function tags(): BelongsToMany
     {
@@ -88,7 +116,7 @@ class BlogPostTranslation extends Model
         $wordCount = str_word_count($text);
 
         // Calculate reading time in minutes
-        $readingTime = ceil($wordCount / $readingSpeed);
+        $readingTime = (int) ceil($wordCount / $readingSpeed);
 
         $this->reading_time = $readingTime;
         $this->save();

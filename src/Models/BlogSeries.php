@@ -3,12 +3,31 @@
 namespace Happytodev\Blogr\Models;
 
 use Happytodev\Blogr\Database\Factories\BlogSeriesFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property string $slug
+ * @property string|null $photo
+ * @property int|null $position
+ * @property bool|null $is_featured
+ * @property string|null $title
+ * @property string|null $description
+ * @property Carbon|null $published_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property string|null $translated_title
+ * @property string|null $translated_description
+ * @property string|null $translated_slug
+ * @property-read Collection<int, BlogSeriesTranslation> $translations
+ * @property-read Collection<int, BlogPost> $posts
+ */
 class BlogSeries extends Model
 {
     use HasFactory;
@@ -240,6 +259,6 @@ class BlogSeries extends Model
      */
     public function isFeatured(): bool
     {
-        return $this->is_featured;
+        return (bool) $this->is_featured;
     }
 }

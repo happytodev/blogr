@@ -83,7 +83,7 @@ class SEOHelper
             'robots' => 'index, follow',
             'author' => $post->user->name ?? ($config['site_name'] ?? 'My Blog'),
             'published_time' => $post->published_at?->toISOString(),
-            'modified_time' => $post->updated_at->toISOString(),
+            'modified_time' => $post->updated_at?->toISOString(),
             'tags' => $post->tags->pluck('name')->toArray(),
         ];
 

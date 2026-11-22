@@ -4,12 +4,48 @@ namespace Happytodev\Blogr\Models;
 
 use Happytodev\Blogr\Helpers\ConfigHelper;
 use Happytodev\Blogr\Tests\Database\Factories\BlogPostFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int|null $category_id
+ * @property int|null $blog_series_id
+ * @property int|null $series_position
+ * @property string|null $title
+ * @property string|null $slug
+ * @property string|null $content
+ * @property string|null $photo
+ * @property string|null $tldr
+ * @property string|null $meta_title
+ * @property string|null $meta_description
+ * @property string|null $meta_keywords
+ * @property string|null $default_locale
+ * @property bool|null $is_published
+ * @property bool|null $is_listed
+ * @property bool|null $display_toc
+ * @property string|int|null $reading_time
+ * @property string|null $translated_title
+ * @property string|null $translated_slug
+ * @property Carbon|null $published_at
+ * @property Carbon|null $unpublish_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection<int, BlogPostTranslation> $translations
+ * @property-read Collection<int, Tag> $tags
+ * @property-read BlogSeries|null $series
+ * @property-read Category|null $category
+ * @property-read User|null $user
+ */
 class BlogPost extends Model
 {
     use HasFactory;
@@ -228,7 +264,10 @@ class BlogPost extends Model
     }
 
     // A blog post belongs to a user
-    public function user()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -240,14 +279,20 @@ class BlogPost extends Model
     }
 
     // A blog post belongs to a category
-    public function category()
+    /**
+     * @return BelongsTo<Category, $this>
+     */
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
     // A blog post can have many tags
     // Many-to-many relationship with Tag model
-    public function tags()
+    /**
+     * @return BelongsToMany<Tag, $this>
+     */
+    public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, config('blogr.tables.prefix', '').'blog_post_tag');
     }
@@ -278,7 +323,10 @@ class BlogPost extends Model
     /**
      * A blog post belongs to a series
      */
-    public function series()
+    /**
+     * @return BelongsTo<BlogSeries, $this>
+     */
+    public function series(): BelongsTo
     {
         return $this->belongsTo(BlogSeries::class, 'blog_series_id');
     }
@@ -286,7 +334,10 @@ class BlogPost extends Model
     /**
      * A blog post has many translations
      */
-    public function translations()
+    /**
+     * @return HasMany<BlogPostTranslation, $this>
+     */
+    public function translations(): HasMany
     {
         return $this->hasMany(BlogPostTranslation::class, 'blog_post_id');
     }
@@ -318,7 +369,12 @@ class BlogPost extends Model
      */
     public function getDefaultTranslation(): ?BlogPostTranslation
     {
-        $locale = $this->default_locale ?? config('app.locale', 'en');
+        $locale = $this->default_locale;
+
+        if (! is_string($locale) || $locale === '') {
+            $configured = config('app.locale');
+            $locale = is_string($configured) ? $configured : 'en';
+        }
 
         return $this->translate($locale) ?? $this->translations->first();
     }
@@ -372,13 +428,17 @@ class BlogPost extends Model
      */
     public function getReadingTimeAttribute($value): ?string
     {
-        if ($value) {
-            return $value;
+        // The column stores minutes; a controller may also store the formatted
+        // text ("12 minutes"). Both are read back as a string, the views format
+        // whatever they get through ConfigHelper::getReadingTimeText().
+        if (is_scalar($value) && $value !== '' && $value !== 0) {
+            return (string) $value;
         }
 
         $translation = $this->getDefaultTranslation();
+        $value = $translation?->reading_time;
 
-        return $translation?->reading_time;
+        return $value === null ? null : (string) $value;
     }
 
     /**
@@ -678,7 +738,7 @@ class BlogPost extends Model
         if (! $value) {
             $translation = $this->getDefaultTranslation();
 
-            return $translation?->content;
+            return $translation === null ? '' : ($translation->content ?? '');
         }
 
         return $value;
@@ -686,20 +746,17 @@ class BlogPost extends Model
 
     /**
      * Get the content without frontmatter
-     *
-     * @return string
      */
-    public function getContentWithoutFrontmatter()
+    public function getContentWithoutFrontmatter(): string
     {
         // Get content from DB or translations
         $content = $this->attributes['content'] ?? null;
 
-        if (! $content) {
-            $translation = $this->getDefaultTranslation();
-            $content = $translation?->content;
+        if (! is_string($content) || $content === '') {
+            $content = $this->getDefaultTranslation()?->content;
         }
 
-        if (! $content) {
+        if (! is_string($content) || $content === '') {
             return '';
         }
 

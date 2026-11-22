@@ -155,7 +155,7 @@ class EditBlogPost extends EditRecord
                     ->label('Language')
                     ->options(
                         $this->record->translations()->pluck('locale', 'id')
-                            ->map(fn ($locale) => app(LocaleService::class)->localeLabel((string) $locale))
+                            ->map(fn ($locale) => app(LocaleService::class)->localeLabel(is_string($locale) ? $locale : ''))
                             ->toArray()
                     )
                     ->default($this->record->translations()->value('id'))

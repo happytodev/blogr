@@ -70,7 +70,7 @@ class EditCmsPageTranslation extends EditRecord
         // Compared through the relation: the model documents none of its columns, so
         // larastan cannot read `cms_page_id` on it, and the relation answers the same
         // question — does this translation still belong to the page it was opened for?
-        if ($model instanceof CmsPageTranslation && $model->page?->is($this->cmsPage)) {
+        if ($model instanceof CmsPageTranslation && $model->page instanceof CmsPage && $model->page->is($this->cmsPage)) {
             return $model;
         }
 
@@ -173,6 +173,10 @@ class EditCmsPageTranslation extends EditRecord
      * a file upload; we reduce it to that path. Any other structure is
      * left intact.
      */
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     protected static function normaliseUploadFields(array $data): array
     {
         $isUploadMap = function ($value): bool {
@@ -193,7 +197,9 @@ class EditCmsPageTranslation extends EditRecord
             }
 
             if ($isUploadMap($value)) {
-                return (string) array_values($value)[0];
+                $first = array_values($value)[0] ?? '';
+
+                return is_string($first) ? $first : '';
             }
 
             $out = [];
@@ -611,9 +617,14 @@ class EditCmsPageTranslation extends EditRecord
      * On fusionne donc : les valeurs du formulaire gagnent, les cles qu'il ne touche pas sont
      * conservees telles quelles.
      */
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     protected function keepUntouchedKeys(array $data): array
     {
-        $published = $this->record?->blocks;
+        $record = $this->record;
+        $published = $record instanceof CmsPageTranslation ? $record->page?->blocks : null;
 
         if (! is_array($published) || $published === [] || ! isset($data['blocks']) || ! is_array($data['blocks'])) {
             return $data;
@@ -624,6 +635,11 @@ class EditCmsPageTranslation extends EditRecord
         return $data;
     }
 
+    /**
+     * @param  array<string, mixed>  $published
+     * @param  array<string, mixed>  $incoming
+     * @return array<string, mixed>
+     */
     protected function mergeBlocksWithPublished(array $published, array $incoming): array
     {
         $publishedByPosition = array_values($published);
@@ -642,7 +658,7 @@ class EditCmsPageTranslation extends EditRecord
             }
 
             $incoming[$key]['data'] = $this->mergeKeepingUntouched(
-                $previous['data'] ?? [],
+                is_array($previous['data'] ?? null) ? $previous['data'] : [],
                 is_array($block['data'] ?? null) ? $block['data'] : []
             );
         }
