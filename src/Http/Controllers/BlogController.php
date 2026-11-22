@@ -206,9 +206,12 @@ class BlogController
             ])
             ->first();
 
-        // If not found in requested locale, try to find by slug alone (fallback)
+        // Not translated in this locale: keep an old link alive, but only when the
+        // post it points at has no translation here. Since #365 the same slug can
+        // belong to another post in this very locale, and that one must win over
+        // a fallback that would answer with someone else's article.
         if (! $translation) {
-            $translation = BlogPostTranslation::where('slug', $actualSlug)
+            $candidate = BlogPostTranslation::where('slug', $actualSlug)
                 ->with([
                     'post.category.translations',
                     'post.tags.translations',
@@ -217,6 +220,20 @@ class BlogController
                     'post.series.posts.translations',
                 ])
                 ->first();
+
+            $candidatePost = $candidate?->post;
+
+            if ($candidate instanceof BlogPostTranslation && $candidatePost instanceof BlogPost) {
+                // Without locales in the URL nothing claims a language, so a slug
+                // resolves to its translation as it always did. With locales, a
+                // post translated in the requested one must be reached through
+                // its own slug — never through another language's.
+                $translatedHere = $candidatePost->translations()->where('locale', $locale)->exists();
+
+                if (! $localesEnabled || ! $translatedHere) {
+                    $translation = $candidate;
+                }
+            }
         }
 
         // If still not found, throw 404

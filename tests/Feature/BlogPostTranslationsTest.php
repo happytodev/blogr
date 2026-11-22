@@ -195,22 +195,40 @@ it('requires unique slug per locale', function () {
     ]))->toThrow(QueryException::class);
 });
 
-it('requires unique slug globally across all locales', function () {
+it('allows the same slug in another locale but still refuses a duplicate inside one', function () {
     $post = BlogPost::create([
         'default_locale' => 'en',
         'user_id' => 1,
         'category_id' => 1,
+    ]);
+
+    $post->translations()->create([
+        'locale' => 'en',
         'title' => 'My Post',
         'slug' => 'my-unique-post',
         'content' => 'English content',
     ]);
 
-    // Try to create French translation with same slug - should fail
-    expect(fn () => $post->translations()->create([
+    // Issue #365: the route carries the locale, so both may share the slug.
+    $post->translations()->create([
         'locale' => 'fr',
         'title' => 'Mon Article',
-        'slug' => 'my-unique-post', // Same slug = conflict!
+        'slug' => 'my-unique-post',
         'content' => 'Contenu français',
+    ]);
+
+    expect($post->translations()->count())->toBe(2);
+
+    // Two posts cannot own the same slug in the same locale.
+    expect(fn () => BlogPost::create([
+        'default_locale' => 'fr',
+        'user_id' => 1,
+        'category_id' => 1,
+    ])->translations()->create([
+        'locale' => 'fr',
+        'title' => 'Un autre article',
+        'slug' => 'my-unique-post',
+        'content' => 'Autre contenu',
     ]))->toThrow(QueryException::class);
 });
 

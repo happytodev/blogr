@@ -25,6 +25,7 @@ use Happytodev\Blogr\Services\LocaleService;
 use Happytodev\Blogr\Services\VersioningService;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Unique;
 
 class BlogPostForm
 {
@@ -70,7 +71,17 @@ class BlogPostForm
                                 TextInput::make('slug')
                                     ->label('Slug')
                                     ->required()
-                                    ->unique(ignoreRecord: true)
+                                    // A slug is unique per locale (#365): the route carries
+                                    // the locale, so /en/blog/hello and /fr/blog/hello are
+                                    // two different posts' URLs on two translations.
+                                    ->unique(
+                                        ignoreRecord: true,
+                                        modifyRuleUsing: function (Unique $rule, Get $get): Unique {
+                                            $locale = $get('locale');
+
+                                            return $rule->where('locale', is_string($locale) ? $locale : '');
+                                        },
+                                    )
                                     ->maxLength(255)
                                     ->helperText('URL-friendly version of the title')
                                     ->suffixAction(self::syncSlugFromTitleAction())
