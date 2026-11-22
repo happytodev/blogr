@@ -2,6 +2,30 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.7.5] - 2026-11-22
+
+### 🐛 Bug Fixes
+
+- **Reads of a nullable timestamp no longer crash the sitemap and the SEO block.** `published_at` and
+  `updated_at` were dereferenced without a check; a post without a publish date answered 500 on
+  `/sitemap.xml` instead of being skipped.
+- **`BlogPostTranslation::calculateReadingTime()` wrote `ceil()`'s float into an integer column.**
+- **`SettingsRepository` read the console argv without checking it exists.** Under php-fpm there is no
+  argv, and the one place that reads it is the `config:cache` guard — the exact command that runs without
+  a terminal.
+- **The admin draft import read offsets of a value it had not checked** (`title`, `slug`, `photo` of a
+  draft built from JSON), which is what the type pass surfaced.
+- **The CMS block merge now says where `blocks` lives.** The column moved to `cms_page_translations` and
+  the page's copy was dropped; the merge source is documented on the translation, where the column is.
+
+### 🔧 Internals
+
+- Every model documents its columns (`@property`) and its relations (`@return BelongsTo<X, $this>`), which
+  is what PHPStan level 9 needs to follow a relation from a controller. No behaviour change.
+- The PHPStan baseline is regenerated: 1199 entries for 1877 findings, replacing 1391 entries that no
+  longer matched what the analyser reports. `pint` and `phpstan` both pass, so the pre-commit hook is
+  usable again.
+
 ## [2.7.4] - 2026-11-22
 
 ### 🐛 Bug Fixes

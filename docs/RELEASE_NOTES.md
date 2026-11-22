@@ -70,6 +70,22 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.7.5 — 2026-11-22
+
+A type-safety pass over the package; what it turned up is fixed here.
+
+- The sitemap and the SEO block dereferenced `published_at` / `updated_at` without a null check — a post
+  without a publish date answered 500 on `/sitemap.xml` instead of being skipped.
+- `calculateReadingTime()` stored `ceil()`'s float in an integer column.
+- `SettingsRepository` read the console argv without checking it exists, under php-fpm it does not, and
+  the one place that reads it is the `config:cache` guard.
+- The admin draft import read offsets of a value it had not checked.
+- The CMS block merge reads `blocks` on the translation, where the column moved.
+
+Every model now documents its columns and relations, so PHPStan level 9 can follow a relation out of a
+controller; the baseline is regenerated and both `pint` and `phpstan` pass. No migration, no
+configuration change.
+
 ### v2.7.4 — 2026-11-22
 
 Saving a new post right after the auto-save fired no longer fails.
