@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $blog_post_id
  * @property string $locale
+ * @property int|null $author_bio_id
  * @property string $title
  * @property string $slug
  * @property string|null $excerpt
@@ -28,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read BlogPost|null $post
+ * @property-read AuthorBio|null $authorBio
  * @property-read Collection<int, Category> $categories
  * @property-read Collection<int, Tag> $tags
  */
@@ -40,6 +42,7 @@ class BlogPostTranslation extends Model
     protected $fillable = [
         'blog_post_id',
         'locale',
+        'author_bio_id',
         'title',
         'slug',
         'photo',
@@ -73,6 +76,16 @@ class BlogPostTranslation extends Model
     /**
      * Get the categories associated with this translation.
      */
+    /**
+     * The bio this translation shows, when the editor picked one (issue #373).
+     *
+     * @return BelongsTo<AuthorBio, $this>
+     */
+    public function authorBio(): BelongsTo
+    {
+        return $this->belongsTo(AuthorBio::class, 'author_bio_id');
+    }
+
     /**
      * @return BelongsToMany<Category, $this>
      */

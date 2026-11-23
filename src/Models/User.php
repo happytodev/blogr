@@ -49,6 +49,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     }
 
     /**
+     * @return HasMany<AuthorBio, $this>
+     */
+    public function authorBios(): HasMany
+    {
+        return $this->hasMany(AuthorBio::class);
+    }
+
+    /**
      * @return HasMany<BlogPost, $this>
      */
     public function blogPosts(): HasMany

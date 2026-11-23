@@ -1,4 +1,4 @@
-@props(['author', 'compact' => false, 'locale' => null])
+@props(['author', 'compact' => false, 'locale' => null, 'bio' => null])
 
 @php
     // Check if author exists
@@ -106,9 +106,11 @@
                     </h3>
                 @endif
 
-                @if($author->bio ?? false)
+                @if(($bio ?? null) || ($author->bio ?? false))
                     <div class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 prose prose-sm dark:prose-invert max-w-none">
-                        @if(is_array($author->bio))
+                        @if(is_string($bio ?? null) && trim($bio) !== '')
+                            {!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($bio) !!}
+                        @elseif(is_array($author->bio))
                             {!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($author->bio[$locale] ?? $author->bio[config('blogr.locales.default', 'en')] ?? '') !!}
                         @else
                             {!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($author->bio) !!}

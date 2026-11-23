@@ -712,6 +712,7 @@
             <x-blogr::author-bio 
                 :author="$post->author" 
                 :locale="$currentLocale"
+                :bio="$post->authorBioFor($currentLocale)"
                 :compact="config('blogr.author_bio.compact', false)" />
         @endif
 
@@ -776,6 +777,7 @@
             <x-blogr::author-bio 
                 :author="$post->author" 
                 :locale="$currentLocale"
+                :bio="$post->authorBioFor($currentLocale)"
                 :compact="config('blogr.author_bio.compact', false)" />
         @endif
 

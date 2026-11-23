@@ -12,12 +12,14 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Happytodev\Blogr\Filament\Components\CalloutMarkdownEditor;
 use Happytodev\Blogr\Filament\Forms\SlugFieldTrait;
+use Happytodev\Blogr\Models\AuthorBio;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\BlogSeries;
 use Happytodev\Blogr\Models\Category;
@@ -26,6 +28,7 @@ use Happytodev\Blogr\Services\VersioningService;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
+use Livewire\Component;
 
 class BlogPostForm
 {
@@ -54,6 +57,35 @@ class BlogPostForm
                                     ->reactive()
                                     ->distinct()
                                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                    ->columnSpan(1),
+
+                                // Which of the author's bios this translation shows (#373).
+                                // Empty: the author's default bio for this language.
+                                Select::make('author_bio_id')
+                                    ->label('Bio')
+                                    ->placeholder('Default bio')
+                                    ->options(function (Get $get, ?Component $livewire = null): array {
+                                        $locale = $get('locale');
+
+                                        $record = $livewire instanceof EditRecord
+                                            ? $livewire->record
+                                            : null;
+
+                                        $authorId = $record instanceof BlogPost ? $record->user_id : auth()->id();
+
+                                        if (! is_string($locale) || $locale === 'new' || ! $authorId) {
+                                            return [];
+                                        }
+
+                                        return AuthorBio::query()
+                                            ->where('user_id', $authorId)
+                                            ->forLocale($locale)
+                                            ->orderByDesc('is_default')
+                                            ->orderBy('label')
+                                            ->pluck('label', 'id')
+                                            ->all();
+                                    })
+                                    ->helperText('Written in “My bios”.')
                                     ->columnSpan(1),
 
                                 TextInput::make('title')

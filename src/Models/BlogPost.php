@@ -380,6 +380,23 @@ class BlogPost extends Model
     }
 
     /**
+     * The bio this post should show in a locale, if a specific one was picked
+     * (issue #373). Null means: use the author's default bio for that locale.
+     */
+    public function authorBioFor(?string $locale = null): ?string
+    {
+        $translation = $this->translate($locale ?? app()->getLocale());
+
+        $bio = $translation?->authorBio;
+
+        if ($bio instanceof AuthorBio && is_string($bio->body) && trim($bio->body) !== '') {
+            return $bio->body;
+        }
+
+        return null;
+    }
+
+    /**
      * Accessor to get the title from the default translation
      */
     public function getTitleAttribute($value): ?string
