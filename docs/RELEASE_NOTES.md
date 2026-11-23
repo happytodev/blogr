@@ -70,6 +70,29 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.9.0 — 2026-11-22
+
+**Several bios per author, and a post picks the one it shows.**
+
+An author had one bio per locale — a JSON map on `users` — so every article they wrote carried the same
+paragraph. If you write about PHP, generative art and running, that paragraph describes nobody: it is
+either the wrong bio or a compromise between three.
+
+- `blogr_author_bios`: `label`, `locale`, `body` (markdown), `is_default`, unique on `(user_id, locale,
+  label)` — one default per language.
+- `blog_post_translations.author_bio_id`: the bio a translation shows.
+- Resolution: the chosen bio → the author's default for that language → `users.bio[locale]`. An existing
+  site keeps its bios as defaults and has nothing to migrate.
+- **"My bios"** page, in the panel's Blog group: an author adds, renames and deletes their own bios.
+- A `Bio` select in each translation of the post form, listing the author's bios for that language.
+
+```php
+// reading the bio of a post in a locale, in a view or a controller
+$post->authorBioFor('fr');   // the chosen body, or null — the author's default then applies
+```
+
+Two migrations. No data change.
+
 ### v2.8.1 — 2026-11-22
 
 Two leftovers from 2.8.0, found on the live site once it was deployed.

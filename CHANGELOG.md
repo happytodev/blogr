@@ -2,6 +2,24 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.9.0] - 2026-11-22
+
+### ✨ Features
+
+- **Several bios per author, one per post.** An author kept a single bio per locale, so every article
+  they wrote printed the same paragraph. `blogr_author_bios` holds named bios — "short", "dev",
+  "artwork" — written in one language each, with one default per language; a translation picks the one
+  it shows (`blog_post_translations.author_bio_id`). Without a choice, the default bio of the language
+  applies, and `users.bio` is still read when there is none. (#373)
+- **A "My bios" page** where an author manages their own bios, and a `Bio` select in each translation of
+  the post form, listing the author's bios for that language.
+
+### Upgrade
+
+Two migrations: `2026_11_22_000002_create_blogr_author_bios_table` and
+`2026_11_22_000003_add_author_bio_to_blog_post_translations`. Nothing to migrate — existing bios stay the
+default ones.
+
 ## [2.8.1] - 2026-11-22
 
 ### 🐛 Bug Fixes
