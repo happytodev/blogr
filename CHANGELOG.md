@@ -2,6 +2,23 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.9.2] - 2026-11-23
+
+### 🐛 Bug Fixes
+
+- **A post keeps its place in its series.** The form showed an integer position as "Custom position…"
+  with an empty number field, saving wrote `null`, and the model's guard sent the post to the end of the
+  series on every save — three posts of one series read 1, 4, 4. The rule lives in
+  `BlogPost::resolveSeriesPosition()` now, an empty number field means "unchanged", and the guard only
+  appends a post that joins a series. (#374)
+- **Cards show a description without a tldr.** `tldr` → `excerpt` → beginning of the body, flattened,
+  200 characters — the chain the meta description follows since 2.8.0. (#375)
+
+### Upgrade
+
+No migration. Positions already duplicated by the bug are not repaired automatically: they need a
+one-off renumbering, since the intended order is not known.
+
 ## [2.9.0] - 2026-11-22
 
 ### ✨ Features

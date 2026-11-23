@@ -70,6 +70,29 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.9.2 — 2026-11-23
+
+**A post keeps its place in its series.** It lost it on every edit: the form showed the stored
+integer position as "Custom position…" with an empty number field, saving wrote `null`, and the model's
+guard — "a post in a series without a position goes to the end" — fired on every save. Three posts of one
+series read 1, 4, 4.
+
+The rule now lives in `BlogPost::resolveSeriesPosition()`: an empty number field means "unchanged", unless
+the post moved to another series, whose positions know nothing of the old number. The form fills the number
+field from the stored value, and the guard only appends a post that **joins** a series.
+
+**Cards show a description without a tldr.** A post written without one — the artwork series, where the
+body is the description — was a title and a date with a hole under it. The card falls back to `excerpt`,
+then to the beginning of the body flattened to plain text, 200 characters: the chain the meta description
+has followed since 2.8.0.
+
+```bash
+composer require happytodev/blogr:^2.9.2
+```
+
+No migration. Positions already duplicated by the bug need a one-off renumbering — the fix stops the
+bleeding but cannot guess the intended order.
+
 ### v2.9.0 — 2026-11-22
 
 **Several bios per author, and a post picks the one it shows.**
