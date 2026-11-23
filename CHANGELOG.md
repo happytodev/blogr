@@ -2,6 +2,16 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.8.1] - 2026-11-22
+
+### 🐛 Bug Fixes
+
+- **Listing pages no longer compose their own titles.** The index read "HTD — HTD" when a site's default
+  title is also its site name — a value that fills `{title}` and `{site}` is now kept once. Category and
+  tag pages were still building "Category: Art - HTD", with the English prefix hardcoded and the site's
+  default title as the entity: they go through `title_pattern` now, and their descriptions are translated
+  instead of shipping "Browse all articles in the Art category." on a French page. (#366)
+
 ## [2.8.0] - 2026-11-22
 
 Page titles, meta descriptions and the series pages.

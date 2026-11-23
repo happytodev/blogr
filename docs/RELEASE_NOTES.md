@@ -70,6 +70,19 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.8.1 — 2026-11-22
+
+Two leftovers from 2.8.0, found on the live site once it was deployed.
+
+- The index page read "HTD — HTD" when a site's default title is also its site name: the same value filled
+  `{title}` and `{site}`. A value that appears twice in a title is kept once.
+- Category and tag pages still composed their own title ("Category: Art - HTD"), with the English prefix
+  hardcoded and the site's default title as the entity. They go through the pattern now, and their
+  descriptions are translated instead of shipping "Browse all articles in the Art category." on a French
+  page.
+
+No migration.
+
 ### v2.8.0 — 2026-11-22
 
 Titles, meta descriptions and the series pages.
