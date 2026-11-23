@@ -437,6 +437,14 @@ class BlogPostForm
                             ->default('auto-bottom')
                             ->live()
                             ->visible(fn ($get) => $get('blog_series_id') !== null)
+                            // The stored position is an integer; the custom field must
+                            // receive it, or "custom" means "empty" and the post loses
+                            // its place on the next save (#374).
+                            ->afterStateHydrated(function ($state, Set $set): void {
+                                if (is_numeric($state)) {
+                                    $set('series_position_custom', (int) $state);
+                                }
+                            })
                             ->formatStateUsing(function ($state) {
                                 if (is_null($state) || $state === 'auto-bottom') {
                                     return 'auto-bottom';

@@ -3,6 +3,7 @@
 namespace Happytodev\Blogr\Models;
 
 use Happytodev\Blogr\Helpers\ConfigHelper;
+use Happytodev\Blogr\Helpers\MarkdownHelper;
 use Happytodev\Blogr\Tests\Database\Factories\BlogPostFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
 use Symfony\Component\Yaml\Yaml;
 
@@ -21,6 +23,8 @@ use Symfony\Component\Yaml\Yaml;
  * @property int|null $category_id
  * @property int|null $blog_series_id
  * @property int|null $series_position
+ * @property string|null $translated_summary
+ * @property string|null $translated_tldr
  * @property string|null $title
  * @property string|null $slug
  * @property string|null $content
@@ -136,13 +140,24 @@ class BlogPost extends Model
             }
         });
 
-        // Auto-calculate series position when assigned to a series without explicit position
+        // A post that joins a series without a position goes to the end of it —
+        // and only that. The guard used to fire on every save with a null
+        // position, so editing a post whose position had been lost sent it to
+        // the end of the series, over and over (#374).
         static::saving(function ($post) {
-            if ($post->blog_series_id && is_null($post->series_position)) {
-                $maxPosition = static::where('blog_series_id', $post->blog_series_id)
-                    ->max('series_position');
-                $post->series_position = $maxPosition ? $maxPosition + 1 : 1;
+            if (! $post->blog_series_id || ! is_null($post->series_position)) {
+                return;
             }
+
+            if ($post->exists && ! $post->isDirty('blog_series_id')) {
+                return;
+            }
+
+            $maxPosition = static::where('blog_series_id', $post->blog_series_id)
+                ->whereKeyNot($post->getKey())
+                ->max('series_position');
+
+            $post->series_position = $maxPosition ? $maxPosition + 1 : 1;
         });
 
         // After creating a post, create translation from pending data
@@ -377,6 +392,79 @@ class BlogPost extends Model
         }
 
         return $this->translate($locale) ?? $this->translations->first();
+    }
+
+    /**
+     * A one-line description of the post, for a card that has no `tldr`.
+     *
+     * Cards printed `tldr` and nothing else, so an artwork post — body, no
+     * summary typed — appeared as a title and a date with a hole under it (#375).
+     * The chain mirrors the meta description: tldr, excerpt, then the body.
+     */
+    public function summary(?string $locale = null, int $limit = 200): ?string
+    {
+        $translation = $this->translate($locale ?? app()->getLocale());
+
+        foreach ([$translation?->tldr, $translation?->excerpt, $this->tldr] as $candidate) {
+            if (is_string($candidate) && trim($candidate) !== '') {
+                return trim($candidate);
+            }
+        }
+
+        $body = $translation ? $translation->content : null;
+
+        if (! is_string($body) || trim($body) === '') {
+            return null;
+        }
+
+        $text = trim((string) preg_replace('/\s+/u', ' ', strip_tags(MarkdownHelper::toHtml($body))));
+
+        if ($text === '') {
+            return null;
+        }
+
+        return Str::limit($text, $limit);
+    }
+
+    /**
+     * The position a post takes in a series, given what the editor picked.
+     *
+     * The form offers "at the end", "at the beginning" and a number; the column
+     * is an integer. Everything ambiguous lands here so it can be tested without
+     * a Filament page (#374): an empty custom field means "unchanged" — unless the
+     * post just moved to another series, where the old number means nothing.
+     */
+    public static function resolveSeriesPosition(
+        ?int $seriesId,
+        ?string $choice,
+        mixed $custom,
+        ?int $currentPosition,
+        ?int $currentSeriesId,
+        ?int $postId = null,
+    ): ?int {
+        if (! $seriesId) {
+            return null;
+        }
+
+        $endOfSeries = function () use ($seriesId, $postId): int {
+            $max = static::query()
+                ->where('blog_series_id', $seriesId)
+                ->when($postId, fn ($query) => $query->whereKeyNot($postId))
+                ->max('series_position');
+
+            return (is_numeric($max) ? (int) $max : 0) + 1;
+        };
+
+        return match ($choice) {
+            'auto-top' => 1,
+            'auto-bottom' => $endOfSeries(),
+            'custom' => is_numeric($custom)
+                ? (int) $custom
+                : (($currentSeriesId !== null && (int) $currentSeriesId !== $seriesId)
+                    ? $endOfSeries()
+                    : $currentPosition),
+            default => $currentPosition,
+        };
     }
 
     /**

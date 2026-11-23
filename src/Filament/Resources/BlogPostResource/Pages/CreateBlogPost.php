@@ -90,14 +90,21 @@ class CreateBlogPost extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         if (isset($data['blog_series_id']) && isset($data['series_position'])) {
-            if ($data['series_position'] === 'auto-top') {
-                BlogPost::where('blog_series_id', $data['blog_series_id'])
-                    ->increment('series_position');
-                $data['series_position'] = 1;
-            } elseif ($data['series_position'] === 'auto-bottom') {
-                $data['series_position'] = null;
-            } elseif ($data['series_position'] === 'custom') {
-                $data['series_position'] = $data['series_position_custom'] ?? null;
+            $seriesId = $data['blog_series_id'];
+            $choice = $data['series_position'];
+
+            if (is_numeric($seriesId) && is_string($choice)) {
+                if ($choice === 'auto-top') {
+                    BlogPost::where('blog_series_id', $seriesId)->increment('series_position');
+                }
+
+                $data['series_position'] = BlogPost::resolveSeriesPosition(
+                    (int) $seriesId,
+                    $choice,
+                    $data['series_position_custom'] ?? null,
+                    null,
+                    null,
+                );
             }
         }
         unset($data['series_position_custom']);

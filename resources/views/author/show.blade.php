@@ -128,9 +128,9 @@
                             </h3>
 
                             {{-- TLDR/Excerpt --}}
-                            @if($post->translated_tldr ?? false)
+                            @if(($post->translated_tldr ?? null) || ($post->translated_summary ?? null))
                                 <p class="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">
-                                    {{ $post->translated_tldr }}
+                                    {{ $post->translated_tldr ?: $post->translated_summary }}
                                 </p>
                             @endif
 

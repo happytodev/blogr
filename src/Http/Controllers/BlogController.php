@@ -83,6 +83,7 @@ class BlogController
                 $post->translated_slug = $translation?->slug
                     ?? $post->translations->first(fn ($t) => ! empty($t->slug))?->slug;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
+                $post->translated_summary = $post->summary(is_string($locale) ? $locale : null);
 
                 // Set reading time from translation
                 if ($translation && isset($translation->reading_time)) {
@@ -1104,6 +1105,7 @@ class BlogController
                     ?? $post->translations->first(fn ($t) => ! empty($t->slug))?->slug;
                 $post->translated_title = $translation?->title ?? $post->title;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
+                $post->translated_summary = $post->summary(is_string($locale) ? $locale : null);
 
                 // Set reading time from translation
                 if ($translation && isset($translation->reading_time)) {

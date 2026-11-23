@@ -4537,12 +4537,6 @@ parameters:
 			path: src/Helpers/SEOHelper.php
 
 		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_tldr\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/AuthorController.php
-
-		-
 			message: '#^Cannot call static method where\(\) on mixed\.$#'
 			identifier: staticMethod.nonObject
 			count: 1
@@ -4595,12 +4589,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: src/Http/Controllers/AuthorController.php
-
-		-
-			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPost\:\:\$translated_tldr\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/Controllers/BlogController.php
 
 		-
 			message: '#^Access to an undefined property Happytodev\\Blogr\\Models\\BlogPostDraft\:\:\$draft_data\.$#'

@@ -4,7 +4,9 @@
     $currentLocale = $currentLocale ?? app()->getLocale();
     $postTranslation = $post->translate($currentLocale);
     $postTitle = $postTranslation ? $postTranslation->title : $post->title;
-    $postTldr = $postTranslation ? $postTranslation->tldr : $post->tldr;
+    // Cards used to show `tldr` and nothing else: a post without one had no
+    // description at all (#375). The model builds a summary from the body.
+    $postTldr = $postTranslation?->tldr ?? $post->tldr ?? ($post->translated_summary ?? $post->summary());
     $postUrl = \Happytodev\Blogr\Helpers\PostUrlHelper::forPost($post, $currentLocale);
 @endphp
 

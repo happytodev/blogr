@@ -69,6 +69,7 @@ class AuthorController extends Controller
                 $post->translated_slug = $translation?->slug
                     ?? $post->translations->first(fn ($t) => ! empty($t->slug))?->slug;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
+                $post->translated_summary = $post->summary($locale);
 
                 // Set reading time from translation (use stored value, don't recalculate)
                 if ($translation && isset($translation->reading_time)) {

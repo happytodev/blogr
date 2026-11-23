@@ -45,6 +45,15 @@ class EditBlogPost extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
+        // The stored position is an integer; the form shows "Custom position..."
+        // for it, so the custom field has to carry the number — otherwise it
+        // reads as empty and the post loses its place on save (#374).
+        if (! empty($data['blog_series_id']) && is_numeric($data['series_position'] ?? null)) {
+            $data['series_position_custom'] = (int) $data['series_position'];
+        } else {
+            $data['series_position'] = 'auto-bottom';
+        }
+
         $draft = app(VersioningService::class)->getPostDraft($this->record);
 
         // Merge draft translations into model translations, preserving model fields
@@ -264,6 +273,11 @@ class EditBlogPost extends EditRecord
     {
         if ($this->record->is_published) {
             $data = $this->data ?? [];
+
+            // A draft carries the raw form state; the series position is a model
+            // column and would be stored as the select's key ("custom") until the
+            // draft is published. Normalise it once, here (#374).
+            $data = $this->mutateFormDataBeforeSave($data);
 
             app(VersioningService::class)->savePostDraft($this->record, $data);
 
@@ -523,17 +537,39 @@ class EditBlogPost extends EditRecord
         return $candidate;
     }
 
+    /**
+     * `$this->record` is a typed property Filament initialises in mount(); the
+     * position logic runs in tests that build the page without it.
+     */
+    protected function currentPost(): ?BlogPost
+    {
+        return isset($this->record) && $this->record instanceof BlogPost ? $this->record : null;
+    }
+
     protected function mutateFormDataBeforeSave(array $data): array
     {
         if (isset($data['blog_series_id']) && isset($data['series_position'])) {
-            if ($data['series_position'] === 'auto-top') {
-                BlogPost::where('blog_series_id', $data['blog_series_id'])
-                    ->increment('series_position');
-                $data['series_position'] = 1;
-            } elseif ($data['series_position'] === 'auto-bottom') {
-                $data['series_position'] = null;
-            } elseif ($data['series_position'] === 'custom') {
-                $data['series_position'] = $data['series_position_custom'] ?? null;
+            $record = $this->currentPost();
+            $seriesId = $data['blog_series_id'];
+            $choice = $data['series_position'];
+
+            if (is_numeric($seriesId) && is_string($choice)) {
+                $recordId = $record?->id;
+
+                if ($choice === 'auto-top') {
+                    BlogPost::where('blog_series_id', $seriesId)
+                        ->when($recordId !== null, fn ($query) => $query->whereKeyNot($recordId))
+                        ->increment('series_position');
+                }
+
+                $data['series_position'] = BlogPost::resolveSeriesPosition(
+                    (int) $seriesId,
+                    $choice,
+                    $data['series_position_custom'] ?? null,
+                    $record?->series_position,
+                    $record?->blog_series_id,
+                    $recordId,
+                );
             }
         }
         unset($data['series_position_custom']);
