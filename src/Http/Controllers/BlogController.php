@@ -20,7 +20,6 @@ use Happytodev\Blogr\Rendering\ShikiCodeBlockRenderer;
 use Happytodev\Blogr\Services\VersioningService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Str;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
@@ -80,7 +79,7 @@ class BlogController
                 }
 
                 // Override post attributes with translation, with fallback to model accessors
-                $post->translated_title = $translation?->title ?? $post->title;
+                $post->translated_title = $translation->title ?? $post->title;
                 $post->translated_slug = $translation?->slug
                     ?? $post->translations->first(fn ($t) => ! empty($t->slug))?->slug;
                 $post->translated_tldr = $translation?->tldr ?? $post->tldr;
@@ -129,7 +128,7 @@ class BlogController
 
                 // Set translated properties with fallback to model accessors
                 $series->translated_title = $translation?->title ?? $series->title;
-                $series->translated_description = $translation?->description ?? $series->description;
+                $series->translated_description = $translation->description ?? $series->description;
                 $series->translated_slug = $series->getTranslatedSlug($locale);
 
                 // Photo fallback logic for series: translation photo > series photo > any other translation photo
@@ -636,9 +635,26 @@ class BlogController
         // Build SEO data using translation data instead of post data
         // Use content without frontmatter for description
         $contentWithoutFrontmatter = $this->getContentWithoutFrontmatter($translation->content);
+        $seriesForTitle = null;
+        if ($post->series instanceof BlogSeries) {
+            $seriesForTitle = $post->series->translate((string) $locale)?->title
+                ?? $post->series->getDefaultTranslation()?->title
+                ?? $post->series->slug;
+        }
+
         $seoData = [
-            'title' => $translation->seo_title ?: $translation->title,
-            'description' => $translation->seo_description ?: Str::limit(strip_tags($contentWithoutFrontmatter), 160),
+            'title' => $translation->seo_title ?: SEOHelper::title(
+                (string) $translation->title,
+                [
+                    'series' => $seriesForTitle,
+                    'category' => $post->category?->name,
+                ],
+                (string) $locale
+            ),
+            'description' => SEOHelper::description(
+                $translation->seo_description ?: $translation->excerpt ?: $translation->tldr,
+                $contentWithoutFrontmatter
+            ),
             'keywords' => $translation->seo_keywords ?: $translation->title,
             'canonical' => PostUrlHelper::forPost($post, (string) $locale),
             'og_type' => 'article',
@@ -663,6 +679,25 @@ class BlogController
         }
 
         // Add structured data for JSON-LD
+        if ($post->series instanceof BlogSeries && $post->series->isPublished()) {
+            $seoData['breadcrumbs'] = [
+                [
+                    'name' => __('blogr::blogr.ui.blog'),
+                    'url' => config('blogr.locales.enabled')
+                        ? route('blog.index', ['locale' => (string) $locale])
+                        : route('blog.index'),
+                ],
+                [
+                    'name' => $seriesForTitle,
+                    'url' => PostUrlHelper::forSeries($post->series, (string) $locale),
+                ],
+                [
+                    'name' => (string) $translation->title,
+                    'url' => PostUrlHelper::forPost($post, (string) $locale),
+                ],
+            ];
+        }
+
         $seoData['schema_additional'] = json_encode([
             'headline' => $translation->title,
             'author' => [
@@ -993,7 +1028,7 @@ class BlogController
             ?? 'Browse all our blog series and learn step by step.';
 
         $seoData = [
-            'title' => 'Blog Series - '.config('app.name'),
+            'title' => SEOHelper::title(__('blogr::blogr.series.title'), [], $locale),
             'description' => $subtitle,
             'canonical' => config('blogr.locales.enabled')
                 ? route('blog.series.index', ['locale' => $locale])
@@ -1122,8 +1157,15 @@ class BlogController
         $translatedSlug = $series->getTranslatedSlug($locale);
 
         $seoData = [
-            'title' => $seriesTranslation?->seo_title ?? $seriesTranslation?->title ?? $series->slug,
-            'description' => $seriesTranslation?->seo_description ?? $seriesTranslation?->description ?? '',
+            'title' => $seriesTranslation?->seo_title ?: SEOHelper::title(
+                (string) ($seriesTranslation->title ?? $series->slug),
+                [],
+                is_string($locale) ? $locale : null
+            ),
+            'description' => SEOHelper::description(
+                $seriesTranslation?->seo_description,
+                $seriesTranslation?->description
+            ),
             'canonical' => $localesEnabled
                 ? route('blog.series', ['locale' => $locale, 'seriesSlug' => $translatedSlug])
                 : route('blog.series', ['seriesSlug' => $translatedSlug]),

@@ -12,6 +12,7 @@ return [
     'ui' => [
         'about_the_author' => 'À propos de l\'auteur',
         'back_to_all_posts' => 'Retour à tous les articles',
+        'blog' => 'Blog',
         'back_to_blog' => 'Retour au blog',
         'check_back_soon' => 'Revenez bientôt pour du nouveau contenu !',
         'current' => 'actuel',

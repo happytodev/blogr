@@ -50,8 +50,9 @@
                         </div>
 
                         @if ($seriesTranslation?->description)
-                            <p class="text-lg text-gray-600 dark:text-gray-300 mb-4">{{ $seriesTranslation->description }}
-                            </p>
+                            {{-- Markdown: the description keeps its paragraphs (#369) --}}
+                            <div class="prose prose-sm dark:prose-invert max-w-none text-lg text-gray-600 dark:text-gray-300 mb-4">{!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($seriesTranslation->description) !!}
+                            </div>
                         @endif
 
                         {{-- Series Authors --}}
@@ -94,7 +95,7 @@
         </div>
 
         {{-- Series List Component --}}
-        <x-blogr::series-list :series="$series" class="mb-12" />
+        <x-blogr::series-list :series="$series" :show-header="false" class="mb-12" />
 
         {{-- Posts Grid --}}
         @if ($posts->count() > 0)

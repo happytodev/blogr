@@ -12,6 +12,7 @@ return [
     'ui' => [
         'about_the_author' => 'About the author',
         'back_to_all_posts' => 'Back to all posts',
+        'blog' => 'Blog',
         'back_to_blog' => 'Back to blog',
         'check_back_soon' => 'Check back soon for new content!',
         'current' => 'current',

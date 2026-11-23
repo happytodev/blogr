@@ -517,6 +517,13 @@
 
         <!-- Post Header -->
         <header class="mb-8">
+            {{-- Back to the series: the article is one piece of a set (#371) --}}
+            @if ($post->series && $post->series->isPublished())
+                <div class="mb-4">
+                    <x-blogr::breadcrumb :post="$post" />
+                </div>
+            @endif
+
             <h1 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white leading-tight">
                 {{ isset($displayData) ? $displayData['title'] : $post->title }}
             </h1>
@@ -612,7 +619,10 @@
                                 class="text-xs uppercase tracking-wide text-purple-600 dark:text-purple-400 font-semibold mb-1">
                                 {{ __('blogr::blogr.series.part_of_series') }}</div>
                             <h3 class="text-lg font-bold text-purple-900 dark:text-purple-300">
-                                {{ $post->series->translated_title ?? $post->series->title }}
+                                <a href="{{ \Happytodev\Blogr\Helpers\PostUrlHelper::forSeries($post->series, $currentLocale ?? app()->getLocale()) }}"
+                                    class="hover:underline">
+                                    {{ $post->series->translated_title ?? $post->series->title }}
+                                </a>
                             </h3>
                         </div>
                     </div>
@@ -623,9 +633,17 @@
                         </span>
                     @endif
                 </div>
-                <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">
-                    {{ $post->series->translated_description ?? $post->series->description }}
-                </p>
+                {{-- A teaser, not the whole description: it belongs to the series page (#370) --}}
+                @php
+                    $seriesTeaser = \Happytodev\Blogr\Helpers\SEOHelper::plainText(
+                        $post->series->translated_description ?? $post->series->description
+                    );
+                @endphp
+                @if ($seriesTeaser !== '')
+                    <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">
+                        {{ \Illuminate\Support\Str::limit($seriesTeaser, 200) }}
+                    </p>
+                @endif
                 <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
                     {{ __('blogr::blogr.series.posts_count', ['count' => $post->series->posts->count()]) }}</div>
 

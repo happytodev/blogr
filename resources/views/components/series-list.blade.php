@@ -1,4 +1,4 @@
-@props(['series', 'currentPost' => null])
+@props(['series', 'currentPost' => null, 'showHeader' => true])
 
 @php
     use Happytodev\Blogr\Models\BlogSeries;
@@ -20,6 +20,7 @@
 
 @if($posts->count() > 0)
 <div class="xl:w-9/12 xl:mx-auto bg-gradient-to-r from-[var(--color-primary)]/5 to-pink-50 dark:from-[var(--color-primary-dark)]/20 dark:to-pink-900/20 border-l-4 border-[var(--color-primary)] dark:border-[var(--color-primary-dark)] p-6 mb-8 rounded-r-xl shadow-lg" {{ $attributes }}>
+    @if($showHeader)
     <div class="flex items-start justify-between mb-4">
         <div class="flex items-center flex-grow">
             <svg class="w-6 h-6 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,15 +42,17 @@
         @endif
     </div>
     
-    @if($seriesTranslation?->description)
-        <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">
-            {{ $seriesTranslation->description }}
-        </p>
+    @if($showHeader && $seriesTranslation?->description)
+        {{-- Markdown: the description is typed in a textarea, with its paragraphs (#369) --}}
+        <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 mb-4">
+            {!! \Happytodev\Blogr\Helpers\MarkdownHelper::toHtml($seriesTranslation->description) !!}
+        </div>
     @endif
     
     <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
         {{ __('blogr::blogr.series.posts_count', ['count' => $posts->count()]) }}
     </div>
+    @endif
 
     @php $shownCount = $extraCount > 0 ? $maxVisible : $posts->count(); @endphp
     <div class="space-y-3 mb-4" x-data="{ showAll: false }">

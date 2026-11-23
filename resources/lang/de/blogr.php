@@ -12,6 +12,7 @@ return [
     'ui' => [
         'table_of_contents' => 'Inhaltsverzeichnis',
         'back_to_all_posts' => 'Zurück zu allen Beiträgen',
+        'blog' => 'Blog',
         'back_to_blog' => 'Zurück zum Blog',
         'read_more' => 'Mehr lesen',
         'read_post' => 'Beitrag lesen',

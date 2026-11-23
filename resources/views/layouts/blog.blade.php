@@ -291,6 +291,12 @@
         <script type="application/ld+json">
             {!! \Happytodev\Blogr\Helpers\SEOHelper::generateJsonLd($seoData) !!}
         </script>
+
+        @if (! empty($seoData['breadcrumbs']))
+            <script type="application/ld+json">
+                {!! \Happytodev\Blogr\Helpers\SEOHelper::generateBreadcrumbJsonLd($seoData['breadcrumbs']) !!}
+            </script>
+        @endif
     @endif
 
     {{-- Analytics Tracking --}}
