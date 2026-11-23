@@ -4,6 +4,7 @@ use Happytodev\Blogr\Tests\TestCase;
 
 uses(TestCase::class);
 
+use Happytodev\Blogr\Helpers\ConfigHelper;
 use Happytodev\Blogr\Models\BlogPost;
 use Happytodev\Blogr\Models\Category;
 use Happytodev\Blogr\Models\Tag;
@@ -112,10 +113,13 @@ test('blog post page includes JSON-LD structured data', function () {
 
     $response->assertStatus(200);
 
-    // Basic SEO checks that should always work
-    $response->assertSee('<title>Test Blog Post for JSON-LD</title>', false)
+    // Basic SEO checks that should always work. The title follows the configured
+    // pattern ({title} — {site}); og:title keeps the bare entity title.
+    $pageTitle = 'Test Blog Post for JSON-LD — '.ConfigHelper::getSeoSiteName();
+
+    $response->assertSee('<title>'.$pageTitle.'</title>', false)
         ->assertSee('<meta name="description"', false)
-        ->assertSee('<meta property="og:title" content="Test Blog Post for JSON-LD">', false);
+        ->assertSee('<meta property="og:title" content="'.$pageTitle.'">', false);
 
     // Skip JSON-LD check in test environment as it may not be configured properly
     // $response->assertSee('<script type="application/ld+json">', false);
