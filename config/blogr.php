@@ -216,6 +216,12 @@ return [
     |
     */
     'seo' => [
+        // Page title pattern, used by every blog and CMS page.
+        // Placeholders: {title} (the entity), {site}, {series}, {category}.
+        // An empty placeholder takes its separator with it, so a post without a
+        // series never ends up as "AF-01 —  — My Blog". Set '{title}' to keep the
+        // old, bare titles.
+        'title_pattern' => '{title} — {site}',
         'site_name' => [
             'en' => 'The blog',
             'fr' => 'Le blog',

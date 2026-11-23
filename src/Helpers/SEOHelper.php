@@ -8,6 +8,118 @@ use Illuminate\Support\Str;
 class SEOHelper
 {
     /**
+     * Build a page title from the configured pattern (issue #366).
+     *
+     * Placeholders: {title}, {site}, {series}, {category}. A placeholder that has
+     * no value leaves its separator behind, so the result is cleaned: a post with
+     * no series reads "AF-01 — My Blog", never "AF-01 —  — My Blog".
+     *
+     * @param  array<string, string|null>  $context
+     */
+    public static function title(string $title, array $context = [], ?string $locale = null): string
+    {
+        $pattern = config('blogr.seo.title_pattern', '{title} — {site}');
+        $site = ConfigHelper::getSeoSiteName($locale);
+
+        if (! is_string($pattern) || trim($pattern) === '') {
+            $pattern = '{title} — {site}';
+        }
+
+        $values = [
+            '{title}' => trim($title),
+            '{site}' => trim($site),
+            '{series}' => trim((string) ($context['series'] ?? '')),
+            '{category}' => trim((string) ($context['category'] ?? '')),
+        ];
+
+        // Walk the pattern instead of the resolved string: a separator only exists
+        // in the pattern, and a title may legitimately contain one ("AF-01 · day 11").
+        preg_match_all('/\{[a-z]+\}|[^{]+/u', $pattern, $matches);
+        $tokens = $matches[0];
+
+        $segments = [];
+        $pendingLiteral = '';
+
+        foreach ($tokens as $token) {
+            if (isset($values[$token])) {
+                if ($values[$token] !== '') {
+                    if ($segments === [] && $pendingLiteral !== '') {
+                        $segments[] = ['separator' => '', 'value' => trim($pendingLiteral)];
+                        $pendingLiteral = '';
+                    }
+
+                    $segments[] = [
+                        'separator' => $segments === [] ? '' : ($pendingLiteral !== '' ? $pendingLiteral : ' '),
+                        'value' => $values[$token],
+                    ];
+                }
+
+                // An empty placeholder takes its separator with it.
+                $pendingLiteral = '';
+
+                continue;
+            }
+
+            $pendingLiteral .= $token;
+        }
+
+        $resolved = '';
+        foreach ($segments as $segment) {
+            $resolved .= $segment['separator'].$segment['value'];
+        }
+
+        $resolved = trim((string) preg_replace('/\s{2,}/u', ' ', $resolved), " \t\n\r\0\x0B");
+
+        if ($resolved === '' || $resolved === trim($title)) {
+            return trim($title) !== '' ? trim($title) : $site;
+        }
+
+        return $resolved;
+    }
+
+    /**
+     * Flatten markdown to one line of plain text (issue #367).
+     */
+    public static function plainText(?string $markdown): string
+    {
+        if ($markdown === null || trim($markdown) === '') {
+            return '';
+        }
+
+        try {
+            $html = MarkdownHelper::toHtml($markdown);
+        } catch (\Throwable) {
+            $html = $markdown;
+        }
+
+        $text = strip_tags($html);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return trim((string) preg_replace('/\s+/u', ' ', $text));
+    }
+
+    /**
+     * The description a search engine gets: what the editor wrote, otherwise the
+     * body flattened to text — never the markdown source (issue #367).
+     */
+    public static function description(?string $explicit, ?string $body = null): string
+    {
+        $explicit = $explicit === null ? '' : trim($explicit);
+
+        if ($explicit !== '') {
+            return Str::limit($explicit, 200);
+        }
+
+        $text = self::plainText($body);
+
+        if ($text === '') {
+            return ConfigHelper::getSeoDefaultDescription();
+        }
+
+        return Str::limit($text, 160);
+    }
+
+    /**
      * Generate SEO metadata for blog listing pages (index, category, tag)
      */
     public static function forListingPage(string $type = 'index', ?string $name = null, ?string $description = null): array
@@ -19,7 +131,7 @@ class SEOHelper
         $baseKeywords = ConfigHelper::getSeoDefaultKeywords($currentLocale);
 
         $seo = [
-            'title' => $baseTitle,
+            'title' => self::title($name !== null && $name !== '' ? $name : $baseTitle, [], $currentLocale),
             'description' => $baseDescription,
             'keywords' => $baseKeywords,
             'canonical' => url()->current(),
@@ -149,6 +261,31 @@ class SEOHelper
     /**
      * Generate complete JSON-LD structured data for a page
      */
+    /**
+     * BreadcrumbList structured data, for a page that has a trail (issue #371).
+     *
+     * @param  array<int, array{name: string, url: string}>  $items
+     */
+    public static function generateBreadcrumbJsonLd(array $items): string
+    {
+        $list = [];
+
+        foreach (array_values($items) as $index => $item) {
+            $list[] = [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'name' => $item['name'],
+                'item' => $item['url'],
+            ];
+        }
+
+        return (string) json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => $list,
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
     public static function generateJsonLd(array $seoData): string
     {
         $config = config('blogr.seo', []);

@@ -2,6 +2,7 @@
 
 namespace Happytodev\Blogr\Http\Controllers;
 
+use Happytodev\Blogr\Helpers\SEOHelper;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Models\CmsPageTranslation;
 use Happytodev\Blogr\Services\VersioningService;
@@ -76,7 +77,7 @@ class CmsPageController extends Controller
             'title' => $translation->title,
             'content' => $translation->content,
             'blocks' => $translation->blocks ?? [], // Blocks are now per-translation
-            'seoTitle' => $translation->seo_title ?? $translation->title,
+            'seoTitle' => $translation->seo_title ?? SEOHelper::title((string) $translation->title, [], is_string($currentLocale) ? $currentLocale : null),
             'seoDescription' => $translation->seo_description ?? $translation->excerpt,
             'seoKeywords' => $translation->seo_keywords,
             'currentLocale' => $currentLocale,
@@ -190,7 +191,7 @@ class CmsPageController extends Controller
             'locale' => $currentLocale,
             'currentLocale' => $currentLocale,
             'availableLocales' => $page->availableLocales(),
-            'seoTitle' => $translation->seo_title ?? $translation->title,
+            'seoTitle' => $translation->seo_title ?? SEOHelper::title((string) $translation->title, [], is_string($currentLocale) ? $currentLocale : null),
             'seoDescription' => $translation->seo_description ?? $translation->excerpt,
             'seoKeywords' => $translation->seo_keywords,
         ]);

@@ -44,6 +44,7 @@ class BlogPostTranslation extends Model
         'slug',
         'photo',
         'content',
+        'excerpt',
         'tldr',
         'seo_title',
         'seo_description',

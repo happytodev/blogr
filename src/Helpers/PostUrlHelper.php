@@ -110,6 +110,21 @@ class PostUrlHelper
     /**
      * Build the flat blog.show URL for a slug.
      */
+    /**
+     * The URL of a series page, in the given locale.
+     */
+    public static function forSeries(BlogSeries $series, ?string $locale = null): string
+    {
+        $locale = self::resolveLocale($locale);
+        $slug = $series->getTranslatedSlug($locale) ?: $series->slug;
+
+        if (config('blogr.locales.enabled', false)) {
+            return route('blog.series', ['locale' => $locale, 'seriesSlug' => $slug]);
+        }
+
+        return route('blog.series', ['seriesSlug' => $slug]);
+    }
+
     public static function flatUrl(string $locale, ?string $slug): string
     {
         $parameters = ['slug' => (string) $slug];

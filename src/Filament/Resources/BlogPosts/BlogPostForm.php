@@ -107,7 +107,7 @@ class BlogPostForm
                                     ->label('TL;DR (Too Long; Didn\'t Read)')
                                     ->rows(3)
                                     ->maxLength(500)
-                                    ->helperText('Short summary of the article (max 500 characters)')
+                                    ->helperText('Short summary of the article (max 500 characters). Used as the meta description when no SEO description is set.')
                                     ->columnSpanFull(),
 
                                 CalloutMarkdownEditor::make('content')
