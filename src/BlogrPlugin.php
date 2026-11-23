@@ -5,6 +5,7 @@ namespace Happytodev\Blogr;
 use Filament\Contracts\Plugin;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
+use Happytodev\Blogr\Filament\Pages\AuthorBios;
 use Happytodev\Blogr\Filament\Pages\BlogrSettings;
 use Happytodev\Blogr\Filament\Pages\Plugins;
 use Happytodev\Blogr\Filament\Resources\BlogPostResource;
@@ -40,6 +41,7 @@ class BlogrPlugin implements Plugin
         $panel->pages([
             BlogrSettings::class,
             Plugins::class,
+            AuthorBios::class,
         ]);
 
         $widgets = array_values(array_intersect(
