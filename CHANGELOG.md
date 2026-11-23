@@ -2,6 +2,21 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.9.3] - 2026-11-23
+
+### ✨ Features
+
+- **A series and a category carry a bio.** Picking a bio translation by translation meant twenty
+  identical choices for a series of twenty artworks. `blog_series_translations.author_bio_id` and
+  `category_translations.author_bio_id` hold one per language, and an article reads them in order of
+  precision: its own choice, then its series, then its category, then the author's default bio. A bio
+  written by another author is ignored at every step. Selects in the series form and the category
+  translations list the bios of the language, labelled by author. (#376)
+
+### Upgrade
+
+One migration: `2026_11_23_000001_add_author_bio_to_series_and_categories`.
+
 ## [2.9.2] - 2026-11-23
 
 ### 🐛 Bug Fixes

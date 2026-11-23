@@ -70,6 +70,30 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.9.3 — 2026-11-23
+
+**A series and a category can carry a bio.** A bio was picked per translation of a post, so a series of
+twenty artworks meant twenty identical choices — and the day the bio is rewritten, twenty edits.
+
+Both now carry one, per translation. An article reads them in order of precision:
+
+1. the bio picked on its own translation,
+2. the bio of its series,
+3. the bio of its category,
+4. the author's default bio for the language.
+
+A bio written by another author is ignored at every step: it says nothing about this post.
+
+In the admin, an "Author bio" select in the series form (per translation) and in the category translations
+lists the bios written in that language, labelled by author — a series can group posts by several people.
+
+```bash
+composer require happytodev/blogr:^2.9.3
+php artisan migrate
+```
+
+One migration. Nothing to migrate in the data: a series or a category without a bio behaves as before.
+
 ### v2.9.2 — 2026-11-23
 
 **A post keeps its place in its series.** It lost it on every edit: the form showed the stored
