@@ -70,6 +70,34 @@ Blogr v2 is a **stack upgrade release**. It migrates the package from Laravel 12
 - **Livewire 4** — `ComponentRegistry` removed, component name resolution via `Str::kebab()`
 - **spatie/laravel-permission ^8.0** — upgraded from ^6.0
 
+### v2.8.0 — 2026-11-22
+
+Titles, meta descriptions and the series pages.
+
+**Titles follow a pattern.** `blogr.seo.title_pattern` (default `{title} — {site}`) accepts `{title}`,
+`{site}`, `{series}` and `{category}`. A post without a series reads "AF-01 — My Blog", not
+"AF-01 —  — My Blog": an empty placeholder takes its separator with it. `{title}` keeps the old bare
+titles. One caveat worth knowing before upgrading: `{site}` comes from `blogr.seo.site_name`, whose demo
+value is "The blog" — set it, or every title will say "AF-01 — The blog".
+
+**Descriptions are plain text.** Without `seo_description` the meta description used the first 160
+characters of the body, markdown included. It now goes `seo_description` → `excerpt` → `tldr` → body
+flattened through the markdown converter. `excerpt` was not fillable and could never be set; it is.
+
+**The series page stops repeating itself.** The description was rendered twice (header and list) and lost
+its paragraphs in both places — it is markdown, typed in a textarea, printed inside a single `<p>`. It is
+now rendered once, as markdown, in the header, the list and the article's box, where it is a 200-character
+teaser instead of the whole text.
+
+**A way back.** The series title in the article's box links to the series, the article carries a
+breadcrumb, and the page declares a `BreadcrumbList` — which it did not have at all.
+
+**Fifteen regression files were never collected.** PHPUnit only collects `*Test.php`; they were named
+`regression_<issue>_<what>.php` and the suite silently skipped them: 45 tests, 112 assertions, written for
+real bugs (#274 … #348). Renamed and green — the suite goes from 1497 to 1566 tests.
+
+No migration.
+
 ### v2.7.6 — 2026-11-22
 
 A post slug is now unique **per locale**, which is what the route always implied.

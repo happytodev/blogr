@@ -2,6 +2,46 @@
 
 All notable changes to `blogr` will be documented in this file.
 
+## [2.8.0] - 2026-11-22
+
+Page titles, meta descriptions and the series pages.
+
+### ✨ Features
+
+- **Page titles follow a pattern.** `blogr.seo.title_pattern` (default
+  `{title} — {site}`) accepts `{title}`, `{site}`, `{series}` and `{category}`. An empty placeholder takes
+  its separator with it; a title that legitimately holds one is left alone. `{title}` restores the old
+  bare titles. Applied by posts, series, listings and CMS pages — and `SEOHelper::forBlogPost()`, which
+  was written for this and never called, is now the single source of truth. (#366)
+- **A way back to the series.** The series title in the article's box is a link, the article carries a
+  breadcrumb (Blog › series › article) and the page declares a `BreadcrumbList` in JSON-LD. (#371)
+
+### 🐛 Bug Fixes
+
+- **Meta descriptions are plain text.** Without `seo_description`, the first 160 characters of the body
+  were used as-is — markdown included ("**Provenance.** … ## Histoire"). The body is now converted to
+  text, and the chain is `seo_description` → `excerpt` → `tldr` → body. `excerpt` was not fillable and
+  could never be set; it is. Posts, series and CMS pages. (#367)
+- **The series description is rendered once on its page.** `series-list` repeated the title, the
+  description and the count the header had already printed; it now takes a `showHeader` prop and the
+  series page passes `false`. (#368)
+- **The series description keeps its paragraphs.** It is markdown, typed in a textarea, and was printed
+  inside a single `<p>` where HTML collapses the whitespace. It is rendered as markdown in the header, in
+  the list and in the article's box. (#369)
+- **Every post no longer reprints the whole series description.** The article's box shows a 200-character
+  teaser; the description belongs to the series page. (#370)
+
+### 🧪 Tests
+
+- **Fifteen regression files were never collected.** PHPUnit only collects `*Test.php`; they were named
+  `regression_<issue>_<what>.php` and the suite skipped them silently — 45 tests and 112 assertions
+  written for real bugs (#274 … #348). Renamed, and all 45 pass. The suite goes from 1497 to 1566 tests.
+
+### Upgrade
+
+No migration. After `composer update`, set `blogr.seo.site_name` if it still holds the demo value, since
+it now appears in every page title: a site whose name is "The blog" will read "AF-01 — The blog".
+
 ## [2.7.6] - 2026-11-22
 
 ### 🐛 Bug Fixes
