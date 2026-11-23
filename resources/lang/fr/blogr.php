@@ -41,6 +41,12 @@ return [
     ],
 
     // Series
+    // SEO
+    'seo' => [
+        'category_description' => 'Tous les articles de la catégorie :name.',
+        'tag_description' => 'Les articles étiquetés :name.',
+    ],
+
     'series' => [
         'all_posts_in_series' => 'Tous les articles de cette série',
         'authors' => 'Auteurs',

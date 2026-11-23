@@ -39,6 +39,12 @@ return [
     ],
 
     // Series
+    // SEO
+    'seo' => [
+        'category_description' => 'Alle Artikel der Kategorie :name.',
+        'tag_description' => 'Artikel mit dem Tag :name.',
+    ],
+
     'series' => [
         'title' => 'Blog-Serien',
         'description' => 'Durchsuchen Sie alle unsere Blog-Serien und lernen Sie Schritt für Schritt.',

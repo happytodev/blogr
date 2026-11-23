@@ -130,3 +130,20 @@ it('builds the series page title the same way', function () {
         ->assertStatus(200)
         ->assertSee('<title>Amber Fossils — Mon Blog</title>', false);
 });
+
+it('does not repeat the site name when the page title is the site name', function () {
+    config([
+        'blogr.seo.site_name' => ['en' => 'HTD', 'fr' => 'HTD'],
+        'blogr.seo.default_title' => ['en' => 'HTD', 'fr' => 'HTD'],
+    ]);
+
+    $this->get('/fr/blog')
+        ->assertStatus(200)
+        ->assertSee('<title>HTD</title>', false);
+});
+
+it('builds the category title from the pattern', function () {
+    $this->get('/fr/blog/category/art')
+        ->assertStatus(200)
+        ->assertSee('<title>Art — Mon Blog</title>', false);
+});

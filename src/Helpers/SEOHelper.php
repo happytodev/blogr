@@ -68,6 +68,24 @@ class SEOHelper
             $resolved .= $segment['separator'].$segment['value'];
         }
 
+        // "HTD — HTD": a site whose name is also its page title reads as a stutter.
+        $seen = [];
+        $unique = [];
+
+        foreach ($segments as $segment) {
+            if (in_array($segment['value'], $seen, true)) {
+                continue;
+            }
+
+            $seen[] = $segment['value'];
+            $unique[] = $segment;
+        }
+
+        $resolved = '';
+        foreach ($unique as $index => $segment) {
+            $resolved .= ($index === 0 ? '' : $segment['separator']).$segment['value'];
+        }
+
         $resolved = trim((string) preg_replace('/\s{2,}/u', ' ', $resolved), " \t\n\r\0\x0B");
 
         if ($resolved === '' || $resolved === trim($title)) {
@@ -143,16 +161,16 @@ class SEOHelper
         switch ($type) {
             case 'category':
                 if ($name) {
-                    $seo['title'] = "Category: {$name} - {$baseTitle}";
-                    $seo['description'] = "Browse all articles in the {$name} category. {$baseDescription}";
+                    $seo['title'] = self::title($name, ['category' => $name], $currentLocale);
+                    $seo['description'] = __('blogr::blogr.seo.category_description', ['name' => $name]);
                     $seo['keywords'] = "{$name}, {$baseKeywords}";
                 }
                 break;
 
             case 'tag':
                 if ($name) {
-                    $seo['title'] = "Tag: {$name} - {$baseTitle}";
-                    $seo['description'] = "Articles tagged with {$name}. {$baseDescription}";
+                    $seo['title'] = self::title($name, [], $currentLocale);
+                    $seo['description'] = __('blogr::blogr.seo.tag_description', ['name' => $name]);
                     $seo['keywords'] = "{$name}, {$baseKeywords}";
                 }
                 break;

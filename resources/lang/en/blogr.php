@@ -41,6 +41,12 @@ return [
     ],
 
     // Series
+    // SEO
+    'seo' => [
+        'category_description' => 'Browse all articles in the :name category.',
+        'tag_description' => 'Articles tagged with :name.',
+    ],
+
     'series' => [
         'authors' => 'Authors',
         'current' => 'current',
