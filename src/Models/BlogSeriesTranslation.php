@@ -21,6 +21,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read BlogSeries $series
+ * @property int|null $author_bio_id
  */
 class BlogSeriesTranslation extends Model
 {
@@ -37,7 +38,18 @@ class BlogSeriesTranslation extends Model
         'photo',
         'seo_title',
         'seo_description',
+        'author_bio_id',
     ];
+
+    /**
+     * The bio this translation prefers for the posts it groups (#376).
+     *
+     * @return BelongsTo<AuthorBio, $this>
+     */
+    public function authorBio(): BelongsTo
+    {
+        return $this->belongsTo(AuthorBio::class, 'author_bio_id');
+    }
 
     /**
      * Boot the model.

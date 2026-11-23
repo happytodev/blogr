@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Category $category
+ * @property int|null $author_bio_id
  */
 class CategoryTranslation extends Model
 {
@@ -32,7 +33,18 @@ class CategoryTranslation extends Model
         'name',
         'slug',
         'description',
+        'author_bio_id',
     ];
+
+    /**
+     * The bio this translation prefers for the posts it groups (#376).
+     *
+     * @return BelongsTo<AuthorBio, $this>
+     */
+    public function authorBio(): BelongsTo
+    {
+        return $this->belongsTo(AuthorBio::class, 'author_bio_id');
+    }
 
     /**
      * Get the category that owns this translation.

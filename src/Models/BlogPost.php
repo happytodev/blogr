@@ -473,12 +473,26 @@ class BlogPost extends Model
      */
     public function authorBioFor(?string $locale = null): ?string
     {
-        $translation = $this->translate($locale ?? app()->getLocale());
+        $locale = $locale ?? app()->getLocale();
+        $translation = $this->translate($locale);
 
-        $bio = $translation?->authorBio;
+        // The order is the one an editor expects: what this article says, then
+        // what its series says, then its category, then the author's default —
+        // which the view still applies when nothing here answers (#376).
+        $candidates = [
+            $translation?->authorBio,
+            $this->series?->translate($locale)?->authorBio,
+            $this->category?->translate($locale)?->authorBio,
+        ];
 
-        if ($bio instanceof AuthorBio && is_string($bio->body) && trim($bio->body) !== '') {
-            return $bio->body;
+        foreach ($candidates as $bio) {
+            // A bio written by another author says nothing about this post.
+            if ($bio instanceof AuthorBio
+                && (int) $bio->user_id === (int) $this->user_id
+                && is_string($bio->body)
+                && trim($bio->body) !== '') {
+                return $bio->body;
+            }
         }
 
         return null;

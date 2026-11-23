@@ -10,9 +10,11 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Happytodev\Blogr\Models\AuthorBio;
 use Happytodev\Blogr\Services\LocaleService;
 use Illuminate\Database\Eloquent\Model;
 
@@ -57,6 +59,32 @@ class TranslationsRelationManager extends RelationManager
                 ->rows(3)
                 ->maxLength(500)
                 ->nullable()
+                ->columnSpan(2),
+
+            // The bio the posts of this category show when they do not pick one
+            // and are not in a series that picks one (#376).
+            Forms\Components\Select::make('author_bio_id')
+                ->label('Author bio')
+                ->placeholder('No bio for this category')
+                ->options(function (Get $get): array {
+                    $locale = $get('locale');
+
+                    if (! is_string($locale) || $locale === '') {
+                        return [];
+                    }
+
+                    return AuthorBio::query()
+                        ->with('user')
+                        ->forLocale($locale)
+                        ->orderByDesc('is_default')
+                        ->orderBy('label')
+                        ->get()
+                        ->mapWithKeys(fn ($bio): array => [
+                            $bio->id => ($bio->user->name ?? 'Author').' — '.$bio->label,
+                        ])
+                        ->all();
+                })
+                ->helperText('Written in “My bios”. Applies to the posts of this category.')
                 ->columnSpan(2),
         ])->columns(2);
     }

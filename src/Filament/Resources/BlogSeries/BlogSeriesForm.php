@@ -10,8 +10,10 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Happytodev\Blogr\Filament\Forms\SlugFieldTrait;
+use Happytodev\Blogr\Models\AuthorBio;
 use Illuminate\Support\HtmlString;
 
 class BlogSeriesForm
@@ -124,6 +126,15 @@ class BlogSeriesForm
                                     ->helperText('Optional: Translation-specific image. Falls back to main series image if empty.')
                                     ->columnSpan(2),
 
+                                // The bio its posts show, when they do not pick one
+                                // themselves (#376).
+                                Select::make('author_bio_id')
+                                    ->label('Author bio')
+                                    ->placeholder('No bio for this series')
+                                    ->options(fn (Get $get): array => self::authorBioOptions($get('locale')))
+                                    ->helperText('Written in “My bios”. Applies to the posts of this series that do not choose one.')
+                                    ->columnSpan(2),
+
                                 TextInput::make('seo_title')
                                     ->label('SEO Title')
                                     ->maxLength(255)
@@ -175,5 +186,29 @@ class BlogSeriesForm
                     ])
                     ->columnSpan('full'),
             ]);
+    }
+
+    /**
+     * The bios written in a language, labelled by author — a series can group
+     * posts by several people, and a bio belongs to its author (#376).
+     *
+     * @return array<int|string, string>
+     */
+    public static function authorBioOptions(mixed $locale): array
+    {
+        if (! is_string($locale) || $locale === '') {
+            return [];
+        }
+
+        return AuthorBio::query()
+            ->with('user')
+            ->forLocale($locale)
+            ->orderByDesc('is_default')
+            ->orderBy('label')
+            ->get()
+            ->mapWithKeys(fn (AuthorBio $bio): array => [
+                $bio->id => ($bio->user->name ?? 'Author').' — '.$bio->label,
+            ])
+            ->all();
     }
 }
